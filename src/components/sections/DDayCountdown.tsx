@@ -1,6 +1,6 @@
- "use client";
+'use client';
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from 'react';
 
 type CountdownParts = {
   months: number;
@@ -14,13 +14,12 @@ type CountdownParts = {
 /**
  * 두 자리 숫자 패딩 처리
  */
-const pad2 = (value: number) => value.toString().padStart(2, "0");
+const pad2 = (value: number) => value.toString().padStart(2, '0');
 
 /**
  * 해당 연도 월의 일수 계산
  */
-const daysInMonth = (year: number, month: number) =>
-  new Date(year, month + 1, 0).getDate();
+const daysInMonth = (year: number, month: number) => new Date(year, month + 1, 0).getDate();
 
 /**
  * 연도 이동 시 월 말 기준으로 날짜가 넘어가지 않게 조정
@@ -36,7 +35,7 @@ const addYearsClamped = (base: Date, years: number) => {
     base.getHours(),
     base.getMinutes(),
     base.getSeconds(),
-    base.getMilliseconds(),
+    base.getMilliseconds()
   );
 };
 
@@ -55,7 +54,7 @@ const addMonthsClamped = (base: Date, months: number) => {
     base.getHours(),
     base.getMinutes(),
     base.getSeconds(),
-    base.getMilliseconds(),
+    base.getMilliseconds()
   );
 };
 
@@ -123,9 +122,7 @@ type DDayCountdownProps = {
  */
 export const DDayCountdown = ({ weddingDateTime }: DDayCountdownProps) => {
   const targetDate = useMemo(() => {
-    return weddingDateTime instanceof Date
-      ? weddingDateTime
-      : new Date(weddingDateTime);
+    return weddingDateTime instanceof Date ? weddingDateTime : new Date(weddingDateTime);
   }, [weddingDateTime]);
   const [parts, setParts] = useState<CountdownParts | null>(null);
 
@@ -143,11 +140,11 @@ export const DDayCountdown = ({ weddingDateTime }: DDayCountdownProps) => {
   }, [targetDate]);
 
   const timeBlocks = [
-    parts ? pad2(parts.months) : "--",
-    parts ? pad2(parts.days) : "--",
-    parts ? pad2(parts.hours) : "--",
-    parts ? pad2(parts.minutes) : "--",
-    parts ? pad2(parts.seconds) : "--",
+    parts ? pad2(parts.months) : '--',
+    parts ? pad2(parts.days) : '--',
+    parts ? pad2(parts.hours) : '--',
+    parts ? pad2(parts.minutes) : '--',
+    parts ? pad2(parts.seconds) : '--',
   ];
 
   return (
@@ -155,8 +152,8 @@ export const DDayCountdown = ({ weddingDateTime }: DDayCountdownProps) => {
       className="rounded-[20px] border border-white/10 bg-white/5 px-5 py-5 text-center shadow-[var(--shadow-soft)]"
       suppressHydrationWarning
     >
-      <div className="text-[11px] uppercase tracking-[0.4em] text-[var(--accent)]">
-        {parts?.isPast ? "오늘" : "D-Day"}
+      <div className="text-[11px] tracking-[0.4em] text-[var(--accent)] uppercase">
+        {parts?.isPast ? '오늘' : 'D-Day'}
       </div>
       <div className="mt-3 text-xl font-semibold tracking-[0.12em] text-[var(--text-light)]">
         {`${timeBlocks[0]}월 ${timeBlocks[1]}일 ${timeBlocks[2]}시 ${timeBlocks[3]}분 ${timeBlocks[4]}초`}

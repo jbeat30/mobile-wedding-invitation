@@ -1,4 +1,4 @@
-import { IntroSection } from "@/components/sections/IntroSection";
+import { IntroSection } from '@/components/sections/IntroSection';
 
 /**
  * 퍼블릭 싱글 페이지 레이아웃 스켈레톤 확인
