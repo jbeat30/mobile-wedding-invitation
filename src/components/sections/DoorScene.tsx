@@ -189,7 +189,7 @@ export const DoorScene = ({
                 }}
               />
               <div
-                className="absolute inset-8 border opacity-20"
+                className="absolute inset-8 border-2 opacity-20"
                 style={{
                   borderColor: BASE_TEXT,
                   borderTopLeftRadius: '100% 12%',
@@ -263,7 +263,7 @@ export const DoorScene = ({
                 }}
               />
               <div
-                className="absolute inset-8 border opacity-20"
+                className="absolute inset-8 border-2 opacity-20"
                 style={{
                   borderColor: BASE_TEXT,
                   borderTopRightRadius: '100% 12%',
