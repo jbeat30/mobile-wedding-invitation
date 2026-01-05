@@ -17,9 +17,6 @@ export const IntroSection = () => {
           <DDayCountdown weddingDateTime={weddingDateTime} />
           {/* 인트로 문구 */}
           <div className="flex flex-col gap-4 text-center">
-            <p className="text-[11px] tracking-[0.5em] text-[#5f5f5f] uppercase">
-              {couple.displayLine}
-            </p>
             <h1 className="text-[26px] leading-[1.5] font-semibold text-[#5f5f5f]">
               {intro.quote}
             </h1>

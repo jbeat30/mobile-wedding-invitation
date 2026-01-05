@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { invitationMock } from '@/mock/invitation.mock';
 
 type CountdownParts = {
   months: number;
@@ -147,17 +148,35 @@ export const DDayCountdown = ({ weddingDateTime }: DDayCountdownProps) => {
     parts ? pad2(parts.seconds) : '--',
   ];
 
+  const labelMap = ['DAYS', 'HOURS', 'MINUTES', 'SECONDS'];
+  const totalDays = parts ? Math.max(0, parts.days + parts.months * 30) : 0;
+  const valueBlocks = [
+    parts ? pad2(totalDays) : '--',
+    parts ? pad2(parts.hours) : '--',
+    parts ? pad2(parts.minutes) : '--',
+    parts ? pad2(parts.seconds) : '--',
+  ];
+
   return (
-    <div
-      className="rounded-[20px] border border-black/10 bg-black/5 px-5 py-5 text-center shadow-[var(--shadow-soft)]"
-      suppressHydrationWarning
-    >
-      <div className="text-[11px] tracking-[0.4em] text-[#5f5f5f] uppercase">
-        {parts?.isPast ? '오늘' : 'D-Day'}
+    <div className="w-full" suppressHydrationWarning>
+      <div className="grid grid-cols-4 gap-2 sm:gap-3">
+        {valueBlocks.map((value, index) => (
+          <div
+            key={labelMap[index]}
+            className="flex flex-col items-center justify-center rounded-[10px] border border-black/5 bg-[#f1f1f1] px-2 py-3 text-center shadow-[0_10px_20px_rgba(0,0,0,0.08)]"
+          >
+            <div className="text-[18px] font-medium leading-none text-[#4d4d4d]">{value}</div>
+            <div className="mt-1 text-[9px] tracking-[0.25em] text-[#a1a1a1]">
+              {labelMap[index]}
+            </div>
+          </div>
+        ))}
       </div>
-      <div className="mt-3 text-xl font-semibold tracking-[0.12em] text-[#5f5f5f]">
-        {`${timeBlocks[0]}월 ${timeBlocks[1]}일 ${timeBlocks[2]}시 ${timeBlocks[3]}분 ${timeBlocks[4]}초`}
-      </div>
+      <p className="mt-4 text-center text-[12px] text-[#6a6a6a]">
+        {parts?.isPast || totalDays === 0
+          ? '우리 오늘 결혼해요 ❤️'
+          : `${invitationMock.couple.groom.fullName} ❤️ ${invitationMock.couple.bride.fullName} 결혼식이 ${totalDays}일 남았습니다`}
+      </p>
     </div>
   );
 };

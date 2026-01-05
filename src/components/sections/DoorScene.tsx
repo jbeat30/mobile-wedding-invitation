@@ -22,9 +22,11 @@ export const DoorScene = ({
   accentColor: _accentColor,
 }: DoorSceneProps) => {
   const MAX_DOOR_HEIGHT = 640;
-  const BASE_SURFACE = '#d6d6d6';
-  const BASE_SURFACE_DARK = '#cfcfcf';
-  const BASE_TEXT = '#5f5f5f';
+  const BASE_SURFACE = 'var(--base-surface)';
+  const BASE_SURFACE_DARK = 'var(--base-surface-dark)';
+  const BASE_TEXT = 'var(--base-text)';
+  const HANDLE_COLOR = 'var(--door-handle)';
+  const HANDLE_COLOR_RGB = 'var(--door-handle-rgb)';
   const GOLD_LINE = '#cbb899';
   const containerRef = useRef<HTMLDivElement>(null);
   const doorFrameRef = useRef<HTMLDivElement>(null);
@@ -201,7 +203,7 @@ export const DoorScene = ({
                   <div
                     className="h-4 w-3 rounded-t-full"
                     style={{
-                      background: `linear-gradient(to right, ${BASE_TEXT}aa, ${BASE_TEXT})`,
+                      background: `linear-gradient(to right, rgb(${HANDLE_COLOR_RGB} / 0.7), ${HANDLE_COLOR})`,
                       boxShadow: `2px 0 4px rgba(0,0,0,0.3)`,
                     }}
                   />
@@ -210,7 +212,7 @@ export const DoorScene = ({
                     className="w-2.5 rounded-sm"
                     style={{
                       height: '80px',
-                      background: `linear-gradient(to right, ${BASE_TEXT}bb, ${BASE_TEXT}, ${BASE_TEXT}bb)`,
+                      background: `linear-gradient(to right, rgb(${HANDLE_COLOR_RGB} / 0.75), ${HANDLE_COLOR}, rgb(${HANDLE_COLOR_RGB} / 0.75))`,
                       boxShadow: `2px 0 6px rgba(0,0,0,0.4), inset -1px 0 2px rgba(0,0,0,0.3)`,
                     }}
                   />
@@ -218,7 +220,7 @@ export const DoorScene = ({
                   <div
                     className="h-4 w-3 rounded-b-full"
                     style={{
-                      background: `linear-gradient(to right, ${BASE_TEXT}aa, ${BASE_TEXT})`,
+                      background: `linear-gradient(to right, rgb(${HANDLE_COLOR_RGB} / 0.7), ${HANDLE_COLOR})`,
                       boxShadow: `2px 0 4px rgba(0,0,0,0.3)`,
                     }}
                   />
@@ -275,7 +277,7 @@ export const DoorScene = ({
                   <div
                     className="h-4 w-3 rounded-t-full"
                     style={{
-                      background: `linear-gradient(to left, ${BASE_TEXT}aa, ${BASE_TEXT})`,
+                      background: `linear-gradient(to left, rgb(${HANDLE_COLOR_RGB} / 0.7), ${HANDLE_COLOR})`,
                       boxShadow: `-2px 0 4px rgba(0,0,0,0.3)`,
                     }}
                   />
@@ -284,7 +286,7 @@ export const DoorScene = ({
                     className="w-2.5 rounded-sm"
                     style={{
                       height: '80px',
-                      background: `linear-gradient(to left, ${BASE_TEXT}bb, ${BASE_TEXT}, ${BASE_TEXT}bb)`,
+                      background: `linear-gradient(to left, rgb(${HANDLE_COLOR_RGB} / 0.75), ${HANDLE_COLOR}, rgb(${HANDLE_COLOR_RGB} / 0.75))`,
                       boxShadow: `-2px 0 6px rgba(0,0,0,0.4), inset 1px 0 2px rgba(0,0,0,0.3)`,
                     }}
                   />
@@ -292,7 +294,7 @@ export const DoorScene = ({
                   <div
                     className="h-4 w-3 rounded-b-full"
                     style={{
-                      background: `linear-gradient(to left, ${BASE_TEXT}aa, ${BASE_TEXT})`,
+                      background: `linear-gradient(to left, rgb(${HANDLE_COLOR_RGB} / 0.7), ${HANDLE_COLOR})`,
                       boxShadow: `-2px 0 4px rgba(0,0,0,0.3)`,
                     }}
                   />

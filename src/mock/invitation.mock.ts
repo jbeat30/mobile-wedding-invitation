@@ -41,7 +41,6 @@ export type InvitationFamilyLine = {
 export type InvitationCouple = {
   groom: InvitationPerson;
   bride: InvitationPerson;
-  displayLine: string;
   familyLines?: InvitationFamilyLine[];
 };
 
@@ -116,16 +115,15 @@ export const invitationMock: InvitationMock = {
   weddingDateTime: '2026-05-16T15:00:00+09:00',
   couple: {
     groom: {
-      fullName: '강신랑',
-      displayName: '신랑 강신랑',
+      fullName: '이름',
+      displayName: '신랑 이름',
       bio: '따뜻한 마음으로 새로운 여정을 준비합니다.',
     },
     bride: {
-      fullName: '장신부',
-      displayName: '신부 장신부',
+      fullName: '이름',
+      displayName: '신부 이름',
       bio: '소중한 하루를 함께 나누고 싶습니다.',
     },
-    displayLine: '강신랑 · 장신부',
     familyLines: [
       {
         subject: 'groom',
@@ -250,14 +248,14 @@ export const invitationMock: InvitationMock = {
       {
         bankName: '국민은행',
         accountNumber: '123-456-789012',
-        holder: '강신랑',
+        holder: '신랑',
       },
     ],
     bride: [
       {
         bankName: '신한은행',
         accountNumber: '110-234-567890',
-        holder: '장신부',
+        holder: '신부',
       },
     ],
   },
