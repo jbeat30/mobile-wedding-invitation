@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1200" viewBox="0 0 900 1200" role="img" aria-label="Wedding hero placeholder">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f5f1ea" />
+      <stop offset="100%" stop-color="#efe6d8" />
+    </linearGradient>
+  </defs>
+  <rect width="900" height="1200" fill="url(#g)" />
+  <rect x="120" y="160" width="660" height="880" rx="24" fill="none" stroke="#d9cbb3" stroke-width="6" />
+  <text x="50%" y="46%" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="36" fill="#a0927a">Wedding Hero</text>
+  <text x="50%" y="52%" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="18" fill="#b3a792">Placeholder</text>
+</svg>
