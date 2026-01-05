@@ -149,13 +149,13 @@ export const DDayCountdown = ({ weddingDateTime }: DDayCountdownProps) => {
 
   return (
     <div
-      className="rounded-[20px] border border-white/10 bg-white/5 px-5 py-5 text-center shadow-[var(--shadow-soft)]"
+      className="rounded-[20px] border border-black/10 bg-black/5 px-5 py-5 text-center shadow-[var(--shadow-soft)]"
       suppressHydrationWarning
     >
-      <div className="text-[11px] tracking-[0.4em] text-[var(--accent)] uppercase">
+      <div className="text-[11px] tracking-[0.4em] text-[#5f5f5f] uppercase">
         {parts?.isPast ? '오늘' : 'D-Day'}
       </div>
-      <div className="mt-3 text-xl font-semibold tracking-[0.12em] text-[var(--text-light)]">
+      <div className="mt-3 text-xl font-semibold tracking-[0.12em] text-[#5f5f5f]">
         {`${timeBlocks[0]}월 ${timeBlocks[1]}일 ${timeBlocks[2]}시 ${timeBlocks[3]}분 ${timeBlocks[4]}초`}
       </div>
     </div>

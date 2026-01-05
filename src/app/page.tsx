@@ -5,7 +5,7 @@ import { IntroSection } from '@/components/sections/IntroSection';
  */
 export default function Page() {
   return (
-    <div className="min-h-svh bg-[var(--surface-dark)] text-[var(--text-light)]">
+    <div className="min-h-svh bg-[#d6d6d6] text-[#5f5f5f]">
       <main className="min-h-svh">
         <IntroSection />
         <section id="info" />
