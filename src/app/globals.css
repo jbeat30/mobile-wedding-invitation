@@ -15,7 +15,7 @@
   --radius-lg: 28px;
   --radius-md: 18px;
   --radius-sm: 10px;
-  --base-surface: #f0f0f0;
+  --base-surface: #f9f9f9;
   --base-surface-dark: #dbdbdb;
   --base-text: #5f5f5f;
   --door-handle: #5f5f5f;
@@ -29,7 +29,6 @@
 body {
   background: var(--base-surface);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
   min-height: 100%;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
