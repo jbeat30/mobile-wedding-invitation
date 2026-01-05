@@ -143,6 +143,37 @@ export const DoorScene = ({
           {/* 문 장식 프레임 */}
           <div className="absolute inset-4 border-2 opacity-30" style={{ borderColor: accentColor }} />
           <div className="absolute inset-8 border opacity-20" style={{ borderColor: accentColor }} />
+
+          {/* 문손잡이 - 좌측 문은 오른쪽에 (세로형) */}
+          <div className="absolute right-6 top-1/2 -translate-y-1/2">
+            <div className="flex flex-col items-center gap-1">
+              {/* 상단 장식 */}
+              <div
+                className="h-4 w-3 rounded-t-full"
+                style={{
+                  background: `linear-gradient(to right, ${accentColor}dd, ${accentColor})`,
+                  boxShadow: `2px 0 4px rgba(0,0,0,0.3)`,
+                }}
+              />
+              {/* 손잡이 본체 */}
+              <div
+                className="w-2.5 rounded-sm"
+                style={{
+                  height: '80px',
+                  background: `linear-gradient(to right, ${accentColor}cc, ${accentColor}, ${accentColor}cc)`,
+                  boxShadow: `2px 0 6px rgba(0,0,0,0.4), inset -1px 0 2px rgba(0,0,0,0.3)`,
+                }}
+              />
+              {/* 하단 장식 */}
+              <div
+                className="h-4 w-3 rounded-b-full"
+                style={{
+                  background: `linear-gradient(to right, ${accentColor}dd, ${accentColor})`,
+                  boxShadow: `2px 0 4px rgba(0,0,0,0.3)`,
+                }}
+              />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -165,6 +196,37 @@ export const DoorScene = ({
           {/* 문 장식 프레임 */}
           <div className="absolute inset-4 border-2 opacity-30" style={{ borderColor: accentColor }} />
           <div className="absolute inset-8 border opacity-20" style={{ borderColor: accentColor }} />
+
+          {/* 문손잡이 - 우측 문은 왼쪽에 (세로형) */}
+          <div className="absolute left-6 top-1/2 -translate-y-1/2">
+            <div className="flex flex-col items-center gap-1">
+              {/* 상단 장식 */}
+              <div
+                className="h-4 w-3 rounded-t-full"
+                style={{
+                  background: `linear-gradient(to left, ${accentColor}dd, ${accentColor})`,
+                  boxShadow: `-2px 0 4px rgba(0,0,0,0.3)`,
+                }}
+              />
+              {/* 손잡이 본체 */}
+              <div
+                className="w-2.5 rounded-sm"
+                style={{
+                  height: '80px',
+                  background: `linear-gradient(to left, ${accentColor}cc, ${accentColor}, ${accentColor}cc)`,
+                  boxShadow: `-2px 0 6px rgba(0,0,0,0.4), inset 1px 0 2px rgba(0,0,0,0.3)`,
+                }}
+              />
+              {/* 하단 장식 */}
+              <div
+                className="h-4 w-3 rounded-b-full"
+                style={{
+                  background: `linear-gradient(to left, ${accentColor}dd, ${accentColor})`,
+                  boxShadow: `-2px 0 4px rgba(0,0,0,0.3)`,
+                }}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
