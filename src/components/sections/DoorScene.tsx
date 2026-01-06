@@ -23,53 +23,73 @@ export const DoorScene = ({
 }: DoorSceneProps) => {
   const MAX_DOOR_HEIGHT = 640;
   const BASE_SURFACE = 'var(--base-surface)';
-  const BASE_SURFACE_DARK = 'var(--base-surface-dark)';
   const BASE_TEXT = 'var(--base-text)';
   const HANDLE_COLOR = 'var(--door-handle)';
   const HANDLE_COLOR_RGB = 'var(--door-handle-rgb)';
   const GOLD_LINE = '#cbb899';
   const containerRef = useRef<HTMLDivElement>(null);
   const doorFrameRef = useRef<HTMLDivElement>(null);
-  const spacerRef = useRef<HTMLDivElement>(null);
   const leftDoorRef = useRef<HTMLDivElement>(null);
   const rightDoorRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const backgroundRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const container = containerRef.current;
     const doorFrame = doorFrameRef.current;
-    const spacer = spacerRef.current;
     const leftDoor = leftDoorRef.current;
     const rightDoor = rightDoorRef.current;
     const content = contentRef.current;
     const background = backgroundRef.current;
 
-    if (!container || !doorFrame || !spacer || !leftDoor || !rightDoor || !content || !background) return;
+    if (!doorFrame || !leftDoor || !rightDoor || !content || !background) return;
 
     const getViewportHeight = () => window.visualViewport?.height ?? window.innerHeight;
-    const getDoorHeight = () => doorFrame.getBoundingClientRect().height;
+
+    // 애니메이션 진행 거리 계산
     const getScrollDistance = () => {
-      const doorHeight = getDoorHeight();
       const viewportHeight = getViewportHeight();
-      const baseDistance = doorHeight >= viewportHeight ? viewportHeight * 2 : doorHeight * 2.2;
-      const minimumDistance = viewportHeight * 1.2;
-
-      return Math.max(600, Math.round(baseDistance), Math.round(minimumDistance));
+      return viewportHeight * 1.5;
     };
 
-    const syncSpacer = () => {
-      spacer.style.height = `${getScrollDistance()}px`;
+    // 도어가 화면에 전체가 보이는지 확인
+    const isDoorFullyVisible = () => {
+      const rect = doorFrame.getBoundingClientRect(); // 도어 프레임의 뷰포트 내 위치
+      const viewportHeight = getViewportHeight(); // 뷰포트 높이
+      return rect.top >= 0 && rect.bottom <= viewportHeight;
     };
+
+    // ScrollTrigger 시작 위치 계산
+    const getStartPosition = () => {
+      const rect = doorFrame.getBoundingClientRect();
+      const viewportHeight = getViewportHeight();
+
+      // 도어가 이미 전체가 보이면 즉시 시작
+      if (isDoorFullyVisible()) {
+        return 'top top';
+      }
+
+      // 도어가 화면보다 크면 도어 하단이 화면 하단에 도달할 때
+      if (rect.height > viewportHeight) {
+        return 'bottom bottom';
+      }
+
+      // 도어가 화면보다 작으면 도어 하단이 화면 하단에 도달할 때 (전체가 보이는 순간)
+      return 'bottom bottom';
+    };
+
+    // IntroSection 전체를 pin (인트로 콘텐츠가 사라지지 않도록)
+    const introSection = document.querySelector('#intro');
+    if (!introSection) return;
 
     const tl = gsap.timeline({
       scrollTrigger: {
-        trigger: container,
-        start: 'top top',
+        trigger: introSection,
+        start: 'top top', // IntroSection이 상단에 도달하면 pin 시작
         end: () => `+=${getScrollDistance()}`,
         scrub: 1,
+        pin: true, // IntroSection 전체를 고정
+        pinSpacing: true,
         invalidateOnRefresh: true,
-        onRefresh: syncSpacer,
       },
     });
 
@@ -103,11 +123,9 @@ export const DoorScene = ({
       .set(background, { backgroundColor: BASE_SURFACE }, 0);
 
     const handleResize = () => {
-      syncSpacer();
       ScrollTrigger.refresh();
     };
 
-    syncSpacer();
     ScrollTrigger.refresh();
 
     window.addEventListener('resize', handleResize);
@@ -124,14 +142,10 @@ export const DoorScene = ({
   return (
     <div ref={containerRef} className="relative w-full">
       <div
-        className="sticky top-0 flex w-full items-start justify-center pt-2"
-        style={{ minHeight: '100vh', height: '100svh' }}
+        ref={doorFrameRef}
+        className="relative w-full overflow-hidden mx-auto"
+        style={{ height: `min(100vh, ${MAX_DOOR_HEIGHT}px)`, maxWidth: '420px' }}
       >
-        <div
-          ref={doorFrameRef}
-          className="relative w-full overflow-hidden"
-          style={{ height: `min(100vh, ${MAX_DOOR_HEIGHT}px)` }}
-        >
           {/* 배경 */}
           <div
             ref={backgroundRef}
@@ -302,9 +316,7 @@ export const DoorScene = ({
               </div>
             </div>
           </div>
-        </div>
       </div>
-      <div ref={spacerRef} aria-hidden />
     </div>
   );
 };
