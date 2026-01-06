@@ -235,13 +235,11 @@ test.describe('GSAP Door Animation', () => {
   });
 
   test('should reveal welcome content after scrolling', async ({ page }) => {
-    // Welcome 콘텐츠 찾기
-    const welcomeHeading = page.locator('text=Welcome');
-    const welcomeSubtext = page.locator('text=우리의 새로운 시작을 함께해주세요');
+    // 문 뒤 이미지 콘텐츠 찾기
+    const welcomeImage = page.locator('img[alt="Wedding Main Image"]');
 
-    // 콘텐츠가 존재하는지 확인 (처음에는 opacity 0일 수 있음)
-    await expect(welcomeHeading).toBeAttached();
-    await expect(welcomeSubtext).toBeAttached();
+    // 이미지가 존재하는지 확인 (처음에는 opacity 0일 수 있음)
+    await expect(welcomeImage).toBeAttached();
 
     // 스크롤 실행
     await page.evaluate(() => {
@@ -251,14 +249,14 @@ test.describe('GSAP Door Animation', () => {
     // 애니메이션이 적용될 시간을 기다림
     await page.waitForTimeout(800);
 
-    // Welcome 콘텐츠의 opacity가 증가했는지 확인
-    const welcomeOpacity = await welcomeHeading.evaluate((el) => {
-      const contentContainer = el.parentElement?.parentElement;
+    // 이미지 콘텐츠의 opacity가 증가했는지 확인
+    const imageOpacity = await welcomeImage.evaluate((el) => {
+      const contentContainer = el.closest('[class*="opacity"]');
       return contentContainer ? window.getComputedStyle(contentContainer).opacity : '0';
     });
 
     // opacity가 0보다 크면 애니메이션이 작동한 것
-    expect(parseFloat(welcomeOpacity)).toBeGreaterThan(0);
+    expect(parseFloat(imageOpacity)).toBeGreaterThan(0);
   });
 
   test('should handle scroll animations smoothly', async ({ page }) => {

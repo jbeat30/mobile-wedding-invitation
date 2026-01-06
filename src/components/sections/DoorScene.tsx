@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import Image from 'next/image';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -159,13 +160,14 @@ export const DoorScene = ({
             className="absolute inset-0 flex items-center justify-center opacity-0"
             style={{ filter: 'blur(10px) brightness(0.5) contrast(0.8)' }}
           >
-            <div className="text-center">
-              <h2 className="text-4xl font-semibold" style={{ color: BASE_TEXT }}>
-              Welcome
-            </h2>
-              <p className="mt-4 text-lg" style={{ color: BASE_TEXT }}>
-                우리의 새로운 시작을 함께해주세요
-              </p>
+            <div className="relative w-full h-full flex items-center justify-center p-8">
+              <Image
+                src="/mock/main-image.png"
+                alt="Wedding Main Image"
+                fill
+                className="object-contain"
+                priority
+              />
             </div>
           </div>
 
