@@ -158,7 +158,7 @@ export const DDayCountdown = ({ weddingDateTime }: DDayCountdownProps) => {
   ];
 
   return (
-    <div className="w-full" suppressHydrationWarning>
+    <div className="w-full px-4 " suppressHydrationWarning>
       <div className="grid grid-cols-4 gap-2 sm:gap-3">
         {valueBlocks.map((value, index) => (
           <div
