@@ -186,12 +186,12 @@ export const DoorScene = ({
             className="absolute inset-0 flex items-center justify-center opacity-0"
             style={{ filter: 'blur(10px) brightness(0.5) contrast(0.8)' }}
           >
-            <div className="relative w-full h-full flex items-center justify-center p-8">
+            <div className="relative h-full w-full overflow-hidden">
               <Image
                 src="/mock/main-image.png"
                 alt="Wedding Main Image"
                 fill
-                className="object-contain"
+                className="object-cover"
                 priority
               />
             </div>
