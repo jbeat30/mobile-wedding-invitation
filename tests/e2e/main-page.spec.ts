@@ -30,6 +30,28 @@ test.describe('Main Page', () => {
     await expect(doorScene.first()).toBeVisible();
     await expect(doorScene.last()).toBeVisible();
   });
+
+  test('should render cherry blossom canvas behind intro content', async ({ page }) => {
+    const canvas = page.locator('[data-testid="cherry-blossom-canvas"]');
+    await expect(canvas).toBeVisible();
+
+    const pointerEvents = await canvas.evaluate((el) =>
+      window.getComputedStyle(el).pointerEvents
+    );
+    expect(pointerEvents).toBe('none');
+
+    const canvasZIndex = await canvas.evaluate((el) =>
+      window.getComputedStyle(el).zIndex || '0'
+    );
+    const doorWrapper = page.locator('[data-testid="door-scene-wrapper"]');
+    const doorZIndex = await doorWrapper.evaluate((el) =>
+      window.getComputedStyle(el).zIndex || '0'
+    );
+    expect(Number(canvasZIndex)).toBeGreaterThan(Number(doorZIndex));
+
+    const daysLabel = page.locator('text=DAYS');
+    await expect(daysLabel).toBeVisible();
+  });
 });
 
 test.describe('GSAP Door Animation', () => {
