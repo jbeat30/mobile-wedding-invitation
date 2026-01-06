@@ -5,8 +5,8 @@ import { useEffect, useRef } from 'react';
 // 밀도는 화면 면적에 비례하며, 값이 클수록 꽃잎 수가 줄어듬
 // MIN_PETAL_COUNT: 최소 꽃잎 개수
 // DENSITY_AREA: (width * height) / DENSITY_AREA 계산에 사용되는 밀도 기준값
-const MIN_PETAL_COUNT = 6;
-const DENSITY_AREA = 20000;
+const MIN_PETAL_COUNT = 22;
+const DENSITY_AREA = 28000;
 
 export const CherryBlossomCanvas = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -51,7 +51,7 @@ export const CherryBlossomCanvas = () => {
         this.depth = Math.random();
         // baseSize: 기본 크기 범위(작을수록 잎이 작아짐)
         // depth: 0(멀리) ~ 1(가까이)로 크기/속도 가중치
-        this.baseSize = Math.random() * 4 + 4;
+        this.baseSize = Math.random() * 3 + 3;
         this.size = this.baseSize * (0.5 + this.depth);
         this.x = Math.random() * width;
         this.y = initial ? Math.random() * height * 0.7 : -30;
@@ -65,7 +65,7 @@ export const CherryBlossomCanvas = () => {
         this.swing = Math.random() * 1.5 + 0.5;
         this.swingStep = Math.random() * Math.PI * 2;
         // opacity: 가까운 잎일수록 더 선명
-        this.opacity = 0.3 + this.depth * 0.5;
+        this.opacity = 0.45 + this.depth * 0.5;
       }
 
       draw() {
