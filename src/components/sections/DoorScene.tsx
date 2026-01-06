@@ -145,7 +145,7 @@ export const DoorScene = ({
       <div
         ref={doorFrameRef}
         className="relative w-full overflow-hidden mx-auto"
-        style={{ height: `min(100vh, ${MAX_DOOR_HEIGHT}px)`, maxWidth: '420px' }}
+        style={{ height: `min(100vh, ${MAX_DOOR_HEIGHT}px)`}}
       >
           {/* 배경 */}
           <div

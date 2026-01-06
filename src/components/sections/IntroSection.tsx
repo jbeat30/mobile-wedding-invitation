@@ -12,7 +12,7 @@ export const IntroSection = () => {
     <section id="intro" className="pb-6">
       {/* 초기 인트로 화면 */}
       <div className="pt-[calc(var(--safe-top)+32px)] pb-4">
-        <div className="mx-auto flex w-full max-w-[420px] flex-col gap-8">
+        <div className="mx-auto flex w-full max-w-[445px] flex-col gap-8">
           {/* 디데이 */}
           <DDayCountdown weddingDateTime={weddingDateTime} />
           {/* 인트로 문구 */}
