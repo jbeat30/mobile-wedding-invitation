@@ -28,7 +28,7 @@ export const IntroSection = () => {
               ) : null}
             </div>
           </div>
-          <div className="relative z-10" data-testid="door-scene-wrapper">
+          <div className="relative z-10 border-0 outline-none" data-testid="door-scene-wrapper">
             <DoorScene
               darkBackground={intro.theme.darkBackground}
               lightBackground={intro.theme.lightBackground}
