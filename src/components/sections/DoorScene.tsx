@@ -83,11 +83,11 @@ export const DoorScene = ({
 
     const tl = gsap.timeline({
       scrollTrigger: {
-        trigger: introSection,
-        start: 'top top', // IntroSection이 상단에 도달하면 pin 시작
+        trigger: doorFrame, // 도어를 trigger로 (정확한 위치 감지)
+        start: getStartPosition(), // 도어가 전체가 보일 때 pin 시작 (동적 계산)
         end: () => `+=${getScrollDistance()}`,
         scrub: 1,
-        pin: true, // IntroSection 전체를 고정
+        pin: introSection, // IntroSection 전체를 고정 (trigger ≠ pin)
         pinSpacing: true,
         invalidateOnRefresh: true,
       },
@@ -161,8 +161,8 @@ export const DoorScene = ({
           >
             <div className="text-center">
               <h2 className="text-4xl font-semibold" style={{ color: BASE_TEXT }}>
-                Welcome
-              </h2>
+              Welcome
+            </h2>
               <p className="mt-4 text-lg" style={{ color: BASE_TEXT }}>
                 우리의 새로운 시작을 함께해주세요
               </p>
