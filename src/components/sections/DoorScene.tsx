@@ -85,6 +85,7 @@ export const DoorScene = ({
           scrub: 1,
           pin: introSection, // IntroSection 전체를 고정 (trigger ≠ pin)
           pinSpacing: true,
+          anticipatePin: 1,
           invalidateOnRefresh: true,
         },
       });

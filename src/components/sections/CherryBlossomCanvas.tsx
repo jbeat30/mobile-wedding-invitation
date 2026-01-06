@@ -22,6 +22,9 @@ export const CherryBlossomCanvas = () => {
     let dpr = window.devicePixelRatio || 1;
     let width = 0;
     let height = 0;
+    let lastWidth = 0;
+    let lastHeight = 0;
+    let lastDpr = dpr;
     let animationFrame = 0;
     const petals: Petal[] = [];
 
@@ -135,13 +138,34 @@ export const CherryBlossomCanvas = () => {
       width = Math.max(0, rect.width);
       height = Math.max(0, rect.height);
 
+      // 핀 동작 등으로 호출되어도 크기가 동일하면 초기화하지 않음
+      if (width === lastWidth && height === lastHeight && dpr === lastDpr) {
+        return;
+      }
+
       canvas.width = width * dpr;
       canvas.height = height * dpr;
       canvas.style.width = `${width}px`;
       canvas.style.height = `${height}px`;
       context.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      init();
+      // 크기 변화 시 위치만 보정해서 자연스럽게 이어지도록 유지
+      if (lastWidth > 0 && lastHeight > 0) {
+        const scaleX = width / lastWidth;
+        const scaleY = height / lastHeight;
+        petals.forEach((petal) => {
+          petal.x *= scaleX;
+          petal.y *= scaleY;
+        });
+      }
+
+      lastWidth = width;
+      lastHeight = height;
+      lastDpr = dpr;
+
+      if (petals.length === 0) {
+        init();
+      }
     };
 
     const handleResize = () => {
