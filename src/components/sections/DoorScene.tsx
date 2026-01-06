@@ -34,6 +34,9 @@ export const DoorScene = ({
   const rightDoorRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const backgroundRef = useRef<HTMLDivElement>(null);
+  const timelineRef = useRef<gsap.core.Timeline | null>(null);
+  const visibilityTriggerRef = useRef<ScrollTrigger | null>(null);
+  const startScrollRef = useRef(0);
 
   useEffect(() => {
     const doorFrame = doorFrameRef.current;
@@ -52,78 +55,98 @@ export const DoorScene = ({
       return viewportHeight * 1.5;
     };
 
-    // 도어가 화면에 전체가 보이는지 확인
-    const isDoorFullyVisible = () => {
+    // 도어가 화면에 전체가 보이는 시점의 스크롤 위치 계산
+    const getFullVisibilityScroll = () => {
       const rect = doorFrame.getBoundingClientRect(); // 도어 프레임의 뷰포트 내 위치
       const viewportHeight = getViewportHeight(); // 뷰포트 높이
-      return rect.top >= 0 && rect.bottom <= viewportHeight;
+      const scrollY = window.scrollY || window.pageYOffset;
+      return Math.max(0, scrollY + rect.bottom - viewportHeight);
     };
 
-    // ScrollTrigger 시작 위치 계산
-    const getStartPosition = () => {
-      const rect = doorFrame.getBoundingClientRect();
-      const viewportHeight = getViewportHeight();
-
-      // 도어가 이미 전체가 보이면 즉시 시작
-      if (isDoorFullyVisible()) {
-        return 'top top';
-      }
-
-      // 도어가 화면보다 크면 도어 하단이 화면 하단에 도달할 때
-      if (rect.height > viewportHeight) {
-        return 'bottom bottom';
-      }
-
-      // 도어가 화면보다 작으면 도어 하단이 화면 하단에 도달할 때 (전체가 보이는 순간)
-      return 'bottom bottom';
+    const hasReachedFullVisibility = () => {
+      const scrollY = window.scrollY || window.pageYOffset;
+      return scrollY >= getFullVisibilityScroll();
     };
 
     // IntroSection 전체를 pin (인트로 콘텐츠가 사라지지 않도록)
     const introSection = document.querySelector('#intro');
     if (!introSection) return;
 
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: doorFrame, // 도어를 trigger로 (정확한 위치 감지)
-        start: getStartPosition(), // 도어가 전체가 보일 때 pin 시작 (동적 계산)
-        end: () => `+=${getScrollDistance()}`,
-        scrub: 1,
-        pin: introSection, // IntroSection 전체를 고정 (trigger ≠ pin)
-        pinSpacing: true,
-        invalidateOnRefresh: true,
-      },
-    });
+    const createDoorTimeline = () => {
+      if (timelineRef.current) return;
 
-    tl.to(
-      leftDoor,
-      {
-        rotateY: -90,
-        transformOrigin: 'left center',
-        ease: 'power2.inOut',
-      },
-      0
-    )
-      .to(
-        rightDoor,
+      startScrollRef.current = getFullVisibilityScroll();
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: doorFrame,
+          start: () => startScrollRef.current,
+          end: () => startScrollRef.current + getScrollDistance(),
+          scrub: 1,
+          pin: introSection, // IntroSection 전체를 고정 (trigger ≠ pin)
+          pinSpacing: true,
+          invalidateOnRefresh: true,
+        },
+      });
+
+      tl.to(
+        leftDoor,
         {
-          rotateY: 90,
-          transformOrigin: 'right center',
+          rotateY: -90,
+          transformOrigin: 'left center',
           ease: 'power2.inOut',
         },
         0
       )
-      .to(
-        content,
-        {
-          opacity: 1,
-          filter: 'blur(0px) brightness(1) contrast(1)',
-          ease: 'power2.inOut',
-        },
-        0
-      )
-      .set(background, { backgroundColor: BASE_SURFACE }, 0);
+        .to(
+          rightDoor,
+          {
+            rotateY: 90,
+            transformOrigin: 'right center',
+            ease: 'power2.inOut',
+          },
+          0
+        )
+        .to(
+          content,
+          {
+            opacity: 1,
+            filter: 'blur(0px) brightness(1) contrast(1)',
+            ease: 'power2.inOut',
+          },
+          0
+        )
+        .set(background, { backgroundColor: BASE_SURFACE }, 0);
+
+      timelineRef.current = tl;
+    };
+
+    const ensureDoorTimeline = () => {
+      if (timelineRef.current) return;
+      if (!hasReachedFullVisibility()) return;
+      createDoorTimeline();
+      visibilityTriggerRef.current?.kill();
+      visibilityTriggerRef.current = null;
+      ScrollTrigger.refresh();
+    };
+
+    if (hasReachedFullVisibility()) {
+      createDoorTimeline();
+    } else {
+      visibilityTriggerRef.current = ScrollTrigger.create({
+        trigger: doorFrame,
+        start: 'top bottom',
+        end: 'bottom top',
+        onUpdate: ensureDoorTimeline,
+        onRefresh: ensureDoorTimeline,
+      });
+    }
 
     const handleResize = () => {
+      if (timelineRef.current) {
+        startScrollRef.current = getFullVisibilityScroll();
+      }
+      ensureDoorTimeline();
       ScrollTrigger.refresh();
     };
 
@@ -135,8 +158,11 @@ export const DoorScene = ({
     return () => {
       window.removeEventListener('resize', handleResize);
       window.visualViewport?.removeEventListener('resize', handleResize);
-      tl.scrollTrigger?.kill();
-      tl.kill();
+      visibilityTriggerRef.current?.kill();
+      visibilityTriggerRef.current = null;
+      timelineRef.current?.scrollTrigger?.kill();
+      timelineRef.current?.kill();
+      timelineRef.current = null;
     };
   }, []);
 
