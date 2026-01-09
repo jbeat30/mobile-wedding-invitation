@@ -5,10 +5,22 @@ import { useEffect, useRef } from 'react';
 // 밀도는 화면 면적에 비례하며, 값이 클수록 꽃잎 수가 줄어듬
 // MIN_PETAL_COUNT: 최소 꽃잎 개수
 // DENSITY_AREA: (width * height) / DENSITY_AREA 계산에 사용되는 밀도 기준값
-const MIN_PETAL_COUNT = 22;
-const DENSITY_AREA = 28000;
+const DEFAULT_MIN_PETAL_COUNT = 22;
+const DEFAULT_DENSITY_AREA = 28000;
 
-export const CherryBlossomCanvas = () => {
+type CherryBlossomCanvasProps = {
+  density?: number; // DENSITY_AREA 값 (기본: 28000, 클수록 희소)
+  opacity?: number; // 전체 투명도 (기본: 0.8)
+  zIndex?: number; // z-index 값 (기본: 20)
+  minPetalCount?: number; // 최소 꽃잎 개수 (기본: 22)
+};
+
+export const CherryBlossomCanvas = ({
+  density = DEFAULT_DENSITY_AREA,
+  opacity = 0.8,
+  zIndex = 20,
+  minPetalCount = DEFAULT_MIN_PETAL_COUNT,
+}: CherryBlossomCanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -114,7 +126,7 @@ export const CherryBlossomCanvas = () => {
     const init = () => {
       petals.length = 0;
       // 밀도를 낮춰 잎 사이 간격이 넓게 보임
-      const count = Math.max(MIN_PETAL_COUNT, Math.floor((width * height) / DENSITY_AREA));
+      const count = Math.max(minPetalCount, Math.floor((width * height) / density));
       for (let i = 0; i < count; i += 1) {
         petals.push(new Petal(true));
       }
@@ -189,13 +201,17 @@ export const CherryBlossomCanvas = () => {
       observer.disconnect();
       window.cancelAnimationFrame(animationFrame);
     };
-  }, []);
+  }, [density, minPetalCount]);
 
   return (
     <canvas
       ref={canvasRef}
       data-testid="cherry-blossom-canvas"
-      className="pointer-events-none absolute inset-0 z-20 block opacity-80"
+      className="pointer-events-none absolute inset-0 block"
+      style={{
+        zIndex,
+        opacity,
+      }}
     />
   );
 };

@@ -23,16 +23,18 @@ export const DoorScene = ({
   accentColor: _accentColor,
 }: DoorSceneProps) => {
   const MAX_DOOR_HEIGHT = 640;
+  const DOOR_SURFACE = 'var(--door-surface)';
   const BASE_SURFACE = 'var(--base-surface)';
   const BASE_TEXT = 'var(--base-text)';
   const HANDLE_COLOR = 'var(--door-handle)';
   const HANDLE_COLOR_RGB = 'var(--door-handle-rgb)';
-  const GOLD_LINE = '#cbb899';
+  const GOLD_LINE = 'var(--door-gold)';
   const containerRef = useRef<HTMLDivElement>(null);
   const doorFrameRef = useRef<HTMLDivElement>(null);
   const leftDoorRef = useRef<HTMLDivElement>(null);
   const rightDoorRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const contentInnerRef = useRef<HTMLDivElement>(null);
   const backgroundRef = useRef<HTMLDivElement>(null);
   const timelineRef = useRef<gsap.core.Timeline | null>(null);
   const visibilityTriggerRef = useRef<ScrollTrigger | null>(null);
@@ -43,9 +45,10 @@ export const DoorScene = ({
     const leftDoor = leftDoorRef.current;
     const rightDoor = rightDoorRef.current;
     const content = contentRef.current;
+    const contentInner = contentInnerRef.current;
     const background = backgroundRef.current;
 
-    if (!doorFrame || !leftDoor || !rightDoor || !content || !background) return;
+    if (!doorFrame || !leftDoor || !rightDoor || !content || !contentInner || !background) return;
 
     const getViewportHeight = () => window.visualViewport?.height ?? window.innerHeight;
 
@@ -112,12 +115,18 @@ export const DoorScene = ({
           content,
           {
             opacity: 1,
-            filter: 'blur(0px) brightness(1) contrast(1)',
             ease: 'power2.inOut',
           },
           0
         )
-        .set(background, { backgroundColor: BASE_SURFACE }, 0);
+        .to(
+          contentInner,
+          {
+            filter: 'blur(0px) brightness(1) contrast(1)',
+            ease: 'power2.inOut',
+          },
+          0
+        );
 
       timelineRef.current = tl;
     };
@@ -171,23 +180,31 @@ export const DoorScene = ({
     <div ref={containerRef} className="relative w-full">
       <div
         ref={doorFrameRef}
-        className="relative w-full overflow-hidden mx-auto"
+        className="relative w-full mx-auto"
         style={{ height: `min(100vh, ${MAX_DOOR_HEIGHT}px)`}}
       >
-          {/* 배경 */}
+          {/* 배경 - 투명 (섹션 배경 그대로 사용) */}
           <div
             ref={backgroundRef}
             className="absolute inset-0 transition-colors"
-            style={{ backgroundColor: BASE_SURFACE }}
+            style={{ backgroundColor: 'transparent' }}
           />
 
           {/* 문 뒤 콘텐츠 */}
           <div
             ref={contentRef}
             className="absolute inset-0 flex items-center justify-center opacity-0"
-            style={{ filter: 'blur(10px) brightness(0.5) contrast(0.8)' }}
+            style={{
+              overflow: 'hidden',
+            }}
           >
-            <div className="relative h-full w-full overflow-hidden">
+            <div
+              ref={contentInnerRef}
+              className="relative h-full w-full overflow-hidden"
+              style={{
+                filter: 'blur(10px) brightness(0.5) contrast(0.8)',
+              }}
+            >
               <Image
                 src="/mock/main-image.png"
                 alt="Wedding Main Image"
@@ -206,12 +223,13 @@ export const DoorScene = ({
             transformStyle: 'preserve-3d',
             backfaceVisibility: 'hidden',
             backgroundColor: BASE_SURFACE,
+            willChange: 'transform',
           }}
           >
             <div
               className="relative h-full w-full overflow-hidden"
               style={{
-                backgroundColor: BASE_SURFACE,
+                backgroundColor: DOOR_SURFACE,
                 backgroundImage: `linear-gradient(115deg, rgba(255,255,255,0.16), rgba(255,255,255,0) 45%), linear-gradient(to right, rgba(0,0,0,0.1), rgba(0,0,0,0) 30%, rgba(0,0,0,0.16)), repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0 2px, rgba(0,0,0,0.02) 2px 4px)`,
                 boxShadow: 'inset -12px 0 20px rgba(0,0,0,0.18), inset 0 20px 30px rgba(255,255,255,0.08)',
                 borderTopLeftRadius: '100% 12%',
@@ -297,12 +315,13 @@ export const DoorScene = ({
             transformStyle: 'preserve-3d',
             backfaceVisibility: 'hidden',
             backgroundColor: BASE_SURFACE,
+            willChange: 'transform',
           }}
           >
             <div
               className="relative h-full w-full overflow-hidden"
               style={{
-                backgroundColor: BASE_SURFACE,
+                backgroundColor: DOOR_SURFACE,
                 backgroundImage: `linear-gradient(245deg, rgba(255,255,255,0.16), rgba(255,255,255,0) 45%), linear-gradient(to left, rgba(0,0,0,0.1), rgba(0,0,0,0) 30%, rgba(0,0,0,0.16)), repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0 2px, rgba(0,0,0,0.02) 2px 4px)`,
                 boxShadow: 'inset 12px 0 20px rgba(0,0,0,0.18), inset 0 20px 30px rgba(255,255,255,0.08)',
                 borderTopRightRadius: '100% 12%',

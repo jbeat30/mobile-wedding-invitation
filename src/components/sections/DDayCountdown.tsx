@@ -140,14 +140,6 @@ export const DDayCountdown = ({ weddingDateTime }: DDayCountdownProps) => {
     };
   }, [targetDate]);
 
-  const timeBlocks = [
-    parts ? pad2(parts.months) : '--',
-    parts ? pad2(parts.days) : '--',
-    parts ? pad2(parts.hours) : '--',
-    parts ? pad2(parts.minutes) : '--',
-    parts ? pad2(parts.seconds) : '--',
-  ];
-
   const labelMap = ['DAYS', 'HOURS', 'MINUTES', 'SECONDS'];
   const totalDays = parts ? Math.max(0, parts.days + parts.months * 30) : 0;
   const valueBlocks = [

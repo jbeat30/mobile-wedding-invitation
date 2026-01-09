@@ -42,7 +42,7 @@ export const AccountsSection = () => {
       const result = document.execCommand('copy');
       document.body.removeChild(textarea);
       setToast({ message: result ? '계좌번호가 복사되었습니다' : '복사에 실패했습니다' });
-    } catch (error) {
+    } catch {
       setToast({ message: '복사에 실패했습니다' });
     }
   }, []);
