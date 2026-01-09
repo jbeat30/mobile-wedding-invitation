@@ -17,12 +17,15 @@ export const IntroSection = () => {
       <CherryBlossomCanvas density={35000} zIndex={10} opacity={0.7} minPetalCount={15} />
       {/* 벚꽃 전경 레이어 (z-25, 매우 희소) - 문 앞 */}
       <CherryBlossomCanvas density={50000} zIndex={25} opacity={0.5} minPetalCount={8} />
+
       {/* 초기 인트로 화면 구성 확인 */}
       <div className="relative pt-[calc(var(--safe-top)+24px)] pb-8">
-        <div className="absolute right-4 top-[calc(var(--safe-top)+16px)] z-40">
-          <BgmToggle />
-        </div>
         <div className="mx-auto flex w-full max-w-[445px] flex-col gap-6">
+          {/* BGM 토글 - 우측 정렬 */}
+          <div className="flex justify-end px-4">
+            <BgmToggle />
+          </div>
+
           <div className="relative z-20 flex flex-col gap-6">
             {/* 디데이 구성 확인 */}
             <DDayCountdown weddingDateTime={weddingDateTime} />

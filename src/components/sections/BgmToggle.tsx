@@ -24,11 +24,11 @@ export const BgmToggle = () => {
   return (
     <button
       type="button"
-      className="flex items-center gap-2 rounded-full border border-black/10 bg-white/80 px-4 py-2 text-[11px] tracking-[0.2em] text-[#4d4d4d] backdrop-blur"
+      className="flex items-center gap-1.5 rounded-full border border-black/5 bg-white/50 px-3 py-1.5 text-[10px] tracking-[0.15em] text-[#6a6a6a] backdrop-blur-sm transition-all hover:bg-white/70 hover:border-black/10"
       aria-pressed={enabled}
       onClick={() => setEnabled((prev) => !prev)}
     >
-      <span className="h-2 w-2 rounded-full bg-[#4d4d4d]" aria-hidden />
+      <span className="h-1.5 w-1.5 rounded-full bg-[#6a6a6a]" aria-hidden />
       BGM {enabled ? 'ON' : 'OFF'}
     </button>
   );

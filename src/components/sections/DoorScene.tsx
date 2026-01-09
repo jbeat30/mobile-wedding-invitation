@@ -230,8 +230,8 @@ export const DoorScene = ({
               className="relative h-full w-full overflow-hidden"
               style={{
                 backgroundColor: DOOR_SURFACE,
-                backgroundImage: `linear-gradient(115deg, rgba(255,255,255,0.16), rgba(255,255,255,0) 45%), linear-gradient(to right, rgba(0,0,0,0.1), rgba(0,0,0,0) 30%, rgba(0,0,0,0.16)), repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0 2px, rgba(0,0,0,0.02) 2px 4px)`,
-                boxShadow: 'inset -12px 0 20px rgba(0,0,0,0.18), inset 0 20px 30px rgba(255,255,255,0.08)',
+                backgroundImage: `linear-gradient(115deg, rgba(255,255,255,0.24), rgba(255,255,255,0) 45%), linear-gradient(to right, rgba(0,0,0,0.04), rgba(0,0,0,0) 30%, rgba(0,0,0,0.06)), repeating-linear-gradient(90deg, rgba(255,255,255,0.03) 0 2px, rgba(0,0,0,0.01) 2px 4px)`,
+                boxShadow: 'inset -8px 0 16px rgba(0,0,0,0.08), inset 0 16px 24px rgba(255,255,255,0.12)',
                 borderTopLeftRadius: '100% 12%',
               }}
             >
@@ -240,14 +240,14 @@ export const DoorScene = ({
                 className="absolute inset-0 pointer-events-none"
                 style={{
                   background:
-                    'radial-gradient(80% 120% at 10% 10%, rgba(255,255,255,0.2), rgba(255,255,255,0) 60%)',
+                    'radial-gradient(80% 120% at 10% 10%, rgba(255,255,255,0.3), rgba(255,255,255,0) 60%)',
                 }}
               />
               {/* 가장자리 깊이감 */}
               <div
                 className="absolute top-0 right-0 h-full w-4"
                 style={{
-                  background: 'linear-gradient(to left, rgba(0,0,0,0.2), rgba(0,0,0,0))',
+                  background: 'linear-gradient(to left, rgba(0,0,0,0.08), rgba(0,0,0,0))',
                 }}
               />
               {/* 오른쪽 테두리 - 상단 3%부터 시작 */}
@@ -322,8 +322,8 @@ export const DoorScene = ({
               className="relative h-full w-full overflow-hidden"
               style={{
                 backgroundColor: DOOR_SURFACE,
-                backgroundImage: `linear-gradient(245deg, rgba(255,255,255,0.16), rgba(255,255,255,0) 45%), linear-gradient(to left, rgba(0,0,0,0.1), rgba(0,0,0,0) 30%, rgba(0,0,0,0.16)), repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0 2px, rgba(0,0,0,0.02) 2px 4px)`,
-                boxShadow: 'inset 12px 0 20px rgba(0,0,0,0.18), inset 0 20px 30px rgba(255,255,255,0.08)',
+                backgroundImage: `linear-gradient(245deg, rgba(255,255,255,0.24), rgba(255,255,255,0) 45%), linear-gradient(to left, rgba(0,0,0,0.04), rgba(0,0,0,0) 30%, rgba(0,0,0,0.06)), repeating-linear-gradient(90deg, rgba(255,255,255,0.03) 0 2px, rgba(0,0,0,0.01) 2px 4px)`,
+                boxShadow: 'inset 8px 0 16px rgba(0,0,0,0.08), inset 0 16px 24px rgba(255,255,255,0.12)',
                 borderTopRightRadius: '100% 12%',
               }}
             >
@@ -332,14 +332,14 @@ export const DoorScene = ({
                 className="absolute inset-0 pointer-events-none"
                 style={{
                   background:
-                    'radial-gradient(80% 120% at 90% 10%, rgba(255,255,255,0.2), rgba(255,255,255,0) 60%)',
+                    'radial-gradient(80% 120% at 90% 10%, rgba(255,255,255,0.3), rgba(255,255,255,0) 60%)',
                 }}
               />
               {/* 가장자리 깊이감 */}
               <div
                 className="absolute top-0 left-0 h-full w-4"
                 style={{
-                  background: 'linear-gradient(to right, rgba(0,0,0,0.2), rgba(0,0,0,0))',
+                  background: 'linear-gradient(to right, rgba(0,0,0,0.08), rgba(0,0,0,0))',
                 }}
               />
               {/* 왼쪽 테두리 - 상단 3%부터 시작 */}

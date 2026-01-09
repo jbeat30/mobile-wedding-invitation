@@ -16,12 +16,12 @@
   --base-surface: #FAF9F7;
   --base-surface-dark: #dbdbdb;
 
-  /* 도어 색상 - 배경과 구분되도록 */
-  --door-surface: #F2F0ED;
-  --door-accent: #E8E6E3;
-  --door-gold: #cbb899;
-  --door-handle: #7a7169;
-  --door-handle-rgb: 122 113 105;
+  /* 도어 색상 - 밝고 따뜻한 베이지 톤 */
+  --door-surface: #F8F6F3;
+  --door-accent: #F0EDE9;
+  --door-gold: #d4c4a8;
+  --door-handle: #a89780;
+  --door-handle-rgb: 168 151 128;
 
   /* 텍스트 색상 */
   --text-primary: #3b3b3b;
