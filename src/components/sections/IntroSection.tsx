@@ -29,8 +29,12 @@ export const IntroSection = () => {
           <div className="relative z-20 flex flex-col gap-6">
             {/* 디데이 구성 확인 */}
             <DDayCountdown weddingDateTime={weddingDateTime} />
-            {/* 인트로 문구 구성 확인 - 개선된 디자인 */}
-            <div className="flex flex-col gap-3 text-center px-4">
+          </div>
+
+          {/* INVITATION + 도어 + 스크롤 인디케이터 영역 (애니메이션 트리거용) */}
+          <div id="door-trigger-area" className="flex flex-col">
+            {/* 인트로 문구 구성 확인 */}
+            <div className="flex flex-col gap-3 text-center px-4 mb-4">
               <div className="inline-flex items-center justify-center">
                 <div className="h-px w-8 bg-gradient-to-r from-transparent to-[var(--accent)]" />
                 <span className="mx-3 text-[10px] tracking-[0.4em] text-[var(--accent)]">INVITATION</span>
@@ -45,18 +49,20 @@ export const IntroSection = () => {
               {/*  </p>*/}
               {/*) : null}*/}
             </div>
-          </div>
-          {/* 문 위치 - 위로 올림 */}
-          <div className="relative z-15 border-0 outline-none mt-2" data-testid="door-scene-wrapper" style={{ zIndex: 15 }}>
-            <DoorScene
-              darkBackground={intro.theme.darkBackground}
-              lightBackground={intro.theme.lightBackground}
-              accentColor={intro.theme.accentColor}
-            />
-          </div>
-          {/* 스크롤 인디케이터 */}
-          <div className="relative z-30 flex justify-center pb-4">
-            <ScrollIndicator />
+
+            {/* 문 위치 */}
+            <div className="relative z-15 border-0 outline-none" data-testid="door-scene-wrapper" style={{ zIndex: 15 }}>
+              <DoorScene
+                darkBackground={intro.theme.darkBackground}
+                lightBackground={intro.theme.lightBackground}
+                accentColor={intro.theme.accentColor}
+              />
+            </div>
+
+            {/* 스크롤 인디케이터 */}
+            <div className="relative z-30 flex justify-center pt-4 pb-4">
+              <ScrollIndicator />
+            </div>
           </div>
         </div>
       </div>

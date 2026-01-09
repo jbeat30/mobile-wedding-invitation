@@ -22,7 +22,8 @@ export const DoorScene = ({
   lightBackground: _lightBackground,
   accentColor: _accentColor,
 }: DoorSceneProps) => {
-  const MAX_DOOR_HEIGHT = 640;
+  const MAX_DOOR_HEIGHT = 480;
+  const DOOR_HEIGHT = `min(78vh, ${MAX_DOOR_HEIGHT}px)`;
   const DOOR_SURFACE = 'var(--door-surface)';
   const BASE_SURFACE = 'var(--base-surface)';
   const BASE_TEXT = 'var(--base-text)';
@@ -58,9 +59,18 @@ export const DoorScene = ({
       return viewportHeight * 1.5;
     };
 
-    // 도어가 화면에 전체가 보이는 시점의 스크롤 위치 계산
+    // INVITATION + 도어 영역 전체가 화면에 보이는 시점의 스크롤 위치 계산
     const getFullVisibilityScroll = () => {
-      const rect = doorFrame.getBoundingClientRect(); // 도어 프레임의 뷰포트 내 위치
+      const triggerArea = document.querySelector('#door-trigger-area');
+      if (!triggerArea) {
+        // fallback: door-trigger-area가 없으면 doorFrame 사용
+        const rect = doorFrame.getBoundingClientRect();
+        const viewportHeight = getViewportHeight();
+        const scrollY = window.scrollY || window.pageYOffset;
+        return Math.max(0, scrollY + rect.bottom - viewportHeight);
+      }
+
+      const rect = triggerArea.getBoundingClientRect(); // INVITATION + 도어 전체 영역의 뷰포트 내 위치
       const viewportHeight = getViewportHeight(); // 뷰포트 높이
       const scrollY = window.scrollY || window.pageYOffset;
       return Math.max(0, scrollY + rect.bottom - viewportHeight);
@@ -80,9 +90,12 @@ export const DoorScene = ({
 
       startScrollRef.current = getFullVisibilityScroll();
 
+      // INVITATION + 도어 영역을 trigger로 사용 (없으면 doorFrame 사용)
+      const triggerElement = document.querySelector('#door-trigger-area') || doorFrame;
+
       const tl = gsap.timeline({
         scrollTrigger: {
-          trigger: doorFrame,
+          trigger: triggerElement,
           start: () => startScrollRef.current,
           end: () => startScrollRef.current + getScrollDistance(),
           scrub: 1,
@@ -143,8 +156,11 @@ export const DoorScene = ({
     if (hasReachedFullVisibility()) {
       createDoorTimeline();
     } else {
+      // INVITATION + 도어 영역을 trigger로 사용 (없으면 doorFrame 사용)
+      const triggerElement = document.querySelector('#door-trigger-area') || doorFrame;
+
       visibilityTriggerRef.current = ScrollTrigger.create({
-        trigger: doorFrame,
+        trigger: triggerElement,
         start: 'top bottom',
         end: 'bottom top',
         onUpdate: ensureDoorTimeline,
@@ -181,7 +197,7 @@ export const DoorScene = ({
       <div
         ref={doorFrameRef}
         className="relative w-full mx-auto"
-        style={{ height: `min(100vh, ${MAX_DOOR_HEIGHT}px)`}}
+        style={{ height: DOOR_HEIGHT }}
       >
           {/* 배경 - 투명 (섹션 배경 그대로 사용) */}
           <div
