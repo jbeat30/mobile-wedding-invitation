@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 
 test.describe('Visual Inspection - Door Animation', () => {
   test('capture door animation stages', async ({ page }) => {

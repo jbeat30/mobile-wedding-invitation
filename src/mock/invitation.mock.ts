@@ -23,6 +23,8 @@ export type InvitationPerson = {
   fullName: string;
   displayName: string;
   bio?: string;
+  profileImage?: string;
+  role?: string;
 };
 
 export type InvitationFamilyMember = {
@@ -101,11 +103,50 @@ export type InvitationAccounts = {
   bride: InvitationAccount[];
 };
 
+export type InvitationLoading = {
+  enabled: boolean;
+  message: string;
+  minDuration: number; // ms
+  maxDuration: number; // ms
+};
+
+export type GalleryImage = {
+  id: string;
+  src: string;
+  alt: string;
+  thumbnail?: string;
+  width?: number;
+  height?: number;
+};
+
+export type InvitationGallery = {
+  title: string;
+  description?: string;
+  images: GalleryImage[];
+  autoplay?: boolean;
+  autoplayDelay?: number;
+};
+
+export type InvitationShare = {
+  title: string;
+  description: string;
+  imageUrl: string;
+  kakaoTemplate?: {
+    title: string;
+    description: string;
+    imageUrl: string;
+    buttonLabel?: string;
+  };
+};
+
 export type InvitationMock = {
   weddingDateTime: string;
+  loading: InvitationLoading;
   couple: InvitationCouple;
   intro: InvitationIntro;
   info: InvitationInfo;
+  gallery: InvitationGallery;
+  share: InvitationShare;
   rsvp: InvitationRsvp;
   guestbook: InvitationGuestbook;
   accounts: InvitationAccounts;
@@ -113,16 +154,26 @@ export type InvitationMock = {
 
 export const invitationMock: InvitationMock = {
   weddingDateTime: '2026-05-16T15:00:00+09:00',
+  loading: {
+    enabled: true,
+    message: '초대합니다',
+    minDuration: 800,
+    maxDuration: 3000,
+  },
   couple: {
     groom: {
-      fullName: '이름',
-      displayName: '신랑 이름',
+      fullName: '김민수',
+      displayName: '신랑 민수',
       bio: '따뜻한 마음으로 새로운 여정을 준비합니다.',
+      profileImage: 'https://placehold.co/400x400/F2F0ED/7a7169?text=Groom',
+      role: 'Groom',
     },
     bride: {
-      fullName: '이름',
-      displayName: '신부 이름',
+      fullName: '이지은',
+      displayName: '신부 지은',
       bio: '소중한 하루를 함께 나누고 싶습니다.',
+      profileImage: 'https://placehold.co/400x400/F2F0ED/7a7169?text=Bride',
+      role: 'Bride',
     },
     familyLines: [
       {
@@ -187,6 +238,59 @@ export const invitationMock: InvitationMock = {
       '혼잡이 예상되오니 대중교통 이용을 권장드립니다.',
     ],
   },
+  gallery: {
+    title: '우리의 추억',
+    description: '함께한 소중한 순간들',
+    images: [
+      {
+        id: 'gallery-1',
+        src: 'https://placehold.co/800x600/FAF9F7/cbb899?text=Gallery+1',
+        alt: '웨딩 사진 1',
+        width: 800,
+        height: 600,
+      },
+      {
+        id: 'gallery-2',
+        src: 'https://placehold.co/800x600/f5f3f2/cbb899?text=Gallery+2',
+        alt: '웨딩 사진 2',
+        width: 800,
+        height: 600,
+      },
+      {
+        id: 'gallery-3',
+        src: 'https://placehold.co/800x600/f6f1ea/cbb899?text=Gallery+3',
+        alt: '웨딩 사진 3',
+        width: 800,
+        height: 600,
+      },
+      {
+        id: 'gallery-4',
+        src: 'https://placehold.co/800x600/FAF9F7/cbb899?text=Gallery+4',
+        alt: '웨딩 사진 4',
+        width: 800,
+        height: 600,
+      },
+      {
+        id: 'gallery-5',
+        src: 'https://placehold.co/800x600/f5f3f2/cbb899?text=Gallery+5',
+        alt: '웨딩 사진 5',
+        width: 800,
+        height: 600,
+      },
+    ],
+    autoplay: false,
+  },
+  share: {
+    title: '김민수 ♥ 이지은 결혼합니다',
+    description: '2026년 5월 16일 오후 3시 | 채림 웨딩홀',
+    imageUrl: 'https://placehold.co/1200x630/FAF9F7/cbb899?text=Wedding+Invitation',
+    kakaoTemplate: {
+      title: '💒 결혼식에 초대합니다',
+      description: '김민수 ♥ 이지은\n2026년 5월 16일 오후 3시\n채림 웨딩홀',
+      imageUrl: 'https://placehold.co/800x400/FAF9F7/cbb899?text=Wedding',
+      buttonLabel: '청첩장 보기',
+    },
+  },
   rsvp: {
     enabled: true,
     deadline: '2026-05-02T18:00:00+09:00',
@@ -208,12 +312,6 @@ export const invitationMock: InvitationMock = {
         label: '동반 인원',
         required: false,
         options: ['0명', '1명', '2명', '3명', '4명', '5명이상'],
-      },
-      {
-        key: 'notes',
-        label: '기타 전달사항',
-        required: false,
-        placeholder: '전하고 싶은 이야기가 있다면 남겨주세요.',
       },
     ],
     consent: {
