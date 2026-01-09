@@ -162,15 +162,15 @@ export const invitationMock: InvitationMock = {
   },
   couple: {
     groom: {
-      fullName: '김민수',
-      displayName: '신랑 민수',
+      fullName: '강신랑',
+      displayName: '신랑 이름',
       bio: '따뜻한 마음으로 새로운 여정을 준비합니다.',
       profileImage: 'https://placehold.co/400x400/F2F0ED/7a7169?text=Groom',
       role: 'Groom',
     },
     bride: {
-      fullName: '이지은',
-      displayName: '신부 지은',
+      fullName: '장신부',
+      displayName: '신부 이름',
       bio: '소중한 하루를 함께 나누고 싶습니다.',
       profileImage: 'https://placehold.co/400x400/F2F0ED/7a7169?text=Bride',
       role: 'Bride',
@@ -281,12 +281,12 @@ export const invitationMock: InvitationMock = {
     autoplay: false,
   },
   share: {
-    title: '김민수 ♥ 이지은 결혼합니다',
+    title: '강신랑 ♥ 장신부 결혼합니다',
     description: '2026년 5월 16일 오후 3시 | 채림 웨딩홀',
     imageUrl: 'https://placehold.co/1200x630/FAF9F7/cbb899?text=Wedding+Invitation',
     kakaoTemplate: {
       title: '💒 결혼식에 초대합니다',
-      description: '김민수 ♥ 이지은\n2026년 5월 16일 오후 3시\n채림 웨딩홀',
+      description: '강신랑 ♥ 장신부\n2026년 5월 16일 오후 3시\n채림 웨딩홀',
       imageUrl: 'https://placehold.co/800x400/FAF9F7/cbb899?text=Wedding',
       buttonLabel: '청첩장 보기',
     },
