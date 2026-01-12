@@ -1,6 +1,5 @@
 import { invitationMock } from '@/mock/invitation.mock';
 import { DDayCountdown } from '@/components/sections/DDayCountdown';
-import { DoorScene } from '@/components/sections/DoorScene';
 import { CherryBlossomCanvas } from '@/components/sections/CherryBlossomCanvas';
 import { BgmToggle } from '@/components/sections/BgmToggle';
 import { ScrollIndicator } from '@/components/ui/ScrollIndicator';
@@ -45,39 +44,6 @@ export const IntroSection = () => {
           <div className="rounded-[var(--radius-lg)] border border-white/60 bg-white/80 p-4 shadow-[var(--shadow-soft)] backdrop-blur">
             {/* 디데이 구성 확인 */}
             <DDayCountdown weddingDateTime={weddingDateTime} />
-          </div>
-
-          {/* INVITATION + 도어 + 스크롤 인디케이터 영역 (애니메이션 트리거용) */}
-          <div id="door-trigger-area" className="flex flex-col gap-6">
-            {/* 인트로 문구 구성 확인 */}
-            <div className="flex flex-col gap-3 text-center">
-              <div className="inline-flex items-center justify-center">
-                <div className="h-px w-8 bg-gradient-to-r from-transparent to-[var(--accent)]" />
-                <span className="mx-3 text-[10px] tracking-[0.4em] text-[var(--accent)]">
-                  INVITATION
-                </span>
-                <div className="h-px w-8 bg-gradient-to-l from-transparent to-[var(--accent)]" />
-              </div>
-              <p className="text-[12px] text-[var(--text-muted)]">문을 열면 인사의 순간이 펼쳐집니다</p>
-            </div>
-
-            {/* 문 위치 */}
-            <div
-              className="relative z-15 border-0 outline-none"
-              data-testid="door-scene-wrapper"
-              style={{ zIndex: 15 }}
-            >
-              <DoorScene
-                darkBackground={intro.theme.darkBackground}
-                lightBackground={intro.theme.lightBackground}
-                accentColor={intro.theme.accentColor}
-              />
-            </div>
-
-            {/* 스크롤 인디케이터 */}
-            <div className="relative z-30 flex justify-center pt-2 pb-2">
-              <ScrollIndicator />
-            </div>
           </div>
         </div>
       </div>

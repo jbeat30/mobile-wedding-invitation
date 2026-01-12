@@ -23,20 +23,18 @@ export default function Page() {
   });
 
   return (
-    <>
-      {loading.enabled && <LoadingSection message={loading.message} isVisible={isLoading} />}
-      <div className="min-h-svh bg-[var(--bg-primary)] text-[var(--base-text)]">
-        <main className="mobile-container min-h-svh">
-          <IntroSection />
-          <CoupleSection />
-          <GallerySection />
-          <InfoSection />
-          <RSVPSection />
-          <GuestbookSection />
-          <ShareSection />
-          <AccountsSection />
-        </main>
-      </div>
-    </>
+    <div className="min-h-svh bg-[var(--bg-primary)] text-[var(--base-text)]">
+      <main className="mobile-container min-h-svh">
+        {loading.enabled && <LoadingSection message={loading.message} isVisible={isLoading} />}
+        <IntroSection />
+        <CoupleSection />
+        <GallerySection />
+        <InfoSection />
+        <RSVPSection />
+        <GuestbookSection />
+        <ShareSection />
+        <AccountsSection />
+      </main>
+    </div>
   );
 }

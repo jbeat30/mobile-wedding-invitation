@@ -1,56 +1,64 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
+import { ScrollIndicator } from '@/components/ui/ScrollIndicator';
 
 type LoadingSectionProps = {
   message: string;
   isVisible: boolean;
 };
 
-/**
- * 로딩 섹션
- */
+// 로딩 섹션 - 전체 화면 크기 유지, 로딩 완료 후 스크롤 인디케이터 표시
 export const LoadingSection = ({ message, isVisible }: LoadingSectionProps) => {
-  const [shouldRender, setShouldRender] = useState(isVisible);
-  const [fadeOut, setFadeOut] = useState(false);
+  const [showScrollHint, setShowScrollHint] = useState(false);
 
-  // useEffect(() => {
-  //   if (!isVisible && shouldRender) {
-  //     // 페이드아웃 시작
-  //     setFadeOut(true);
-  //     // 페이드아웃 완료 후 unmount
-  //     const timer = window.setTimeout(() => {
-  //       setShouldRender(false);
-  //     }, 500); // 애니메이션 duration과 동일
-  //
-  //     return () => {
-  //       window.clearTimeout(timer);
-  //     };
-  //   }
-  // }, [isVisible, shouldRender]);
+  // 로딩 완료 시 스크롤 인디케이터 표시
+  useEffect(() => {
+    if (!isVisible) {
+      const timer = window.setTimeout(() => {
+        setShowScrollHint(true);
+      }, 300);
 
-  if (!shouldRender) {
-    return null;
-  }
+      return () => {
+        window.clearTimeout(timer);
+      };
+    }
+  }, [isVisible]);
+
+  // 스크롤 제어
+  useEffect(() => {
+    if (isVisible) {
+      // 로딩 중에는 스크롤 막기
+      document.body.style.overflow = 'hidden';
+      window.scrollTo(0, 0);
+    } else {
+      // 로딩 완료 후 스크롤 허용
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isVisible]);
 
   return (
-    <div
+    <section
       data-testid="loading-section"
-      className={`fixed inset-0 z-50 flex flex-col items-center justify-center transition-opacity duration-500 ${
-        fadeOut ? 'opacity-0' : 'opacity-100'
-      }`}
+      className="relative h-svh w-full flex flex-col items-center justify-center"
       style={{
         background: 'linear-gradient(135deg, #f7f2ec 0%, #efe3d7 100%)',
       }}
-      role="status"
-      aria-live="polite"
     >
       <div className="loading-splash">
         <div className="loading-bg">
-          <img
+          <Image
             src="/mock/main-image.png"
             alt=""
+            fill
+            priority
             className="loading-bg-image loading-bg-image--back"
+            sizes="100vw"
           />
           <div className="loading-overlay" />
           <div className="loading-overlay-soft" />
@@ -67,13 +75,19 @@ export const LoadingSection = ({ message, isVisible }: LoadingSectionProps) => {
 
         <div className="loading-copy">
           <p className="loading-eyebrow">WEDDING INVITATION</p>
-          <p className="loading-title font-display">
-            {message}
-          </p>
+          <p className="loading-title font-display">{message}</p>
           <div className="loading-divider" />
         </div>
 
+        {/* 스크롤 인디케이터 */}
+        {showScrollHint && (
+          <div className="absolute bottom-12 left-0 right-0 flex justify-center z-10">
+            <div className="[&_p]:!text-white [&_p]:!opacity-100 [&_div>div]:!bg-white [&_div>div]:drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]">
+              <ScrollIndicator />
+            </div>
+          </div>
+        )}
       </div>
-    </div>
+    </section>
   );
 };
