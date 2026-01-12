@@ -227,7 +227,7 @@ export const invitationMock: InvitationMock = {
     ],
   },
   gallery: {
-    title: '우리의 계절',
+    title: '우리의 갤러리',
     description: '함께한 시간을 담은 작은 기록',
     images: [
       {

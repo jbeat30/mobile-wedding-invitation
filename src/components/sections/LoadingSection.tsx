@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { ScrollIndicator } from '@/components/ui/ScrollIndicator';
 import { BgmToggle } from '@/components/sections/BgmToggle';
@@ -13,6 +13,14 @@ type LoadingSectionProps = {
 // 로딩 섹션 - 전체 화면 크기 유지, 로딩 완료 후 스크롤 인디케이터 표시
 export const LoadingSection = ({ message, isVisible }: LoadingSectionProps) => {
   const [showScrollHint, setShowScrollHint] = useState(false);
+  const scrollLockStyles = useRef<{
+    bodyOverflow: string;
+    htmlOverflow: string;
+    bodyTouchAction: string;
+    htmlTouchAction: string;
+    bodyHeight: string;
+    htmlHeight: string;
+  } | null>(null);
 
   // 로딩 완료 시 스크롤 인디케이터 표시
   useEffect(() => {
@@ -29,17 +37,68 @@ export const LoadingSection = ({ message, isVisible }: LoadingSectionProps) => {
 
   // 스크롤 제어
   useEffect(() => {
+    const html = document.documentElement;
+    const body = document.body;
+
     if (isVisible) {
       // 로딩 중에는 스크롤 막기
-      document.body.style.overflow = 'hidden';
+      if (!scrollLockStyles.current) {
+        scrollLockStyles.current = {
+          bodyOverflow: body.style.overflow,
+          htmlOverflow: html.style.overflow,
+          bodyTouchAction: body.style.touchAction,
+          htmlTouchAction: html.style.touchAction,
+          bodyHeight: body.style.height,
+          htmlHeight: html.style.height,
+        };
+      }
+
+      body.style.overflow = 'hidden';
+      html.style.overflow = 'hidden';
+      body.style.touchAction = 'none';
+      html.style.touchAction = 'none';
+      body.style.height = '100%';
+      html.style.height = '100%';
       window.scrollTo(0, 0);
     } else {
       // 로딩 완료 후 스크롤 허용
-      document.body.style.overflow = '';
+      const previous = scrollLockStyles.current;
+      if (previous) {
+        body.style.overflow = previous.bodyOverflow;
+        html.style.overflow = previous.htmlOverflow;
+        body.style.touchAction = previous.bodyTouchAction;
+        html.style.touchAction = previous.htmlTouchAction;
+        body.style.height = previous.bodyHeight;
+        html.style.height = previous.htmlHeight;
+        scrollLockStyles.current = null;
+      } else {
+        body.style.overflow = '';
+        html.style.overflow = '';
+        body.style.touchAction = '';
+        html.style.touchAction = '';
+        body.style.height = '';
+        html.style.height = '';
+      }
     }
 
     return () => {
-      document.body.style.overflow = '';
+      const previous = scrollLockStyles.current;
+      if (previous) {
+        body.style.overflow = previous.bodyOverflow;
+        html.style.overflow = previous.htmlOverflow;
+        body.style.touchAction = previous.bodyTouchAction;
+        html.style.touchAction = previous.htmlTouchAction;
+        body.style.height = previous.bodyHeight;
+        html.style.height = previous.htmlHeight;
+        scrollLockStyles.current = null;
+      } else {
+        body.style.overflow = '';
+        html.style.overflow = '';
+        body.style.touchAction = '';
+        html.style.touchAction = '';
+        body.style.height = '';
+        html.style.height = '';
+      }
     };
   }, [isVisible]);
 
@@ -77,14 +136,14 @@ export const LoadingSection = ({ message, isVisible }: LoadingSectionProps) => {
         <div className="loading-copy">
           <p className="loading-eyebrow">WEDDING INVITATION</p>
           <p className="loading-title font-display">{message}</p>
-          <div className="loading-divider" />
+          {/*<div className="loading-divider" />*/}
         </div>
 
         <div className="loading-handwrite loading-handwrite--bottom" aria-hidden="true">
           <svg viewBox="0 0 600 180" width="100%" height="100%">
             <path
               className="loading-handwrite-path--bottom"
-              d="M130 22 C180 48, 230 58, 280 64 C300 66, 320 66, 340 63 C390 56, 440 46, 490 24"
+              d="M128 36 C168 66, 218 82, 256 82 C278 82, 292 86, 304 98 C318 112, 336 118, 356 110 C384 96, 414 84, 444 74 C468 66, 484 60, 496 36"
             />
           </svg>
         </div>
