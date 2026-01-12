@@ -5,17 +5,9 @@ export type InvitationIntroTheme = {
   accentColor: string;
 };
 
-export type InvitationIntroDoor = {
-  leftImage: string;
-  rightImage: string;
-  frameImage: string;
-  heroImage: string;
-};
-
 export type InvitationIntro = {
   quote: string;
   subQuote?: string;
-  door: InvitationIntroDoor;
   theme: InvitationIntroTheme;
 };
 
@@ -159,23 +151,23 @@ export const invitationMock: InvitationMock = {
   weddingDateTime: '2026-05-16T15:00:00+09:00',
   loading: {
     enabled: true,
-    message: '우리의 초대장',
-    minDuration: 900,
-    maxDuration: 3200,
+    message: '결혼합니다',
+    minDuration: 4200,
+    maxDuration: 9000,
   },
   couple: {
     groom: {
       fullName: '강신랑',
       displayName: '강신랑',
       bio: '조용한 다정함으로 하루를 따뜻하게 만드는 사람입니다.',
-      profileImage: 'https://placehold.co/400x400/F3EEE8/8c7b6a?text=Groom',
+      profileImage: '/mock/groom-front-512.png',
       role: '신랑',
     },
     bride: {
       fullName: '장신부',
       displayName: '장신부',
       bio: '웃음을 나누는 순간이 가장 소중한 사람입니다.',
-      profileImage: 'https://placehold.co/400x400/F3EEE8/8c7b6a?text=Bride',
+      profileImage: '/mock/bride-front-512.png',
       role: '신부',
     },
     familyLines: [
@@ -212,12 +204,6 @@ export const invitationMock: InvitationMock = {
   intro: {
     quote: '서로의 오늘이 되어, 함께 걸어가려 합니다.',
     subQuote: '소중한 분들을 모시고 작은 약속을 나누고자 합니다.',
-    door: {
-      leftImage: '/mock/main-image.png',
-      rightImage: '/mock/main-image.png',
-      frameImage: '/mock/main-image.png',
-      heroImage: '/mock/main-image.png',
-    },
     theme: {
       darkBackground: '#2f2722',
       lightBackground: '#f7f2ec',

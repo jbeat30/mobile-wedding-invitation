@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { invitationMock } from '@/mock/invitation.mock';
 
 type LoadingSectionProps = {
   message: string;
@@ -13,6 +14,7 @@ type LoadingSectionProps = {
 export const LoadingSection = ({ message, isVisible }: LoadingSectionProps) => {
   const [shouldRender, setShouldRender] = useState(isVisible);
   const [fadeOut, setFadeOut] = useState(false);
+  const { couple, info } = invitationMock;
 
   useEffect(() => {
     if (!isVisible && shouldRender) {
@@ -40,66 +42,42 @@ export const LoadingSection = ({ message, isVisible }: LoadingSectionProps) => {
         fadeOut ? 'opacity-0' : 'opacity-100'
       }`}
       style={{
-        background: 'linear-gradient(135deg, #f8f4ef 0%, #efe5db 100%)',
+        background: 'linear-gradient(135deg, #f7f2ec 0%, #efe3d7 100%)',
       }}
       role="status"
       aria-live="polite"
     >
-      {/* 벚꽃 스피너 */}
-      <div className="relative mb-8 h-24 w-24">
-        {[...Array(5)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute left-1/2 top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 animate-cherry-spin rounded-full"
-            style={{
-              background: 'radial-gradient(circle, rgba(255,228,236,0.9), rgba(236,180,192,0.8))',
-              animationDelay: `${i * 0.2}s`,
-              transform: `rotate(${i * 72}deg) translateY(-36px)`,
-            }}
+      <div className="loading-splash">
+        <div className="loading-bg">
+          <img
+            src="https://placehold.co/1500x2400/efe4da/9a7f6a?text=Opening+Layer+01"
+            alt=""
+            className="loading-bg-image loading-bg-image--back"
           />
-        ))}
+          <div className="loading-overlay" />
+          <div className="loading-overlay-soft" />
+        </div>
+
+        <div className="loading-handwrite" aria-hidden="true">
+          <svg viewBox="0 0 600 180" width="100%" height="100%">
+            <path
+              className="loading-handwrite-path"
+              d="M40 110 C90 60, 160 60, 210 105 C245 138, 290 140, 330 110 C370 80, 420 70, 470 92 C515 112, 545 132, 560 150"
+            />
+          </svg>
+        </div>
+
+        <div className="loading-copy">
+          <p className="loading-eyebrow">WEDDING INVITATION</p>
+          <p className="loading-title font-display">
+            {couple.groom.fullName} · {couple.bride.fullName}
+          </p>
+          <p className="loading-subtitle">{message}</p>
+          <div className="loading-divider" />
+          <p className="loading-sub">{info.dateText}</p>
+          <p className="loading-sub">{info.venue}</p>
+        </div>
       </div>
-
-      {/* 메시지 */}
-      <p
-        className="animate-fade-in text-center text-[18px] font-medium tracking-[0.3em]"
-        style={{
-          color: 'var(--text-secondary)',
-        }}
-        aria-live="polite"
-      >
-        {message}
-      </p>
-
-      <style jsx>{`
-        @keyframes cherry-spin {
-          0%, 100% {
-            opacity: 0.4;
-            transform: rotate(var(--rotation)) translateY(-36px) scale(0.8);
-          }
-          50% {
-            opacity: 1;
-            transform: rotate(var(--rotation)) translateY(-36px) scale(1.2);
-          }
-        }
-
-        @keyframes fade-in {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-
-        .animate-cherry-spin {
-          animation: cherry-spin 2s ease-in-out infinite;
-        }
-
-        .animate-fade-in {
-          animation: fade-in 1s ease-in-out;
-        }
-      `}</style>
     </div>
   );
 };
