@@ -37,6 +37,7 @@ export const IntroSection = () => {
             </div>
           </div>
 
+          {/* 달력 */}
           <IntroCalendar
             weddingDateTime={weddingDateTime}
             highlightDates={[5, 25]}
