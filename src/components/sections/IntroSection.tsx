@@ -1,34 +1,12 @@
 import { invitationMock } from '@/mock/invitation.mock';
 import { DDayCountdown } from '@/components/sections/DDayCountdown';
+import { IntroCalendar } from '@/components/sections/IntroCalendar';
 
 /**
  * 인트로 섹션 구성 확인
  */
 export const IntroSection = () => {
   const { weddingDateTime, intro, couple, info } = invitationMock;
-  const weddingDate = new Date(weddingDateTime);
-  const year = weddingDate.getFullYear();
-  const month = weddingDate.getMonth();
-  const weddingDay = weddingDate.getDate();
-  const isMay = month === 4;
-  const mayHolidayDates = new Set([5, 25]);
-  const firstWeekday = new Date(year, month, 1).getDay();
-  const lastDate = new Date(year, month + 1, 0).getDate();
-  const dayCells: Array<number | null> = [];
-
-  for (let i = 0; i < firstWeekday; i += 1) {
-    dayCells.push(null);
-  }
-  for (let day = 1; day <= lastDate; day += 1) {
-    dayCells.push(day);
-  }
-  while (dayCells.length % 7 !== 0) {
-    dayCells.push(null);
-  }
-  const weeks = [];
-  for (let i = 0; i < dayCells.length; i += 7) {
-    weeks.push(dayCells.slice(i, i + 7));
-  }
 
   return (
     <section id="intro" className="relative min-h-svh">
@@ -60,49 +38,7 @@ export const IntroSection = () => {
             <DDayCountdown weddingDateTime={weddingDateTime} />
           </div>
 
-          <div className="intro-calendar" data-animate="fade-up">
-            <div className="intro-calendar-header">
-              <p className="intro-calendar-eyebrow">Wedding Date</p>
-              <p className="intro-calendar-title">
-                {year}.{String(month + 1).padStart(2, '0')}
-              </p>
-            </div>
-            <div className="intro-calendar-grid">
-              {['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'].map((label, index) => (
-                <div
-                  key={label}
-                  className={`intro-calendar-weekday${
-                    index === 0 ? ' is-sunday' : index === 6 ? ' is-saturday' : ''
-                  }`}
-                >
-                  {label}
-                </div>
-              ))}
-              {weeks.map((week, weekIndex) =>
-                week.map((day, dayIndex) => {
-                  const key = `day-${weekIndex}-${dayIndex}`;
-                  if (!day) {
-                    return <div key={key} className="intro-calendar-day empty" />;
-                  }
-                  const isWeddingDay = day === weddingDay;
-                  const isSunday = dayIndex === 0;
-                  const isSaturday = dayIndex === 6;
-                  const isHoliday = isMay && mayHolidayDates.has(day);
-                  return (
-                    <div
-                      key={key}
-                      className={`intro-calendar-day${isWeddingDay ? ' is-wedding' : ''}${
-                        isSunday ? ' is-sunday' : ''
-                      }${isSaturday ? ' is-saturday' : ''}${isHoliday ? ' is-holiday' : ''}`}
-                    >
-                      {day}
-                    </div>
-                  );
-                })
-              )}
-            </div>
-            <p className="intro-calendar-caption">SATURDAY · {month + 1}월 {weddingDay}일</p>
-          </div>
+          <IntroCalendar weddingDateTime={weddingDateTime} highlightDates={[5, 25]} />
         </div>
       </div>
     </section>
