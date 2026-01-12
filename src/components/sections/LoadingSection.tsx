@@ -84,7 +84,7 @@ export const LoadingSection = ({ message, isVisible }: LoadingSectionProps) => {
           <svg viewBox="0 0 600 180" width="100%" height="100%">
             <path
               className="loading-handwrite-path--bottom"
-              d="M60 30 C120 60, 180 80, 240 95 C280 105, 320 105, 360 95 C420 80, 480 60, 540 30"
+              d="M130 22 C180 48, 230 58, 280 64 C300 66, 320 66, 340 63 C390 56, 440 46, 490 24"
             />
           </svg>
         </div>
