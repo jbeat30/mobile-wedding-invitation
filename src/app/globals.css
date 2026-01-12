@@ -438,6 +438,100 @@ video {
     filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.15));
 }
 
+.intro-calendar {
+    border-radius: 22px;
+    border: 1px solid rgba(255, 255, 255, 0.65);
+    background: rgba(255, 255, 255, 0.9);
+    padding: 18px 16px 16px;
+    box-shadow: var(--shadow-soft);
+    backdrop-filter: blur(10px);
+    color: var(--text-primary);
+}
+
+.intro-calendar-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.intro-calendar-eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.intro-calendar-title {
+    font-family: var(--font-nanum), serif;
+    font-size: 18px;
+    letter-spacing: 0.1em;
+}
+
+.intro-calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 8px 6px;
+}
+
+.intro-calendar-weekday {
+    font-size: 10px;
+    text-align: center;
+    color: var(--text-muted);
+    letter-spacing: 0.12em;
+}
+
+.intro-calendar-weekday.is-sunday {
+    color: #c05b5b;
+}
+
+.intro-calendar-weekday.is-saturday {
+    color: #4e75b8;
+}
+
+.intro-calendar-day {
+    height: 32px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: var(--text-secondary);
+    background: rgba(255, 255, 255, 0.6);
+}
+
+.intro-calendar-day.is-sunday {
+    color: #c05b5b;
+}
+
+.intro-calendar-day.is-saturday {
+    color: #4e75b8;
+}
+
+.intro-calendar-day.is-holiday {
+    color: #c05b5b;
+}
+
+.intro-calendar-day.empty {
+    background: transparent;
+}
+
+.intro-calendar-day.is-wedding {
+    background: #f2b7c5;
+    color: #5b2d35;
+    font-weight: 600;
+    box-shadow: 0 8px 20px rgba(242, 183, 197, 0.45);
+}
+
+.intro-calendar-caption {
+    margin-top: 12px;
+    text-align: center;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
 @media (prefers-reduced-motion: reduce) {
     * {
         animation-duration: 0.001ms !important;
