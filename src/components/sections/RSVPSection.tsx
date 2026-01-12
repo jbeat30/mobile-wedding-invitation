@@ -2,14 +2,12 @@
 
 import { useCallback, useState, type FormEvent } from 'react';
 import { invitationMock } from '@/mock/invitation.mock';
-import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
 /**
  * RSVP (참석 여부) 섹션
  */
 export const RSVPSection = () => {
   const { rsvp } = invitationMock;
-  const { ref, isVisible } = useScrollAnimation({ threshold: 0.1 });
 
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [consent, setConsent] = useState(false);
@@ -51,17 +49,11 @@ export const RSVPSection = () => {
     <>
       <section
         id="rsvp"
-        ref={ref}
         className="bg-[var(--bg-secondary)] py-16"
-        style={{
-          opacity: isVisible ? 1 : 0,
-          transform: isVisible ? 'translateY(0)' : 'translateY(30px)',
-          transition: 'opacity 0.8s ease-out, transform 0.8s ease-out',
-        }}
       >
         <div className="mx-auto flex w-full max-w-[520px] flex-col gap-10 px-6">
           {/* 섹션 헤더 */}
-          <div className="text-center">
+          <div className="text-center" data-animate="fade-up">
             <span className="text-[10px] tracking-[0.4em] text-[var(--muted)]">RSVP</span>
             <h2 className="font-display mt-3 text-[26px] font-semibold text-[var(--text-primary)]">
               참석 여부
@@ -77,6 +69,7 @@ export const RSVPSection = () => {
           <form
             className="flex flex-col gap-5 rounded-[var(--radius-lg)] border border-white/70 bg-white/90 p-6 shadow-[var(--shadow-soft)] backdrop-blur"
             onSubmit={handleSubmit}
+            data-animate="fade-up"
           >
             {rsvp.fields.map((field) => (
               <div key={field.key} className="flex flex-col gap-2">

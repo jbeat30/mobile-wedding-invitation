@@ -2,7 +2,6 @@
 
 import { useCallback, useState, useEffect } from 'react';
 import { invitationMock } from '@/mock/invitation.mock';
-import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { useKakaoSDK } from '@/hooks/useKakaoSDK';
 
 /**
@@ -13,7 +12,6 @@ import { useKakaoSDK } from '@/hooks/useKakaoSDK';
  */
 export const ShareSection = () => {
   const { share } = invitationMock;
-  const { ref, isVisible } = useScrollAnimation({ threshold: 0.1 });
   const { isReady: isKakaoReady, hasAppKey } = useKakaoSDK();
 
   const [showToast, setShowToast] = useState(false);
@@ -131,17 +129,11 @@ export const ShareSection = () => {
     <>
       <section
         id="share"
-        ref={ref}
         className="bg-[var(--bg-primary)] py-16"
-        style={{
-          opacity: isVisible ? 1 : 0,
-          transform: isVisible ? 'translateY(0)' : 'translateY(30px)',
-          transition: 'opacity 0.8s ease-out, transform 0.8s ease-out',
-        }}
       >
         <div className="mx-auto flex w-full max-w-[520px] flex-col gap-10 px-6">
           {/* 섹션 헤더 */}
-          <div className="text-center">
+          <div className="text-center" data-animate="fade-up">
             <span className="text-[10px] tracking-[0.4em] text-[var(--muted)]">SHARE</span>
             <h2 className="font-display mt-3 text-[26px] font-semibold text-[var(--text-primary)]">
               청첩장 공유하기
@@ -151,7 +143,10 @@ export const ShareSection = () => {
             </p>
           </div>
 
-          <div className="rounded-[var(--radius-lg)] border border-white/70 bg-white/90 p-5 shadow-[var(--shadow-soft)]">
+          <div
+            className="rounded-[var(--radius-lg)] border border-white/70 bg-white/90 p-5 shadow-[var(--shadow-soft)]"
+            data-animate="scale"
+          >
             <div
               className="relative h-[160px] w-full overflow-hidden rounded-[18px]"
               style={{
@@ -170,11 +165,12 @@ export const ShareSection = () => {
           </div>
 
           {/* 공유 버튼 그룹 */}
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3" data-animate="stagger">
             {/* 카카오톡 공유 */}
             <button
               onClick={handleKakaoShare}
               disabled={!hasAppKey || !isKakaoReady}
+              data-animate-item
               className="relative flex items-center justify-center gap-3 rounded-full bg-[#FEE500] py-4 text-[15px] font-medium text-[#3C1E1E] shadow-[0_18px_36px_rgba(41,32,26,0.12)] transition hover:bg-[#FDD835] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-[#FEE500]"
               title={
                 !hasAppKey
@@ -198,6 +194,7 @@ export const ShareSection = () => {
             {/* URL 복사 */}
             <button
               onClick={handleCopyUrl}
+              data-animate-item
               className="flex items-center justify-center gap-3 rounded-full border-2 border-[var(--accent)] bg-white py-4 text-[15px] font-medium text-[var(--text-primary)] transition hover:bg-[var(--bg-tertiary)]"
             >
               <svg
@@ -220,6 +217,7 @@ export const ShareSection = () => {
             {canShare && (
               <button
                 onClick={handleNativeShare}
+                data-animate-item
                 className="flex items-center justify-center gap-3 rounded-full border-2 border-[var(--text-muted)]/20 bg-white py-4 text-[15px] font-medium text-[var(--text-secondary)] transition hover:bg-[var(--bg-tertiary)]"
               >
                 <svg

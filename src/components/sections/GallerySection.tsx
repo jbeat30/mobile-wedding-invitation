@@ -6,7 +6,6 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay } from 'swiper/modules';
 import { invitationMock } from '@/mock/invitation.mock';
 import { ImageModal } from '@/components/ui/ImageModal';
-import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
 import 'swiper/css';
 import 'swiper/css/pagination';
@@ -16,7 +15,6 @@ import 'swiper/css/pagination';
  */
 export const GallerySection = () => {
   const { gallery } = invitationMock;
-  const { ref, isVisible } = useScrollAnimation({ threshold: 0.1 });
   const [modalImage, setModalImage] = useState<{ src: string; alt: string } | null>(null);
 
   const thumbs = useMemo(
@@ -32,16 +30,10 @@ export const GallerySection = () => {
     <>
       <section
         id="gallery"
-        ref={ref}
         className="bg-[var(--bg-tertiary)] py-16"
-        style={{
-          opacity: isVisible ? 1 : 0,
-          transform: isVisible ? 'translateY(0)' : 'translateY(30px)',
-          transition: 'opacity 0.8s ease-out, transform 0.8s ease-out',
-        }}
       >
         <div className="mx-auto flex w-full max-w-[520px] flex-col gap-10 px-6">
-          <div className="text-center">
+          <div className="text-center" data-animate="fade-up">
             <span className="text-[10px] tracking-[0.4em] text-[var(--muted)]">GALLERY</span>
             <h2 className="font-display mt-3 text-[26px] font-semibold text-[var(--text-primary)]">
               {gallery.title}
@@ -53,7 +45,10 @@ export const GallerySection = () => {
             )}
           </div>
 
-          <div className="rounded-[var(--radius-lg)] border border-white/70 bg-white/80 p-4 shadow-[var(--shadow-soft)] backdrop-blur">
+          <div
+            className="rounded-[var(--radius-lg)] border border-white/70 bg-white/80 p-4 shadow-[var(--shadow-soft)] backdrop-blur"
+            data-animate="scale"
+          >
             <Swiper
               modules={[Pagination, Autoplay]}
               slidesPerView={1}
@@ -100,7 +95,7 @@ export const GallerySection = () => {
             <div className="gallery-thumb-pagination mt-5" />
           </div>
 
-          <p className="text-center text-[12px] text-[var(--muted)]">
+          <p className="text-center text-[12px] text-[var(--muted)]" data-animate="fade">
             썸네일을 터치하면 해당 사진으로 이동합니다
           </p>
         </div>

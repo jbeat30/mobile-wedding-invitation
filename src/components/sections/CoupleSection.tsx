@@ -1,7 +1,6 @@
 'use client';
 
 import { invitationMock, type InvitationFamilyMember } from '@/mock/invitation.mock';
-import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import Image from 'next/image';
 
 /**
@@ -9,7 +8,6 @@ import Image from 'next/image';
  */
 export const CoupleSection = () => {
   const { couple } = invitationMock;
-  const { ref, isVisible } = useScrollAnimation({ threshold: 0.1 });
   const formatMembers = (members: InvitationFamilyMember[]) =>
     members
       .map((member) => `${member.prefix ?? ''}${member.name}${member.suffix ? ` (${member.suffix})` : ''}`.trim())
@@ -18,17 +16,11 @@ export const CoupleSection = () => {
   return (
     <section
       id="couple"
-      ref={ref}
       className="bg-[var(--bg-secondary)] py-16"
-      style={{
-        opacity: isVisible ? 1 : 0,
-        transform: isVisible ? 'translateY(0)' : 'translateY(30px)',
-        transition: 'opacity 0.8s ease-out, transform 0.8s ease-out',
-      }}
     >
       <div className="mx-auto flex w-full max-w-[520px] flex-col gap-10 px-6">
         {/* 섹션 헤더 */}
-        <div className="text-center">
+        <div className="text-center" data-animate="fade-up">
           <span className="text-[10px] tracking-[0.4em] text-[var(--muted)]">COUPLE</span>
           <h2 className="font-display mt-3 text-[26px] font-semibold text-[var(--text-primary)]">
             두 사람을 소개합니다
@@ -39,9 +31,12 @@ export const CoupleSection = () => {
         </div>
 
         {/* 프로필 카드 그리드 */}
-        <div className="grid gap-8 sm:grid-cols-2">
+        <div className="grid gap-8 sm:grid-cols-2" data-animate="stagger">
           {/* 신랑 카드 */}
-          <div className="flex flex-col items-center gap-4 rounded-[var(--radius-lg)] border border-white/70 bg-white/85 p-6 text-center shadow-[var(--shadow-soft)] backdrop-blur">
+          <div
+            className="flex flex-col items-center gap-4 rounded-[var(--radius-lg)] border border-white/70 bg-white/85 p-6 text-center shadow-[var(--shadow-soft)] backdrop-blur"
+            data-animate-item
+          >
             <div className="relative h-[160px] w-[160px] overflow-hidden rounded-full border-4 border-white/80 shadow-md">
               {couple.groom.profileImage && (
                 <Image
@@ -79,7 +74,10 @@ export const CoupleSection = () => {
           </div>
 
           {/* 신부 카드 */}
-          <div className="flex flex-col items-center gap-4 rounded-[var(--radius-lg)] border border-white/70 bg-white/85 p-6 text-center shadow-[var(--shadow-soft)] backdrop-blur">
+          <div
+            className="flex flex-col items-center gap-4 rounded-[var(--radius-lg)] border border-white/70 bg-white/85 p-6 text-center shadow-[var(--shadow-soft)] backdrop-blur"
+            data-animate-item
+          >
             <div className="relative h-[160px] w-[160px] overflow-hidden rounded-full border-4 border-white/80 shadow-md">
               {couple.bride.profileImage && (
                 <Image

@@ -60,7 +60,7 @@ export const AccountsSection = () => {
   return (
     <section id="accounts" className="bg-[var(--bg-secondary)]">
       <div className="mx-auto flex w-full max-w-[520px] flex-col gap-10 px-6 py-16">
-        <div className="text-center">
+        <div className="text-center" data-animate="fade-up">
           <span className="text-[10px] tracking-[0.4em] text-[var(--muted)]">ACCOUNTS</span>
           <h2 className="font-display mt-3 text-[26px] font-semibold text-[var(--text-primary)]">
             {accounts.title}
@@ -68,11 +68,12 @@ export const AccountsSection = () => {
           <p className="mt-2 text-[13px] text-[var(--text-secondary)]">{accounts.description}</p>
         </div>
 
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6" data-animate="stagger">
           {sections.map((section) => (
             <div
               key={section.title}
               className="rounded-[var(--radius-lg)] border border-white/70 bg-white/90 p-6 shadow-[var(--shadow-soft)]"
+              data-animate-item
             >
               <p className="text-[15px] font-semibold text-[var(--text-primary)]">{section.title}</p>
               <div className="mt-4 flex flex-col gap-3">

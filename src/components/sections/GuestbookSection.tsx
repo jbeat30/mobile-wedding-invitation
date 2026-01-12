@@ -81,7 +81,7 @@ export const GuestbookSection = () => {
   return (
     <section id="guestbook" className="bg-[var(--bg-tertiary)]">
       <div className="mx-auto flex w-full max-w-[520px] flex-col gap-10 px-6 py-16">
-        <div className="text-center">
+        <div className="text-center" data-animate="fade-up">
           <span className="text-[10px] tracking-[0.4em] text-[var(--muted)]">GUESTBOOK</span>
           <h2 className="font-display mt-3 text-[26px] font-semibold text-[var(--text-primary)]">
             축하 메시지
@@ -92,6 +92,7 @@ export const GuestbookSection = () => {
         <form
           className="flex flex-col gap-4 rounded-[var(--radius-lg)] border border-white/70 bg-white/90 p-6 shadow-[var(--shadow-soft)] backdrop-blur"
           onSubmit={handleSubmit}
+          data-animate="fade-up"
         >
           <div className="flex flex-col gap-2">
             <label className="text-[10px] tracking-[0.35em] text-[var(--muted)]" htmlFor="guest-name">
@@ -146,9 +147,12 @@ export const GuestbookSection = () => {
           </button>
         </form>
 
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4" data-animate="stagger">
           {guestbook.displayMode === 'recent' ? (
-            <p className="rounded-[14px] border border-white/70 bg-white/80 px-4 py-3 text-center text-[12px] text-[var(--text-muted)]">
+            <p
+              className="rounded-[14px] border border-white/70 bg-white/80 px-4 py-3 text-center text-[12px] text-[var(--text-muted)]"
+              data-animate-item
+            >
               {guestbook.recentNotice}
             </p>
           ) : null}
@@ -157,6 +161,7 @@ export const GuestbookSection = () => {
             <div
               key={entry.id}
               className="rounded-[20px] border border-white/70 bg-white/90 px-5 py-4 shadow-[0_12px_30px_rgba(22,22,22,0.08)]"
+              data-animate-item
             >
               <div className="flex items-center justify-between">
                 <p className="text-[14px] font-medium text-[var(--text-primary)]">{entry.name}</p>
@@ -170,7 +175,10 @@ export const GuestbookSection = () => {
         </div>
 
         {guestbook.displayMode === 'paginated' ? (
-          <div className="flex items-center justify-center gap-4 rounded-[16px] border border-white/70 bg-white/80 px-4 py-3 text-[12px] text-[var(--text-muted)] shadow-[0_12px_24px_rgba(41,32,26,0.1)]">
+          <div
+            className="flex items-center justify-center gap-4 rounded-[16px] border border-white/70 bg-white/80 px-4 py-3 text-[12px] text-[var(--text-muted)] shadow-[0_12px_24px_rgba(41,32,26,0.1)]"
+            data-animate="fade-up"
+          >
             <button
               type="button"
               className="rounded-full border border-[var(--accent-soft)] px-3 py-1 text-[12px] text-[var(--text-secondary)] transition disabled:opacity-40"
