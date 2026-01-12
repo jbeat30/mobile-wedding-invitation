@@ -83,19 +83,24 @@ export default function Page() {
     let cleanup: (() => void) | null = null;
 
     const initScrollAnimations = () => {
+      // data-animate 속성이 붙은 요소만 GSAP 대상에 포함
+      // 요소가 아직 렌더되지 않았으면 false를 반환해 대기
       const elements = gsap.utils.toArray<HTMLElement>(container.querySelectorAll('[data-animate]'));
       if (!elements.length) return false;
 
       const ctx = gsap.context(() => {
+        // 모션 감소 설정일 때는 애니메이션 없이 바로 표시
         if (prefersReducedMotion) {
           gsap.set(elements, { opacity: 1, clearProps: 'transform' });
           return;
         }
 
         elements.forEach((element) => {
+          // data-animate 값으로 타입을 지정: fade-up(기본), fade, scale, stagger
           const type = element.dataset.animate ?? 'fade-up';
 
           if (type === 'stagger') {
+            // 그룹 내부 아이템은 data-animate-item으로 관리
             const items = gsap.utils
               .toArray<HTMLElement>(element.querySelectorAll('[data-animate-item]'))
               .slice(0);
@@ -109,6 +114,7 @@ export default function Page() {
               ease: 'power3.out',
               stagger: 0.12,
               scrollTrigger: {
+                // 그룹의 컨테이너 기준으로 스크롤 진입 감지
                 trigger: element,
                 start: 'top 80%',
                 toggleActions: 'play none none none',
@@ -117,6 +123,7 @@ export default function Page() {
             return;
           }
 
+          // 기본 애니메이션 초기 상태 정의
           const initial =
             type === 'scale'
               ? { opacity: 0, y: 18, scale: 0.98 }
@@ -132,6 +139,7 @@ export default function Page() {
             duration: 1.1,
             ease: 'power3.out',
             scrollTrigger: {
+              // 요소 상단이 뷰포트 진입 시점에 트리거
               trigger: element,
               start: 'top 82%',
               toggleActions: 'play none none none',
@@ -139,9 +147,11 @@ export default function Page() {
           });
         });
 
+        // 모든 트리거 계산을 한 번 갱신
         ScrollTrigger.refresh();
       }, container);
 
+      // cleanup으로 애니메이션/트리거를 정리
       cleanup = () => {
         ctx.revert();
       };
@@ -151,6 +161,7 @@ export default function Page() {
     const initialized = initScrollAnimations();
 
     if (!initialized) {
+      // 동적 섹션이 마운트된 뒤에 GSAP을 초기화
       observer = new MutationObserver(() => {
         const nextInitialized = initScrollAnimations();
         if (nextInitialized) {
