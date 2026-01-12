@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { LoadingSection } from '@/components/sections/LoadingSection';
+import { CherryBlossomCanvas } from '@/components/sections/CherryBlossomCanvas';
 import { useLoadingState } from '@/hooks/useLoadingState';
 import { invitationMock } from '@/mock/invitation.mock';
 
@@ -182,10 +183,14 @@ export default function Page() {
   return (
     <div className="min-h-svh bg-[var(--bg-primary)] text-[var(--base-text)]">
       <main ref={contentRef} className="mobile-container min-h-svh">
-        {showLoading && <LoadingSection message={loading.message} isVisible={isLoading} />}
+        <div className="relative">
+          <CherryBlossomCanvas density={35000} zIndex={40} opacity={0.7} minPetalCount={15} />
+          <CherryBlossomCanvas density={50000} zIndex={50} opacity={0.5} minPetalCount={8} />
+          {showLoading && <LoadingSection message={loading.message} isVisible={isLoading} />}
+          {showContent && <IntroSection />}
+        </div>
         {showContent && (
           <>
-            <IntroSection />
             <CoupleSection />
             <GallerySection />
             <InfoSection />

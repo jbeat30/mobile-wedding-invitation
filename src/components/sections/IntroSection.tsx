@@ -1,6 +1,5 @@
 import { invitationMock } from '@/mock/invitation.mock';
 import { DDayCountdown } from '@/components/sections/DDayCountdown';
-import { CherryBlossomCanvas } from '@/components/sections/CherryBlossomCanvas';
 
 /**
  * 인트로 섹션 구성 확인
@@ -10,11 +9,6 @@ export const IntroSection = () => {
 
   return (
     <section id="intro" className="relative pb-10">
-      {/* 벚꽃 배경 레이어 (콘텐츠 위로 보이도록 z-index를 높임) */}
-      <CherryBlossomCanvas density={35000} zIndex={40} opacity={0.7} minPetalCount={15} />
-      {/* 벚꽃 전경 레이어 (콘텐츠 최상단) */}
-      <CherryBlossomCanvas density={50000} zIndex={50} opacity={0.5} minPetalCount={8} />
-
       {/* 초기 인트로 화면 구성 확인 */}
       <div className="relative pt-[calc(var(--safe-top)+28px)] pb-10">
         <div className="mx-auto flex w-full max-w-[460px] flex-col gap-8 px-5">

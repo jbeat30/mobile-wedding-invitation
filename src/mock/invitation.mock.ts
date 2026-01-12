@@ -152,7 +152,7 @@ export const invitationMock: InvitationMock = {
   loading: {
     enabled: true,
     message: 'We are getting married',
-    minDuration: 3000,
+    minDuration: 2500,
     additionalDuration: 1000,
   },
   couple: {
