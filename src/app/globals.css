@@ -1,26 +1,113 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
+  /* 레거시 변수 (하위 호환성) */
   --background: #ffffff;
   --foreground: #171717;
-}
+  --surface-dark: #0f0f0f;
+  --surface-light: #f7f2ea;
+  --text-light: #f5f0e6;
+  --text-dark: #1c1c1c;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* 기본 배경 - 레퍼런스 공통 크림/베이지 톤 */
+  --bg-primary: #FAF9F7;
+  --bg-secondary: #f5f3f2;
+  --bg-tertiary: #f6f1ea;
+  --base-surface: #FAF9F7;
+  --base-surface-dark: #dbdbdb;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* 도어 색상 - 밝고 따뜻한 베이지 톤 */
+  --door-surface: #F8F6F3;
+  --door-accent: #F0EDE9;
+  --door-gold: #d4c4a8;
+  --door-handle: #a89780;
+  --door-handle-rgb: 168 151 128;
+
+  /* 텍스트 색상 */
+  --text-primary: #3b3b3b;
+  --text-secondary: #5d5d5d;
+  --text-muted: #6f6a62;
+  --base-text: #5f5f5f;
+
+  /* 액센트 */
+  --accent: #cbb899;
+  --accent-strong: #b49d74;
+  --accent-soft: #e8dcc8;
+  --muted: #6f6a62;
+
+  /* 카드 */
+  --card-bg: rgba(255, 255, 255, 0.9);
+  --card-bg-light: rgba(255, 255, 255, 0.7);
+  --card-border: rgba(255, 255, 255, 0.7);
+
+  /* 벚꽃 색상 */
+  --cherry-light: rgba(255, 235, 240, 0.9);
+  --cherry-dark: rgba(255, 175, 195, 0.85);
+
+  /* 그림자 */
+  --shadow-soft: 0 18px 40px rgba(22, 22, 22, 0.1);
+  --shadow-medium: 0 24px 60px rgba(16, 16, 16, 0.18);
+  --shadow-strong: 0 32px 90px rgba(16, 16, 16, 0.28);
+
+  /* 모서리 반경 */
+  --radius-lg: 28px;
+  --radius-md: 18px;
+  --radius-sm: 10px;
+
+  /* Safe area */
+  --safe-top: env(safe-area-inset-top);
+  --safe-right: env(safe-area-inset-right);
+  --safe-bottom: env(safe-area-inset-bottom);
+  --safe-left: env(safe-area-inset-left);
 }
 
 body {
-  background: var(--background);
+  background: var(--base-surface);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-nanum), serif;
+  min-height: 100%;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+img,
+svg,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+/* 웹폰트 유틸리티 클래스 */
+.font-nanum {
+  font-family: var(--font-nanum), serif;
+}
+
+.font-gowun {
+  font-family: var(--font-gowun), serif;
+}
+
+/* PC 레이아웃 최적화 (480px 초과) */
+@media (min-width: 481px) {
+  body {
+    background: linear-gradient(135deg, #f0ebe3 0%, #e8e3da 100%);
+    min-height: 100vh;
+  }
+
+  .mobile-container {
+    max-width: 480px;
+    margin: 0 auto;
+    box-shadow: 0 0 60px rgba(0, 0, 0, 0.15);
+    position: relative;
+  }
 }
