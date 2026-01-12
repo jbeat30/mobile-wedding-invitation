@@ -2,6 +2,9 @@
 @source '../**/*.{js,jsx,ts,tsx,mdx}';
 
 :root {
+    /* 영문 모노스페이스 폰트 스택 */
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+        "Courier New", monospace;
     /* 레거시 변수 (하위 호환성) */
     --background: #f7f2ec;
     --foreground: #2f2722;

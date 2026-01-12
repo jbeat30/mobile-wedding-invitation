@@ -62,7 +62,7 @@ export const AccountsSection = () => {
       <div className="mx-auto flex w-full max-w-[520px] flex-col gap-10 px-6 py-16">
         <div className="text-center" data-animate="fade-up">
           <span className="text-[10px] tracking-[0.4em] text-[var(--muted)]">ACCOUNTS</span>
-          <h2 className="font-[var(--font-nanum),serif] mt-3 text-[26px] font-semibold text-[var(--text-primary)]">
+          <h2 className="font-[var(--font-crimson),var(--font-nanum),var(--font-gowun),serif] mt-3 text-[26px] font-semibold text-[var(--text-primary)]">
             {accounts.title}
           </h2>
           <p className="mt-2 text-[13px] text-[var(--text-secondary)]">{accounts.description}</p>

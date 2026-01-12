@@ -49,11 +49,11 @@ export const IntroCalendar = ({
       className="rounded-[24px] border border-white/70 bg-[#fbf6f1]/90 px-5 py-4 shadow-[var(--shadow-soft)] backdrop-blur"
       data-animate="fade-up"
     >
-      <div className="mb-4 flex items-baseline justify-between">
-        <p className="text-[10px] tracking-[0.35em] text-[var(--text-muted)]">
-          결혼 날짜
-        </p>
-        <p className="font-[var(--font-nanum),serif] text-[19px] tracking-[0.12em]">
+      <p className="mt-3 text-center text-[14px] tracking-[0.2em] text-[var(--text-muted)]">
+        {venue} · {weekdayName} · {month + 1}월 {weddingDay}일 · {timeLabel}
+      </p>
+      <div className="my-4 flex items-center justify-center">
+        <p className="font-[var(--font-crimson),var(--font-nanum),var(--font-gowun),serif] text-[24px] tracking-[0.12em]">
           {year}.{String(month + 1).padStart(2, '0')}
         </p>
       </div>
@@ -101,9 +101,7 @@ export const IntroCalendar = ({
           })
         )}
       </div>
-      <p className="mt-3 text-center text-[11px] tracking-[0.2em] text-[var(--text-muted)]">
-        {venue} · {weekdayName} · {month + 1}월 {weddingDay}일 · {timeLabel}
-      </p>
+
     </div>
   );
 };

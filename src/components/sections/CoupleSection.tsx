@@ -22,7 +22,7 @@ export const CoupleSection = () => {
         {/* 섹션 헤더 */}
         <div className="text-center" data-animate="fade-up">
           <span className="text-[10px] tracking-[0.4em] text-[var(--muted)]">COUPLE</span>
-          <h2 className="font-[var(--font-nanum),serif] mt-3 text-[26px] font-semibold text-[var(--text-primary)]">
+          <h2 className="font-[var(--font-crimson),var(--font-nanum),var(--font-gowun),serif] mt-3 text-[26px] font-semibold text-[var(--text-primary)]">
             두 사람을 소개합니다
           </h2>
           <p className="mt-2 text-[13px] text-[var(--text-secondary)]">
@@ -52,7 +52,7 @@ export const CoupleSection = () => {
               <p className="text-[10px] tracking-[0.35em] text-[var(--muted)]">
                 {couple.groom.role || '신랑'}
               </p>
-              <h3 className="font-[var(--font-nanum),serif] mt-1 text-[22px] font-semibold text-[var(--text-primary)]">
+              <h3 className="font-[var(--font-crimson),var(--font-nanum),var(--font-gowun),serif] mt-1 text-[22px] font-semibold text-[var(--text-primary)]">
                 {couple.groom.displayName}
               </h3>
               {couple.groom.bio && (
@@ -93,7 +93,7 @@ export const CoupleSection = () => {
               <p className="text-[10px] tracking-[0.35em] text-[var(--muted)]">
                 {couple.bride.role || '신부'}
               </p>
-              <h3 className="font-[var(--font-nanum),serif] mt-1 text-[22px] font-semibold text-[var(--text-primary)]">
+              <h3 className="font-[var(--font-crimson),var(--font-nanum),var(--font-gowun),serif] mt-1 text-[22px] font-semibold text-[var(--text-primary)]">
                 {couple.bride.displayName}
               </h3>
               {couple.bride.bio && (
