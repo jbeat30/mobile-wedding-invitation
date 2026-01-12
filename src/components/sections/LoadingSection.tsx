@@ -134,11 +134,11 @@ export const LoadingSection = ({ message, isVisible, isHintVisible }: LoadingSec
           </svg>
         </div>
         {/* 로딩 텍스트 */}
-        <div className="relative z-[5] max-w-[min(360px,72vw)] px-6 text-center font-gowun text-white animate-[loading-fade_1s_ease-out_both]">
+        <div className="relative z-[5] max-w-[min(360px,72vw)] px-6 text-center font-[var(--font-gowun),serif] text-white animate-[loading-fade_1s_ease-out_both]">
           <p className="text-[10px] font-bold uppercase tracking-[0.6em] opacity-90">
             WEDDING INVITATION
           </p>
-          <p className="font-display mt-3.5 text-[28px] font-semibold tracking-[0.12em]">
+          <p className="font-[var(--font-nanum),serif] mt-3.5 text-[28px] font-semibold tracking-[0.12em]">
             {message}
           </p>
           {/*<div className="loading-divider" />*/}

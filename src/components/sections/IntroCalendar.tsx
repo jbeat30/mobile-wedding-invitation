@@ -53,7 +53,7 @@ export const IntroCalendar = ({
         <p className="text-[10px] tracking-[0.35em] text-[var(--text-muted)]">
           결혼 날짜
         </p>
-        <p className="font-display text-[19px] tracking-[0.12em]">
+        <p className="font-[var(--font-nanum),serif] text-[19px] tracking-[0.12em]">
           {year}.{String(month + 1).padStart(2, '0')}
         </p>
       </div>

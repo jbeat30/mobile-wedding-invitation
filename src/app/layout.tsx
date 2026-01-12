@@ -40,9 +40,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
+    <html lang="ko" className="h-full">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${nanumMyeongjo.variable} ${gowunBatang.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${nanumMyeongjo.variable} ${gowunBatang.variable} min-h-full bg-[var(--base-surface)] text-[var(--base-text)] font-[var(--font-gowun),serif] antialiased [text-rendering:optimizeLegibility] relative overflow-x-hidden isolate min-[481px]:min-h-screen min-[481px]:[background:radial-gradient(circle_at_top,_#f4ede6_0%,_#e7ded4_60%,_#e2d7cc_100%)]`}
       >
         {children}
       </body>

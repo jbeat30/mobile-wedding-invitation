@@ -35,7 +35,7 @@ export const GallerySection = () => {
         <div className="mx-auto flex w-full max-w-[520px] flex-col gap-10 px-6">
           <div className="text-center" data-animate="fade-up">
             <span className="text-[10px] tracking-[0.4em] text-[var(--muted)]">GALLERY</span>
-            <h2 className="font-display mt-3 text-[26px] font-semibold text-[var(--text-primary)]">
+            <h2 className="font-[var(--font-nanum),serif] mt-3 text-[26px] font-semibold text-[var(--text-primary)]">
               {gallery.title}
             </h2>
             {gallery.description && (

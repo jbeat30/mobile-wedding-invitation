@@ -62,18 +62,6 @@
     --safe-left: env(safe-area-inset-left);
 }
 
-body {
-    background: var(--base-surface);
-    color: var(--base-text);
-    font-family: var(--font-gowun), serif;
-    min-height: 100%;
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-    position: relative;
-    overflow-x: hidden;
-    isolation: isolate;
-}
-
 body::before {
     content: '';
     position: fixed;
@@ -86,35 +74,10 @@ body::before {
     z-index: -1;
 }
 
-*,
-*::before,
-*::after {
-    box-sizing: border-box;
-}
-
-html,
-body {
-    height: 100%;
-}
-
-img,
-svg,
-video {
-    max-width: 100%;
-    height: auto;
-}
-
-/* 웹폰트 유틸리티 클래스 */
-.font-nanum {
-    font-family: var(--font-nanum), serif;
-}
-
-.font-gowun {
-    font-family: var(--font-gowun), serif;
-}
-
-.font-display {
-    font-family: var(--font-nanum), serif;
+@layer base {
+    svg {
+        @apply max-w-full h-auto;
+    }
 }
 
 @keyframes loading-reveal {
@@ -173,13 +136,5 @@ video {
         animation-iteration-count: 1 !important;
         transition-duration: 0.001ms !important;
         scroll-behavior: auto !important;
-    }
-}
-
-/* PC 레이아웃 최적화 (480px 초과) */
-@media (min-width: 481px) {
-    body {
-        background: radial-gradient(circle at top, #f4ede6 0%, #e7ded4 60%, #e2d7cc 100%);
-        min-height: 100vh;
     }
 }
