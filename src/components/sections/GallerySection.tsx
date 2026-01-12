@@ -1,89 +1,106 @@
 'use client';
 
-import { useState } from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination, Navigation } from 'swiper/modules';
+import { useMemo, useState } from 'react';
 import Image from 'next/image';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Pagination, Autoplay } from 'swiper/modules';
 import { invitationMock } from '@/mock/invitation.mock';
 import { ImageModal } from '@/components/ui/ImageModal';
-import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
-// Swiper 스타일 import
 import 'swiper/css';
 import 'swiper/css/pagination';
-import 'swiper/css/navigation';
 
 /**
- * 갤러리 섹션 - Swiper 슬라이더
+ * 갤러리 섹션 - 레퍼런스형 메인 슬라이더 + 썸네일 도트
  */
 export const GallerySection = () => {
   const { gallery } = invitationMock;
-  const { ref, isVisible } = useScrollAnimation({ threshold: 0.1 });
   const [modalImage, setModalImage] = useState<{ src: string; alt: string } | null>(null);
+
+  const thumbs = useMemo(
+    () =>
+      gallery.images.map((image) => {
+        const raw = image.thumbnail ?? image.src;
+        return raw.replace(/'/g, '%27');
+      }),
+    [gallery.images]
+  );
 
   return (
     <>
       <section
         id="gallery"
-        ref={ref}
-        className="bg-white py-16"
-        style={{
-          opacity: isVisible ? 1 : 0,
-          transform: isVisible ? 'translateY(0)' : 'translateY(30px)',
-          transition: 'opacity 0.8s ease-out, transform 0.8s ease-out',
-        }}
+        className="bg-[var(--bg-tertiary)] py-16"
       >
         <div className="mx-auto flex w-full max-w-[520px] flex-col gap-10 px-6">
-          {/* 섹션 헤더 */}
-          <div className="text-center">
-            <span className="text-[11px] tracking-[0.35em] text-[var(--muted)]">GALLERY</span>
-            <h2 className="font-gowun mt-3 text-[24px] font-semibold text-[var(--text-primary)]">
+          <div className="text-center" data-animate="fade-up">
+            <span className="text-[10px] tracking-[0.4em] text-[var(--muted)]">GALLERY</span>
+            <h2 className="font-display mt-3 text-[26px] font-semibold text-[var(--text-primary)]">
               {gallery.title}
             </h2>
             {gallery.description && (
-              <p className="mt-2 text-[14px] text-[var(--text-secondary)]">
+              <p className="mt-2 text-[13px] text-[var(--text-secondary)]">
                 {gallery.description}
               </p>
             )}
           </div>
 
-          {/* Swiper 슬라이더 */}
-          <div className="relative">
+          <div
+            className="rounded-[var(--radius-lg)] border border-white/70 bg-white/80 p-4 shadow-[var(--shadow-soft)] backdrop-blur"
+            data-animate="scale"
+          >
             <Swiper
-              modules={[Pagination, Navigation]}
-              spaceBetween={20}
+              modules={[Pagination, Autoplay]}
               slidesPerView={1}
-              pagination={{ clickable: true }}
-              navigation
               loop
-              className="gallery-swiper rounded-[var(--radius-lg)] overflow-hidden"
+              pagination={{
+                clickable: true,
+                el: '.gallery-thumb-pagination',
+                renderBullet: (index, className) => {
+                  const thumbUrl = thumbs[index] ?? '';
+                  return `<span class="gallery-thumb ${className}" style="background-image:url('${thumbUrl}')"></span>`;
+                },
+              }}
+              autoplay={
+                gallery.autoplay
+                  ? {
+                      delay: gallery.autoplayDelay ?? 3800,
+                      disableOnInteraction: false,
+                    }
+                  : false
+              }
+              className="gallery-swiper"
             >
               {gallery.images.map((image) => (
                 <SwiperSlide key={image.id}>
-                  <div
-                    className="relative aspect-[4/3] w-full cursor-pointer overflow-hidden bg-[var(--bg-secondary)]"
+                  <button
+                    type="button"
                     onClick={() => setModalImage({ src: image.src, alt: image.alt })}
+                    className="group relative h-[340px] w-full overflow-hidden rounded-[20px] bg-[var(--bg-secondary)]"
+                    aria-label={`${image.alt} 크게 보기`}
                   >
                     <Image
                       src={image.src}
                       alt={image.alt}
                       fill
-                      className="object-cover transition hover:scale-105"
+                      className="object-cover transition duration-700 group-hover:scale-105"
                       unoptimized
                     />
-                  </div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" />
+                  </button>
                 </SwiperSlide>
               ))}
             </Swiper>
+
+            <div className="gallery-thumb-pagination mt-5" />
           </div>
 
-          <p className="text-center text-[12px] text-[var(--muted)]">
-            이미지를 클릭하면 크게 볼 수 있습니다
+          <p className="text-center text-[12px] text-[var(--muted)]" data-animate="fade">
+            썸네일을 터치하면 해당 사진으로 이동합니다
           </p>
         </div>
       </section>
 
-      {/* 이미지 확대 모달 */}
       <ImageModal
         isOpen={modalImage !== null}
         onClose={() => setModalImage(null)}
@@ -92,24 +109,37 @@ export const GallerySection = () => {
       />
 
       <style jsx global>{`
-        .gallery-swiper .swiper-pagination-bullet {
-          background: var(--accent);
-          opacity: 0.5;
+        .gallery-swiper .swiper-slide {
+          padding-bottom: 6px;
         }
-        .gallery-swiper .swiper-pagination-bullet-active {
+        .gallery-thumb-pagination {
+          display: flex;
+          gap: 10px;
+          justify-content: center;
+          align-items: center;
+          flex-wrap: wrap;
+        }
+        .gallery-thumb {
+          width: 46px;
+          height: 46px;
+          border-radius: 12px;
+          background-size: cover;
+          background-position: center;
+          border: 1px solid rgba(255, 255, 255, 0.8);
+          box-shadow: 0 10px 22px rgba(41, 32, 26, 0.15);
+          opacity: 0.6;
+          transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        .gallery-thumb.swiper-pagination-bullet-active {
           opacity: 1;
+          transform: translateY(-2px);
+          border-color: rgba(255, 255, 255, 1);
         }
-        .gallery-swiper .swiper-button-prev,
-        .gallery-swiper .swiper-button-next {
-          color: var(--accent);
-          background: rgba(255, 255, 255, 0.9);
-          width: 40px;
-          height: 40px;
-          border-radius: 50%;
-        }
-        .gallery-swiper .swiper-button-prev:after,
-        .gallery-swiper .swiper-button-next:after {
-          font-size: 16px;
+        @media (max-width: 380px) {
+          .gallery-thumb {
+            width: 40px;
+            height: 40px;
+          }
         }
       `}</style>
     </>

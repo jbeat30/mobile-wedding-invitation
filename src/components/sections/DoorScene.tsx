@@ -52,6 +52,15 @@ export const DoorScene = ({
     if (!doorFrame || !leftDoor || !rightDoor || !content || !contentInner || !background) return;
 
     const getViewportHeight = () => window.visualViewport?.height ?? window.innerHeight;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReducedMotion) {
+      gsap.set(leftDoor, { rotateY: -90, transformOrigin: 'left center' });
+      gsap.set(rightDoor, { rotateY: 90, transformOrigin: 'right center' });
+      gsap.set(content, { opacity: 1 });
+      gsap.set(contentInner, { filter: 'blur(0px) brightness(1) contrast(1)' });
+      return;
+    }
 
     // 애니메이션 진행 거리 계산
     const getScrollDistance = () => {

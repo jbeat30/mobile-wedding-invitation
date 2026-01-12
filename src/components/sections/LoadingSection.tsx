@@ -1,102 +1,189 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
+import { ScrollIndicator } from '@/components/ui/ScrollIndicator';
+import { BgmToggle } from '@/components/sections/BgmToggle';
 
 type LoadingSectionProps = {
   message: string;
   isVisible: boolean;
+  isHintVisible: boolean;
 };
 
-/**
- * 로딩 섹션 - 벚꽃 스피너 애니메이션
- */
-export const LoadingSection = ({ message, isVisible }: LoadingSectionProps) => {
-  const [shouldRender, setShouldRender] = useState(isVisible);
-  const [fadeOut, setFadeOut] = useState(false);
+// 로딩 섹션 - 전체 화면 크기 유지, 로딩 완료 후 스크롤 인디케이터 표시
+export const LoadingSection = ({ message, isVisible, isHintVisible }: LoadingSectionProps) => {
+  const [showHint, setShowHint] = useState(false);
+  const scrollLockStyles = useRef<{
+    bodyOverflow: string;
+    htmlOverflow: string;
+    bodyTouchAction: string;
+    htmlTouchAction: string;
+    bodyHeight: string;
+    htmlHeight: string;
+  } | null>(null);
 
   useEffect(() => {
-    if (!isVisible && shouldRender) {
-      // 페이드아웃 시작
-      setFadeOut(true);
-      // 페이드아웃 완료 후 unmount
-      const timer = window.setTimeout(() => {
-        setShouldRender(false);
-      }, 500); // 애니메이션 duration과 동일
-
-      return () => {
-        window.clearTimeout(timer);
-      };
+    if (isHintVisible || !isVisible) {
+      setShowHint(true);
     }
-  }, [isVisible, shouldRender]);
+  }, [isHintVisible, isVisible]);
 
-  if (!shouldRender) {
-    return null;
-  }
+  // 스크롤 제어
+  useEffect(() => {
+    const html = document.documentElement;
+    const body = document.body;
+
+    if (isVisible) {
+      // 로딩 중에는 스크롤 막기
+      if (!scrollLockStyles.current) {
+        scrollLockStyles.current = {
+          bodyOverflow: body.style.overflow,
+          htmlOverflow: html.style.overflow,
+          bodyTouchAction: body.style.touchAction,
+          htmlTouchAction: html.style.touchAction,
+          bodyHeight: body.style.height,
+          htmlHeight: html.style.height,
+        };
+      }
+
+      body.style.overflow = 'hidden';
+      html.style.overflow = 'hidden';
+      body.style.touchAction = 'none';
+      html.style.touchAction = 'none';
+      body.style.height = '100%';
+      html.style.height = '100%';
+      window.scrollTo(0, 0);
+    } else {
+      // 로딩 완료 후 스크롤 허용
+      const previous = scrollLockStyles.current;
+      if (previous) {
+        body.style.overflow = previous.bodyOverflow;
+        html.style.overflow = previous.htmlOverflow;
+        body.style.touchAction = previous.bodyTouchAction;
+        html.style.touchAction = previous.htmlTouchAction;
+        body.style.height = previous.bodyHeight;
+        html.style.height = previous.htmlHeight;
+        scrollLockStyles.current = null;
+      } else {
+        body.style.overflow = '';
+        html.style.overflow = '';
+        body.style.touchAction = '';
+        html.style.touchAction = '';
+        body.style.height = '';
+        html.style.height = '';
+      }
+    }
+
+    return () => {
+      const previous = scrollLockStyles.current;
+      if (previous) {
+        body.style.overflow = previous.bodyOverflow;
+        html.style.overflow = previous.htmlOverflow;
+        body.style.touchAction = previous.bodyTouchAction;
+        html.style.touchAction = previous.htmlTouchAction;
+        body.style.height = previous.bodyHeight;
+        html.style.height = previous.htmlHeight;
+        scrollLockStyles.current = null;
+      } else {
+        body.style.overflow = '';
+        html.style.overflow = '';
+        body.style.touchAction = '';
+        html.style.touchAction = '';
+        body.style.height = '';
+        html.style.height = '';
+      }
+    };
+  }, [isVisible]);
 
   return (
-    <div
+    <section
       data-testid="loading-section"
-      className={`fixed inset-0 z-50 flex flex-col items-center justify-center transition-opacity duration-500 ${
-        fadeOut ? 'opacity-0' : 'opacity-100'
-      }`}
+      className="relative h-svh w-full flex flex-col items-center justify-center"
       style={{
-        background: 'linear-gradient(135deg, #FAF9F7 0%, #f5f3f2 100%)',
+        background: 'linear-gradient(135deg, #f7f2ec 0%, #efe3d7 100%)',
       }}
     >
-      {/* 벚꽃 스피너 */}
-      <div className="relative mb-8 h-24 w-24">
-        {[...Array(5)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute left-1/2 top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 animate-cherry-spin rounded-full"
-            style={{
-              background: 'radial-gradient(circle, rgba(255,235,240,0.9), rgba(255,175,195,0.8))',
-              animationDelay: `${i * 0.2}s`,
-              transform: `rotate(${i * 72}deg) translateY(-36px)`,
-            }}
+      <div className="relative flex h-full w-full items-center justify-center">
+        <div className="absolute inset-0 overflow-hidden">
+          <Image
+            src="/mock/main-image.png"
+            alt=""
+            fill
+            priority
+            className="absolute inset-0 h-full w-full object-cover opacity-85 saturate-[0.95] will-change-[transform,opacity] animate-[loading-reveal_1.1s_ease-out_both] z-[1]"
+            sizes="100vw"
           />
-        ))}
+          <div className="absolute inset-0 z-[3] bg-[linear-gradient(180deg,rgba(0,0,0,0.25)_0%,rgba(20,14,10,0.55)_70%)]" />
+          <div className="absolute inset-0 z-[4] bg-[radial-gradient(60%_40%_at_50%_30%,rgba(255,255,255,0.4),transparent_70%)] opacity-70 mix-blend-screen" />
+        </div>
+
+        <div
+          className="pointer-events-none absolute left-1/2 top-[22%] z-[6] flex h-[22%] w-[90%] -translate-x-1/2 -translate-y-1/2 items-center justify-center"
+          aria-hidden="true"
+        >
+          <svg viewBox="0 0 600 180" width="100%" height="100%" className="block h-full w-full">
+            <path
+              className="fill-none stroke-white/95 stroke-[3.6] drop-shadow-[0_0_6px_rgba(255,255,255,0.35)] animate-[loading-write_2.8s_ease-out_0s_1_forwards]"
+              d="M40 110 C90 60, 160 60, 210 105 C245 138, 290 140, 330 110 C370 80, 420 70, 470 92 C515 112, 545 132, 560 150"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeDasharray={1000}
+              strokeDashoffset={1000}
+            />
+          </svg>
+        </div>
+        {/* 로딩 텍스트 */}
+        <div className="relative z-[5] max-w-[min(360px,72vw)] px-6 text-center font-gowun text-white animate-[loading-fade_1s_ease-out_both]">
+          <p className="text-[10px] font-bold uppercase tracking-[0.6em] opacity-90">
+            WEDDING INVITATION
+          </p>
+          <p className="font-display mt-3.5 text-[28px] font-semibold tracking-[0.12em]">
+            {message}
+          </p>
+          {/*<div className="loading-divider" />*/}
+        </div>
+
+        <div
+          className="pointer-events-none absolute left-1/2 top-[76%] z-[6] flex h-[22%] w-[90%] -translate-x-1/2 -translate-y-1/2 items-center justify-center"
+          aria-hidden="true"
+        >
+          <svg viewBox="0 0 600 180" width="100%" height="100%" className="block h-full w-full">
+            <path
+              className="fill-none stroke-white/95 stroke-[3.6] drop-shadow-[0_0_6px_rgba(255,255,255,0.35)] animate-[loading-write-bottom_2.2s_ease-out_0.6s_1_forwards] opacity-90"
+              d="M132 24 C158 14, 188 28, 216 52 C234 72, 248 86, 266 98 C278 110, 296 114, 314 108 C332 98, 352 84, 374 68 C398 54, 422 44, 446 38 C462 32, 474 28, 484 14"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeDasharray={550}
+              strokeDashoffset={550}
+            />
+          </svg>
+        </div>
+
+        {/* BGM 토글 */}
+        <div
+          className={`absolute right-8 top-8 z-[70] transition duration-500 ease-out ${
+            showHint
+              ? 'translate-y-0 opacity-100 pointer-events-auto'
+              : 'translate-y-2.5 opacity-0 pointer-events-none'
+          }`}
+        >
+          <BgmToggle />
+        </div>
+
+        {/* 스크롤 인디케이터 */}
+        <div
+          className={`absolute bottom-12 left-0 right-0 z-[70] flex justify-center transition duration-500 ease-out ${
+            showHint
+              ? 'translate-y-0 opacity-100 pointer-events-auto'
+              : 'translate-y-2.5 opacity-0 pointer-events-none'
+          }`}
+        >
+          <div className="[&_p]:!text-white [&_p]:!opacity-100 [&_div>div]:!bg-white [&_div>div]:drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]">
+            <ScrollIndicator />
+          </div>
+        </div>
       </div>
-
-      {/* 메시지 */}
-      <p
-        className="animate-fade-in text-center text-[18px] font-medium tracking-[0.3em]"
-        style={{
-          color: 'var(--text-secondary)',
-        }}
-      >
-        {message}
-      </p>
-
-      <style jsx>{`
-        @keyframes cherry-spin {
-          0%, 100% {
-            opacity: 0.4;
-            transform: rotate(var(--rotation)) translateY(-36px) scale(0.8);
-          }
-          50% {
-            opacity: 1;
-            transform: rotate(var(--rotation)) translateY(-36px) scale(1.2);
-          }
-        }
-
-        @keyframes fade-in {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-
-        .animate-cherry-spin {
-          animation: cherry-spin 2s ease-in-out infinite;
-        }
-
-        .animate-fade-in {
-          animation: fade-in 1s ease-in-out;
-        }
-      `}</style>
-    </div>
+    </section>
   );
 };

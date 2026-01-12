@@ -54,7 +54,7 @@ export const ImageModal = ({ isOpen, onClose, imageSrc, imageAlt }: ImageModalPr
     >
       <button
         type="button"
-        className="absolute right-4 top-4 z-50 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-[20px] font-bold text-[var(--text-primary)] transition hover:bg-white"
+        className="absolute right-4 top-4 z-50 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-[20px] font-bold text-[var(--text-primary)] shadow-[0_12px_24px_rgba(0,0,0,0.2)] transition hover:bg-white"
         onClick={onClose}
         aria-label="닫기"
       >

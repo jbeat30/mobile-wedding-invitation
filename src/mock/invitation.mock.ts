@@ -5,17 +5,9 @@ export type InvitationIntroTheme = {
   accentColor: string;
 };
 
-export type InvitationIntroDoor = {
-  leftImage: string;
-  rightImage: string;
-  frameImage: string;
-  heroImage: string;
-};
-
 export type InvitationIntro = {
   quote: string;
   subQuote?: string;
-  door: InvitationIntroDoor;
   theme: InvitationIntroTheme;
 };
 
@@ -66,6 +58,9 @@ export type InvitationGuestbook = {
   privacyNotice: string;
   retentionText: string;
   mockEntries: GuestbookEntry[];
+  displayMode: 'recent' | 'paginated';
+  pageSize: number;
+  recentNotice: string;
 };
 
 export type InvitationRsvpField = {
@@ -106,8 +101,8 @@ export type InvitationAccounts = {
 export type InvitationLoading = {
   enabled: boolean;
   message: string;
-  minDuration: number; // ms
-  maxDuration: number; // ms
+  minDuration: number; // 최소 로딩 시간 (ms)
+  additionalDuration: number; // 페이지 로딩 완료 후 추가 대기 시간 (ms)
 };
 
 export type GalleryImage = {
@@ -156,24 +151,24 @@ export const invitationMock: InvitationMock = {
   weddingDateTime: '2026-05-16T15:00:00+09:00',
   loading: {
     enabled: true,
-    message: '초대합니다',
-    minDuration: 800,
-    maxDuration: 3000,
+    message: 'We are getting married',
+    minDuration: 1500,
+    additionalDuration: 1000,
   },
   couple: {
     groom: {
       fullName: '강신랑',
-      displayName: '신랑 이름',
-      bio: '따뜻한 마음으로 새로운 여정을 준비합니다.',
-      profileImage: 'https://placehold.co/400x400/F2F0ED/7a7169?text=Groom',
-      role: 'Groom',
+      displayName: '강신랑',
+      bio: '조용한 다정함으로 하루를 따뜻하게 만드는 사람입니다.',
+      profileImage: '/mock/groom-front-512.png',
+      role: '신랑',
     },
     bride: {
       fullName: '장신부',
-      displayName: '신부 이름',
-      bio: '소중한 하루를 함께 나누고 싶습니다.',
-      profileImage: 'https://placehold.co/400x400/F2F0ED/7a7169?text=Bride',
-      role: 'Bride',
+      displayName: '장신부',
+      bio: '웃음을 나누는 순간이 가장 소중한 사람입니다.',
+      profileImage: '/mock/bride-front-512.png',
+      role: '신부',
     },
     familyLines: [
       {
@@ -195,84 +190,77 @@ export const invitationMock: InvitationMock = {
         relationshipLabel: '딸',
         members: [
           {
-            role: 'mother',
-            name: '장어머니',
-            prefix: '故',
+            role: 'father',
+            name: '장아버지',
           },
           {
-            role: 'guardian',
-            name: '최보호자',
-            suffix: '외가',
+            role: 'mother',
+            name: '이어머니',
           },
         ],
       },
     ],
   },
   intro: {
-    quote: '우리의 새로운 문이 열리는 날',
-    subQuote: '소중한 분들과 함께 하고 싶습니다.',
-    door: {
-      leftImage: '/mock/pngtree-white-romantic-wedding-door-close.png',
-      rightImage: '/mock/pngtree-white-romantic-wedding-door-close.png',
-      frameImage: '/mock/door-frame.svg',
-      heroImage: '/mock/hero-placeholder.svg',
-    },
+    quote: '서로의 오늘이 되어, 함께 걸어가려 합니다.',
+    subQuote: '소중한 분들을 모시고 작은 약속을 나누고자 합니다.',
     theme: {
-      darkBackground: '#0f0f0f',
-      lightBackground: '#f7f2ea',
-      textColor: '#f5f0e6',
-      accentColor: '#cbb899',
+      darkBackground: '#2f2722',
+      lightBackground: '#f7f2ec',
+      textColor: '#4d4036',
+      accentColor: '#c19a7b',
     },
   },
   info: {
-    title: '우리 결혼해요',
+    title: '결혼합니다',
     venue: '채림 웨딩홀',
     dateText: '2026년 5월 16일 (토) 오후 3시',
     address: '경기도 부천시 원미구 심곡동 173-1',
     directions: [
-      '지하철 1호선 부천역(북부역광장 방면) - 지상 3번, 4번, 지하 7번출구 이용',
+      '지하철 1호선 부천역(북부역광장 방면) - 지상 3번, 4번, 지하 7번 출구 이용',
+      '버스 5, 12, 23번 부천역 하차 후 도보 7분',
       '주차: 로얄쇼핑주차장 (채림웨딩홀 전용주차장) 약 3시간 무료',
     ],
     notices: [
-      '예식 후 식사가 준비되어 있습니다.',
-      '혼잡이 예상되오니 대중교통 이용을 권장드립니다.',
+      '예식 후 간단한 식사가 준비되어 있습니다.',
+      '주말 교통 혼잡이 예상되오니 여유 있게 출발해주세요.',
     ],
   },
   gallery: {
-    title: '우리의 추억',
-    description: '함께한 소중한 순간들',
+    title: '우리의 갤러리',
+    description: '함께한 시간을 담은 작은 기록',
     images: [
       {
         id: 'gallery-1',
-        src: 'https://placehold.co/800x600/FAF9F7/cbb899?text=Gallery+1',
+        src: 'https://placehold.co/900x700/F6EFE7/c19a7b?text=Gallery+1',
         alt: '웨딩 사진 1',
         width: 800,
         height: 600,
       },
       {
         id: 'gallery-2',
-        src: 'https://placehold.co/800x600/f5f3f2/cbb899?text=Gallery+2',
+        src: 'https://placehold.co/900x700/F1E7DC/c19a7b?text=Gallery+2',
         alt: '웨딩 사진 2',
         width: 800,
         height: 600,
       },
       {
         id: 'gallery-3',
-        src: 'https://placehold.co/800x600/f6f1ea/cbb899?text=Gallery+3',
+        src: 'https://placehold.co/900x700/F8F4EE/c19a7b?text=Gallery+3',
         alt: '웨딩 사진 3',
         width: 800,
         height: 600,
       },
       {
         id: 'gallery-4',
-        src: 'https://placehold.co/800x600/FAF9F7/cbb899?text=Gallery+4',
+        src: 'https://placehold.co/900x700/EDE3D8/c19a7b?text=Gallery+4',
         alt: '웨딩 사진 4',
         width: 800,
         height: 600,
       },
       {
         id: 'gallery-5',
-        src: 'https://placehold.co/800x600/f5f3f2/cbb899?text=Gallery+5',
+        src: 'https://placehold.co/900x700/F5ECE2/c19a7b?text=Gallery+5',
         alt: '웨딩 사진 5',
         width: 800,
         height: 600,
@@ -281,19 +269,19 @@ export const invitationMock: InvitationMock = {
     autoplay: false,
   },
   share: {
-    title: '강신랑 ♥ 장신부 결혼합니다',
-    description: '2026년 5월 16일 오후 3시 | 채림 웨딩홀',
-    imageUrl: 'https://placehold.co/1200x630/FAF9F7/cbb899?text=Wedding+Invitation',
+    title: '강신랑 · 장신부 결혼식에 초대합니다',
+    description: '2026년 05월 16일 오후 3시 00분 | 채림 웨딩홀',
+    imageUrl: 'https://placehold.co/1200x630/F6EFE7/c19a7b?text=Wedding+Invitation',
     kakaoTemplate: {
-      title: '💒 결혼식에 초대합니다',
-      description: '강신랑 ♥ 장신부\n2026년 5월 16일 오후 3시\n채림 웨딩홀',
-      imageUrl: 'https://placehold.co/800x400/FAF9F7/cbb899?text=Wedding',
+      title: '결혼식에 초대합니다',
+      description: '강신랑 · 장신부\n2026년 05월 16일 오후 3시 00분\n채림 웨딩홀',
+      imageUrl: 'https://placehold.co/800x400/F6EFE7/c19a7b?text=Wedding',
       buttonLabel: '청첩장 보기',
     },
   },
   rsvp: {
     enabled: true,
-    deadline: '2026-05-02T18:00:00+09:00',
+    deadline: '2026-04-16T15:00:00+09:00',
     fields: [
       {
         key: 'attendance',
@@ -322,8 +310,11 @@ export const invitationMock: InvitationMock = {
     },
   },
   guestbook: {
-    privacyNotice: '보유기록: 행사 이후 최대 12개월 보관 후 삭제됩니다.',
-    retentionText: '축하 메시지는 예식 당일 현장에서 함께 공유됩니다.',
+    privacyNotice: '보유기록: 예식 이후 최대 12개월 보관 후 삭제됩니다.',
+    retentionText: '축하 메시지는 예식 당일 함께 공유됩니다.',
+    displayMode: 'recent',
+    pageSize: 5,
+    recentNotice: '최근 5개의 메시지만 먼저 보여드려요.',
     mockEntries: [
       {
         id: 'guest-1',
@@ -341,19 +332,19 @@ export const invitationMock: InvitationMock = {
   },
   accounts: {
     title: '마음 전하실 곳',
-    description: '축하의 마음을 전해주실 분들을 위한 계좌 안내입니다.',
+    description: '축하의 마음만 전해주셔도 감사한 하루입니다.',
     groom: [
       {
         bankName: '국민은행',
         accountNumber: '123-456-789012',
-        holder: '신랑',
+        holder: '강신랑',
       },
     ],
     bride: [
       {
         bankName: '신한은행',
         accountNumber: '110-234-567890',
-        holder: '신부',
+        holder: '장신부',
       },
     ],
   },
