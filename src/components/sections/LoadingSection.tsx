@@ -79,6 +79,15 @@ export const LoadingSection = ({ message, isVisible }: LoadingSectionProps) => {
           <div className="loading-divider" />
         </div>
 
+        <div className="loading-handwrite loading-handwrite--bottom" aria-hidden="true">
+          <svg viewBox="0 0 600 180" width="100%" height="100%">
+            <path
+              className="loading-handwrite-path--bottom"
+              d="M60 30 C120 60, 180 80, 240 95 C280 105, 320 105, 360 95 C420 80, 480 60, 540 30"
+            />
+          </svg>
+        </div>
+
         {/* 스크롤 인디케이터 */}
         {showScrollHint && (
           <div className="absolute bottom-12 left-0 right-0 flex justify-center z-10">

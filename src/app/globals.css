@@ -320,9 +320,14 @@ video {
 }
 
 .loading-handwrite-path--bottom {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.95);
+  stroke-linecap: round;
+  stroke-linejoin: round;
   stroke-dasharray: 700;
   stroke-dashoffset: 700;
-  animation: loading-write 2.2s ease-out 0.6s 1 forwards;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.35));
+  animation: loading-write-bottom 2.2s ease-out 0.6s 1 forwards;
   stroke-width: 3;
   opacity: 0.9;
 }
@@ -338,6 +343,20 @@ video {
   100% {
     stroke-dashoffset: 0;
     opacity: 1;
+  }
+}
+
+@keyframes loading-write-bottom {
+  0% {
+    stroke-dashoffset: 700;
+    opacity: 0.2;
+  }
+  40% {
+    opacity: 0.9;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0.9;
   }
 }
 
