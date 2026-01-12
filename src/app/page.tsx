@@ -19,7 +19,7 @@ export default function Page() {
   const { loading } = invitationMock;
   const { isLoading } = useLoadingState({
     minDuration: loading.minDuration,
-    maxDuration: loading.maxDuration,
+    additionalDuration: loading.additionalDuration,
   });
 
   return (

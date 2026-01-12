@@ -101,8 +101,8 @@ export type InvitationAccounts = {
 export type InvitationLoading = {
   enabled: boolean;
   message: string;
-  minDuration: number; // ms
-  maxDuration: number; // ms
+  minDuration: number; // 최소 로딩 시간 (ms)
+  additionalDuration: number; // 페이지 로딩 완료 후 추가 대기 시간 (ms)
 };
 
 export type GalleryImage = {
@@ -152,8 +152,8 @@ export const invitationMock: InvitationMock = {
   loading: {
     enabled: true,
     message: 'We are getting married',
-    minDuration: 4200,
-    maxDuration: 9000,
+    minDuration: 3000,
+    additionalDuration: 1000,
   },
   couple: {
     groom: {

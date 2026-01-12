@@ -73,7 +73,7 @@ export const LoadingSection = ({ message, isVisible }: LoadingSectionProps) => {
             />
           </svg>
         </div>
-
+        {/* 로딩 텍스트 */}
         <div className="loading-copy">
           <p className="loading-eyebrow">WEDDING INVITATION</p>
           <p className="loading-title font-display">{message}</p>

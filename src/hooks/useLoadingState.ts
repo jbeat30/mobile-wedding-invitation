@@ -3,48 +3,37 @@
 import { useEffect, useState } from 'react';
 
 type UseLoadingStateProps = {
-  minDuration: number; // ms
-  maxDuration: number; // ms
+  minDuration: number; // 최소 로딩 시간 (ms)
+  additionalDuration: number; // 페이지 로딩 완료 후 추가 대기 시간 (ms)
 };
 
 /**
  * 로딩 상태 관리 훅
- * - 최소 표시 시간 보장
- * - 최대 표시 시간 제한
- * - 리소스 로딩 감지
+ * - 페이지 로딩 시간 측정
+ * - 최소 로딩 시간 보장
+ * - 로딩 완료 후 추가 대기 시간 적용
  */
-export const useLoadingState = ({ minDuration, maxDuration }: UseLoadingStateProps) => {
+export const useLoadingState = ({ minDuration, additionalDuration }: UseLoadingStateProps) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const startTime = Date.now();
-    let minTimerCompleted = false;
-    let resourcesLoaded = false;
 
-    // 최소 표시 시간 타이머
-    const minTimer = window.setTimeout(() => {
-      minTimerCompleted = true;
-      if (resourcesLoaded) {
-        setIsLoading(false);
-      }
-    }, minDuration);
-
-    // 최대 표시 시간 타이머 (안전장치)
-    const maxTimer = window.setTimeout(() => {
-      setIsLoading(false);
-    }, maxDuration);
-
-    // 리소스 로딩 감지
     const handleLoad = () => {
-      resourcesLoaded = true;
-      const elapsed = Date.now() - startTime;
+      const loadTime = Date.now() - startTime;
 
-      if (minTimerCompleted || elapsed >= minDuration) {
+      // 최소 시간 미만이면 최소 시간까지 대기
+      const waitTime = Math.max(0, minDuration - loadTime);
+
+      // 최소 시간 대기 + 추가 대기 시간
+      const totalWaitTime = waitTime + additionalDuration;
+
+      window.setTimeout(() => {
         setIsLoading(false);
-      }
+      }, totalWaitTime);
     };
 
-    // DOMContentLoaded 이미 완료되었는지 확인
+    // 페이지 로드 완료 감지
     if (document.readyState === 'complete') {
       handleLoad();
     } else {
@@ -52,11 +41,9 @@ export const useLoadingState = ({ minDuration, maxDuration }: UseLoadingStatePro
     }
 
     return () => {
-      window.clearTimeout(minTimer);
-      window.clearTimeout(maxTimer);
       window.removeEventListener('load', handleLoad);
     };
-  }, [minDuration, maxDuration]);
+  }, [minDuration, additionalDuration]);
 
   return { isLoading };
 };
