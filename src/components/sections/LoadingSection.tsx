@@ -144,15 +144,21 @@ export const LoadingSection = ({ message, isVisible, isHintVisible }: LoadingSec
 
         {/* BGM 토글 */}
         <div
-          className={`loading-hint loading-hint--top${showHint ? ' loading-hint--visible' : ''}`}
+          className={`absolute right-8 top-8 z-[70] transition duration-500 ease-out ${
+            showHint
+              ? 'translate-y-0 opacity-100 pointer-events-auto'
+              : 'translate-y-2.5 opacity-0 pointer-events-none'
+          }`}
         >
           <BgmToggle />
         </div>
 
         {/* 스크롤 인디케이터 */}
         <div
-          className={`loading-hint loading-hint--bottom${
-            showHint ? ' loading-hint--visible' : ''
+          className={`absolute bottom-12 left-0 right-0 z-[70] flex justify-center transition duration-500 ease-out ${
+            showHint
+              ? 'translate-y-0 opacity-100 pointer-events-auto'
+              : 'translate-y-2.5 opacity-0 pointer-events-none'
           }`}
         >
           <div className="[&_p]:!text-white [&_p]:!opacity-100 [&_div>div]:!bg-white [&_div>div]:drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]">
