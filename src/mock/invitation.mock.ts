@@ -151,7 +151,7 @@ export const invitationMock: InvitationMock = {
   weddingDateTime: '2026-05-16T15:00:00+09:00',
   loading: {
     enabled: true,
-    message: '결혼합니다',
+    message: 'We are getting married',
     minDuration: 4200,
     maxDuration: 9000,
   },

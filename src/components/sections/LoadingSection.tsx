@@ -9,27 +9,26 @@ type LoadingSectionProps = {
 };
 
 /**
- * 로딩 섹션 - 벚꽃 스피너 애니메이션
+ * 로딩 섹션
  */
 export const LoadingSection = ({ message, isVisible }: LoadingSectionProps) => {
   const [shouldRender, setShouldRender] = useState(isVisible);
   const [fadeOut, setFadeOut] = useState(false);
-  const { couple, info } = invitationMock;
 
-  useEffect(() => {
-    if (!isVisible && shouldRender) {
-      // 페이드아웃 시작
-      setFadeOut(true);
-      // 페이드아웃 완료 후 unmount
-      const timer = window.setTimeout(() => {
-        setShouldRender(false);
-      }, 500); // 애니메이션 duration과 동일
-
-      return () => {
-        window.clearTimeout(timer);
-      };
-    }
-  }, [isVisible, shouldRender]);
+  // useEffect(() => {
+  //   if (!isVisible && shouldRender) {
+  //     // 페이드아웃 시작
+  //     setFadeOut(true);
+  //     // 페이드아웃 완료 후 unmount
+  //     const timer = window.setTimeout(() => {
+  //       setShouldRender(false);
+  //     }, 500); // 애니메이션 duration과 동일
+  //
+  //     return () => {
+  //       window.clearTimeout(timer);
+  //     };
+  //   }
+  // }, [isVisible, shouldRender]);
 
   if (!shouldRender) {
     return null;
@@ -50,7 +49,7 @@ export const LoadingSection = ({ message, isVisible }: LoadingSectionProps) => {
       <div className="loading-splash">
         <div className="loading-bg">
           <img
-            src="https://placehold.co/1500x2400/efe4da/9a7f6a?text=Opening+Layer+01"
+            src="/mock/main-image.png"
             alt=""
             className="loading-bg-image loading-bg-image--back"
           />
@@ -70,12 +69,9 @@ export const LoadingSection = ({ message, isVisible }: LoadingSectionProps) => {
         <div className="loading-copy">
           <p className="loading-eyebrow">WEDDING INVITATION</p>
           <p className="loading-title font-display">
-            {couple.groom.fullName} · {couple.bride.fullName}
+            {message}
           </p>
-          <p className="loading-subtitle">{message}</p>
           <div className="loading-divider" />
-          <p className="loading-sub">{info.dateText}</p>
-          <p className="loading-sub">{info.venue}</p>
         </div>
       </div>
     </div>
