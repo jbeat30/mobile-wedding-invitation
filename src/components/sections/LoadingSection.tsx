@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { invitationMock } from '@/mock/invitation.mock';
 
 type LoadingSectionProps = {
   message: string;
@@ -57,7 +56,7 @@ export const LoadingSection = ({ message, isVisible }: LoadingSectionProps) => {
           <div className="loading-overlay-soft" />
         </div>
 
-        <div className="loading-handwrite" aria-hidden="true">
+        <div className="loading-handwrite loading-handwrite--top" aria-hidden="true">
           <svg viewBox="0 0 600 180" width="100%" height="100%">
             <path
               className="loading-handwrite-path"
@@ -73,6 +72,7 @@ export const LoadingSection = ({ message, isVisible }: LoadingSectionProps) => {
           </p>
           <div className="loading-divider" />
         </div>
+
       </div>
     </div>
   );
