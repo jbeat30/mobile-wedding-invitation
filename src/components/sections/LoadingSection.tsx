@@ -111,7 +111,7 @@ export const LoadingSection = ({ message, isVisible, isHintVisible }: LoadingSec
             alt=""
             fill
             priority
-            className="absolute inset-0 h-full w-full object-cover opacity-85 saturate-[0.95] will-change-[transform,opacity] animate-[loading-reveal_1.1s_ease-out_both] z-[1]"
+            className="absolute inset-0 h-full w-full object-cover object-bottom opacity-85 saturate-[0.95] will-change-[transform,opacity] animate-[loading-reveal_1.1s_ease-out_both] z-[1]"
             sizes="100vw"
           />
           <div className="absolute inset-0 z-[3] bg-[linear-gradient(180deg,rgba(0,0,0,0.25)_0%,rgba(20,14,10,0.55)_70%)]" />
