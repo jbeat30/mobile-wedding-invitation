@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { ScrollIndicator } from '@/components/ui/ScrollIndicator';
 import { BgmToggle } from '@/components/sections/BgmToggle';
+import { CherryBlossomCanvas } from '@/components/sections/CherryBlossomCanvas';
 
 type LoadingSectionProps = {
   message: string;
@@ -110,6 +111,9 @@ export const LoadingSection = ({ message, isVisible }: LoadingSectionProps) => {
         background: 'linear-gradient(135deg, #f7f2ec 0%, #efe3d7 100%)',
       }}
     >
+      {/* 벚꽃 레이어 - 로딩 콘텐츠 위에 표시 */}
+      <CherryBlossomCanvas density={38000} zIndex={40} opacity={0.65} minPetalCount={12} />
+      <CherryBlossomCanvas density={52000} zIndex={50} opacity={0.5} minPetalCount={8} />
       <div className="loading-splash">
         <div className="loading-bg">
           <Image
