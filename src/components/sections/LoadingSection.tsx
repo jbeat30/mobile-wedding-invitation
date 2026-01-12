@@ -8,11 +8,12 @@ import { BgmToggle } from '@/components/sections/BgmToggle';
 type LoadingSectionProps = {
   message: string;
   isVisible: boolean;
+  isHintVisible: boolean;
 };
 
 // 로딩 섹션 - 전체 화면 크기 유지, 로딩 완료 후 스크롤 인디케이터 표시
-export const LoadingSection = ({ message, isVisible }: LoadingSectionProps) => {
-  const [showScrollHint, setShowScrollHint] = useState(false);
+export const LoadingSection = ({ message, isVisible, isHintVisible }: LoadingSectionProps) => {
+  const [showHint, setShowHint] = useState(false);
   const scrollLockStyles = useRef<{
     bodyOverflow: string;
     htmlOverflow: string;
@@ -22,18 +23,11 @@ export const LoadingSection = ({ message, isVisible }: LoadingSectionProps) => {
     htmlHeight: string;
   } | null>(null);
 
-  // 로딩 완료 시 스크롤 인디케이터 표시
   useEffect(() => {
-    if (!isVisible) {
-      const timer = window.setTimeout(() => {
-        setShowScrollHint(true);
-      }, 300);
-
-      return () => {
-        window.clearTimeout(timer);
-      };
+    if (isHintVisible || !isVisible) {
+      setShowHint(true);
     }
-  }, [isVisible]);
+  }, [isHintVisible, isVisible]);
 
   // 스크롤 제어
   useEffect(() => {
@@ -149,20 +143,22 @@ export const LoadingSection = ({ message, isVisible }: LoadingSectionProps) => {
         </div>
 
         {/* BGM 토글 */}
-        {showScrollHint && (
-          <div className="absolute top-8 right-8 z-10">
-            <BgmToggle />
-          </div>
-        )}
+        <div
+          className={`loading-hint loading-hint--top${showHint ? ' loading-hint--visible' : ''}`}
+        >
+          <BgmToggle />
+        </div>
 
         {/* 스크롤 인디케이터 */}
-        {showScrollHint && (
-          <div className="absolute bottom-12 left-0 right-0 flex justify-center z-10">
-            <div className="[&_p]:!text-white [&_p]:!opacity-100 [&_div>div]:!bg-white [&_div>div]:drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]">
-              <ScrollIndicator />
-            </div>
+        <div
+          className={`loading-hint loading-hint--bottom${
+            showHint ? ' loading-hint--visible' : ''
+          }`}
+        >
+          <div className="[&_p]:!text-white [&_p]:!opacity-100 [&_div>div]:!bg-white [&_div>div]:drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]">
+            <ScrollIndicator />
           </div>
-        )}
+        </div>
       </div>
     </section>
   );

@@ -49,13 +49,13 @@ const AccountsSection = dynamic(
  */
 export default function Page() {
   const { loading } = invitationMock;
-  const { isLoading } = useLoadingState({
+  const { isLoading, isHintVisible } = useLoadingState({
     minDuration: loading.minDuration,
     additionalDuration: loading.additionalDuration,
   });
   const showLoading = loading.enabled;
   const showContent = !loading.enabled || !isLoading;
-  const contentRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (!loading.enabled || !isLoading) {
@@ -186,7 +186,13 @@ export default function Page() {
         <div className="relative">
           <CherryBlossomCanvas density={35000} zIndex={40} opacity={0.7} minPetalCount={15} />
           <CherryBlossomCanvas density={50000} zIndex={50} opacity={0.5} minPetalCount={8} />
-          {showLoading && <LoadingSection message={loading.message} isVisible={isLoading} />}
+          {showLoading && (
+            <LoadingSection
+              message={loading.message}
+              isVisible={isLoading}
+              isHintVisible={isHintVisible}
+            />
+          )}
           {showContent && <IntroSection />}
         </div>
         {showContent && (

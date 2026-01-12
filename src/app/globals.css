@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@source '../**/*.{js,jsx,ts,tsx,mdx}';
 
 :root {
     /* 레거시 변수 (하위 호환성) */
@@ -276,6 +277,36 @@ video {
     text-transform: uppercase;
     opacity: 0.75;
     animation: none;
+}
+
+.loading-hint {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    pointer-events: none;
+}
+
+.loading-hint--top {
+    position: absolute;
+    top: 1em;
+    right: 1em;
+    z-index: 70;
+}
+
+.loading-hint--bottom {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 3em;
+    display: flex;
+    justify-content: center;
+    z-index: 70;
+}
+
+.loading-hint--visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
 }
 
 .loading-handwrite {

@@ -15,9 +15,12 @@ type UseLoadingStateProps = {
  */
 export const useLoadingState = ({ minDuration, additionalDuration }: UseLoadingStateProps) => {
   const [isLoading, setIsLoading] = useState(true);
+  const [isHintVisible, setIsHintVisible] = useState(false);
 
   useEffect(() => {
     const startTime = Date.now();
+    let hintTimer: number | undefined;
+    let loadingTimer: number | undefined;
 
     const handleLoad = () => {
       const loadTime = Date.now() - startTime;
@@ -27,8 +30,13 @@ export const useLoadingState = ({ minDuration, additionalDuration }: UseLoadingS
 
       // 최소 시간 대기 + 추가 대기 시간
       const totalWaitTime = waitTime + additionalDuration;
+      const hintLeadTime = Math.max(0, totalWaitTime - 100);
 
-      window.setTimeout(() => {
+      hintTimer = window.setTimeout(() => {
+        setIsHintVisible(true);
+      }, hintLeadTime);
+
+      loadingTimer = window.setTimeout(() => {
         setIsLoading(false);
       }, totalWaitTime);
     };
@@ -42,8 +50,14 @@ export const useLoadingState = ({ minDuration, additionalDuration }: UseLoadingS
 
     return () => {
       window.removeEventListener('load', handleLoad);
+      if (hintTimer) {
+        window.clearTimeout(hintTimer);
+      }
+      if (loadingTimer) {
+        window.clearTimeout(loadingTimer);
+      }
     };
   }, [minDuration, additionalDuration]);
 
-  return { isLoading };
+  return { isLoading, isHintVisible };
 };
