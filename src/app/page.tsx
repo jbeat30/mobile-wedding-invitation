@@ -25,7 +25,7 @@ export default function Page() {
   return (
     <>
       {loading.enabled && <LoadingSection message={loading.message} isVisible={isLoading} />}
-      <div className="min-h-svh bg-[var(--base-surface)] text-[var(--base-text)]">
+      <div className="min-h-svh bg-[var(--bg-primary)] text-[var(--base-text)]">
         <main className="mobile-container min-h-svh">
           <IntroSection />
           <CoupleSection />

@@ -40,8 +40,10 @@ export const LoadingSection = ({ message, isVisible }: LoadingSectionProps) => {
         fadeOut ? 'opacity-0' : 'opacity-100'
       }`}
       style={{
-        background: 'linear-gradient(135deg, #FAF9F7 0%, #f5f3f2 100%)',
+        background: 'linear-gradient(135deg, #f8f4ef 0%, #efe5db 100%)',
       }}
+      role="status"
+      aria-live="polite"
     >
       {/* 벚꽃 스피너 */}
       <div className="relative mb-8 h-24 w-24">
@@ -50,7 +52,7 @@ export const LoadingSection = ({ message, isVisible }: LoadingSectionProps) => {
             key={i}
             className="absolute left-1/2 top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 animate-cherry-spin rounded-full"
             style={{
-              background: 'radial-gradient(circle, rgba(255,235,240,0.9), rgba(255,175,195,0.8))',
+              background: 'radial-gradient(circle, rgba(255,228,236,0.9), rgba(236,180,192,0.8))',
               animationDelay: `${i * 0.2}s`,
               transform: `rotate(${i * 72}deg) translateY(-36px)`,
             }}
@@ -64,6 +66,7 @@ export const LoadingSection = ({ message, isVisible }: LoadingSectionProps) => {
         style={{
           color: 'var(--text-secondary)',
         }}
+        aria-live="polite"
       >
         {message}
       </p>

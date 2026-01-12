@@ -1,6 +1,6 @@
 'use client';
 
-import { invitationMock } from '@/mock/invitation.mock';
+import { invitationMock, type InvitationFamilyMember } from '@/mock/invitation.mock';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import Image from 'next/image';
 
@@ -10,6 +10,10 @@ import Image from 'next/image';
 export const CoupleSection = () => {
   const { couple } = invitationMock;
   const { ref, isVisible } = useScrollAnimation({ threshold: 0.1 });
+  const formatMembers = (members: InvitationFamilyMember[]) =>
+    members
+      .map((member) => `${member.prefix ?? ''}${member.name}${member.suffix ? ` (${member.suffix})` : ''}`.trim())
+      .join(' · ');
 
   return (
     <section
@@ -25,17 +29,20 @@ export const CoupleSection = () => {
       <div className="mx-auto flex w-full max-w-[520px] flex-col gap-10 px-6">
         {/* 섹션 헤더 */}
         <div className="text-center">
-          <span className="text-[11px] tracking-[0.35em] text-[var(--muted)]">COUPLE</span>
-          <h2 className="font-gowun mt-3 text-[24px] font-semibold text-[var(--text-primary)]">
+          <span className="text-[10px] tracking-[0.4em] text-[var(--muted)]">COUPLE</span>
+          <h2 className="font-display mt-3 text-[26px] font-semibold text-[var(--text-primary)]">
             두 사람을 소개합니다
           </h2>
+          <p className="mt-2 text-[13px] text-[var(--text-secondary)]">
+            마음을 모아 새로운 계절을 맞이합니다
+          </p>
         </div>
 
         {/* 프로필 카드 그리드 */}
-        <div className="flex flex-col gap-8 sm:flex-row sm:gap-6">
+        <div className="grid gap-8 sm:grid-cols-2">
           {/* 신랑 카드 */}
-          <div className="flex flex-1 flex-col items-center gap-4 rounded-[var(--radius-lg)] border border-[var(--card-border)] bg-[var(--card-bg)] p-6 shadow-[var(--shadow-soft)]">
-            <div className="relative h-[160px] w-[160px] overflow-hidden rounded-full border-4 border-white shadow-md">
+          <div className="flex flex-col items-center gap-4 rounded-[var(--radius-lg)] border border-white/70 bg-white/85 p-6 text-center shadow-[var(--shadow-soft)] backdrop-blur">
+            <div className="relative h-[160px] w-[160px] overflow-hidden rounded-full border-4 border-white/80 shadow-md">
               {couple.groom.profileImage && (
                 <Image
                   src={couple.groom.profileImage}
@@ -47,10 +54,10 @@ export const CoupleSection = () => {
               )}
             </div>
             <div className="text-center">
-              <p className="text-[10px] tracking-[0.3em] text-[var(--muted)]">
-                {couple.groom.role || 'GROOM'}
+              <p className="text-[10px] tracking-[0.35em] text-[var(--muted)]">
+                {couple.groom.role || '신랑'}
               </p>
-              <h3 className="mt-1 text-[20px] font-semibold text-[var(--text-primary)]">
+              <h3 className="font-display mt-1 text-[22px] font-semibold text-[var(--text-primary)]">
                 {couple.groom.displayName}
               </h3>
               {couple.groom.bio && (
@@ -63,25 +70,17 @@ export const CoupleSection = () => {
             {couple.familyLines
               ?.filter((line) => line.subject === 'groom')
               .map((line) => (
-                <div key={line.subject} className="mt-2 text-center">
+                <div key={line.subject} className="mt-1 text-center">
                   <p className="text-[12px] text-[var(--text-muted)]">
-                    {line.members.map((member) => (
-                      <span key={member.name}>
-                        {member.prefix}
-                        {member.name}
-                        {member.suffix ? ` (${member.suffix})` : ''}
-                        {' · '}
-                      </span>
-                    ))}
-                    의 {line.relationshipLabel}
+                    {formatMembers(line.members)} 의 {line.relationshipLabel}
                   </p>
                 </div>
               ))}
           </div>
 
           {/* 신부 카드 */}
-          <div className="flex flex-1 flex-col items-center gap-4 rounded-[var(--radius-lg)] border border-[var(--card-border)] bg-[var(--card-bg)] p-6 shadow-[var(--shadow-soft)]">
-            <div className="relative h-[160px] w-[160px] overflow-hidden rounded-full border-4 border-white shadow-md">
+          <div className="flex flex-col items-center gap-4 rounded-[var(--radius-lg)] border border-white/70 bg-white/85 p-6 text-center shadow-[var(--shadow-soft)] backdrop-blur">
+            <div className="relative h-[160px] w-[160px] overflow-hidden rounded-full border-4 border-white/80 shadow-md">
               {couple.bride.profileImage && (
                 <Image
                   src={couple.bride.profileImage}
@@ -93,10 +92,10 @@ export const CoupleSection = () => {
               )}
             </div>
             <div className="text-center">
-              <p className="text-[10px] tracking-[0.3em] text-[var(--muted)]">
-                {couple.bride.role || 'BRIDE'}
+              <p className="text-[10px] tracking-[0.35em] text-[var(--muted)]">
+                {couple.bride.role || '신부'}
               </p>
-              <h3 className="mt-1 text-[20px] font-semibold text-[var(--text-primary)]">
+              <h3 className="font-display mt-1 text-[22px] font-semibold text-[var(--text-primary)]">
                 {couple.bride.displayName}
               </h3>
               {couple.bride.bio && (
@@ -109,17 +108,9 @@ export const CoupleSection = () => {
             {couple.familyLines
               ?.filter((line) => line.subject === 'bride')
               .map((line) => (
-                <div key={line.subject} className="mt-2 text-center">
+                <div key={line.subject} className="mt-1 text-center">
                   <p className="text-[12px] text-[var(--text-muted)]">
-                    {line.members.map((member) => (
-                      <span key={member.name}>
-                        {member.prefix}
-                        {member.name}
-                        {member.suffix ? ` (${member.suffix})` : ''}
-                        {' · '}
-                      </span>
-                    ))}
-                    의 {line.relationshipLabel}
+                    {formatMembers(line.members)} 의 {line.relationshipLabel}
                   </p>
                 </div>
               ))}

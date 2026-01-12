@@ -2,52 +2,52 @@
 
 :root {
   /* 레거시 변수 (하위 호환성) */
-  --background: #ffffff;
-  --foreground: #171717;
-  --surface-dark: #0f0f0f;
-  --surface-light: #f7f2ea;
-  --text-light: #f5f0e6;
-  --text-dark: #1c1c1c;
+  --background: #f7f2ec;
+  --foreground: #2f2722;
+  --surface-dark: #2f2722;
+  --surface-light: #f7f2ec;
+  --text-light: #f9f6f2;
+  --text-dark: #2f2722;
 
-  /* 기본 배경 - 레퍼런스 공통 크림/베이지 톤 */
-  --bg-primary: #FAF9F7;
-  --bg-secondary: #f5f3f2;
-  --bg-tertiary: #f6f1ea;
-  --base-surface: #FAF9F7;
-  --base-surface-dark: #dbdbdb;
+  /* 기본 배경 */
+  --bg-primary: #f7f2ec;
+  --bg-secondary: #efe7de;
+  --bg-tertiary: #f9f5f1;
+  --base-surface: #f7f2ec;
+  --base-surface-dark: #e6ddd2;
 
-  /* 도어 색상 - 밝고 따뜻한 베이지 톤 */
-  --door-surface: #F8F6F3;
-  --door-accent: #F0EDE9;
-  --door-gold: #d4c4a8;
-  --door-handle: #a89780;
-  --door-handle-rgb: 168 151 128;
+  /* 도어 색상 */
+  --door-surface: #f4ede6;
+  --door-accent: #efe4d9;
+  --door-gold: #c8a57c;
+  --door-handle: #8b745f;
+  --door-handle-rgb: 139 116 95;
 
   /* 텍스트 색상 */
-  --text-primary: #3b3b3b;
-  --text-secondary: #5d5d5d;
-  --text-muted: #6f6a62;
-  --base-text: #5f5f5f;
+  --text-primary: #3f3530;
+  --text-secondary: #6b5f55;
+  --text-muted: #8c8076;
+  --base-text: #3f3530;
 
   /* 액센트 */
-  --accent: #cbb899;
-  --accent-strong: #b49d74;
-  --accent-soft: #e8dcc8;
-  --muted: #6f6a62;
+  --accent: #c19a7b;
+  --accent-strong: #a67c5c;
+  --accent-soft: #ead7c5;
+  --muted: #8c8076;
 
   /* 카드 */
-  --card-bg: rgba(255, 255, 255, 0.9);
-  --card-bg-light: rgba(255, 255, 255, 0.7);
-  --card-border: rgba(255, 255, 255, 0.7);
+  --card-bg: rgba(255, 255, 255, 0.92);
+  --card-bg-light: rgba(255, 255, 255, 0.72);
+  --card-border: rgba(255, 255, 255, 0.65);
 
   /* 벚꽃 색상 */
-  --cherry-light: rgba(255, 235, 240, 0.9);
-  --cherry-dark: rgba(255, 175, 195, 0.85);
+  --cherry-light: rgba(255, 233, 239, 0.9);
+  --cherry-dark: rgba(255, 182, 198, 0.8);
 
   /* 그림자 */
-  --shadow-soft: 0 18px 40px rgba(22, 22, 22, 0.1);
-  --shadow-medium: 0 24px 60px rgba(16, 16, 16, 0.18);
-  --shadow-strong: 0 32px 90px rgba(16, 16, 16, 0.28);
+  --shadow-soft: 0 18px 44px rgba(44, 34, 28, 0.12);
+  --shadow-medium: 0 26px 70px rgba(44, 34, 28, 0.18);
+  --shadow-strong: 0 34px 90px rgba(44, 34, 28, 0.24);
 
   /* 모서리 반경 */
   --radius-lg: 28px;
@@ -63,11 +63,27 @@
 
 body {
   background: var(--base-surface);
-  color: var(--foreground);
-  font-family: var(--font-nanum), serif;
+  color: var(--base-text);
+  font-family: var(--font-gowun), serif;
   min-height: 100%;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  position: relative;
+  overflow-x: hidden;
+  isolation: isolate;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 120% at 20% 0%, rgba(255, 255, 255, 0.55), transparent 60%),
+    radial-gradient(120% 120% at 85% 10%, rgba(237, 220, 206, 0.5), transparent 60%),
+    repeating-linear-gradient(120deg, rgba(255, 255, 255, 0.12) 0 2px, transparent 2px 8px);
+  opacity: 0.6;
+  z-index: -1;
 }
 
 *,
@@ -97,17 +113,39 @@ video {
   font-family: var(--font-gowun), serif;
 }
 
+.font-display {
+  font-family: var(--font-nanum), serif;
+}
+
+.mobile-container {
+  background: var(--base-surface);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 40px 120px rgba(44, 34, 28, 0.12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* PC 레이아웃 최적화 (480px 초과) */
 @media (min-width: 481px) {
   body {
-    background: linear-gradient(135deg, #f0ebe3 0%, #e8e3da 100%);
+    background: radial-gradient(circle at top, #f4ede6 0%, #e7ded4 60%, #e2d7cc 100%);
     min-height: 100vh;
   }
 
   .mobile-container {
     max-width: 480px;
     margin: 0 auto;
-    box-shadow: 0 0 60px rgba(0, 0, 0, 0.15);
+    border-radius: 28px;
+    border: 1px solid rgba(255, 255, 255, 0.65);
+    box-shadow: 0 50px 120px rgba(41, 32, 26, 0.22);
     position: relative;
   }
 }

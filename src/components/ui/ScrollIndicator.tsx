@@ -6,12 +6,12 @@
 export const ScrollIndicator = () => {
   return (
     <div className="flex flex-col items-center gap-2">
-      <p className="text-[11px] tracking-[0.3em] text-[var(--text-muted)] opacity-70">
+      <p className="text-[10px] tracking-[0.4em] text-[var(--text-muted)] opacity-80">
         SCROLL
       </p>
       <div className="flex flex-col gap-1">
         <div
-          className="h-1 w-1 rounded-full bg-[var(--accent)] animate-scroll-bounce"
+          className="h-1 w-1 rounded-full bg-[var(--accent-strong)] animate-scroll-bounce"
           style={{ animationDelay: '0s' }}
         />
         <div
@@ -19,7 +19,7 @@ export const ScrollIndicator = () => {
           style={{ animationDelay: '0.2s' }}
         />
         <div
-          className="h-1 w-1 rounded-full bg-[var(--accent)] animate-scroll-bounce"
+          className="h-1 w-1 rounded-full bg-[var(--accent-soft)] animate-scroll-bounce"
           style={{ animationDelay: '0.4s' }}
         />
       </div>

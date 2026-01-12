@@ -58,38 +58,40 @@ export const AccountsSection = () => {
   }, [toast]);
 
   return (
-    <section id="accounts" className="bg-[#f6f1ea]">
+    <section id="accounts" className="bg-[var(--bg-secondary)]">
       <div className="mx-auto flex w-full max-w-[520px] flex-col gap-10 px-6 py-16">
         <div className="text-center">
-          <span className="text-[11px] tracking-[0.35em] text-[var(--muted)]">ACCOUNTS</span>
-          <h2 className="mt-3 text-[24px] font-semibold text-[#3b3b3b]">{accounts.title}</h2>
-          <p className="mt-2 text-[14px] text-[#6f6a62]">{accounts.description}</p>
+          <span className="text-[10px] tracking-[0.4em] text-[var(--muted)]">ACCOUNTS</span>
+          <h2 className="font-display mt-3 text-[26px] font-semibold text-[var(--text-primary)]">
+            {accounts.title}
+          </h2>
+          <p className="mt-2 text-[13px] text-[var(--text-secondary)]">{accounts.description}</p>
         </div>
 
         <div className="flex flex-col gap-6">
           {sections.map((section) => (
             <div
               key={section.title}
-              className="rounded-[var(--radius-lg)] border border-white/60 bg-white/90 p-6 shadow-[0_18px_40px_rgba(22,22,22,0.1)]"
+              className="rounded-[var(--radius-lg)] border border-white/70 bg-white/90 p-6 shadow-[var(--shadow-soft)]"
             >
-              <p className="text-[15px] font-semibold text-[#3b3b3b]">{section.title}</p>
+              <p className="text-[15px] font-semibold text-[var(--text-primary)]">{section.title}</p>
               <div className="mt-4 flex flex-col gap-3">
                 {section.entries.map((entry) => (
                   <div
                     key={`${section.title}-${entry.accountNumber}`}
-                    className="flex items-center justify-between gap-4 rounded-[16px] border border-black/5 bg-[#fbfaf8] px-4 py-3"
+                    className="flex items-center justify-between gap-4 rounded-[16px] border border-black/5 bg-[#fbf8f4] px-4 py-3"
                   >
                     <div className="flex flex-col">
-                      <span className="text-[13px] text-[#8f877c]">{entry.bankName}</span>
-                      <span className="text-[14px] font-medium text-[#3b3b3b]">
+                      <span className="text-[13px] text-[var(--text-muted)]">{entry.bankName}</span>
+                      <span className="text-[14px] font-medium text-[var(--text-primary)]">
                         {entry.accountNumber}
                       </span>
-                      <span className="text-[12px] text-[#9b9287]">{entry.holder}</span>
+                      <span className="text-[12px] text-[var(--text-muted)]">{entry.holder}</span>
                     </div>
                     <button
                       type="button"
                       onClick={() => copyToClipboard(entry.accountNumber)}
-                      className="rounded-full border border-[#cbb899] px-4 py-2 text-[12px] font-medium text-[#7a6a52] transition hover:bg-[#efe6d9]"
+                      className="rounded-full border border-[var(--accent)] px-4 py-2 text-[12px] font-medium text-[var(--accent-strong)] transition hover:bg-[var(--accent-soft)]"
                     >
                       복사
                     </button>

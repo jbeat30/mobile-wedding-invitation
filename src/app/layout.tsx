@@ -27,8 +27,8 @@ const gowunBatang = Gowun_Batang({
 });
 
 export const metadata: Metadata = {
-  title: '모바일 청첩장',
-  description: '모바일 청첩장 프론트 엔드',
+  title: '강신랑 · 장신부 결혼식에 초대합니다',
+  description: '2026년 05월 16일 오후 2시 30분, 채림 웨딩홀',
 };
 
 /**

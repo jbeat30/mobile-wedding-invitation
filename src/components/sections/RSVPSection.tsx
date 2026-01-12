@@ -52,7 +52,7 @@ export const RSVPSection = () => {
       <section
         id="rsvp"
         ref={ref}
-        className="bg-[var(--bg-tertiary)] py-16"
+        className="bg-[var(--bg-secondary)] py-16"
         style={{
           opacity: isVisible ? 1 : 0,
           transform: isVisible ? 'translateY(0)' : 'translateY(30px)',
@@ -62,24 +62,26 @@ export const RSVPSection = () => {
         <div className="mx-auto flex w-full max-w-[520px] flex-col gap-10 px-6">
           {/* 섹션 헤더 */}
           <div className="text-center">
-            <span className="text-[11px] tracking-[0.35em] text-[var(--muted)]">RSVP</span>
-            <h2 className="font-gowun mt-3 text-[24px] font-semibold text-[var(--text-primary)]">
+            <span className="text-[10px] tracking-[0.4em] text-[var(--muted)]">RSVP</span>
+            <h2 className="font-display mt-3 text-[26px] font-semibold text-[var(--text-primary)]">
               참석 여부
             </h2>
             <p className="mt-2 text-[13px] text-[var(--text-secondary)]">
-              {rsvp.deadline ? `${new Date(rsvp.deadline).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' })}까지 회신 부탁드립니다` : '참석 여부를 알려주세요'}
+              {rsvp.deadline
+                ? `${new Date(rsvp.deadline).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' })}까지 회신 부탁드립니다`
+                : '참석 여부를 알려주세요'}
             </p>
           </div>
 
           {/* RSVP 폼 */}
           <form
-            className="flex flex-col gap-5 rounded-[var(--radius-lg)] border border-[var(--card-border)] bg-[var(--card-bg)] p-6 shadow-[var(--shadow-soft)]"
+            className="flex flex-col gap-5 rounded-[var(--radius-lg)] border border-white/70 bg-white/90 p-6 shadow-[var(--shadow-soft)] backdrop-blur"
             onSubmit={handleSubmit}
           >
             {rsvp.fields.map((field) => (
               <div key={field.key} className="flex flex-col gap-2">
                 <label
-                  className="text-[12px] tracking-[0.3em] text-[var(--muted)]"
+                  className="text-[10px] tracking-[0.35em] text-[var(--muted)]"
                   htmlFor={`rsvp-${field.key}`}
                 >
                   {field.label}
@@ -91,7 +93,7 @@ export const RSVPSection = () => {
                     id={`rsvp-${field.key}`}
                     value={formData[field.key] || ''}
                     onChange={(e) => handleChange(field.key, e.target.value)}
-                    className="rounded-[12px] border border-black/10 bg-white px-4 py-3 text-[14px] text-[var(--text-primary)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/40"
+                    className="rounded-[14px] border border-black/10 bg-white px-4 py-3 text-[14px] text-[var(--text-primary)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/30"
                     required={field.required}
                   >
                     <option value="">선택해주세요</option>
@@ -107,7 +109,7 @@ export const RSVPSection = () => {
                     value={formData[field.key] || ''}
                     onChange={(e) => handleChange(field.key, e.target.value)}
                     placeholder={field.placeholder}
-                    className="min-h-[100px] rounded-[12px] border border-black/10 bg-white px-4 py-3 text-[14px] text-[var(--text-primary)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/40"
+                    className="min-h-[100px] rounded-[14px] border border-black/10 bg-white px-4 py-3 text-[14px] text-[var(--text-primary)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/30"
                     required={field.required}
                   />
                 )}
@@ -115,7 +117,7 @@ export const RSVPSection = () => {
             ))}
 
             {/* 개인정보 동의 */}
-            <label className="flex items-start gap-3 rounded-[12px] border border-black/5 bg-white px-4 py-3 text-[12px] text-[var(--text-muted)]">
+            <label className="flex items-start gap-3 rounded-[14px] border border-black/5 bg-[#fbf8f4] px-4 py-3 text-[12px] text-[var(--text-muted)]">
               <input
                 type="checkbox"
                 checked={consent}

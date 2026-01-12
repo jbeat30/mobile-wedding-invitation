@@ -150,21 +150,23 @@ export const DDayCountdown = ({ weddingDateTime }: DDayCountdownProps) => {
   ];
 
   return (
-    <div className="w-full px-4 " suppressHydrationWarning>
+    <div className="w-full px-2" suppressHydrationWarning>
       <div className="grid grid-cols-4 gap-2 sm:gap-3">
         {valueBlocks.map((value, index) => (
           <div
             key={labelMap[index]}
-            className="flex flex-col items-center justify-center rounded-[10px] border border-black/5 bg-[#f1f1f1] px-2 py-3 text-center shadow-[0_10px_20px_rgba(0,0,0,0.08)]"
+            className="flex flex-col items-center justify-center rounded-[14px] border border-white/70 bg-[var(--bg-tertiary)] px-2 py-3 text-center shadow-[0_14px_30px_rgba(41,32,26,0.12)]"
           >
-            <div className="text-[18px] font-medium leading-none text-[#4d4d4d]">{value}</div>
-            <div className="mt-1 text-[9px] tracking-[0.25em] text-[#a1a1a1]">
+            <div className="text-[18px] font-semibold leading-none text-[var(--text-primary)]">
+              {value}
+            </div>
+            <div className="mt-1 text-[9px] tracking-[0.28em] text-[var(--text-muted)]">
               {labelMap[index]}
             </div>
           </div>
         ))}
       </div>
-      <p className="mt-4 text-center text-[12px] text-[#6a6a6a]">
+      <p className="mt-4 text-center text-[12px] text-[var(--text-secondary)]">
         {parts?.isPast || totalDays === 0
           ? '우리 오늘 결혼해요 ❤️'
           : `${invitationMock.couple.groom.fullName} ❤️ ${invitationMock.couple.bride.fullName} 결혼식이 ${totalDays}일 남았습니다`}
