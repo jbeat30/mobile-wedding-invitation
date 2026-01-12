@@ -1,8 +1,6 @@
 import { invitationMock } from '@/mock/invitation.mock';
 import { DDayCountdown } from '@/components/sections/DDayCountdown';
 import { CherryBlossomCanvas } from '@/components/sections/CherryBlossomCanvas';
-import { BgmToggle } from '@/components/sections/BgmToggle';
-import { ScrollIndicator } from '@/components/ui/ScrollIndicator';
 
 /**
  * 인트로 섹션 구성 확인
@@ -20,10 +18,6 @@ export const IntroSection = () => {
       {/* 초기 인트로 화면 구성 확인 */}
       <div className="relative pt-[calc(var(--safe-top)+28px)] pb-10">
         <div className="mx-auto flex w-full max-w-[460px] flex-col gap-8 px-5">
-          <div className="flex items-center justify-end">
-            <BgmToggle />
-          </div>
-
           <div className="text-center">
             <p className="text-[11px] tracking-[0.5em] text-[var(--text-muted)]">
               WEDDING INVITATION

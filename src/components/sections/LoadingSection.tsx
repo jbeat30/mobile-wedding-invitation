@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { ScrollIndicator } from '@/components/ui/ScrollIndicator';
+import { BgmToggle } from '@/components/sections/BgmToggle';
 
 type LoadingSectionProps = {
   message: string;
@@ -87,6 +88,13 @@ export const LoadingSection = ({ message, isVisible }: LoadingSectionProps) => {
             />
           </svg>
         </div>
+
+        {/* BGM 토글 */}
+        {showScrollHint && (
+          <div className="absolute top-8 right-8 z-10">
+            <BgmToggle />
+          </div>
+        )}
 
         {/* 스크롤 인디케이터 */}
         {showScrollHint && (
