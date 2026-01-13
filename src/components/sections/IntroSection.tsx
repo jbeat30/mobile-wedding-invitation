@@ -13,15 +13,6 @@ export const IntroSection = () => {
       {/* 초기 인트로 화면 구성 확인 */}
       <div className="relative min-h-svh pt-[calc(var(--safe-top)+28px)] pb-12">
         <div className="mx-auto flex min-h-[calc(100svh-88px)] w-full max-w-[460px] flex-col justify-center gap-8 px-5">
-
-          <div
-            className="rounded-[var(--radius-lg)] border border-white/60 bg-white/80 p-4 shadow-[var(--shadow-soft)] backdrop-blur"
-            data-animate="scale"
-          >
-            {/* 디데이 구성 확인 */}
-            <DDayCountdown weddingDateTime={weddingDateTime} />
-          </div>
-
           <div className="text-center" data-animate="fade-up">
             <p className="text-[11px] tracking-[0.5em] text-[var(--text-muted)]">
               WEDDING INVITATION
@@ -35,6 +26,14 @@ export const IntroSection = () => {
               <p>{intro.quote}</p>
               {intro.subQuote ? <p className="text-[13px]">{intro.subQuote}</p> : null}
             </div>
+          </div>
+
+          <div
+            className="rounded-[var(--radius-lg)] border border-white/60 bg-white/80 p-4 shadow-[var(--shadow-soft)] backdrop-blur"
+            data-animate="scale"
+          >
+            {/* 디데이 구성 확인 */}
+            <DDayCountdown weddingDateTime={weddingDateTime} />
           </div>
 
           {/* 달력 */}
