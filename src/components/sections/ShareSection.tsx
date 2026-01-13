@@ -135,7 +135,7 @@ export const ShareSection = () => {
           {/* 섹션 헤더 */}
           <div className="text-center" data-animate="fade-up">
             <span className="text-[10px] tracking-[0.4em] text-[var(--muted)]">SHARE</span>
-            <h2 className="font-display mt-3 text-[26px] font-semibold text-[var(--text-primary)]">
+            <h2 className="mt-3 text-[26px] font-semibold text-[var(--text-primary)]">
               청첩장 공유하기
             </h2>
             <p className="mt-2 text-[13px] text-[var(--text-secondary)]">

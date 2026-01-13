@@ -58,6 +58,14 @@ export default function Page() {
   const contentRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
+    // 모바일/웹뷰 리사이즈 리프레시 과다 방지용 설정임
+    ScrollTrigger.config({
+      ignoreMobileResize: true,
+      limitCallbacks: true,
+    });
+  }, []);
+
+  useEffect(() => {
     if (!loading.enabled || !isLoading) {
       return;
     }

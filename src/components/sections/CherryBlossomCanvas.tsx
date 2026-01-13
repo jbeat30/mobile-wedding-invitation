@@ -31,13 +31,29 @@ export const CherryBlossomCanvas = ({
     if (!ctx) return;
     const context: CanvasRenderingContext2D = ctx;
 
-    let dpr = window.devicePixelRatio || 1;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches; // 접근성 설정
+    const isCoarsePointer = window.matchMedia('(pointer: coarse)').matches; // 터치스크린 감지
+    const userAgent = navigator.userAgent || ''; // 사용자 에이전트 문자열
+    const isKakaoWebView = /KAKAOTALK/i.test(userAgent); // 카카오톡 웹뷰 감지
+    const { deviceMemory } = navigator as Navigator & { deviceMemory?: number }; // 장치 메모리 정보
+    const { connection } = navigator as Navigator & { connection?: { saveData?: boolean } }; // 네트워크 정보
+    // 카톡 웹뷰/저사양/모바일이면 부하 낮추는 기준임
+    const isLowPower =
+      Boolean(connection?.saveData) || (deviceMemory ?? 8) <= 4 || isCoarsePointer || isKakaoWebView; // 저사양 장치 감지
+    // 웹뷰에서 과한 DPR/프레임 쓰면 스크롤 끊김 생겨서 제한하는 값
+    const maxDpr = isKakaoWebView ? 1.25 : isLowPower ? 1.5 : 2;
+    const frameInterval = isKakaoWebView ? 1000 / 24 : isLowPower ? 1000 / 30 : 1000 / 60;
+
+    let dpr = Math.min(window.devicePixelRatio || 1, maxDpr);
     let width = 0;
     let height = 0;
     let lastWidth = 0;
     let lastHeight = 0;
     let lastDpr = dpr;
     let animationFrame = 0;
+    let lastFrameTime = 0;
+    let isAnimating = false;
+    let isVisible = true;
     const petals: Petal[] = [];
 
     // 단일 벚꽃 잎 파티클
@@ -126,19 +142,58 @@ export const CherryBlossomCanvas = ({
     const init = () => {
       petals.length = 0;
       // 밀도를 낮춰 잎 사이 간격이 넓게 보임
-      const count = Math.max(minPetalCount, Math.floor((width * height) / density));
-      for (let i = 0; i < count; i += 1) {
+      // 카톡 웹뷰/저사양이면 개체 수 줄여서 렌더링 부하 낮추는 용도임
+      const densityScale = isKakaoWebView ? 2.1 : isLowPower ? 1.7 : 1;
+      const adjustedMinCount = isLowPower
+        ? Math.max(6, Math.floor(minPetalCount * 0.5))
+        : minPetalCount;
+      const count = Math.max(
+        adjustedMinCount,
+        Math.floor((width * height) / (density * densityScale))
+      );
+      const maxCount = isKakaoWebView ? 60 : isLowPower ? 80 : 160;
+      const finalCount = Math.min(count, maxCount);
+      for (let i = 0; i < finalCount; i += 1) {
         petals.push(new Petal(true));
       }
     };
 
-    const animate = () => {
+    const renderStatic = () => {
+      context.clearRect(0, 0, width, height);
+      petals.forEach((petal) => {
+        petal.draw();
+      });
+    };
+
+    const animate = (time: number) => {
+      if (!isAnimating) return;
+      if (time - lastFrameTime < frameInterval) {
+        animationFrame = window.requestAnimationFrame(animate);
+        return;
+      }
+
+      lastFrameTime = time;
       context.clearRect(0, 0, width, height);
       petals.forEach((petal) => {
         petal.update();
         petal.draw();
       });
       animationFrame = window.requestAnimationFrame(animate);
+    };
+
+    const startAnimation = () => {
+      if (prefersReducedMotion || isAnimating) return;
+      isAnimating = true;
+      lastFrameTime = 0;
+      animationFrame = window.requestAnimationFrame(animate);
+    };
+
+    const stopAnimation = () => {
+      isAnimating = false;
+      if (animationFrame) {
+        window.cancelAnimationFrame(animationFrame);
+        animationFrame = 0;
+      }
     };
 
     const resizeCanvas = () => {
@@ -178,28 +233,70 @@ export const CherryBlossomCanvas = ({
       if (petals.length === 0) {
         init();
       }
+
+      if (prefersReducedMotion) {
+        renderStatic();
+      }
     };
 
     const handleResize = () => {
-      dpr = window.devicePixelRatio || 1;
+      dpr = Math.min(window.devicePixelRatio || 1, maxDpr);
       resizeCanvas();
     };
 
-    const observer = new ResizeObserver(handleResize);
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        stopAnimation();
+        return;
+      }
+      if (isVisible) {
+        startAnimation();
+      }
+    };
+
+    // 화면 밖이면 애니메이션 멈춰서 스크롤 버벅임 줄이는 용도임
+    const visibilityObserver = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        isVisible = entry?.isIntersecting ?? true;
+        if (prefersReducedMotion) {
+          if (isVisible) {
+            renderStatic();
+          }
+          return;
+        }
+        if (isVisible) {
+          startAnimation();
+        } else {
+          stopAnimation();
+        }
+      },
+      { threshold: 0.05 }
+    );
+
+    const resizeObserver = new ResizeObserver(handleResize);
     if (canvas.parentElement) {
-      observer.observe(canvas.parentElement);
+      resizeObserver.observe(canvas.parentElement);
     }
 
     handleResize();
-    animationFrame = window.requestAnimationFrame(animate);
+    if (prefersReducedMotion) {
+      renderStatic();
+    } else {
+      startAnimation();
+    }
     window.addEventListener('resize', handleResize);
     window.visualViewport?.addEventListener('resize', handleResize);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    visibilityObserver.observe(canvas);
 
     return () => {
       window.removeEventListener('resize', handleResize);
       window.visualViewport?.removeEventListener('resize', handleResize);
-      observer.disconnect();
-      window.cancelAnimationFrame(animationFrame);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      resizeObserver.disconnect();
+      visibilityObserver.disconnect();
+      stopAnimation();
     };
   }, [density, minPetalCount]);
 

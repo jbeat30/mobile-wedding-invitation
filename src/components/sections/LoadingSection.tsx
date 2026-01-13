@@ -99,7 +99,8 @@ export const LoadingSection = ({ message, isVisible, isHintVisible }: LoadingSec
   return (
     <section
       data-testid="loading-section"
-      className="relative h-svh w-full flex flex-col items-center justify-center"
+      className="relative flex h-svh w-full flex-col items-center justify-center touch-pan-y"
+      // 터치 스크롤 우선 처리되게 해서 웹뷰 드래그 확대 막는 용도임
       style={{
         background: 'linear-gradient(135deg, #f7f2ec 0%, #efe3d7 100%)',
       }}
@@ -111,8 +112,10 @@ export const LoadingSection = ({ message, isVisible, isHintVisible }: LoadingSec
             alt=""
             fill
             priority
-            className="absolute inset-0 h-full w-full object-cover opacity-85 saturate-[0.95] will-change-[transform,opacity] animate-[loading-reveal_1.1s_ease-out_both] z-[1]"
+            className="absolute inset-0 h-full w-full object-cover object-bottom opacity-85 saturate-[0.95] will-change-[transform,opacity] animate-[loading-reveal_1.1s_ease-out_both] pointer-events-none select-none [-webkit-user-drag:none] z-[1]"
             sizes="100vw"
+            // 모바일/웹뷰 이미지 드래그 방지용임
+            draggable={false}
           />
           <div className="absolute inset-0 z-[3] bg-[linear-gradient(180deg,rgba(0,0,0,0.25)_0%,rgba(20,14,10,0.55)_70%)]" />
           <div className="absolute inset-0 z-[4] bg-[radial-gradient(60%_40%_at_50%_30%,rgba(255,255,255,0.4),transparent_70%)] opacity-70 mix-blend-screen" />
@@ -134,11 +137,11 @@ export const LoadingSection = ({ message, isVisible, isHintVisible }: LoadingSec
           </svg>
         </div>
         {/* 로딩 텍스트 */}
-        <div className="relative z-[5] max-w-[min(360px,72vw)] px-6 text-center font-gowun text-white animate-[loading-fade_1s_ease-out_both]">
+        <div className="relative z-[5] max-w-[min(360px,72vw)] px-6 text-center text-white animate-[loading-fade_1s_ease-out_both]">
           <p className="text-[10px] font-bold uppercase tracking-[0.6em] opacity-90">
             WEDDING INVITATION
           </p>
-          <p className="font-display mt-3.5 text-[28px] font-semibold tracking-[0.12em]">
+          <p className="mt-3.5 text-[26px] font-semibold tracking-[0.12em]">
             {message}
           </p>
           {/*<div className="loading-divider" />*/}

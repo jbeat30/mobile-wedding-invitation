@@ -265,6 +265,13 @@ export const invitationMock: InvitationMock = {
         width: 800,
         height: 600,
       },
+      {
+        id: 'gallery-6',
+        src: 'https://placehold.co/900x700/F5ECE2/c19a7b?text=Gallery+6',
+        alt: '웨딩 사진 6',
+        width: 800,
+        height: 600,
+      },
     ],
     autoplay: false,
   },

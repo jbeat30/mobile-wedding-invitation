@@ -14,7 +14,7 @@ export const InfoSection = () => {
       <div className="mx-auto flex w-full max-w-[520px] flex-col gap-10 px-6 py-16">
         <div className="flex flex-col gap-4 text-center" data-animate="fade-up">
           <span className="text-[10px] tracking-[0.4em] text-[var(--muted)]">WEDDING DAY</span>
-          <h2 className="font-display text-[28px] font-semibold text-[var(--text-primary)]">
+          <h2 className="text-[28px] font-semibold text-[var(--text-primary)]">
             {info.title}
           </h2>
           <p className="text-[13px] text-[var(--text-secondary)]">

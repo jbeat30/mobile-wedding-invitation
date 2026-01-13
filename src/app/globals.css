@@ -2,6 +2,11 @@
 @source '../**/*.{js,jsx,ts,tsx,mdx}';
 
 :root {
+    /* 폰트 패밀리 정의 - 영문/한글 자동 적용 */
+    --font-serif: var(--font-crimson), var(--font-gowun), var(--font-nanum), "Nanum Myeongjo", "Gowun Batang", Georgia, serif;
+    --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Malgun Gothic", sans-serif;
+    --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
     /* 레거시 변수 (하위 호환성) */
     --background: #f7f2ec;
     --foreground: #2f2722;
@@ -62,18 +67,6 @@
     --safe-left: env(safe-area-inset-left);
 }
 
-body {
-    background: var(--base-surface);
-    color: var(--base-text);
-    font-family: var(--font-gowun), serif;
-    min-height: 100%;
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-    position: relative;
-    overflow-x: hidden;
-    isolation: isolate;
-}
-
 body::before {
     content: '';
     position: fixed;
@@ -86,35 +79,44 @@ body::before {
     z-index: -1;
 }
 
-*,
-*::before,
-*::after {
-    box-sizing: border-box;
-}
+@layer base {
+    /* 기본 폰트 적용 - body는 세리프 폰트 사용 */
+    body {
+        font-family: var(--font-serif);
+        font-feature-settings: "kern" 1, "liga" 1;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
 
-html,
-body {
-    height: 100%;
-}
+    /* 영문 우선 적용이 필요한 요소 */
+    [lang="en"],
+    .font-en {
+        font-family: var(--font-crimson), Georgia, serif;
+    }
 
-img,
-svg,
-video {
-    max-width: 100%;
-    height: auto;
-}
+    /* 한글 우선 적용이 필요한 요소 */
+    [lang="ko"],
+    .font-ko {
+        font-family: var(--font-gowun), var(--font-nanum), "Nanum Myeongjo", serif;
+    }
 
-/* 웹폰트 유틸리티 클래스 */
-.font-nanum {
-    font-family: var(--font-nanum), serif;
-}
+    /* 산세리프 폰트가 필요한 요소 */
+    .font-sans {
+        font-family: var(--font-sans);
+    }
 
-.font-gowun {
-    font-family: var(--font-gowun), serif;
-}
+    /* 모노스페이스 폰트가 필요한 요소 */
+    code,
+    kbd,
+    samp,
+    pre,
+    .font-mono {
+        font-family: var(--font-mono);
+    }
 
-.font-display {
-    font-family: var(--font-nanum), serif;
+    svg {
+        @apply max-w-full h-auto;
+    }
 }
 
 @keyframes loading-reveal {
@@ -173,13 +175,5 @@ video {
         animation-iteration-count: 1 !important;
         transition-duration: 0.001ms !important;
         scroll-behavior: auto !important;
-    }
-}
-
-/* PC 레이아웃 최적화 (480px 초과) */
-@media (min-width: 481px) {
-    body {
-        background: radial-gradient(circle at top, #f4ede6 0%, #e7ded4 60%, #e2d7cc 100%);
-        min-height: 100vh;
     }
 }
