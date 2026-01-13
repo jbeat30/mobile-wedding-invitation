@@ -17,6 +17,7 @@ const nanumMyeongjo = Nanum_Myeongjo({
   subsets: ['latin'],
   variable: '--font-nanum',
   display: 'swap',
+  preload: true,
 });
 
 const gowunBatang = Gowun_Batang({
@@ -24,11 +25,12 @@ const gowunBatang = Gowun_Batang({
   subsets: ['latin'],
   variable: '--font-gowun',
   display: 'swap',
+  preload: true,
 });
 
 const crimsonPro = Crimson_Pro({
   weight: ['400', '600', '700'],
-  subsets: ['latin'],
+  subsets: ['latin', 'latin-ext'],
   variable: '--font-crimson',
   display: 'swap',
 });
@@ -49,7 +51,7 @@ export default function RootLayout({
   return (
     <html lang="ko" className="h-full">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${nanumMyeongjo.variable} ${gowunBatang.variable} ${crimsonPro.variable} min-h-full bg-[var(--base-surface)] text-[var(--base-text)] font-[var(--font-crimson),var(--font-gowun),var(--font-nanum),serif] antialiased [text-rendering:optimizeLegibility] relative overflow-x-hidden isolate min-[481px]:min-h-screen min-[481px]:[background:radial-gradient(circle_at_top,_#f4ede6_0%,_#e7ded4_60%,_#e2d7cc_100%)]`}
+        className={`${geistSans.variable} ${geistMono.variable} ${nanumMyeongjo.variable} ${gowunBatang.variable} ${crimsonPro.variable} min-h-full bg-[var(--base-surface)] text-[var(--base-text)] antialiased [text-rendering:optimizeLegibility] relative overflow-x-hidden isolate min-[481px]:min-h-screen min-[481px]:[background:radial-gradient(circle_at_top,_#f4ede6_0%,_#e7ded4_60%,_#e2d7cc_100%)]`}
       >
         {children}
       </body>

@@ -53,7 +53,7 @@ export const IntroCalendar = ({
         {venue} · {weekdayName} · {month + 1}월 {weddingDay}일 · {timeLabel}
       </p>
       <div className="my-4 flex items-center justify-center">
-        <p className="font-[var(--font-crimson),var(--font-nanum),var(--font-gowun),serif] text-[24px] tracking-[0.12em]">
+        <p className="text-[24px] tracking-[0.12em]">
           {year}.{String(month + 1).padStart(2, '0')}
         </p>
       </div>

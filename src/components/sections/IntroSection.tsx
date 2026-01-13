@@ -26,7 +26,7 @@ export const IntroSection = () => {
             <p className="text-[11px] tracking-[0.5em] text-[var(--text-muted)]">
               WEDDING INVITATION
             </p>
-            <h2 className="font-[var(--font-crimson),var(--font-nanum),var(--font-gowun),serif] mt-4 text-[32px] font-semibold tracking-tight text-[var(--text-primary)]">
+            <h2 className="mt-4 text-[32px] font-semibold tracking-tight text-[var(--text-primary)]">
               {couple.groom.fullName}
               <span className="mx-2 text-[18px] text-[var(--accent)]">·</span>
               {couple.bride.fullName}

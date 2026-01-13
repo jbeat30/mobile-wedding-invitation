@@ -83,7 +83,7 @@ export const GuestbookSection = () => {
       <div className="mx-auto flex w-full max-w-[520px] flex-col gap-10 px-6 py-16">
         <div className="text-center" data-animate="fade-up">
           <span className="text-[10px] tracking-[0.4em] text-[var(--muted)]">GUESTBOOK</span>
-          <h2 className="font-[var(--font-crimson),var(--font-nanum),var(--font-gowun),serif] mt-3 text-[26px] font-semibold text-[var(--text-primary)]">
+          <h2 className="mt-3 text-[26px] font-semibold text-[var(--text-primary)]">
             축하 메시지
           </h2>
           <p className="mt-2 text-[13px] text-[var(--text-secondary)]">{guestbook.retentionText}</p>

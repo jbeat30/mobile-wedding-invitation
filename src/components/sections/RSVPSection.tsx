@@ -55,7 +55,7 @@ export const RSVPSection = () => {
           {/* 섹션 헤더 */}
           <div className="text-center" data-animate="fade-up">
             <span className="text-[10px] tracking-[0.4em] text-[var(--muted)]">RSVP</span>
-            <h2 className="font-[var(--font-crimson),var(--font-nanum),var(--font-gowun),serif] mt-3 text-[26px] font-semibold text-[var(--text-primary)]">
+            <h2 className="mt-3 text-[26px] font-semibold text-[var(--text-primary)]">
               참석 여부
             </h2>
             <p className="mt-2 text-[13px] text-[var(--text-secondary)]">
