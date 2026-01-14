@@ -9,10 +9,10 @@ export const IntroSection = () => {
   const { weddingDateTime, intro, couple, info } = invitationMock;
 
   return (
-    <section id="intro" className="relative min-h-svh">
+    <section id="intro" className="relative">
       {/* 초기 인트로 화면 구성 확인 */}
-      <div className="relative min-h-svh pt-[calc(var(--safe-top)+28px)] pb-12">
-        <div className="mx-auto flex min-h-[calc(100svh-88px)] w-full max-w-[460px] flex-col justify-center gap-8 px-5">
+      <div className="relative pt-[calc(var(--safe-top)+28px)] pb-12">
+        <div className="mx-auto flex w-full max-w-[460px] flex-col justify-center gap-8 px-5 py-12">
           <div className="text-center" data-animate="fade-up">
             <p className="text-[11px] tracking-[0.5em] text-[var(--text-muted)]">
               WEDDING INVITATION

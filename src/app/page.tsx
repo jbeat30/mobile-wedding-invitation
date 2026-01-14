@@ -60,9 +60,46 @@ export default function Page() {
   useEffect(() => {
     // 모바일/웹뷰 리사이즈 리프레시 과다 방지용 설정임
     ScrollTrigger.config({
-      ignoreMobileResize: true,
+      ignoreMobileResize: true, // 작은 리사이즈 무시
       limitCallbacks: true,
     });
+
+    // 모바일 주소창/네비게이션 바로 인한 viewport 변경 필터링
+    let lastWidth = window.innerWidth;
+    let lastHeight = window.innerHeight;
+    let resizeTimer: number;
+
+    const handleSmartResize = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(() => {
+        const currentWidth = window.innerWidth;
+        const currentHeight = window.innerHeight;
+
+        // 너비 변경 = 실제 리사이즈 (가로↔세로, 창 크기 변경)
+        const widthChanged = Math.abs(currentWidth - lastWidth) > 50;
+        // 높이만 변경 = 주소창/네비 바 (무시)
+        const onlyHeightChanged = Math.abs(currentHeight - lastHeight) > 50 && !widthChanged;
+
+        if (widthChanged) {
+          // 실제 리사이즈만 ScrollTrigger refresh
+          ScrollTrigger.refresh();
+          lastWidth = currentWidth;
+          lastHeight = currentHeight;
+        } else if (onlyHeightChanged) {
+          // 높이만 변경 = 주소창/네비 바 변경 (refresh 안함)
+          lastHeight = currentHeight;
+        }
+      }, 150);
+    };
+
+    window.addEventListener('resize', handleSmartResize);
+    window.visualViewport?.addEventListener('resize', handleSmartResize);
+
+    return () => {
+      window.removeEventListener('resize', handleSmartResize);
+      window.visualViewport?.removeEventListener('resize', handleSmartResize);
+      clearTimeout(resizeTimer);
+    };
   }, []);
 
   useEffect(() => {
@@ -189,10 +226,10 @@ export default function Page() {
   }, [showContent]);
 
   return (
-    <div className="min-h-svh bg-[var(--bg-primary)] text-[var(--base-text)]">
+    <div className="bg-[var(--bg-primary)] text-[var(--base-text)]">
       <main
         ref={contentRef}
-        className="relative min-h-svh overflow-hidden bg-[var(--base-surface)] shadow-[0_40px_120px_rgba(44,34,28,0.12)] min-[481px]:mx-auto min-[481px]:max-w-[480px] min-[481px]:rounded-[28px] min-[481px]:border min-[481px]:border-white/65 min-[481px]:shadow-[0_50px_120px_rgba(41,32,26,0.22)]"
+        className="relative overflow-hidden bg-[var(--base-surface)] shadow-[0_40px_120px_rgba(44,34,28,0.12)] min-[481px]:mx-auto min-[481px]:max-w-[480px] min-[481px]:rounded-[28px] min-[481px]:border min-[481px]:border-white/65 min-[481px]:shadow-[0_50px_120px_rgba(41,32,26,0.22)]"
       >
         <div className="relative">
           <CherryBlossomCanvas density={35000} zIndex={40} opacity={0.7} minPetalCount={15} />
