@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 
 type ImageModalProps = {
@@ -11,28 +11,37 @@ type ImageModalProps = {
 };
 
 /**
- * 이미지 확대 모달
+ * 이미지 확대 모달 - 스크롤 위치 유지, 최상위 z-index
  */
 export const ImageModal = ({ isOpen, onClose, imageSrc, imageAlt }: ImageModalProps) => {
+  const scrollPosRef = useRef(0);
+
   useEffect(() => {
     if (isOpen) {
-      // 스크롤 및 viewport 변경 완전 차단
+      // 현재 스크롤 위치 저장
+      scrollPosRef.current = window.scrollY;
+
+      // body 스크롤 차단 (위치 유지)
       document.body.style.overflow = 'hidden';
       document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollPosRef.current}px`;
       document.body.style.width = '100%';
-      document.body.style.height = '100%';
     } else {
+      // 스크롤 복원
       document.body.style.overflow = '';
       document.body.style.position = '';
+      document.body.style.top = '';
       document.body.style.width = '';
-      document.body.style.height = '';
+
+      // 이전 스크롤 위치로 복원
+      window.scrollTo(0, scrollPosRef.current);
     }
 
     return () => {
       document.body.style.overflow = '';
       document.body.style.position = '';
+      document.body.style.top = '';
       document.body.style.width = '';
-      document.body.style.height = '';
     };
   }, [isOpen]);
 
@@ -58,13 +67,13 @@ export const ImageModal = ({ isOpen, onClose, imageSrc, imageAlt }: ImageModalPr
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm"
       onClick={onClose}
       style={{ touchAction: 'none' }}
     >
       <button
         type="button"
-        className="absolute right-4 top-4 z-50 flex h-10 w-10 items-center justify-center rounded-full bg-white/95 text-[20px] font-bold text-[var(--text-primary)] shadow-[0_12px_24px_rgba(0,0,0,0.2)] transition active:scale-95 hover:bg-white"
+        className="absolute right-4 top-4 z-[10000] flex h-10 w-10 items-center justify-center rounded-full bg-white/95 text-[20px] font-bold text-[var(--text-primary)] shadow-[0_12px_24px_rgba(0,0,0,0.2)] transition active:scale-95 hover:bg-white"
         onClick={onClose}
         aria-label="닫기"
         style={{ touchAction: 'manipulation' }}

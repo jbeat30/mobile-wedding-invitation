@@ -196,6 +196,21 @@ body::before {
     }
 }
 
+/* Swiper 갤러리 커스텀 */
+.swiper-slide {
+    background: transparent !important;
+}
+
+.gallery-thumbs .swiper-slide {
+    width: auto !important;
+}
+
+.gallery-thumbs .swiper-slide-thumb-active button {
+    border-color: var(--accent) !important;
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(193, 154, 123, 0.4);
+}
+
 @media (prefers-reduced-motion: reduce) {
     * {
         animation-duration: 0.001ms !important;
