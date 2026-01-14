@@ -62,7 +62,35 @@ export default function Page() {
     ScrollTrigger.config({
       ignoreMobileResize: true,
       limitCallbacks: true,
+      autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load', // resize 이벤트 제외
     });
+
+    // 모바일 주소창/네비게이션 바로 인한 viewport 변경 완전 차단
+    let resizeTimer: number;
+    const preventViewportResize = (e: Event) => {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(() => {
+        // 실제 화면 회전 등 필요한 경우만 허용
+        const isOrientationChange = Math.abs(window.innerWidth - window.innerHeight) > 100;
+        if (isOrientationChange) {
+          ScrollTrigger.refresh();
+        }
+      }, 300);
+    };
+
+    window.addEventListener('resize', preventViewportResize, { capture: true, passive: false });
+    window.visualViewport?.addEventListener('resize', preventViewportResize, {
+      capture: true,
+      passive: false,
+    });
+
+    return () => {
+      window.removeEventListener('resize', preventViewportResize, true);
+      window.visualViewport?.removeEventListener('resize', preventViewportResize, true);
+      clearTimeout(resizeTimer);
+    };
   }, []);
 
   useEffect(() => {
@@ -189,10 +217,10 @@ export default function Page() {
   }, [showContent]);
 
   return (
-    <div className="min-h-svh bg-[var(--bg-primary)] text-[var(--base-text)]">
+    <div className="bg-[var(--bg-primary)] text-[var(--base-text)]">
       <main
         ref={contentRef}
-        className="relative min-h-svh overflow-hidden bg-[var(--base-surface)] shadow-[0_40px_120px_rgba(44,34,28,0.12)] min-[481px]:mx-auto min-[481px]:max-w-[480px] min-[481px]:rounded-[28px] min-[481px]:border min-[481px]:border-white/65 min-[481px]:shadow-[0_50px_120px_rgba(41,32,26,0.22)]"
+        className="relative overflow-hidden bg-[var(--base-surface)] shadow-[0_40px_120px_rgba(44,34,28,0.12)] min-[481px]:mx-auto min-[481px]:max-w-[480px] min-[481px]:rounded-[28px] min-[481px]:border min-[481px]:border-white/65 min-[481px]:shadow-[0_50px_120px_rgba(41,32,26,0.22)]"
       >
         <div className="relative">
           <CherryBlossomCanvas density={35000} zIndex={40} opacity={0.7} minPetalCount={15} />

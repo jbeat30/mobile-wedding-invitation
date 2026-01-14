@@ -22,8 +22,7 @@ export const DoorScene = ({
   lightBackground: _lightBackground,
   accentColor: _accentColor,
 }: DoorSceneProps) => {
-  const MAX_DOOR_HEIGHT = 480;
-  const DOOR_HEIGHT = `min(78vh, ${MAX_DOOR_HEIGHT}px)`;
+  const DOOR_HEIGHT = '480px'; // 고정 높이로 변경 (viewport 의존성 제거)
   const DOOR_SURFACE = 'var(--door-surface)';
   const BASE_SURFACE = 'var(--base-surface)';
   const BASE_TEXT = 'var(--base-text)';
@@ -40,6 +39,7 @@ export const DoorScene = ({
   const timelineRef = useRef<gsap.core.Timeline | null>(null);
   const visibilityTriggerRef = useRef<ScrollTrigger | null>(null);
   const startScrollRef = useRef(0);
+  const initialHeightRef = useRef(0); // 초기 높이 저장 (리사이즈 방지)
 
   useEffect(() => {
     const doorFrame = doorFrameRef.current;
@@ -51,7 +51,11 @@ export const DoorScene = ({
 
     if (!doorFrame || !leftDoor || !rightDoor || !content || !contentInner || !background) return;
 
-    const getViewportHeight = () => window.visualViewport?.height ?? window.innerHeight;
+    // 초기 높이를 한 번만 저장 (viewport 변경 무시)
+    if (!initialHeightRef.current) {
+      initialHeightRef.current = window.innerHeight;
+    }
+    const getViewportHeight = () => initialHeightRef.current;
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     if (prefersReducedMotion) {
@@ -177,22 +181,11 @@ export const DoorScene = ({
       });
     }
 
-    const handleResize = () => {
-      if (timelineRef.current) {
-        startScrollRef.current = getFullVisibilityScroll();
-      }
-      ensureDoorTimeline();
-      ScrollTrigger.refresh();
-    };
-
+    // 리사이즈 핸들러 제거 - 모바일 주소창/네비 바 변경 시 리플로우 방지
+    // 초기 로드 시에만 한 번 refresh
     ScrollTrigger.refresh();
 
-    window.addEventListener('resize', handleResize);
-    window.visualViewport?.addEventListener('resize', handleResize);
-
     return () => {
-      window.removeEventListener('resize', handleResize);
-      window.visualViewport?.removeEventListener('resize', handleResize);
       visibilityTriggerRef.current?.kill();
       visibilityTriggerRef.current = null;
       timelineRef.current?.scrollTrigger?.kill();

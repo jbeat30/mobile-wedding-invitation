@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono, Nanum_Myeongjo, Gowun_Batang, Crimson_Pro } from 'next/font/google';
 import './globals.css';
 
@@ -38,6 +38,18 @@ const crimsonPro = Crimson_Pro({
 export const metadata: Metadata = {
   title: '강신랑 · 장신부 결혼식에 초대합니다',
   description: '2026년 05월 16일 오후 2시 30분, 채림 웨딩홀',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+  },
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
 };
 
 /**
@@ -49,9 +61,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className="h-full">
+    <html lang="ko">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${nanumMyeongjo.variable} ${gowunBatang.variable} ${crimsonPro.variable} min-h-full bg-[var(--base-surface)] text-[var(--base-text)] antialiased [text-rendering:optimizeLegibility] relative overflow-x-hidden isolate min-[481px]:min-h-screen min-[481px]:[background:radial-gradient(circle_at_top,_#f4ede6_0%,_#e7ded4_60%,_#e2d7cc_100%)]`}
+        className={`${geistSans.variable} ${geistMono.variable} ${nanumMyeongjo.variable} ${gowunBatang.variable} ${crimsonPro.variable} bg-[var(--base-surface)] text-[var(--base-text)] antialiased [text-rendering:optimizeLegibility] isolate min-[481px]:[background:radial-gradient(circle_at_top,_#f4ede6_0%,_#e7ded4_60%,_#e2d7cc_100%)]`}
       >
         {children}
       </body>
