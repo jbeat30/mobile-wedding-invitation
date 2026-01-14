@@ -11,9 +11,10 @@ type LoadingSectionProps = {
   isHintVisible: boolean;
 };
 
-// 로딩 섹션 - 전체 화면 크기 유지, 로딩 완료 후 스크롤 인디케이터 표시
+// 로딩 섹션 - 초기 viewport 크기 고정, 주소창/네비바 사라진 공간은 다음 섹션 노출
 export const LoadingSection = ({ message, isVisible, isHintVisible }: LoadingSectionProps) => {
   const [showHint, setShowHint] = useState(false);
+  const initialHeightRef = useRef<number>(0);
   const scrollLockStyles = useRef<{
     bodyOverflow: string;
     htmlOverflow: string;
@@ -22,6 +23,13 @@ export const LoadingSection = ({ message, isVisible, isHintVisible }: LoadingSec
     bodyHeight: string;
     htmlHeight: string;
   } | null>(null);
+
+  // 초기 viewport 높이 저장 (한 번만)
+  useEffect(() => {
+    if (!initialHeightRef.current) {
+      initialHeightRef.current = window.innerHeight;
+    }
+  }, []);
 
   useEffect(() => {
     if (isHintVisible || !isVisible) {
@@ -99,9 +107,12 @@ export const LoadingSection = ({ message, isVisible, isHintVisible }: LoadingSec
   return (
     <section
       data-testid="loading-section"
-      className="relative flex h-svh w-full flex-col items-center justify-center touch-pan-y"
+      className="relative flex w-full flex-col items-center justify-center touch-pan-y"
       // 터치 스크롤 우선 처리되게 해서 웹뷰 드래그 확대 막는 용도임
       style={{
+        height: initialHeightRef.current ? `${initialHeightRef.current}px` : '100vh',
+        minHeight: initialHeightRef.current ? `${initialHeightRef.current}px` : '100vh',
+        maxHeight: initialHeightRef.current ? `${initialHeightRef.current}px` : '100vh',
         background: 'linear-gradient(135deg, #f7f2ec 0%, #efe3d7 100%)',
       }}
     >

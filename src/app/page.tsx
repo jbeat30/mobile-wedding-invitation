@@ -60,35 +60,44 @@ export default function Page() {
   useEffect(() => {
     // 모바일/웹뷰 리사이즈 리프레시 과다 방지용 설정임
     ScrollTrigger.config({
-      ignoreMobileResize: true,
+      ignoreMobileResize: true, // 작은 리사이즈 무시
       limitCallbacks: true,
-      autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load', // resize 이벤트 제외
     });
 
-    // 모바일 주소창/네비게이션 바로 인한 viewport 변경 완전 차단
+    // 모바일 주소창/네비게이션 바로 인한 viewport 변경 필터링
+    let lastWidth = window.innerWidth;
+    let lastHeight = window.innerHeight;
     let resizeTimer: number;
-    const preventViewportResize = (e: Event) => {
-      e.preventDefault();
-      e.stopImmediatePropagation();
+
+    const handleSmartResize = () => {
       clearTimeout(resizeTimer);
       resizeTimer = window.setTimeout(() => {
-        // 실제 화면 회전 등 필요한 경우만 허용
-        const isOrientationChange = Math.abs(window.innerWidth - window.innerHeight) > 100;
-        if (isOrientationChange) {
+        const currentWidth = window.innerWidth;
+        const currentHeight = window.innerHeight;
+
+        // 너비 변경 = 실제 리사이즈 (가로↔세로, 창 크기 변경)
+        const widthChanged = Math.abs(currentWidth - lastWidth) > 50;
+        // 높이만 변경 = 주소창/네비 바 (무시)
+        const onlyHeightChanged = Math.abs(currentHeight - lastHeight) > 50 && !widthChanged;
+
+        if (widthChanged) {
+          // 실제 리사이즈만 ScrollTrigger refresh
           ScrollTrigger.refresh();
+          lastWidth = currentWidth;
+          lastHeight = currentHeight;
+        } else if (onlyHeightChanged) {
+          // 높이만 변경 = 주소창/네비 바 변경 (refresh 안함)
+          lastHeight = currentHeight;
         }
-      }, 300);
+      }, 150);
     };
 
-    window.addEventListener('resize', preventViewportResize, { capture: true, passive: false });
-    window.visualViewport?.addEventListener('resize', preventViewportResize, {
-      capture: true,
-      passive: false,
-    });
+    window.addEventListener('resize', handleSmartResize);
+    window.visualViewport?.addEventListener('resize', handleSmartResize);
 
     return () => {
-      window.removeEventListener('resize', preventViewportResize, true);
-      window.visualViewport?.removeEventListener('resize', preventViewportResize, true);
+      window.removeEventListener('resize', handleSmartResize);
+      window.visualViewport?.removeEventListener('resize', handleSmartResize);
       clearTimeout(resizeTimer);
     };
   }, []);

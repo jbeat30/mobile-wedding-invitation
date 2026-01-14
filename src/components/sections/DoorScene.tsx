@@ -51,7 +51,7 @@ export const DoorScene = ({
 
     if (!doorFrame || !leftDoor || !rightDoor || !content || !contentInner || !background) return;
 
-    // 초기 높이를 한 번만 저장 (viewport 변경 무시)
+    // 초기 높이 저장 (주소창/네비 바 변경은 무시, 실제 리사이즈는 갱신)
     if (!initialHeightRef.current) {
       initialHeightRef.current = window.innerHeight;
     }
@@ -181,11 +181,31 @@ export const DoorScene = ({
       });
     }
 
-    // 리사이즈 핸들러 제거 - 모바일 주소창/네비 바 변경 시 리플로우 방지
-    // 초기 로드 시에만 한 번 refresh
+    // 스마트 리사이즈 핸들러 - 너비 변경만 처리
+    let lastWidth = window.innerWidth;
+    const handleSmartResize = () => {
+      const currentWidth = window.innerWidth;
+      const widthChanged = Math.abs(currentWidth - lastWidth) > 50;
+
+      if (widthChanged) {
+        // 실제 리사이즈만 처리 (가로↔세로, 창 크기)
+        if (timelineRef.current) {
+          startScrollRef.current = getFullVisibilityScroll();
+        }
+        ensureDoorTimeline();
+        ScrollTrigger.refresh();
+        lastWidth = currentWidth;
+      }
+      // 높이만 변경 = 주소창/네비 바 (무시)
+    };
+
+    // 초기 로드 시 한 번 refresh
     ScrollTrigger.refresh();
 
+    window.addEventListener('resize', handleSmartResize);
+
     return () => {
+      window.removeEventListener('resize', handleSmartResize);
       visibilityTriggerRef.current?.kill();
       visibilityTriggerRef.current = null;
       timelineRef.current?.scrollTrigger?.kill();
