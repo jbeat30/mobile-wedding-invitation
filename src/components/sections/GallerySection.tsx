@@ -24,16 +24,16 @@ export const GallerySection = () => {
 
   return (
     <>
-      <section id="gallery" className="bg-[var(--bg-tertiary)] py-16">
-        <div className="mx-auto flex w-full max-w-[520px] flex-col gap-8 px-6">
+      <section id="gallery" className="bg-[var(--bg-primary)] py-20">
+        <div className="mx-auto flex w-full max-w-[520px] flex-col gap-10 px-6">
           {/* 헤더 */}
           <div className="text-center" data-animate="fade-up">
-            <span className="text-[10px] tracking-[0.4em] text-[var(--muted)]">GALLERY</span>
-            <h2 className="mt-3 text-[26px] font-semibold text-[var(--text-primary)]">
+            <span className="text-[10px] tracking-[0.4em] text-[var(--text-muted)]">GALLERY</span>
+            <h2 className="mt-3 text-[28px] font-semibold text-[var(--text-primary)]">
               {gallery.title}
             </h2>
             {gallery.description && (
-              <p className="mt-2 text-[13px] text-[var(--text-secondary)]">
+              <p className="mt-2 text-[14px] text-[var(--text-secondary)]">
                 {gallery.description}
               </p>
             )}
