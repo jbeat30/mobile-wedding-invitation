@@ -49,12 +49,12 @@ export const RSVPSection = () => {
     <>
       <section
         id="rsvp"
-        className="bg-[var(--bg-secondary)] py-16"
+        className="bg-[var(--bg-primary)] py-24"
       >
         <div className="mx-auto flex w-full max-w-[520px] flex-col gap-10 px-6">
           {/* 섹션 헤더 */}
           <div className="text-center" data-animate="fade-up">
-            <span className="text-[10px] tracking-[0.4em] text-[var(--muted)]">RSVP</span>
+            <span className="text-[11px] tracking-[0.4em] text-[var(--muted)]">RSVP</span>
             <h2 className="mt-3 text-[26px] font-semibold text-[var(--text-primary)]">
               참석 여부
             </h2>
@@ -74,7 +74,7 @@ export const RSVPSection = () => {
             {rsvp.fields.map((field) => (
               <div key={field.key} className="flex flex-col gap-2">
                 <label
-                  className="text-[10px] tracking-[0.35em] text-[var(--muted)]"
+                  className="text-[11px] tracking-[0.35em] text-[var(--muted)]"
                   htmlFor={`rsvp-${field.key}`}
                 >
                   {field.label}
@@ -122,7 +122,7 @@ export const RSVPSection = () => {
                 <br />
                 {rsvp.consent.description}
                 <br />
-                <span className="text-[11px]">{rsvp.consent.retention}</span>
+                <span className="text-[12px]">{rsvp.consent.retention}</span>
               </span>
             </label>
 

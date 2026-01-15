@@ -1,13 +1,13 @@
 import { invitationMock } from '@/mock/invitation.mock';
 
 /**
- * 마무리 섹션 - 신규 생성
+ * 마무리 섹션
  */
 export const ClosingSection = () => {
   const { closing } = invitationMock;
 
   return (
-    <section id="closing" className="bg-[var(--bg-secondary)] py-24 pb-32">
+    <section id="closing" className="bg-[var(--bg-primary)] py-24 pb-32">
       <div className="mx-auto flex w-full max-w-[520px] flex-col gap-10 px-6">
         {/* 마무리 인사 */}
         <div className="text-center" data-animate="fade-up">

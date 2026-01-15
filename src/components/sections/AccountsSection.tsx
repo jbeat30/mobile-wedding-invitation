@@ -58,10 +58,10 @@ export const AccountsSection = () => {
   }, [toast]);
 
   return (
-    <section id="accounts" className="bg-[var(--bg-secondary)]">
-      <div className="mx-auto flex w-full max-w-[520px] flex-col gap-10 px-6 py-16">
+    <section id="accounts" className="bg-[var(--bg-primary)]">
+      <div className="mx-auto flex w-full max-w-[520px] flex-col gap-10 px-6 py-24">
         <div className="text-center" data-animate="fade-up">
-          <span className="text-[10px] tracking-[0.4em] text-[var(--muted)]">ACCOUNTS</span>
+          <span className="text-[11px] tracking-[0.4em] text-[var(--muted)]">ACCOUNTS</span>
           <h2 className="mt-3 text-[26px] font-semibold text-[var(--text-primary)]">
             {accounts.title}
           </h2>

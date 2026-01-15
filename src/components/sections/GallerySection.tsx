@@ -24,11 +24,11 @@ export const GallerySection = () => {
 
   return (
     <>
-      <section id="gallery" className="bg-[var(--bg-primary)] py-20">
+      <section id="gallery" className="bg-[var(--bg-primary)] py-24">
         <div className="mx-auto flex w-full max-w-[520px] flex-col gap-10 px-6">
           {/* 헤더 */}
           <div className="text-center" data-animate="fade-up">
-            <span className="text-[10px] tracking-[0.4em] text-[var(--text-muted)]">GALLERY</span>
+            <span className="text-[11px] tracking-[0.4em] text-[var(--text-muted)]">GALLERY</span>
             <h2 className="mt-3 text-[28px] font-semibold text-[var(--text-primary)]">
               {gallery.title}
             </h2>
