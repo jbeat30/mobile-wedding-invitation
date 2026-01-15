@@ -6,7 +6,7 @@ import { DDayCountdown } from '@/components/sections/DDayCountdown';
  * 예식 정보 섹션 - 날짜/시간/장소 상세
  */
 export const WeddingInfoSection = () => {
-  const { weddingDateTime, info, couple } = invitationMock;
+  const { weddingDateTime, info } = invitationMock;
 
   return (
     <section id="wedding-info" className="bg-[var(--bg-primary)] py-24">
