@@ -28,20 +28,20 @@ export const IntroSection = () => {
             </div>
           </div>
 
-          <div
-            className="rounded-[var(--radius-lg)] border border-white/60 bg-white/80 p-4 shadow-[var(--shadow-soft)] backdrop-blur"
-            data-animate="scale"
-          >
-            {/* 디데이 구성 확인 */}
-            <DDayCountdown weddingDateTime={weddingDateTime} />
-          </div>
-
           {/* 달력 */}
           <IntroCalendar
             weddingDateTime={weddingDateTime}
             highlightDates={[5, 25]}
             venue={info.venue}
           />
+
+          {/* 디데이 구성 확인 */}
+          <div
+            className="rounded-[var(--radius-lg)] border border-white/60 bg-white/80 p-4 shadow-[var(--shadow-soft)] backdrop-blur"
+            data-animate="scale"
+          >
+            <DDayCountdown weddingDateTime={weddingDateTime} />
+          </div>
         </div>
       </div>
     </section>

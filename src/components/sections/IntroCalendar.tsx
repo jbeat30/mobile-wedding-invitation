@@ -46,7 +46,10 @@ export const IntroCalendar = ({
 
   return (
     <div>
-      <p className="mb-6 text-center text-[14px] tracking-[0.2em] text-[var(--text-muted)]">
+      <p
+        className="mb-8 text-center text-[14px] tracking-[0.2em] text-[var(--text-muted)]"
+        data-animate="fade-up"
+      >
         {venue} · {weekdayName} · {month + 1}월 {weddingDay}일 · {timeLabel}
       </p>
       <div

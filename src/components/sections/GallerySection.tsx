@@ -143,10 +143,10 @@ export const GallerySection = () => {
               slidesPerView="auto"
               spaceBetween={10}
               freeMode={true}
-              className="gallery-thumbs"
+              className="gallery-thumb"
             >
               {gallery.images.map((image, index) => (
-                <SwiperSlide key={image.id} className="!w-16">
+                <SwiperSlide key={image.id} className="!w-16 pt-2">
                   <button
                     type="button"
                     onClick={() => {

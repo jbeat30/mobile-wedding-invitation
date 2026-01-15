@@ -151,6 +151,11 @@ export const DDayCountdown = ({ weddingDateTime }: DDayCountdownProps) => {
 
   return (
     <div className="w-full px-2" suppressHydrationWarning>
+      <p className="mb-4 text-center text-[12px] text-[var(--text-secondary)]">
+        {parts?.isPast || totalDays === 0
+          ? '우리 오늘 결혼해요 ❤️'
+          : `${invitationMock.couple.groom.fullName} ❤️ ${invitationMock.couple.bride.fullName} 결혼식이 ${totalDays}일 남았습니다`}
+      </p>
       <div className="grid grid-cols-4 gap-2 sm:gap-3">
         {valueBlocks.map((value, index) => (
           <div
@@ -166,11 +171,6 @@ export const DDayCountdown = ({ weddingDateTime }: DDayCountdownProps) => {
           </div>
         ))}
       </div>
-      <p className="mt-4 text-center text-[12px] text-[var(--text-secondary)]">
-        {parts?.isPast || totalDays === 0
-          ? '우리 오늘 결혼해요 ❤️'
-          : `${invitationMock.couple.groom.fullName} ❤️ ${invitationMock.couple.bride.fullName} 결혼식이 ${totalDays}일 남았습니다`}
-      </p>
     </div>
   );
 };
