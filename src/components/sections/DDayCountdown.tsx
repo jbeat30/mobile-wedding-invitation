@@ -150,8 +150,8 @@ export const DDayCountdown = ({ weddingDateTime }: DDayCountdownProps) => {
   ];
 
   return (
-    <div className="w-full px-2" suppressHydrationWarning>
-      <p className="mb-4 text-center text-[12px] text-[var(--text-secondary)]">
+    <div className="w-full px-2" suppressHydrationWarning data-animate="fade-up">
+      <p className="mb-4 text-center text-[16px] text-[var(--text-secondary)]">
         {parts?.isPast || totalDays === 0
           ? '우리 오늘 결혼해요 ❤️'
           : `${invitationMock.couple.groom.fullName} ❤️ ${invitationMock.couple.bride.fullName} 결혼식이 ${totalDays}일 남았습니다`}
@@ -162,10 +162,10 @@ export const DDayCountdown = ({ weddingDateTime }: DDayCountdownProps) => {
             key={labelMap[index]}
             className="flex flex-col items-center justify-center rounded-[14px] border border-white/70 bg-[var(--bg-tertiary)] px-2 py-3 text-center shadow-[0_14px_30px_rgba(41,32,26,0.12)]"
           >
-            <div className="text-[18px] font-semibold leading-none text-[var(--text-primary)]">
+            <div className="text-[20px] font-semibold leading-none text-[var(--text-primary)]">
               {value}
             </div>
-            <div className="mt-1 text-[9px] tracking-[0.28em] text-[var(--text-muted)]">
+            <div className="mt-1 text-[12px] tracking-[0.28em] text-[var(--text-muted)]">
               {labelMap[index]}
             </div>
           </div>

@@ -149,7 +149,7 @@ export const LoadingSection = ({ message, isVisible, isHintVisible }: LoadingSec
         </div>
         {/* 로딩 텍스트 */}
         <div className="relative z-[5] max-w-[min(360px,72vw)] px-6 text-center text-white animate-[loading-fade_1s_ease-out_both]">
-          <p className="text-[10px] font-bold uppercase tracking-[0.6em] opacity-90">
+          <p className="text-[11px] font-bold uppercase tracking-[0.6em] opacity-90">
             WEDDING INVITATION
           </p>
           <p className="mt-3.5 text-[26px] font-semibold tracking-[0.12em]">
