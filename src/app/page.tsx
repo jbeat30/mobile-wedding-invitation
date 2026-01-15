@@ -256,11 +256,15 @@ export default function Page() {
               isHintVisible={isHintVisible}
             />
           )}
-          {showContent && <IntroSection />}
+          {showContent && (
+            <>
+              <GreetingSection />
+              <IntroSection />
+            </>
+          )}
         </div>
         {showContent && (
           <>
-            <GreetingSection />
             <CoupleSection />
             <WeddingInfoSection />
             <LocationSection />

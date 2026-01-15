@@ -1,10 +1,11 @@
 import { invitationMock } from '@/mock/invitation.mock';
+import { IntroCalendar } from '@/components/sections/IntroCalendar';
 
 /**
- * 예식 정보 섹션 - 날짜/시간/장소 요약
+ * 예식 정보 섹션 - 날짜/시간/장소 상세
  */
 export const WeddingInfoSection = () => {
-  const { info, couple } = invitationMock;
+  const { weddingDateTime, info, couple } = invitationMock;
 
   return (
     <section id="wedding-info" className="bg-[var(--bg-primary)] py-20">
@@ -20,10 +21,19 @@ export const WeddingInfoSection = () => {
           </p>
         </div>
 
+        {/* 달력 */}
+        <div data-animate="scale">
+          <IntroCalendar
+            weddingDateTime={weddingDateTime}
+            highlightDates={[16]}
+            venue={info.venue}
+          />
+        </div>
+
         {/* 정보 카드 */}
         <div
           className="rounded-[var(--radius-lg)] border border-white/70 bg-white/90 px-8 py-10 shadow-[var(--shadow-soft)] backdrop-blur"
-          data-animate="scale"
+          data-animate="fade-up"
         >
           <div className="grid gap-8">
             {/* 날짜/시간 */}
