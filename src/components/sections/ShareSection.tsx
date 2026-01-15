@@ -129,12 +129,12 @@ export const ShareSection = () => {
     <>
       <section
         id="share"
-        className="bg-[var(--bg-primary)] py-16"
+        className="bg-[var(--bg-primary)] py-24"
       >
         <div className="mx-auto flex w-full max-w-[520px] flex-col gap-10 px-6">
           {/* 섹션 헤더 */}
           <div className="text-center" data-animate="fade-up">
-            <span className="text-[10px] tracking-[0.4em] text-[var(--muted)]">SHARE</span>
+            <span className="text-[11px] tracking-[0.4em] text-[var(--muted)]">SHARE</span>
             <h2 className="mt-3 text-[26px] font-semibold text-[var(--text-primary)]">
               청첩장 공유하기
             </h2>

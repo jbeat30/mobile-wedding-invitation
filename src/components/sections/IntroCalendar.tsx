@@ -1,29 +1,18 @@
 type IntroCalendarProps = {
   weddingDateTime: string;
   highlightDates?: number[];
-  venue: string;
 };
 
 const WEEKDAY_LABELS = ['일', '월', '화', '수', '목', '금', '토'] as const;
-const WEEKDAY_NAMES = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'] as const;
 
 export const IntroCalendar = ({
   weddingDateTime,
   highlightDates = [],
-  venue,
 }: IntroCalendarProps) => {
   const weddingDate = new Date(weddingDateTime);
   const year = weddingDate.getFullYear();
   const month = weddingDate.getMonth();
   const weddingDay = weddingDate.getDate();
-  const weekdayName = WEEKDAY_NAMES[weddingDate.getDay()];
-  const hours = weddingDate.getHours();
-  const minutes = weddingDate.getMinutes();
-  const meridiem = hours >= 12 ? '오후' : '오전';
-  const hour12 = hours % 12 === 0 ? 12 : hours % 12;
-  const timeLabel = minutes
-    ? `${meridiem} ${hour12}시 ${String(minutes).padStart(2, '0')}분`
-    : `${meridiem} ${hour12}시`;
   const firstWeekday = new Date(year, month, 1).getDay();
   const lastDate = new Date(year, month + 1, 0).getDate();
   const highlighted = new Set(highlightDates);
@@ -46,9 +35,6 @@ export const IntroCalendar = ({
 
   return (
     <div>
-      <p className="mb-6 text-center text-[14px] tracking-[0.2em] text-[var(--text-muted)]">
-        {venue} · {weekdayName} · {month + 1}월 {weddingDay}일 · {timeLabel}
-      </p>
       <div
         className="rounded-[24px] border border-white/70 bg-[#fbf6f1]/90 px-5 py-4 shadow-[var(--shadow-soft)] backdrop-blur"
         data-animate="fade-up"
@@ -62,7 +48,7 @@ export const IntroCalendar = ({
           {WEEKDAY_LABELS.map((label, index) => (
             <div
               key={label}
-              className={`text-center text-[10px] tracking-[0.28em] text-[var(--text-muted)]${
+              className={`text-center text-[14px] tracking-[0.28em] text-[var(--text-muted)]${
                 index === 0 ? ' text-[#c05b5b]' : index === 6 ? ' text-[#4e75b8]' : ''
               }`}
             >

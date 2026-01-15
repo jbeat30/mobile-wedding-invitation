@@ -15,32 +15,44 @@ const IntroSection = dynamic(
   () => import('@/components/sections/IntroSection').then((mod) => mod.IntroSection),
   { ssr: false }
 );
+const GreetingSection = dynamic(
+  () => import('@/components/sections/GreetingSection').then((mod) => mod.GreetingSection),
+  { ssr: false }
+);
 const CoupleSection = dynamic(
   () => import('@/components/sections/CoupleSection').then((mod) => mod.CoupleSection),
+  { ssr: false }
+);
+const WeddingInfoSection = dynamic(
+  () => import('@/components/sections/WeddingInfoSection').then((mod) => mod.WeddingInfoSection),
+  { ssr: false }
+);
+const LocationSection = dynamic(
+  () => import('@/components/sections/LocationSection').then((mod) => mod.LocationSection),
   { ssr: false }
 );
 const GallerySection = dynamic(
   () => import('@/components/sections/GallerySection').then((mod) => mod.GallerySection),
   { ssr: false }
 );
-const InfoSection = dynamic(
-  () => import('@/components/sections/InfoSection').then((mod) => mod.InfoSection),
-  { ssr: false }
-);
-const RSVPSection = dynamic(
-  () => import('@/components/sections/RSVPSection').then((mod) => mod.RSVPSection),
+const AccountsSection = dynamic(
+  () => import('@/components/sections/AccountsSection').then((mod) => mod.AccountsSection),
   { ssr: false }
 );
 const GuestbookSection = dynamic(
   () => import('@/components/sections/GuestbookSection').then((mod) => mod.GuestbookSection),
   { ssr: false }
 );
+const RSVPSection = dynamic(
+  () => import('@/components/sections/RSVPSection').then((mod) => mod.RSVPSection),
+  { ssr: false }
+);
 const ShareSection = dynamic(
   () => import('@/components/sections/ShareSection').then((mod) => mod.ShareSection),
   { ssr: false }
 );
-const AccountsSection = dynamic(
-  () => import('@/components/sections/AccountsSection').then((mod) => mod.AccountsSection),
+const ClosingSection = dynamic(
+  () => import('@/components/sections/ClosingSection').then((mod) => mod.ClosingSection),
   { ssr: false }
 );
 
@@ -109,13 +121,16 @@ export default function Page() {
 
     void Promise.all([
       import('@/components/sections/IntroSection'),
+      import('@/components/sections/GreetingSection'),
       import('@/components/sections/CoupleSection'),
+      import('@/components/sections/WeddingInfoSection'),
+      import('@/components/sections/LocationSection'),
       import('@/components/sections/GallerySection'),
-      import('@/components/sections/InfoSection'),
-      import('@/components/sections/RSVPSection'),
-      import('@/components/sections/GuestbookSection'),
-      import('@/components/sections/ShareSection'),
       import('@/components/sections/AccountsSection'),
+      import('@/components/sections/GuestbookSection'),
+      import('@/components/sections/RSVPSection'),
+      import('@/components/sections/ShareSection'),
+      import('@/components/sections/ClosingSection'),
     ]);
   }, [loading.enabled, isLoading]);
 
@@ -241,17 +256,24 @@ export default function Page() {
               isHintVisible={isHintVisible}
             />
           )}
-          {showContent && <IntroSection />}
+          {showContent && (
+            <>
+              <GreetingSection />
+              <IntroSection />
+            </>
+          )}
         </div>
         {showContent && (
           <>
             <CoupleSection />
+            <WeddingInfoSection />
+            <LocationSection />
             <GallerySection />
-            <InfoSection />
-            <RSVPSection />
-            <GuestbookSection />
-            <ShareSection />
             <AccountsSection />
+            <GuestbookSection />
+            <RSVPSection />
+            <ShareSection />
+            <ClosingSection />
           </>
         )}
       </main>

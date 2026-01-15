@@ -79,10 +79,10 @@ export const GuestbookSection = () => {
   const recentEntries = sortedEntries.slice(0, pageSize);
 
   return (
-    <section id="guestbook" className="bg-[var(--bg-tertiary)]">
-      <div className="mx-auto flex w-full max-w-[520px] flex-col gap-10 px-6 py-16">
+    <section id="guestbook" className="bg-[var(--bg-primary)]">
+      <div className="mx-auto flex w-full max-w-[520px] flex-col gap-10 px-6 py-24">
         <div className="text-center" data-animate="fade-up">
-          <span className="text-[10px] tracking-[0.4em] text-[var(--muted)]">GUESTBOOK</span>
+          <span className="text-[11px] tracking-[0.4em] text-[var(--muted)]">GUESTBOOK</span>
           <h2 className="mt-3 text-[26px] font-semibold text-[var(--text-primary)]">
             축하 메시지
           </h2>
@@ -95,7 +95,7 @@ export const GuestbookSection = () => {
           data-animate="fade-up"
         >
           <div className="flex flex-col gap-2">
-            <label className="text-[10px] tracking-[0.35em] text-[var(--muted)]" htmlFor="guest-name">
+            <label className="text-[11px] tracking-[0.35em] text-[var(--muted)]" htmlFor="guest-name">
               NAME
             </label>
             <input
@@ -111,7 +111,7 @@ export const GuestbookSection = () => {
           </div>
           <div className="flex flex-col gap-2">
             <label
-              className="text-[10px] tracking-[0.35em] text-[var(--muted)]"
+              className="text-[11px] tracking-[0.35em] text-[var(--muted)]"
               htmlFor="guest-message"
             >
               MESSAGE
@@ -165,7 +165,7 @@ export const GuestbookSection = () => {
             >
               <div className="flex items-center justify-between">
                 <p className="text-[14px] font-medium text-[var(--text-primary)]">{entry.name}</p>
-                <span className="text-[11px] text-[var(--text-muted)]">{formatDate(entry.createdAt)}</span>
+                <span className="text-[12px] text-[var(--text-muted)]">{formatDate(entry.createdAt)}</span>
               </div>
               <p className="mt-2 text-[13px] leading-relaxed text-[var(--text-secondary)]">
                 {entry.message}

@@ -134,17 +134,47 @@ export type InvitationShare = {
   };
 };
 
+export type InvitationGreeting = {
+  message: string[];
+  poeticNote?: string;
+};
+
+export type InvitationLocation = {
+  venue: string;
+  address: string;
+  coordinates?: {
+    lat: number;
+    lng: number;
+  };
+  transportation: {
+    subway?: string[];
+    bus?: string[];
+    car?: string;
+    parking?: string;
+  };
+  notices?: string[];
+};
+
+export type InvitationClosing = {
+  message: string;
+  signature?: string;
+  copyright?: string;
+};
+
 export type InvitationMock = {
   weddingDateTime: string;
   loading: InvitationLoading;
   couple: InvitationCouple;
   intro: InvitationIntro;
+  greeting: InvitationGreeting;
   info: InvitationInfo;
+  location: InvitationLocation;
   gallery: InvitationGallery;
   share: InvitationShare;
   rsvp: InvitationRsvp;
   guestbook: InvitationGuestbook;
   accounts: InvitationAccounts;
+  closing: InvitationClosing;
 };
 
 export const invitationMock: InvitationMock = {
@@ -211,16 +241,32 @@ export const invitationMock: InvitationMock = {
       accentColor: '#c19a7b',
     },
   },
+  greeting: {
+    message: [
+      '두 사람의 이야기가 열리고 있어요.',
+      '서로의 오늘이 되어, 함께 걸어가려 합니다.',
+      '',
+      '진심 어린 축복 속에',
+      '그 첫걸음을 함께해 주시면 감사하겠습니다.',
+    ],
+    poeticNote: '민들레 홀씨처럼 날아와 영원한 사랑을 만났습니다',
+  },
   info: {
     title: '결혼합니다',
     venue: '채림 웨딩홀',
     dateText: '2026년 5월 16일 (토) 오후 3시',
     address: '경기도 부천시 원미구 심곡동 173-1',
-    directions: [
-      '지하철 1호선 부천역(북부역광장 방면) - 지상 3번, 4번, 지하 7번 출구 이용',
-      '버스 5, 12, 23번 부천역 하차 후 도보 7분',
-      '주차: 로얄쇼핑주차장 (채림웨딩홀 전용주차장) 약 3시간 무료',
-    ],
+    directions: [],
+    notices: [],
+  },
+  location: {
+    venue: '채림 웨딩홀',
+    address: '경기도 부천시 원미구 심곡동 173-1',
+    transportation: {
+      subway: ['지하철 1호선 부천역 3번, 4번, 7번 출구'],
+      bus: ['5, 12, 23번 부천역 하차 후 도보 7분'],
+      parking: '로얄쇼핑주차장 (채림웨딩홀 전용주차장) 약 3시간 무료',
+    },
     notices: [
       '예식 후 간단한 식사가 준비되어 있습니다.',
       '주말 교통 혼잡이 예상되오니 여유 있게 출발해주세요.',
@@ -354,5 +400,10 @@ export const invitationMock: InvitationMock = {
         holder: '장신부',
       },
     ],
+  },
+  closing: {
+    message: '소중한 분들과 함께하는 이 자리, 오래 기억하겠습니다.',
+    signature: '강신랑 · 장신부',
+    copyright: '© 2026. All rights reserved.',
   },
 };
