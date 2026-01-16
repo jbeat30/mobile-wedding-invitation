@@ -2,66 +2,55 @@
 @source '../**/*.{js,jsx,ts,tsx,mdx}';
 
 :root {
-    /* 폰트 패밀리 정의 - 영문/한글 자동 적용 */
-    --font-serif: var(--font-crimson), var(--font-gowun), var(--font-nanum), "Nanum Myeongjo", "Gowun Batang", Georgia, serif;
-    --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Malgun Gothic", sans-serif;
-    --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    /* 폰트 */
+    --font-serif: var(--font-gowun), var(--font-nanum), "Gowun Batang", "Nanum Myeongjo", Georgia, serif;
+    --font-serif-en: var(--font-crimson), Georgia, "Times New Roman", serif;
+    --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif;
 
-    /* 배경 (Background) - 레퍼런스 기반 크림 톤 */
-    --bg-primary: #FFFCF0;
-    --bg-secondary: #FAF9F7;
-    --bg-tertiary: #F5F3F2;
-    --base-surface: #FFFCF0;
-    --base-surface-dark: #F5F3F2;
+    /* 배경 */
+    --bg-primary: #FAF9F7;
+    --bg-secondary: #F5F3F0;
+    --bg-tertiary: #F0EDE8;
 
-    /* 텍스트 (Text) - WCAG AA 완전 준수 */
-    --text-primary: #111111;        /* 대비율 19.8:1 */
-    --text-secondary: #2D2D2D;      /* 대비율 14.2:1 */
-    --text-tertiary: #757575;       /* 대비율 4.6:1 */
-    --text-muted: #6B6B6B;          /* 대비율 5.1:1 */
-    --base-text: #111111;
+    /* 텍스트 */
+    --text-primary: #2C2420;
+    --text-secondary: #4A423C;
+    --text-tertiary: #7A726C;
+    --text-muted: #9A928C;
 
-    /* 강조색 (Accent) - WCAG AA 준수 */
-    --accent-gold: #B77C00;         /* 대비율 5.2:1 */
-    --accent-gold-light: #C98A00;   /* 대비율 4.9:1 */
-    --accent-burgundy: #5A0000;     /* 대비율 14.0:1 */
-    --accent-navy: #00214A;         /* 대비율 16.5:1 */
+    /* 강조색 */
+    --accent-rose: #C4A092;
+    --accent-rose-dark: #A67C6B;
+    --accent-rose-light: #E8D5CC;
+    --accent-burgundy: #8B4A5E;
+    --accent-gold: #B8956C;
 
-    /* 기존 accent 변수 호환성 유지 */
-    --accent: var(--accent-gold);
+    /* 결혼일 강조 */
+    --wedding-highlight: #E8A4B3;
+    --wedding-highlight-bg: #FCF0F3;
+
+    /* 통합 변수 */
+    --accent: var(--accent-rose);
     --accent-strong: var(--accent-burgundy);
-    --accent-soft: #F3E8DD;
+    --accent-soft: var(--accent-rose-light);
     --muted: var(--text-muted);
 
-    /* 레거시 변수 (하위 호환성) */
-    --background: var(--bg-primary);
-    --foreground: var(--text-primary);
-    --surface-dark: var(--base-surface-dark);
-    --surface-light: var(--base-surface);
-    --text-light: #F9F6F2;
-    --text-dark: var(--text-primary);
-
     /* 카드 */
-    --card-bg: rgba(255, 255, 255, 0.92);
-    --card-bg-light: rgba(255, 255, 255, 0.72);
-    --card-border: rgba(255, 255, 255, 0.65);
-
-    /* 벚꽃 색상 */
-    --cherry-light: rgba(255, 233, 239, 0.9);
-    --cherry-dark: rgba(255, 182, 198, 0.8);
+    --card-bg: rgba(255, 255, 255, 0.85);
+    --card-border: rgba(255, 255, 255, 0.6);
 
     /* 그림자 */
-    --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.08);
-    --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.12);
-    --shadow-strong: 0 8px 24px rgba(0, 0, 0, 0.16);
+    --shadow-soft: 0 2px 12px rgba(44, 36, 32, 0.06);
+    --shadow-medium: 0 4px 20px rgba(44, 36, 32, 0.08);
+    --shadow-card: 0 8px 32px rgba(44, 36, 32, 0.06);
 
-    /* UI 요소 */
-    --border-light: rgba(0, 0, 0, 0.1);
-    --overlay-dark: rgba(0, 0, 0, 0.4);
+    /* UI */
+    --border-light: rgba(44, 36, 32, 0.08);
+    --divider: rgba(196, 160, 146, 0.3);
 
-    /* 모서리 반경 */
-    --radius-lg: 28px;
-    --radius-md: 18px;
+    /* 모서리 */
+    --radius-lg: 24px;
+    --radius-md: 16px;
     --radius-sm: 10px;
 
     /* Safe area */
@@ -76,73 +65,62 @@ body::before {
     position: fixed;
     inset: 0;
     pointer-events: none;
-    background: radial-gradient(120% 120% at 20% 0%, rgba(255, 255, 255, 0.55), transparent 60%),
-    radial-gradient(120% 120% at 85% 10%, rgba(237, 220, 206, 0.5), transparent 60%),
-    repeating-linear-gradient(120deg, rgba(255, 255, 255, 0.12) 0 2px, transparent 2px 8px);
-    opacity: 0.6;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255, 255, 255, 0.6), transparent),
+                radial-gradient(ellipse 100% 80% at 80% 20%, rgba(232, 213, 204, 0.3), transparent);
+    opacity: 0.7;
     z-index: -1;
 }
 
 @layer base {
-    /* HTML/Body 설정 - 스크롤 가능하되 가로 스크롤 차단 */
     html {
         width: 100%;
         overflow-x: hidden;
     }
 
-    /* 기본 폰트 적용 - body는 세리프 폰트 사용 */
     body {
         width: 100%;
         min-height: 100%;
         overflow-x: hidden;
         position: relative;
         font-family: var(--font-serif);
+        font-weight: 400;
+        line-height: 1.8;
+        letter-spacing: 0.01em;
+        color: var(--text-primary);
+        background: var(--bg-primary);
         font-feature-settings: "kern" 1, "liga" 1;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
-        /* 모바일 확대 방지 */
         touch-action: pan-y pan-x;
         -webkit-text-size-adjust: 100%;
-        -ms-text-size-adjust: 100%;
-        /* iOS Safari 고무줄 효과 방지 */
         overscroll-behavior-y: none;
     }
 
-    /* 이미지와 버튼의 터치 동작 제어 */
     img,
     button {
         touch-action: manipulation;
         -webkit-user-select: none;
         user-select: none;
-        /* 이미지 리사이징 방지 */
-        image-rendering: -webkit-optimize-contrast;
-        image-rendering: crisp-edges;
     }
 
-    /* 영문 우선 적용이 필요한 요소 */
-    [lang="en"],
-    .font-en {
-        font-family: var(--font-crimson), Georgia, serif;
+    .font-label {
+        font-family: var(--font-serif-en);
+        font-weight: 400;
+        letter-spacing: 0.35em;
+        text-transform: uppercase;
     }
 
-    /* 한글 우선 적용이 필요한 요소 */
-    [lang="ko"],
-    .font-ko {
-        font-family: var(--font-gowun), var(--font-nanum), "Nanum Myeongjo", serif;
+    .font-serif-ko {
+        font-family: var(--font-serif);
+        font-weight: 400;
     }
 
-    /* 산세리프 폰트가 필요한 요소 */
+    .font-serif-en {
+        font-family: var(--font-serif-en);
+    }
+
     .font-sans {
         font-family: var(--font-sans);
-    }
-
-    /* 모노스페이스 폰트가 필요한 요소 */
-    code,
-    kbd,
-    samp,
-    pre,
-    .font-mono {
-        font-family: var(--font-mono);
     }
 
     svg {

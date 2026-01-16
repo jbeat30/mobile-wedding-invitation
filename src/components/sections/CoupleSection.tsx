@@ -10,24 +10,21 @@ export const CoupleSection = () => {
   const { couple } = invitationMock;
 
   return (
-    <section id="couple" className="bg-[var(--bg-primary)] py-24">
-      <div className="mx-auto flex w-full max-w-[520px] flex-col gap-16 px-6">
+    <section id="couple" className="bg-[var(--bg-primary)] py-16">
+      <div className="mx-auto flex w-full max-w-[520px] flex-col gap-12 px-6">
         {/* 섹션 헤더 */}
         <div className="text-center" data-animate="fade-up">
-          <span className="text-[11px] tracking-[0.4em] text-[var(--text-muted)]">COUPLE</span>
-          <h2 className="mt-3 text-[28px] font-semibold text-[var(--text-primary)]">
+          <span className="font-label text-[11px] text-[var(--text-muted)]">COUPLE</span>
+          <h2 className="mt-2 text-[24px] font-medium text-[var(--text-primary)]">
             두 사람을 소개합니다
           </h2>
-          <p className="mt-3 text-[15px] leading-relaxed text-[var(--text-secondary)]">
-            마음을 모아 새로운 계절을 맞이합니다
-          </p>
         </div>
 
         {/* 프로필 */}
-        <div className="grid gap-16 sm:grid-cols-2" data-animate="stagger">
+        <div className="grid gap-10 sm:grid-cols-2" data-animate="stagger">
           {/* 신랑 */}
-          <div className="flex flex-col items-center gap-6 text-center" data-animate-item>
-            <div className="relative h-[200px] w-[200px] overflow-hidden rounded-full border-[6px] border-white shadow-[0_8px_32px_rgba(41,32,26,0.15)]">
+          <div className="flex flex-col items-center gap-5 text-center" data-animate-item>
+            <div className="relative h-[160px] w-[160px] overflow-hidden rounded-full border-4 border-white shadow-[var(--shadow-card)]">
               {couple.groom.profileImage && (
                 <Image
                   src={couple.groom.profileImage}
@@ -38,17 +35,15 @@ export const CoupleSection = () => {
                 />
               )}
             </div>
-            <div className="flex flex-col gap-3">
-              <div>
-                <p className="text-[12px] tracking-[0.35em] text-[var(--text-muted)]">
-                  {couple.groom.role || '신랑'}
-                </p>
-                <h3 className="mt-2 text-[26px] font-bold text-[var(--text-primary)]">
-                  {couple.groom.displayName}
-                </h3>
-              </div>
+            <div className="flex flex-col gap-2">
+              <p className="font-label text-[10px] text-[var(--text-muted)]">
+                {couple.groom.role || 'GROOM'}
+              </p>
+              <h3 className="text-[22px] font-medium text-[var(--text-primary)]">
+                {couple.groom.displayName}
+              </h3>
               {couple.groom.bio && (
-                <p className="text-[14px] leading-[1.8] text-[var(--text-secondary)]">
+                <p className="mt-1 text-[14px] leading-relaxed text-[var(--text-tertiary)]">
                   {couple.groom.bio}
                 </p>
               )}
@@ -56,8 +51,8 @@ export const CoupleSection = () => {
           </div>
 
           {/* 신부 */}
-          <div className="flex flex-col items-center gap-6 text-center" data-animate-item>
-            <div className="relative h-[200px] w-[200px] overflow-hidden rounded-full border-[6px] border-white shadow-[0_8px_32px_rgba(41,32,26,0.15)]">
+          <div className="flex flex-col items-center gap-5 text-center" data-animate-item>
+            <div className="relative h-[160px] w-[160px] overflow-hidden rounded-full border-4 border-white shadow-[var(--shadow-card)]">
               {couple.bride.profileImage && (
                 <Image
                   src={couple.bride.profileImage}
@@ -68,17 +63,15 @@ export const CoupleSection = () => {
                 />
               )}
             </div>
-            <div className="flex flex-col gap-3">
-              <div>
-                <p className="text-[12px] tracking-[0.35em] text-[var(--text-muted)]">
-                  {couple.bride.role || '신부'}
-                </p>
-                <h3 className="mt-2 text-[26px] font-bold text-[var(--text-primary)]">
-                  {couple.bride.displayName}
-                </h3>
-              </div>
+            <div className="flex flex-col gap-2">
+              <p className="font-label text-[10px] text-[var(--text-muted)]">
+                {couple.bride.role || 'BRIDE'}
+              </p>
+              <h3 className="text-[22px] font-medium text-[var(--text-primary)]">
+                {couple.bride.displayName}
+              </h3>
               {couple.bride.bio && (
-                <p className="text-[14px] leading-[1.8] text-[var(--text-secondary)]">
+                <p className="mt-1 text-[14px] leading-relaxed text-[var(--text-tertiary)]">
                   {couple.bride.bio}
                 </p>
               )}

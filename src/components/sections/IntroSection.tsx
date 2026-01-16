@@ -10,7 +10,7 @@ export const IntroSection = () => {
   return (
     <section id="intro" className="relative bg-[var(--bg-primary)]">
       {/* Hero 영역 */}
-      <div className="relative h-[65vh] min-h-[500px] max-h-[700px] overflow-hidden">
+      <div className="relative h-[60vh] min-h-[480px] max-h-[640px] overflow-hidden">
         <Image
           src="/mock/main-image.png"
           alt="Wedding Main"
@@ -19,21 +19,21 @@ export const IntroSection = () => {
           className="object-cover object-center"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-[var(--bg-primary)]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-[var(--bg-primary)]" />
 
         {/* Hero 텍스트 */}
-        <div className="absolute inset-0 flex items-end justify-center pb-20">
+        <div className="absolute inset-0 flex items-end justify-center pb-16">
           <div className="text-center" data-animate="fade-up">
-            <p className="text-[12px] tracking-[0.5em] text-white/90 drop-shadow-lg">
+            <p className="font-label text-[11px] text-white/85 drop-shadow-md">
               WEDDING INVITATION
             </p>
-            <h1 className="mt-3 text-[38px] font-bold tracking-tight text-white drop-shadow-xl">
+            <h1 className="mt-4 text-[32px] font-medium tracking-wide text-white drop-shadow-lg">
               {couple.groom.displayName}
-              <span className="mx-2 text-[22px] text-white/80">·</span>
+              <span className="mx-3 text-[18px] text-white/70">♥</span>
               {couple.bride.displayName}
             </h1>
-            <p className="mt-4 text-[15px] text-white/85 drop-shadow-md">
-              {info.dateText.split(' ').slice(0, 3).join(' ')}
+            <p className="mt-3 text-[14px] font-light tracking-wider text-white/80 drop-shadow-sm">
+              {info.dateText}
             </p>
           </div>
         </div>

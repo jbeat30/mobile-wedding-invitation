@@ -58,33 +58,33 @@ export const AccountsSection = () => {
   }, [toast]);
 
   return (
-    <section id="accounts" className="bg-[var(--bg-primary)]">
-      <div className="mx-auto flex w-full max-w-[520px] flex-col gap-10 px-6 py-24">
+    <section id="accounts" className="bg-[var(--bg-primary)] py-16">
+      <div className="mx-auto flex w-full max-w-[520px] flex-col gap-8 px-6">
         <div className="text-center" data-animate="fade-up">
-          <span className="text-[11px] tracking-[0.4em] text-[var(--muted)]">ACCOUNTS</span>
-          <h2 className="mt-3 text-[26px] font-semibold text-[var(--text-primary)]">
+          <span className="font-label text-[11px] text-[var(--text-muted)]">ACCOUNTS</span>
+          <h2 className="mt-2 text-[24px] font-medium text-[var(--text-primary)]">
             {accounts.title}
           </h2>
-          <p className="mt-2 text-[13px] text-[var(--text-secondary)]">{accounts.description}</p>
+          <p className="mt-2 text-[14px] text-[var(--text-tertiary)]">{accounts.description}</p>
         </div>
 
-        <div className="flex flex-col gap-6" data-animate="stagger">
+        <div className="flex flex-col gap-5" data-animate="stagger">
           {sections.map((section) => (
             <div
               key={section.title}
-              className="rounded-[var(--radius-lg)] border border-white/70 bg-white/90 p-6 shadow-[var(--shadow-soft)]"
+              className="rounded-[var(--radius-md)] border border-[var(--card-border)] bg-white/70 p-5 shadow-[var(--shadow-soft)]"
               data-animate-item
             >
-              <p className="text-[15px] font-semibold text-[var(--text-primary)]">{section.title}</p>
+              <p className="text-[14px] font-medium text-[var(--text-primary)]">{section.title}</p>
               <div className="mt-4 flex flex-col gap-3">
                 {section.entries.map((entry) => (
                   <div
                     key={`${section.title}-${entry.accountNumber}`}
-                    className="flex items-center justify-between gap-4 rounded-[16px] border border-black/5 bg-[#fbf8f4] px-4 py-3"
+                    className="flex items-center justify-between gap-4 rounded-[12px] bg-[var(--bg-secondary)] px-4 py-3"
                   >
-                    <div className="flex flex-col">
-                      <span className="text-[13px] text-[var(--text-muted)]">{entry.bankName}</span>
-                      <span className="text-[14px] font-medium text-[var(--text-primary)]">
+                    <div className="flex flex-col gap-0.5">
+                      <span className="text-[12px] text-[var(--text-muted)]">{entry.bankName}</span>
+                      <span className="text-[14px] text-[var(--text-primary)]">
                         {entry.accountNumber}
                       </span>
                       <span className="text-[12px] text-[var(--text-muted)]">{entry.holder}</span>
@@ -92,7 +92,7 @@ export const AccountsSection = () => {
                     <button
                       type="button"
                       onClick={() => copyToClipboard(entry.accountNumber)}
-                      className="rounded-full border border-[var(--accent)] px-4 py-2 text-[12px] font-medium text-[var(--accent-strong)] transition hover:bg-[var(--accent-soft)]"
+                      className="rounded-full border border-[var(--accent)] px-4 py-2 text-[12px] text-[var(--accent-rose-dark)] transition hover:bg-[var(--accent-soft)]"
                     >
                       복사
                     </button>

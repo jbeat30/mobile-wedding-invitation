@@ -24,16 +24,16 @@ export const GallerySection = () => {
 
   return (
     <>
-      <section id="gallery" className="bg-[var(--bg-primary)] py-24">
-        <div className="mx-auto flex w-full max-w-[520px] flex-col gap-10 px-6">
+      <section id="gallery" className="bg-[var(--bg-primary)] py-16">
+        <div className="mx-auto flex w-full max-w-[520px] flex-col gap-8 px-6">
           {/* 헤더 */}
           <div className="text-center" data-animate="fade-up">
-            <span className="text-[11px] tracking-[0.4em] text-[var(--text-muted)]">GALLERY</span>
-            <h2 className="mt-3 text-[28px] font-semibold text-[var(--text-primary)]">
+            <span className="font-label text-[11px] text-[var(--text-muted)]">GALLERY</span>
+            <h2 className="mt-2 text-[24px] font-medium text-[var(--text-primary)]">
               {gallery.title}
             </h2>
             {gallery.description && (
-              <p className="mt-2 text-[14px] text-[var(--text-secondary)]">
+              <p className="mt-2 text-[14px] text-[var(--text-tertiary)]">
                 {gallery.description}
               </p>
             )}
@@ -173,7 +173,7 @@ export const GallerySection = () => {
           </div>
 
           {/* 하단 안내 */}
-          <p className="text-center text-[12px] text-[var(--muted)]" data-animate="fade">
+          <p className="text-center text-[12px] text-[var(--text-muted)]" data-animate="fade">
             사진을 클릭하거나 좌우로 슬라이드하여 감상하세요
           </p>
         </div>

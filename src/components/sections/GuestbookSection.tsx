@@ -79,23 +79,23 @@ export const GuestbookSection = () => {
   const recentEntries = sortedEntries.slice(0, pageSize);
 
   return (
-    <section id="guestbook" className="bg-[var(--bg-primary)]">
-      <div className="mx-auto flex w-full max-w-[520px] flex-col gap-10 px-6 py-24">
+    <section id="guestbook" className="bg-[var(--bg-primary)] py-16">
+      <div className="mx-auto flex w-full max-w-[520px] flex-col gap-8 px-6">
         <div className="text-center" data-animate="fade-up">
-          <span className="text-[11px] tracking-[0.4em] text-[var(--muted)]">GUESTBOOK</span>
-          <h2 className="mt-3 text-[26px] font-semibold text-[var(--text-primary)]">
+          <span className="font-label text-[11px] text-[var(--text-muted)]">GUESTBOOK</span>
+          <h2 className="mt-2 text-[24px] font-medium text-[var(--text-primary)]">
             축하 메시지
           </h2>
-          <p className="mt-2 text-[13px] text-[var(--text-secondary)]">{guestbook.retentionText}</p>
+          <p className="mt-2 text-[14px] text-[var(--text-tertiary)]">{guestbook.retentionText}</p>
         </div>
 
         <form
-          className="flex flex-col gap-4 rounded-[var(--radius-lg)] border border-white/70 bg-white/90 p-6 shadow-[var(--shadow-soft)] backdrop-blur"
+          className="flex flex-col gap-4 rounded-[var(--radius-md)] border border-[var(--card-border)] bg-white/70 p-5 shadow-[var(--shadow-soft)]"
           onSubmit={handleSubmit}
           data-animate="fade-up"
         >
           <div className="flex flex-col gap-2">
-            <label className="text-[11px] tracking-[0.35em] text-[var(--muted)]" htmlFor="guest-name">
+            <label className="font-label text-[10px] text-[var(--text-muted)]" htmlFor="guest-name">
               NAME
             </label>
             <input
@@ -103,7 +103,7 @@ export const GuestbookSection = () => {
               name="guest-name"
               value={name}
               onChange={(event) => setName(event.target.value)}
-              className="rounded-[14px] border border-black/10 bg-white px-4 py-3 text-[14px] text-[var(--text-primary)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/30"
+              className="rounded-[12px] border border-[var(--border-light)] bg-white px-4 py-3 text-[14px] text-[var(--text-primary)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
               placeholder="성함을 입력해주세요"
               maxLength={20}
               required
@@ -111,7 +111,7 @@ export const GuestbookSection = () => {
           </div>
           <div className="flex flex-col gap-2">
             <label
-              className="text-[11px] tracking-[0.35em] text-[var(--muted)]"
+              className="font-label text-[10px] text-[var(--text-muted)]"
               htmlFor="guest-message"
             >
               MESSAGE
@@ -121,53 +121,51 @@ export const GuestbookSection = () => {
               name="guest-message"
               value={message}
               onChange={(event) => setMessage(event.target.value)}
-              className="min-h-[120px] rounded-[14px] border border-black/10 bg-white px-4 py-3 text-[14px] text-[var(--text-primary)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/30"
+              className="min-h-[100px] rounded-[12px] border border-[var(--border-light)] bg-white px-4 py-3 text-[14px] text-[var(--text-primary)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
               placeholder="축하의 한마디를 남겨주세요"
               maxLength={200}
               required
             />
           </div>
-          <label className="flex items-start gap-3 rounded-[14px] border border-black/5 bg-[#fbf8f4] px-4 py-3 text-[12px] text-[var(--text-muted)]">
+          <label className="flex items-start gap-3 rounded-[12px] bg-[var(--bg-secondary)] px-4 py-3 text-[12px] text-[var(--text-muted)]">
             <input
               type="checkbox"
               checked={consent}
               onChange={(event) => setConsent(event.target.checked)}
-              className="mt-[3px] h-4 w-4 accent-[var(--accent-strong)]"
+              className="mt-[3px] h-4 w-4 accent-[var(--accent-burgundy)]"
             />
-            <span>
-              {guestbook.privacyNotice}
-            </span>
+            <span>{guestbook.privacyNotice}</span>
           </label>
           <button
             type="submit"
-            className="rounded-full bg-[var(--accent-strong)] py-3 text-[14px] font-medium text-white transition hover:bg-[var(--accent)] disabled:bg-[var(--base-surface-dark)]"
+            className="rounded-full bg-[var(--accent-burgundy)] py-3 text-[14px] text-white transition hover:opacity-90 disabled:bg-[var(--bg-tertiary)] disabled:text-[var(--text-muted)]"
             disabled={!isValid}
           >
             축하 메시지 남기기
           </button>
         </form>
 
-        <div className="flex flex-col gap-4" data-animate="stagger">
-          {guestbook.displayMode === 'recent' ? (
+        <div className="flex flex-col gap-3" data-animate="stagger">
+          {guestbook.displayMode === 'recent' && (
             <p
-              className="rounded-[14px] border border-white/70 bg-white/80 px-4 py-3 text-center text-[12px] text-[var(--text-muted)]"
+              className="rounded-[12px] bg-[var(--bg-secondary)] px-4 py-3 text-center text-[12px] text-[var(--text-muted)]"
               data-animate-item
             >
               {guestbook.recentNotice}
             </p>
-          ) : null}
+          )}
 
           {(guestbook.displayMode === 'paginated' ? paginatedEntries : recentEntries).map((entry) => (
             <div
               key={entry.id}
-              className="rounded-[20px] border border-white/70 bg-white/90 px-5 py-4 shadow-[0_12px_30px_rgba(22,22,22,0.08)]"
+              className="rounded-[var(--radius-md)] border border-[var(--card-border)] bg-white/70 px-4 py-4 shadow-[var(--shadow-soft)]"
               data-animate-item
             >
               <div className="flex items-center justify-between">
                 <p className="text-[14px] font-medium text-[var(--text-primary)]">{entry.name}</p>
                 <span className="text-[12px] text-[var(--text-muted)]">{formatDate(entry.createdAt)}</span>
               </div>
-              <p className="mt-2 text-[13px] leading-relaxed text-[var(--text-secondary)]">
+              <p className="mt-2 text-[14px] leading-relaxed text-[var(--text-secondary)]">
                 {entry.message}
               </p>
             </div>

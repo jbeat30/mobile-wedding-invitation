@@ -4,6 +4,7 @@ type IntroCalendarProps = {
 };
 
 const WEEKDAY_LABELS = ['일', '월', '화', '수', '목', '금', '토'] as const;
+const MONTH_NAMES_EN = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'] as const;
 
 export const IntroCalendar = ({
   weddingDateTime,
@@ -34,60 +35,80 @@ export const IntroCalendar = ({
   }
 
   return (
-    <div>
-      <div
-        className="rounded-[24px] border border-white/70 bg-[#fbf6f1]/90 px-5 py-4 shadow-[var(--shadow-soft)] backdrop-blur"
-        data-animate="fade-up"
-      >
-        <div className="my-4 flex items-center justify-center">
-          <p className="text-[24px] tracking-[0.12em]">
-            {year}.{String(month + 1).padStart(2, '0')}
-          </p>
-        </div>
-        <div className="grid grid-cols-7 gap-x-2 gap-y-2.5">
-          {WEEKDAY_LABELS.map((label, index) => (
-            <div
-              key={label}
-              className={`text-center text-[14px] tracking-[0.28em] text-[var(--text-muted)]${
-                index === 0 ? ' text-[#c05b5b]' : index === 6 ? ' text-[#4e75b8]' : ''
-              }`}
-            >
-              {label}
-            </div>
-          ))}
-          {weeks.map((week, weekIndex) =>
-            week.map((day, dayIndex) => {
-              const key = `day-${weekIndex}-${dayIndex}`;
-              if (!day) {
-                return <div key={key} className="h-8 rounded-[10px]" />;
-              }
-              const isWeddingDay = day === weddingDay;
-              const isSunday = dayIndex === 0;
-              const isSaturday = dayIndex === 6;
-              const isHoliday = highlighted.has(day);
-              const textColor = isWeddingDay
-                ? ' text-[#5a2831]'
-                : isHoliday || isSunday
-                  ? ' text-[#c05b5b]'
-                  : isSaturday
-                    ? ' text-[#4e75b8]'
-                    : ' text-[var(--text-secondary)]';
-              const background = isWeddingDay ? ' bg-[#f2b7c5]' : ' bg-white/70';
-              const emphasis = isWeddingDay
-                ? ' font-semibold shadow-[0_8px_20px_rgba(242,183,197,0.45)]'
-                : '';
+    <div
+      className="rounded-[20px] border border-[var(--card-border)] bg-white/60 px-5 py-6 shadow-[var(--shadow-soft)] backdrop-blur-sm"
+      data-animate="fade-up"
+    >
+      {/* 연월 표시 */}
+      <div className="mb-5 flex flex-col items-center gap-1">
+        <p className="font-label text-[13px] text-[var(--text-muted)]">
+          {MONTH_NAMES_EN[month]}
+        </p>
+        <p className="text-[22px] font-medium tracking-wide text-[var(--text-primary)]">
+          {year}년 {month + 1}월
+        </p>
+      </div>
 
+      {/* 요일 헤더 */}
+      <div className="mb-2 grid grid-cols-7 gap-x-1">
+        {WEEKDAY_LABELS.map((label, index) => (
+          <div
+            key={label}
+            className={`py-2 text-center text-[14px] tracking-[0.15em] font-medium 
+            ${
+              index === 0
+                ? 'text-[var(--accent-burgundy)]'
+                : index === 6
+                  ? 'text-[var(--accent-rose-dark)]'
+                  : 'text-[var(--text-muted)]'
+            }`}
+          >
+            {label}
+          </div>
+        ))}
+      </div>
+
+      {/* 날짜 그리드 */}
+      <div className="grid grid-cols-7 gap-x-1 gap-y-1">
+        {weeks.map((week, weekIndex) =>
+          week.map((day, dayIndex) => {
+            const key = `day-${weekIndex}-${dayIndex}`;
+            if (!day) {
+              return <div key={key} className="aspect-square" />;
+            }
+
+            const isWeddingDay = day === weddingDay;
+            const isSunday = dayIndex === 0;
+            const isSaturday = dayIndex === 6;
+            const isHoliday = highlighted.has(day);
+
+            if (isWeddingDay) {
               return (
-                <div
-                  key={key}
-                  className={`flex h-8 items-center justify-center rounded-[10px] text-[12px]${background}${textColor}${emphasis}`}
-                >
-                  {day}
+                <div key={key} className="flex aspect-square items-center justify-center">
+                  <div className="relative flex h-9 w-9 items-center justify-center rounded-full bg-[var(--wedding-highlight)] shadow-[0_4px_16px_rgba(232,164,179,0.4)]">
+                    <span className="text-[14px] font-semibold text-white">{day}</span>
+                    <span className="absolute -bottom-0.5 -right-0.5 text-[10px]">♥</span>
+                  </div>
                 </div>
               );
-            })
-          )}
-        </div>
+            }
+
+            const textColor = isHoliday || isSunday
+              ? 'text-[var(--accent-burgundy)]'
+              : isSaturday
+                ? 'text-[var(--accent-rose-dark)]'
+                : 'text-[var(--text-secondary)]';
+
+            return (
+              <div
+                key={key}
+                className={`flex aspect-square items-center justify-center text-[13px] ${textColor}`}
+              >
+                {day}
+              </div>
+            );
+          })
+        )}
       </div>
     </div>
   );

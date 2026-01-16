@@ -49,16 +49,16 @@ export const RSVPSection = () => {
     <>
       <section
         id="rsvp"
-        className="bg-[var(--bg-primary)] py-24"
+        className="bg-[var(--bg-primary)] py-16"
       >
-        <div className="mx-auto flex w-full max-w-[520px] flex-col gap-10 px-6">
+        <div className="mx-auto flex w-full max-w-[520px] flex-col gap-8 px-6">
           {/* 섹션 헤더 */}
           <div className="text-center" data-animate="fade-up">
-            <span className="text-[11px] tracking-[0.4em] text-[var(--muted)]">RSVP</span>
-            <h2 className="mt-3 text-[26px] font-semibold text-[var(--text-primary)]">
+            <span className="font-label text-[11px] text-[var(--text-muted)]">RSVP</span>
+            <h2 className="mt-2 text-[24px] font-medium text-[var(--text-primary)]">
               참석 여부
             </h2>
-            <p className="mt-2 text-[13px] text-[var(--text-secondary)]">
+            <p className="mt-2 text-[14px] text-[var(--text-tertiary)]">
               {rsvp.deadline
                 ? `${new Date(rsvp.deadline).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' })}까지 회신 부탁드립니다`
                 : '참석 여부를 알려주세요'}
@@ -67,18 +67,18 @@ export const RSVPSection = () => {
 
           {/* RSVP 폼 */}
           <form
-            className="flex flex-col gap-5 rounded-[var(--radius-lg)] border border-white/70 bg-white/90 p-6 shadow-[var(--shadow-soft)] backdrop-blur"
+            className="flex flex-col gap-4 rounded-[var(--radius-md)] border border-[var(--card-border)] bg-white/70 p-5 shadow-[var(--shadow-soft)]"
             onSubmit={handleSubmit}
             data-animate="fade-up"
           >
             {rsvp.fields.map((field) => (
               <div key={field.key} className="flex flex-col gap-2">
                 <label
-                  className="text-[11px] tracking-[0.35em] text-[var(--muted)]"
+                  className="font-label text-[10px] text-[var(--text-muted)]"
                   htmlFor={`rsvp-${field.key}`}
                 >
                   {field.label}
-                  {field.required && <span className="ml-1 text-red-500">*</span>}
+                  {field.required && <span className="ml-1 text-[var(--accent-burgundy)]">*</span>}
                 </label>
 
                 {field.options ? (
@@ -86,7 +86,7 @@ export const RSVPSection = () => {
                     id={`rsvp-${field.key}`}
                     value={formData[field.key] || ''}
                     onChange={(e) => handleChange(field.key, e.target.value)}
-                    className="rounded-[14px] border border-black/10 bg-white px-4 py-3 text-[14px] text-[var(--text-primary)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/30"
+                    className="rounded-[12px] border border-[var(--border-light)] bg-white px-4 py-3 text-[14px] text-[var(--text-primary)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
                     required={field.required}
                   >
                     <option value="">선택해주세요</option>
@@ -102,7 +102,7 @@ export const RSVPSection = () => {
                     value={formData[field.key] || ''}
                     onChange={(e) => handleChange(field.key, e.target.value)}
                     placeholder={field.placeholder}
-                    className="min-h-[100px] rounded-[14px] border border-black/10 bg-white px-4 py-3 text-[14px] text-[var(--text-primary)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/30"
+                    className="min-h-[80px] rounded-[12px] border border-[var(--border-light)] bg-white px-4 py-3 text-[14px] text-[var(--text-primary)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
                     required={field.required}
                   />
                 )}
@@ -110,19 +110,19 @@ export const RSVPSection = () => {
             ))}
 
             {/* 개인정보 동의 */}
-            <label className="flex items-start gap-3 rounded-[14px] border border-black/5 bg-[#fbf8f4] px-4 py-3 text-[12px] text-[var(--text-muted)]">
+            <label className="flex items-start gap-3 rounded-[12px] bg-[var(--bg-secondary)] px-4 py-3 text-[12px] text-[var(--text-muted)]">
               <input
                 type="checkbox"
                 checked={consent}
                 onChange={(e) => setConsent(e.target.checked)}
-                className="mt-[3px] h-4 w-4 accent-[var(--accent-strong)]"
+                className="mt-[3px] h-4 w-4 accent-[var(--accent-burgundy)]"
               />
               <span>
                 <strong className="text-[var(--text-primary)]">{rsvp.consent.title}</strong>
                 <br />
                 {rsvp.consent.description}
                 <br />
-                <span className="text-[12px]">{rsvp.consent.retention}</span>
+                <span className="text-[11px]">{rsvp.consent.retention}</span>
               </span>
             </label>
 
@@ -130,7 +130,7 @@ export const RSVPSection = () => {
             <button
               type="submit"
               disabled={!isValid()}
-              className="rounded-full bg-[var(--accent-strong)] py-3 text-[14px] font-medium text-white transition hover:bg-[var(--accent)] disabled:bg-[var(--base-surface-dark)] disabled:text-[var(--text-muted)]"
+              className="rounded-full bg-[var(--accent-burgundy)] py-3 text-[14px] text-white transition hover:opacity-90 disabled:bg-[var(--bg-tertiary)] disabled:text-[var(--text-muted)]"
             >
               참석 여부 전달하기
             </button>

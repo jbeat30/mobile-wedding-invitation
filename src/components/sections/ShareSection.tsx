@@ -129,36 +129,36 @@ export const ShareSection = () => {
     <>
       <section
         id="share"
-        className="bg-[var(--bg-primary)] py-24"
+        className="bg-[var(--bg-primary)] py-16"
       >
-        <div className="mx-auto flex w-full max-w-[520px] flex-col gap-10 px-6">
+        <div className="mx-auto flex w-full max-w-[520px] flex-col gap-8 px-6">
           {/* 섹션 헤더 */}
           <div className="text-center" data-animate="fade-up">
-            <span className="text-[11px] tracking-[0.4em] text-[var(--muted)]">SHARE</span>
-            <h2 className="mt-3 text-[26px] font-semibold text-[var(--text-primary)]">
+            <span className="font-label text-[11px] text-[var(--text-muted)]">SHARE</span>
+            <h2 className="mt-2 text-[24px] font-medium text-[var(--text-primary)]">
               청첩장 공유하기
             </h2>
-            <p className="mt-2 text-[13px] text-[var(--text-secondary)]">
+            <p className="mt-2 text-[14px] text-[var(--text-tertiary)]">
               소중한 분들과 함께 나눠주세요
             </p>
           </div>
 
           <div
-            className="rounded-[var(--radius-lg)] border border-white/70 bg-white/90 p-5 shadow-[var(--shadow-soft)]"
+            className="overflow-hidden rounded-[var(--radius-md)] border border-[var(--card-border)] shadow-[var(--shadow-soft)]"
             data-animate="scale"
           >
             <div
-              className="relative h-[160px] w-full overflow-hidden rounded-[18px]"
+              className="relative h-[140px] w-full"
               style={{
-                backgroundImage: `linear-gradient(120deg, rgba(255,255,255,0.5), rgba(255,255,255,0)), url(${share.imageUrl})`,
+                backgroundImage: `linear-gradient(120deg, rgba(255,255,255,0.4), rgba(255,255,255,0)), url(${share.imageUrl})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
               }}
             >
-              <div className="absolute inset-0 bg-gradient-to-t from-black/35 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
               <div className="absolute bottom-4 left-4 text-white">
-                <p className="text-[12px] tracking-[0.3em] uppercase text-white/80">Invitation</p>
-                <p className="mt-2 text-[18px] font-semibold">{share.title}</p>
+                <p className="font-label text-[10px] text-white/80">Invitation</p>
+                <p className="mt-1.5 text-[16px] font-medium">{share.title}</p>
                 <p className="mt-1 text-[12px] text-white/80">{share.description}</p>
               </div>
             </div>
@@ -171,7 +171,7 @@ export const ShareSection = () => {
               onClick={handleKakaoShare}
               disabled={!hasAppKey || !isKakaoReady}
               data-animate-item
-              className="relative flex items-center justify-center gap-3 rounded-full bg-[#FEE500] py-4 text-[15px] font-medium text-[#3C1E1E] shadow-[0_18px_36px_rgba(41,32,26,0.12)] transition hover:bg-[#FDD835] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-[#FEE500]"
+              className="relative flex items-center justify-center gap-3 rounded-full bg-[#FEE500] py-3.5 text-[14px] font-medium text-[#3C1E1E] shadow-[var(--shadow-soft)] transition hover:bg-[#FDD835] disabled:cursor-not-allowed disabled:opacity-40"
               title={
                 !hasAppKey
                   ? '카카오 API 키가 설정되지 않았습니다'
@@ -180,7 +180,7 @@ export const ShareSection = () => {
                     : ''
               }
             >
-              <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 3C6.48 3 2 6.58 2 11c0 2.89 2.06 5.43 5.18 6.87-.2.74-.74 2.67-.85 3.1-.13.49.17.48.36.35.14-.09 2.26-1.54 3.62-2.47.52.07 1.05.11 1.59.11C17.52 19 22 15.42 22 11S17.52 3 12 3z" />
               </svg>
               카카오톡으로 공유하기
@@ -195,10 +195,10 @@ export const ShareSection = () => {
             <button
               onClick={handleCopyUrl}
               data-animate-item
-              className="flex items-center justify-center gap-3 rounded-full border-2 border-[var(--accent)] bg-white py-4 text-[15px] font-medium text-[var(--text-primary)] transition hover:bg-[var(--bg-tertiary)]"
+              className="flex items-center justify-center gap-3 rounded-full border border-[var(--accent)] bg-white py-3.5 text-[14px] text-[var(--text-primary)] transition hover:bg-[var(--bg-secondary)]"
             >
               <svg
-                className="h-5 w-5"
+                className="h-4 w-4"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -213,15 +213,15 @@ export const ShareSection = () => {
               링크 복사하기
             </button>
 
-            {/* 네이티브 공유 (Web Share API 지원 브라우저만) */}
+            {/* 네이티브 공유 */}
             {canShare && (
               <button
                 onClick={handleNativeShare}
                 data-animate-item
-                className="flex items-center justify-center gap-3 rounded-full border-2 border-[var(--text-muted)]/20 bg-white py-4 text-[15px] font-medium text-[var(--text-secondary)] transition hover:bg-[var(--bg-tertiary)]"
+                className="flex items-center justify-center gap-3 rounded-full border border-[var(--border-light)] bg-white py-3.5 text-[14px] text-[var(--text-secondary)] transition hover:bg-[var(--bg-secondary)]"
               >
                 <svg
-                  className="h-5 w-5"
+                  className="h-4 w-4"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
