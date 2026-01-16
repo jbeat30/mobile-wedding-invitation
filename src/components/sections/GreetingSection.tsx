@@ -1,4 +1,5 @@
 import { invitationMock, type InvitationFamilyMember } from '@/mock/invitation.mock';
+import { AnimatedHeart } from '@/components/ui/AnimatedHeart';
 
 /**
  * 인사말 섹션
@@ -47,7 +48,12 @@ export const GreetingSection = () => {
         {/* 구분선 */}
         <div className="flex items-center justify-center gap-4" data-animate="fade">
           <div className="h-px w-12 bg-[var(--divider)]" />
-          <span className="text-[var(--accent-rose)]">♥</span>
+          <AnimatedHeart
+            size={20}
+            strokeColor="var(--accent-rose)"
+            strokeWidth={1.5}
+            delay={300}
+          />
           <div className="h-px w-12 bg-[var(--divider)]" />
         </div>
 

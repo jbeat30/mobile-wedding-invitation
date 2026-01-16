@@ -52,6 +52,7 @@ export type GuestbookEntry = {
   name: string;
   message: string;
   createdAt: string;
+  passwordHash?: string;
 };
 
 export type InvitationGuestbook = {
@@ -61,6 +62,10 @@ export type InvitationGuestbook = {
   displayMode: 'recent' | 'paginated';
   pageSize: number;
   recentNotice: string;
+  enablePassword: boolean;
+  enableEdit: boolean;
+  enableDelete: boolean;
+  storageKey: string;
 };
 
 export type InvitationRsvpField = {
@@ -142,7 +147,8 @@ export type InvitationGreeting = {
 export type InvitationLocation = {
   venue: string;
   address: string;
-  coordinates?: {
+  placeName: string;
+  coordinates: {
     lat: number;
     lng: number;
   };
@@ -262,6 +268,11 @@ export const invitationMock: InvitationMock = {
   location: {
     venue: '채림 웨딩홀',
     address: '경기도 부천시 원미구 심곡동 173-1',
+    placeName: '채림웨딩홀',
+    coordinates: {
+      lat: 37.4843,
+      lng: 126.7832,
+    },
     transportation: {
       subway: ['지하철 1호선 부천역 3번, 4번, 7번 출구'],
       bus: ['5, 12, 23번 부천역 하차 후 도보 7분'],
@@ -363,11 +374,15 @@ export const invitationMock: InvitationMock = {
     },
   },
   guestbook: {
-    privacyNotice: '보유기록: 예식 이후 최대 12개월 보관 후 삭제됩니다.',
+    privacyNotice: '개인정보는 예식 이후 최대 12개월 보관 후 삭제됩니다.',
     retentionText: '축하 메시지는 예식 당일 함께 공유됩니다.',
     displayMode: 'recent',
     pageSize: 5,
     recentNotice: '최근 5개의 메시지만 먼저 보여드려요.',
+    enablePassword: true,
+    enableEdit: true,
+    enableDelete: true,
+    storageKey: 'wedding-guestbook',
     mockEntries: [
       {
         id: 'guest-1',

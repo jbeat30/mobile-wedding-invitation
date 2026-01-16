@@ -1,3 +1,5 @@
+import { AnimatedHeart } from '@/components/ui/AnimatedHeart';
+
 type IntroCalendarProps = {
   weddingDateTime: string;
   highlightDates?: number[];
@@ -36,25 +38,25 @@ export const IntroCalendar = ({
 
   return (
     <div
-      className="rounded-[20px] border border-[var(--card-border)] bg-white/60 px-5 py-6 shadow-[var(--shadow-soft)] backdrop-blur-sm"
+      className="rounded-[20px] border border-[var(--card-border)] bg-white/70 px-6 py-7 shadow-[var(--shadow-soft)] backdrop-blur-sm"
       data-animate="fade-up"
     >
       {/* 연월 표시 */}
-      <div className="mb-5 flex flex-col items-center gap-1">
-        <p className="font-label text-[13px] text-[var(--text-muted)]">
+      <div className="mb-6 flex flex-col items-center gap-1">
+        <p className="font-label text-[14px] text-[var(--text-muted)]">
           {MONTH_NAMES_EN[month]}
         </p>
-        <p className="text-[22px] font-medium tracking-wide text-[var(--text-primary)]">
+        <p className="text-[26px] font-medium tracking-wide text-[var(--text-primary)]">
           {year}년 {month + 1}월
         </p>
       </div>
 
       {/* 요일 헤더 */}
-      <div className="mb-2 grid grid-cols-7 gap-x-1">
+      <div className="mb-3 grid grid-cols-7 gap-x-1">
         {WEEKDAY_LABELS.map((label, index) => (
           <div
             key={label}
-            className={`py-2 text-center text-[14px] tracking-[0.15em] font-medium 
+            className={`py-2 text-center text-[15px] tracking-[0.15em] font-medium
             ${
               index === 0
                 ? 'text-[var(--accent-burgundy)]'
@@ -69,7 +71,7 @@ export const IntroCalendar = ({
       </div>
 
       {/* 날짜 그리드 */}
-      <div className="grid grid-cols-7 gap-x-1 gap-y-1">
+      <div className="grid grid-cols-7 gap-x-1 gap-y-2">
         {weeks.map((week, weekIndex) =>
           week.map((day, dayIndex) => {
             const key = `day-${weekIndex}-${dayIndex}`;
@@ -85,9 +87,17 @@ export const IntroCalendar = ({
             if (isWeddingDay) {
               return (
                 <div key={key} className="flex aspect-square items-center justify-center">
-                  <div className="relative flex h-9 w-9 items-center justify-center rounded-full bg-[var(--wedding-highlight)] shadow-[0_4px_16px_rgba(232,164,179,0.4)]">
-                    <span className="text-[14px] font-semibold text-white">{day}</span>
-                    <span className="absolute -bottom-0.5 -right-0.5 text-[10px]">♥</span>
+                  <div className="relative flex h-10 w-10 items-center justify-center rounded-full bg-[var(--wedding-highlight)] shadow-[0_4px_16px_rgba(232,164,179,0.4)]">
+                    <span className="text-[15px] font-semibold text-white">{day}</span>
+                    <div className="absolute -bottom-1 -right-1">
+                      <AnimatedHeart
+                        size={14}
+                        strokeColor="var(--accent-burgundy)"
+                        fillColor="var(--accent-burgundy)"
+                        strokeWidth={0}
+                        animate={false}
+                      />
+                    </div>
                   </div>
                 </div>
               );
@@ -102,7 +112,7 @@ export const IntroCalendar = ({
             return (
               <div
                 key={key}
-                className={`flex aspect-square items-center justify-center text-[13px] ${textColor}`}
+                className={`flex aspect-square items-center justify-center text-[15px] ${textColor}`}
               >
                 {day}
               </div>
