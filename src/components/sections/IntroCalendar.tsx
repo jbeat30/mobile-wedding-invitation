@@ -48,7 +48,7 @@ export const IntroCalendar = ({
               key={label}
               className={
                 index === 0
-                  ? 'text-[var(--accent-burgundy)]'
+                  ? 'text-[#f87171]'
                   : index === 6
                   ? 'text-blue-500'
                   : ''
@@ -74,7 +74,7 @@ export const IntroCalendar = ({
               if (isWeddingDay) {
                 return (
                   <div key={key} className="flex justify-center">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#8B4A5E] font-extralight text-white">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#eb7272] font-extralight text-white">
                       {day}
                     </div>
                   </div>
@@ -82,7 +82,7 @@ export const IntroCalendar = ({
               }
 
               const textColor = (isHoliday || isSunday)
-                ? 'text-[var(--accent-burgundy)]'
+                ? 'text-[#f87171]'
                 : isSaturday
                 ? 'text-blue-500'
                 : '';
