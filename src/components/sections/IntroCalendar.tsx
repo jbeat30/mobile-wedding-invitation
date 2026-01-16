@@ -34,53 +34,63 @@ export const IntroCalendar = ({
   }
 
   return (
-    <div>
-      <div
-        className="rounded-[24px] border border-white/70 bg-[#fbf6f1]/90 px-5 py-4 shadow-[var(--shadow-soft)] backdrop-blur"
-        data-animate="fade-up"
-      >
-        <div className="my-4 flex items-center justify-center">
-          <p className="text-[24px] tracking-[0.12em]">
-            {year}.{String(month + 1).padStart(2, '0')}
-          </p>
-        </div>
-        <div className="grid grid-cols-7 gap-x-2 gap-y-2.5">
+    <div className="w-full px-5" data-animate="fade-up">
+      <div className="mb-4"></div>
+      <div className="w-full">
+        {/* 상단 구분선 */}
+        <div className="my-8 h-[1px] w-full shrink-0 bg-black opacity-10"></div>
+
+        {/* 달력 그리드 */}
+        <div className="grid grid-cols-7 gap-y-6 text-center font-normal">
+          {/* 요일 헤더 */}
           {WEEKDAY_LABELS.map((label, index) => (
             <div
               key={label}
-              className={`text-center text-[14px] tracking-[0.28em] text-[var(--text-muted)]${
-                index === 0 ? ' text-[#c05b5b]' : index === 6 ? ' text-[#4e75b8]' : ''
-              }`}
+              className={
+                index === 0
+                  ? 'text-[#f87171]'
+                  : index === 6
+                  ? 'text-blue-500'
+                  : ''
+              }
             >
               {label}
             </div>
           ))}
+
+          {/* 날짜 */}
           {weeks.map((week, weekIndex) =>
             week.map((day, dayIndex) => {
               const key = `day-${weekIndex}-${dayIndex}`;
               if (!day) {
-                return <div key={key} className="h-8 rounded-[10px]" />;
+                return <div key={key} />;
               }
+
               const isWeddingDay = day === weddingDay;
               const isSunday = dayIndex === 0;
               const isSaturday = dayIndex === 6;
               const isHoliday = highlighted.has(day);
-              const textColor = isWeddingDay
-                ? ' text-[#5a2831]'
-                : isHoliday || isSunday
-                  ? ' text-[#c05b5b]'
-                  : isSaturday
-                    ? ' text-[#4e75b8]'
-                    : ' text-[var(--text-secondary)]';
-              const background = isWeddingDay ? ' bg-[#f2b7c5]' : ' bg-white/70';
-              const emphasis = isWeddingDay
-                ? ' font-semibold shadow-[0_8px_20px_rgba(242,183,197,0.45)]'
+
+              if (isWeddingDay) {
+                return (
+                  <div key={key} className="flex justify-center">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#eb7272] font-extralight text-white">
+                      {day}
+                    </div>
+                  </div>
+                );
+              }
+
+              const textColor = (isHoliday || isSunday)
+                ? 'text-[#f87171]'
+                : isSaturday
+                ? 'text-blue-500'
                 : '';
 
               return (
                 <div
                   key={key}
-                  className={`flex h-8 items-center justify-center rounded-[10px] text-[12px]${background}${textColor}${emphasis}`}
+                  className={`px-2 py-1 font-extralight ${textColor}`}
                 >
                   {day}
                 </div>
@@ -88,6 +98,9 @@ export const IntroCalendar = ({
             })
           )}
         </div>
+
+        {/* 하단 구분선 */}
+        <div className="my-8 h-[1px] w-full shrink-0 bg-black opacity-10"></div>
       </div>
     </div>
   );

@@ -1,14 +1,9 @@
 import type { Metadata, Viewport } from 'next';
-import { Geist, Geist_Mono, Nanum_Myeongjo, Gowun_Batang, Crimson_Pro } from 'next/font/google';
+import { Geist, Nanum_Myeongjo, Gowun_Batang, Crimson_Pro } from 'next/font/google';
 import './globals.css';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
-  subsets: ['latin'],
-});
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
   subsets: ['latin'],
 });
 
@@ -63,7 +58,7 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${nanumMyeongjo.variable} ${gowunBatang.variable} ${crimsonPro.variable} bg-[var(--base-surface)] text-[var(--base-text)] antialiased [text-rendering:optimizeLegibility] isolate min-[481px]:[background:radial-gradient(circle_at_top,_#f4ede6_0%,_#e7ded4_60%,_#e2d7cc_100%)]`}
+        className={`${geistSans.variable} ${nanumMyeongjo.variable} ${gowunBatang.variable} ${crimsonPro.variable} antialiased [text-rendering:optimizeLegibility] isolate min-[481px]:[background:radial-gradient(circle_at_top,_#FAF9F7_0%,_#F0EDE8_100%)]`}
       >
         {children}
       </body>
