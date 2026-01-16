@@ -79,21 +79,21 @@ export const DDayCountdown = ({ weddingDateTime }: DDayCountdownProps) => {
             <span className="font-serif-en text-[20px] text-[var(--text-primary)]">
               {pad2(parts.hours)}
             </span>
-            <span className="text-[10px] tracking-[0.2em] text-[var(--text-muted)]">HOURS</span>
+            <span className="text-[12px] tracking-[0.2em] text-[var(--text-muted)]">HOURS</span>
           </div>
           <span className="text-[var(--text-muted)]">:</span>
           <div className="flex flex-col items-center">
             <span className="font-serif-en text-[20px] text-[var(--text-primary)]">
               {pad2(parts.minutes)}
             </span>
-            <span className="text-[10px] tracking-[0.2em] text-[var(--text-muted)]">MIN</span>
+            <span className="text-[12px] tracking-[0.2em] text-[var(--text-muted)]">MIN</span>
           </div>
           <span className="text-[var(--text-muted)]">:</span>
           <div className="flex flex-col items-center">
             <span className="font-serif-en text-[20px] text-[var(--text-primary)]">
               {pad2(parts.seconds)}
             </span>
-            <span className="text-[10px] tracking-[0.2em] text-[var(--text-muted)]">SEC</span>
+            <span className="text-[12px] tracking-[0.2em] text-[var(--text-muted)]">SEC</span>
           </div>
         </div>
       )}

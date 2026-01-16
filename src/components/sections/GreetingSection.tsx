@@ -1,5 +1,5 @@
 import { invitationMock, type InvitationFamilyMember } from '@/mock/invitation.mock';
-import { AnimatedHeart } from '@/components/ui/AnimatedHeart';
+import { HeartLineDrawing } from '@/components/ui/HeartLineDrawing';
 
 /**
  * 인사말 섹션
@@ -18,7 +18,7 @@ export const GreetingSection = () => {
       <div className="mx-auto flex w-full max-w-[520px] flex-col gap-12 px-6">
         {/* 섹션 헤더 */}
         <div className="text-center" data-animate="fade-up">
-          <span className="font-label text-[11px] text-[var(--accent-rose)]">INVITATION</span>
+          <span className="font-label text-[13px] text-[var(--accent-rose)]">INVITATION</span>
           <h2 className="mt-2 text-[24px] font-medium text-[var(--text-primary)]">
             초대합니다
           </h2>
@@ -45,20 +45,19 @@ export const GreetingSection = () => {
           )}
         </div>
 
-        {/* 구분선 */}
-        <div className="flex items-center justify-center gap-4" data-animate="fade">
-          <div className="h-px w-12 bg-[var(--divider)]" />
-          <AnimatedHeart
-            size={20}
-            strokeColor="var(--accent-rose)"
+        {/* SVG 하트 라인 드로잉 */}
+        <div className="flex justify-center" data-animate="fade">
+          <HeartLineDrawing
+            width={240}
+            height={60}
+            strokeColor="#C4A092"
             strokeWidth={1.5}
-            delay={300}
+            duration={2.5}
           />
-          <div className="h-px w-12 bg-[var(--divider)]" />
         </div>
 
         {/* 부모님 성함 */}
-        <div className="flex flex-col gap-6 text-center" data-animate="fade-up">
+        <div className="flex gap-6 text-center justify-center" data-animate="fade-up">
           {groomFamily && (
             <div className="flex flex-col gap-1.5">
               <p className="text-[13px] text-[var(--text-muted)]">

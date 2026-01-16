@@ -1,12 +1,9 @@
-import { AnimatedHeart } from '@/components/ui/AnimatedHeart';
-
 type IntroCalendarProps = {
   weddingDateTime: string;
   highlightDates?: number[];
 };
 
 const WEEKDAY_LABELS = ['일', '월', '화', '수', '목', '금', '토'] as const;
-const MONTH_NAMES_EN = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'] as const;
 
 export const IntroCalendar = ({
   weddingDateTime,
@@ -37,88 +34,73 @@ export const IntroCalendar = ({
   }
 
   return (
-    <div
-      className="rounded-[20px] border border-[var(--card-border)] bg-white/70 px-6 py-7 shadow-[var(--shadow-soft)] backdrop-blur-sm"
-      data-animate="fade-up"
-    >
-      {/* 연월 표시 */}
-      <div className="mb-6 flex flex-col items-center gap-1">
-        <p className="font-label text-[14px] text-[var(--text-muted)]">
-          {MONTH_NAMES_EN[month]}
-        </p>
-        <p className="text-[26px] font-medium tracking-wide text-[var(--text-primary)]">
-          {year}년 {month + 1}월
-        </p>
-      </div>
+    <div className="w-full px-5" data-animate="fade-up">
+      <div className="mb-4"></div>
+      <div className="w-full">
+        {/* 상단 구분선 */}
+        <div className="my-8 h-[1px] w-full shrink-0 bg-black opacity-10"></div>
 
-      {/* 요일 헤더 */}
-      <div className="mb-3 grid grid-cols-7 gap-x-1">
-        {WEEKDAY_LABELS.map((label, index) => (
-          <div
-            key={label}
-            className={`py-2 text-center text-[15px] tracking-[0.15em] font-medium
-            ${
-              index === 0
-                ? 'text-[var(--accent-burgundy)]'
-                : index === 6
-                  ? 'text-[var(--accent-rose-dark)]'
-                  : 'text-[var(--text-muted)]'
-            }`}
-          >
-            {label}
-          </div>
-        ))}
-      </div>
+        {/* 달력 그리드 */}
+        <div className="grid grid-cols-7 gap-y-6 text-center font-normal">
+          {/* 요일 헤더 */}
+          {WEEKDAY_LABELS.map((label, index) => (
+            <div
+              key={label}
+              className={
+                index === 0
+                  ? 'text-[var(--accent-burgundy)]'
+                  : index === 6
+                  ? 'text-blue-500'
+                  : ''
+              }
+            >
+              {label}
+            </div>
+          ))}
 
-      {/* 날짜 그리드 */}
-      <div className="grid grid-cols-7 gap-x-1 gap-y-2">
-        {weeks.map((week, weekIndex) =>
-          week.map((day, dayIndex) => {
-            const key = `day-${weekIndex}-${dayIndex}`;
-            if (!day) {
-              return <div key={key} className="aspect-square" />;
-            }
+          {/* 날짜 */}
+          {weeks.map((week, weekIndex) =>
+            week.map((day, dayIndex) => {
+              const key = `day-${weekIndex}-${dayIndex}`;
+              if (!day) {
+                return <div key={key} />;
+              }
 
-            const isWeddingDay = day === weddingDay;
-            const isSunday = dayIndex === 0;
-            const isSaturday = dayIndex === 6;
-            const isHoliday = highlighted.has(day);
+              const isWeddingDay = day === weddingDay;
+              const isSunday = dayIndex === 0;
+              const isSaturday = dayIndex === 6;
+              const isHoliday = highlighted.has(day);
 
-            if (isWeddingDay) {
-              return (
-                <div key={key} className="flex aspect-square items-center justify-center">
-                  <div className="relative flex h-10 w-10 items-center justify-center rounded-full bg-[var(--wedding-highlight)] shadow-[0_4px_16px_rgba(232,164,179,0.4)]">
-                    <span className="text-[15px] font-semibold text-white">{day}</span>
-                    <div className="absolute -bottom-1 -right-1">
-                      <AnimatedHeart
-                        size={14}
-                        strokeColor="var(--accent-burgundy)"
-                        fillColor="var(--accent-burgundy)"
-                        strokeWidth={0}
-                        animate={false}
-                      />
+              if (isWeddingDay) {
+                return (
+                  <div key={key} className="flex justify-center">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#8B4A5E] font-extralight text-white">
+                      {day}
                     </div>
                   </div>
+                );
+              }
+
+              const textColor = (isHoliday || isSunday)
+                ? 'text-[var(--accent-burgundy)]'
+                : isSaturday
+                ? 'text-blue-500'
+                : '';
+
+              return (
+                <div
+                  key={key}
+                  className={`px-2 py-1 font-extralight ${textColor}`}
+                >
+                  {day}
                 </div>
               );
-            }
+            })
+          )}
+        </div>
 
-            const textColor = isHoliday || isSunday
-              ? 'text-[var(--accent-burgundy)]'
-              : isSaturday
-                ? 'text-[var(--accent-rose-dark)]'
-                : 'text-[var(--text-secondary)]';
-
-            return (
-              <div
-                key={key}
-                className={`flex aspect-square items-center justify-center text-[15px] ${textColor}`}
-              >
-                {day}
-              </div>
-            );
-          })
-        )}
+        {/* 하단 구분선 */}
+        <div className="my-8 h-[1px] w-full shrink-0 bg-black opacity-10"></div>
       </div>
     </div>
   );

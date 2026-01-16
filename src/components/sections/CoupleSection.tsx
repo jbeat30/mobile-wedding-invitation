@@ -14,7 +14,7 @@ export const CoupleSection = () => {
       <div className="mx-auto flex w-full max-w-[520px] flex-col gap-12 px-6">
         {/* 섹션 헤더 */}
         <div className="text-center" data-animate="fade-up">
-          <span className="font-label text-[11px] text-[var(--accent-rose)]">COUPLE</span>
+          <span className="font-label text-[13px] text-[var(--accent-rose)]">COUPLE</span>
           <h2 className="mt-2 text-[24px] font-medium text-[var(--text-primary)]">
             두 사람을 소개합니다
           </h2>
@@ -36,7 +36,7 @@ export const CoupleSection = () => {
               )}
             </div>
             <div className="flex flex-col gap-2">
-              <p className="font-label text-[10px] text-[var(--text-muted)]">
+              <p className="font-label text-[12px] text-[var(--text-muted)]">
                 {couple.groom.role || 'GROOM'}
               </p>
               <h3 className="text-[22px] font-medium text-[var(--text-primary)]">
@@ -64,7 +64,7 @@ export const CoupleSection = () => {
               )}
             </div>
             <div className="flex flex-col gap-2">
-              <p className="font-label text-[10px] text-[var(--text-muted)]">
+              <p className="font-label text-[12px] text-[var(--text-muted)]">
                 {couple.bride.role || 'BRIDE'}
               </p>
               <h3 className="text-[22px] font-medium text-[var(--text-primary)]">

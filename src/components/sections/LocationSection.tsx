@@ -113,7 +113,7 @@ export const LocationSection = () => {
           <button
             type="button"
             onClick={() => openNavigation('naver')}
-            className="flex flex-col items-center gap-2 rounded-[var(--radius-md)] border border-[var(--card-border)] bg-white/70 px-4 py-4 shadow-[var(--shadow-soft)] transition hover:bg-white"
+            className="flex cursor-pointer flex-col items-center gap-2 rounded-[var(--radius-md)] border border-[var(--card-border)] bg-white/70 px-4 py-4 shadow-[var(--shadow-soft)] transition hover:bg-white"
             data-animate-item
           >
             <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none">
@@ -126,7 +126,7 @@ export const LocationSection = () => {
           <button
             type="button"
             onClick={() => openNavigation('kakao')}
-            className="flex flex-col items-center gap-2 rounded-[var(--radius-md)] border border-[var(--card-border)] bg-white/70 px-4 py-4 shadow-[var(--shadow-soft)] transition hover:bg-white"
+            className="flex cursor-pointer flex-col items-center gap-2 rounded-[var(--radius-md)] border border-[var(--card-border)] bg-white/70 px-4 py-4 shadow-[var(--shadow-soft)] transition hover:bg-white"
             data-animate-item
           >
             <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none">
@@ -139,7 +139,7 @@ export const LocationSection = () => {
           <button
             type="button"
             onClick={() => openNavigation('tmap')}
-            className="flex flex-col items-center gap-2 rounded-[var(--radius-md)] border border-[var(--card-border)] bg-white/70 px-4 py-4 shadow-[var(--shadow-soft)] transition hover:bg-white"
+            className="flex cursor-pointer flex-col items-center gap-2 rounded-[var(--radius-md)] border border-[var(--card-border)] bg-white/70 px-4 py-4 shadow-[var(--shadow-soft)] transition hover:bg-white"
             data-animate-item
           >
             <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none">
@@ -152,7 +152,7 @@ export const LocationSection = () => {
           <button
             type="button"
             onClick={copyAddress}
-            className="flex flex-col items-center gap-2 rounded-[var(--radius-md)] border border-[var(--card-border)] bg-white/70 px-4 py-4 shadow-[var(--shadow-soft)] transition hover:bg-white"
+            className="flex cursor-pointer flex-col items-center gap-2 rounded-[var(--radius-md)] border border-[var(--card-border)] bg-white/70 px-4 py-4 shadow-[var(--shadow-soft)] transition hover:bg-white"
             data-animate-item
           >
             <svg className="h-6 w-6 text-[var(--text-secondary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -170,7 +170,7 @@ export const LocationSection = () => {
           <button
             type="button"
             onClick={() => setIsTransportOpen(!isTransportOpen)}
-            className="flex w-full items-center justify-between px-5 py-4 text-left"
+            className="flex w-full cursor-pointer items-center justify-between px-5 py-4 text-left"
             aria-expanded={isTransportOpen}
             aria-controls="transport-content"
           >
