@@ -5,8 +5,8 @@ import { useEffect, useRef } from 'react';
 // 밀도는 화면 면적에 비례하며, 값이 클수록 꽃잎 수가 줄어듬
 // MIN_PETAL_COUNT: 최소 꽃잎 개수
 // DENSITY_AREA: (width * height) / DENSITY_AREA 계산에 사용되는 밀도 기준값
-const DEFAULT_MIN_PETAL_COUNT = 22;
-const DEFAULT_DENSITY_AREA = 28000;
+const DEFAULT_MIN_PETAL_COUNT = 160;
+const DEFAULT_DENSITY_AREA = 10000;
 
 type CherryBlossomCanvasProps = {
   density?: number; // DENSITY_AREA 값 (기본: 28000, 클수록 희소)
@@ -96,7 +96,7 @@ export const CherryBlossomCanvas = ({
         this.swing = Math.random() * 1.5 + 0.5;
         this.swingStep = Math.random() * Math.PI * 2;
         // opacity: 가까운 잎일수록 더 선명
-        this.opacity = 0.45 + this.depth * 0.5;
+        this.opacity = 0.65 + this.depth * 0.35;
       }
 
       draw() {
@@ -112,10 +112,10 @@ export const CherryBlossomCanvas = ({
         context.bezierCurveTo(-1, 11, -6, 8, -7, 2);
         context.bezierCurveTo(-9, -4, -3, -8, 0, -6);
 
-        // gradient: 잎 중앙이 살짝 밝도록 설정
+        // gradient: 잎 중앙이 살짝 밝도록 설정 (더 선명한 핑크)
         const gradient = context.createRadialGradient(1, 2, 0, 0, 2, 12);
-        gradient.addColorStop(0, `rgba(255,235,240,${this.opacity})`);
-        gradient.addColorStop(1, `rgba(255,175,195,${this.opacity * 0.85})`);
+        gradient.addColorStop(0, `rgba(255,220,230,${this.opacity})`);
+        gradient.addColorStop(1, `rgba(255,150,180,${this.opacity * 0.9})`);
 
         context.fillStyle = gradient;
         context.fill();

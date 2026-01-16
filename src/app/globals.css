@@ -1,6 +1,12 @@
 @import 'tailwindcss';
 @source '../**/*.{js,jsx,ts,tsx,mdx}';
 
+/* Tailwind CSS 4 테마 설정 */
+@theme {
+    --font-serif: var(--font-gowun), var(--font-nanum), "Gowun Batang", "Nanum Myeongjo", Georgia, serif;
+    --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif;
+}
+
 :root {
     /* 폰트 */
     --font-serif: var(--font-gowun), var(--font-nanum), "Gowun Batang", "Nanum Myeongjo", Georgia, serif;

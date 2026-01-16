@@ -11,7 +11,7 @@ export const ClosingSection = () => {
       <div className="mx-auto flex w-full max-w-[520px] flex-col gap-8 px-6">
         {/* 섹션 헤더 */}
         <div className="text-center" data-animate="fade-up">
-          <span className="font-label text-[11px] text-[var(--text-muted)]">THANK YOU</span>
+          <span className="font-label text-[11px] text-[var(--accent-rose)]">THANK YOU</span>
         </div>
 
         {/* 마무리 인사 */}
@@ -26,10 +26,10 @@ export const ClosingSection = () => {
           )}
         </div>
 
-        {/* 저작권 */}
+        {/* 저작권 - 최하단이라 애니메이션 트리거 안됨, 항상 표시 */}
         {closing.copyright && (
-          <div className="text-center pt-8" data-animate="fade">
-            <p className="text-[11px] text-[var(--text-muted)]">{closing.copyright}</p>
+          <div className="text-center pt-12">
+            <p className="text-[11px] text-[var(--text-tertiary)]">{closing.copyright}</p>
           </div>
         )}
       </div>

@@ -13,7 +13,7 @@ export const WeddingInfoSection = () => {
       <div className="mx-auto flex w-full max-w-[520px] flex-col gap-10 px-6">
         {/* 섹션 헤더 */}
         <div className="text-center" data-animate="fade-up">
-          <span className="font-label text-[11px] text-[var(--text-muted)]">WEDDING DAY</span>
+          <span className="font-label text-[11px] text-[var(--accent-rose)]">WEDDING DAY</span>
           <h2 className="mt-2 text-[24px] font-medium text-[var(--text-primary)]">
             {info.title}
           </h2>

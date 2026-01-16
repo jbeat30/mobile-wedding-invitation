@@ -61,7 +61,7 @@ export const AccountsSection = () => {
     <section id="accounts" className="bg-[var(--bg-primary)] py-16">
       <div className="mx-auto flex w-full max-w-[520px] flex-col gap-8 px-6">
         <div className="text-center" data-animate="fade-up">
-          <span className="font-label text-[11px] text-[var(--text-muted)]">ACCOUNTS</span>
+          <span className="font-label text-[11px] text-[var(--accent-rose)]">ACCOUNTS</span>
           <h2 className="mt-2 text-[24px] font-medium text-[var(--text-primary)]">
             {accounts.title}
           </h2>
