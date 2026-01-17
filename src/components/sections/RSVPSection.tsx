@@ -2,8 +2,11 @@
 
 import { useCallback, useState, type FormEvent } from 'react';
 import type { InvitationRsvp } from '@/mock/invitation.mock';
+import { FieldLabel } from '@/components/ui/FieldLabel';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { SurfaceCard } from '@/components/ui/SurfaceCard';
+import { SelectField } from '@/components/ui/SelectField';
+import { TextArea } from '@/components/ui/TextInput';
 import { Toast } from '@/components/ui/Toast';
 
 type RSVPSectionProps = {
@@ -85,20 +88,15 @@ export const RSVPSection = ({ rsvp, storageKey }: RSVPSectionProps) => {
           >
             {rsvp.fields.map((field) => (
               <div key={field.key} className="flex flex-col gap-2">
-                <label
-                  className="font-label text-[10px] text-[var(--text-muted)]"
-                  htmlFor={`rsvp-${field.key}`}
-                >
+                <FieldLabel htmlFor={`rsvp-${field.key}`} required={field.required}>
                   {field.label}
-                  {field.required && <span className="ml-1 text-[var(--accent-burgundy)]">*</span>}
-                </label>
+                </FieldLabel>
 
                 {field.options ? (
-                  <select
+                  <SelectField
                     id={`rsvp-${field.key}`}
                     value={formData[field.key] || ''}
                     onChange={(e) => handleChange(field.key, e.target.value)}
-                    className="rounded-[12px] border border-[var(--border-light)] bg-white px-4 py-3 text-[14px] text-[var(--text-primary)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
                     required={field.required}
                   >
                     <option value="">선택해주세요</option>
@@ -107,14 +105,14 @@ export const RSVPSection = ({ rsvp, storageKey }: RSVPSectionProps) => {
                         {option}
                       </option>
                     ))}
-                  </select>
+                  </SelectField>
                 ) : (
-                  <textarea
+                  <TextArea
                     id={`rsvp-${field.key}`}
                     value={formData[field.key] || ''}
                     onChange={(e) => handleChange(field.key, e.target.value)}
                     placeholder={field.placeholder}
-                    className="min-h-[80px] rounded-[12px] border border-[var(--border-light)] bg-white px-4 py-3 text-[14px] text-[var(--text-primary)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
+                    className="min-h-[80px]"
                     required={field.required}
                   />
                 )}

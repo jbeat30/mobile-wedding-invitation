@@ -2,9 +2,11 @@
 
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
 import type { GuestbookEntry, InvitationGuestbook } from '@/mock/invitation.mock';
+import { FieldLabel } from '@/components/ui/FieldLabel';
 import { PasswordModal } from '@/components/ui/PasswordModal';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { SurfaceCard } from '@/components/ui/SurfaceCard';
+import { TextArea, TextInput } from '@/components/ui/TextInput';
 import { Toast } from '@/components/ui/Toast';
 
 type GuestbookSectionProps = {
@@ -256,18 +258,12 @@ export const GuestbookSection = ({ guestbook, storageKey }: GuestbookSectionProp
             data-animate="fade-up"
           >
             <div className="flex flex-col gap-2">
-              <label
-                className="font-label text-[10px] text-[var(--text-muted)]"
-                htmlFor="guest-name"
-              >
-                NAME
-              </label>
-              <input
+              <FieldLabel htmlFor="guest-name">NAME</FieldLabel>
+              <TextInput
                 id="guest-name"
                 name="guest-name"
                 value={name}
                 onChange={(event) => setName(event.target.value)}
-                className="rounded-[12px] border border-[var(--border-light)] bg-white px-4 py-3 text-[14px] text-[var(--text-primary)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
                 placeholder="성함을 입력해주세요"
                 maxLength={20}
                 required
@@ -276,13 +272,8 @@ export const GuestbookSection = ({ guestbook, storageKey }: GuestbookSectionProp
 
             {guestbook.enablePassword && (
               <div className="flex flex-col gap-2">
-                <label
-                  className="font-label text-[10px] text-[var(--text-muted)]"
-                  htmlFor="guest-password"
-                >
-                  PASSWORD
-                </label>
-                <input
+                <FieldLabel htmlFor="guest-password">PASSWORD</FieldLabel>
+                <TextInput
                   id="guest-password"
                   name="guest-password"
                   type="password"
@@ -291,7 +282,6 @@ export const GuestbookSection = ({ guestbook, storageKey }: GuestbookSectionProp
                   maxLength={4}
                   value={password}
                   onChange={(event) => setPassword(event.target.value.replace(/\D/g, ''))}
-                  className="rounded-[12px] border border-[var(--border-light)] bg-white px-4 py-3 text-[14px] text-[var(--text-primary)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
                   placeholder="4자리 숫자 (수정/삭제 시 필요)"
                   required
                 />
@@ -299,18 +289,13 @@ export const GuestbookSection = ({ guestbook, storageKey }: GuestbookSectionProp
             )}
 
             <div className="flex flex-col gap-2">
-              <label
-                className="font-label text-[10px] text-[var(--text-muted)]"
-                htmlFor="guest-message"
-              >
-                MESSAGE
-              </label>
-              <textarea
+              <FieldLabel htmlFor="guest-message">MESSAGE</FieldLabel>
+              <TextArea
                 id="guest-message"
                 name="guest-message"
                 value={message}
                 onChange={(event) => setMessage(event.target.value)}
-                className="min-h-[100px] rounded-[12px] border border-[var(--border-light)] bg-white px-4 py-3 text-[14px] text-[var(--text-primary)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
+                className="min-h-[100px]"
                 placeholder="축하의 한마디를 남겨주세요"
                 maxLength={200}
                 required
@@ -505,34 +490,23 @@ export const GuestbookSection = ({ guestbook, storageKey }: GuestbookSectionProp
 
             <form onSubmit={handleEditSubmit} className="flex flex-col gap-4">
               <div className="flex flex-col gap-2">
-                <label
-                  className="font-label text-[10px] text-[var(--text-muted)]"
-                  htmlFor="edit-name"
-                >
-                  NAME
-                </label>
-                <input
+                <FieldLabel htmlFor="edit-name">NAME</FieldLabel>
+                <TextInput
                   id="edit-name"
                   value={editName}
                   onChange={(e) => setEditName(e.target.value)}
-                  className="rounded-[12px] border border-[var(--border-light)] bg-white px-4 py-3 text-[14px] text-[var(--text-primary)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
                   maxLength={20}
                   required
                 />
               </div>
 
               <div className="flex flex-col gap-2">
-                <label
-                  className="font-label text-[10px] text-[var(--text-muted)]"
-                  htmlFor="edit-message"
-                >
-                  MESSAGE
-                </label>
-                <textarea
+                <FieldLabel htmlFor="edit-message">MESSAGE</FieldLabel>
+                <TextArea
                   id="edit-message"
                   value={editMessage}
                   onChange={(e) => setEditMessage(e.target.value)}
-                  className="min-h-[100px] rounded-[12px] border border-[var(--border-light)] bg-white px-4 py-3 text-[14px] text-[var(--text-primary)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
+                  className="min-h-[100px]"
                   maxLength={200}
                   required
                 />
