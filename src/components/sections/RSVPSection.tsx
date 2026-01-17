@@ -3,6 +3,7 @@
 import { useCallback, useState, type FormEvent } from 'react';
 import type { InvitationRsvp } from '@/mock/invitation.mock';
 import { SectionHeader } from '@/components/ui/SectionHeader';
+import { SurfaceCard } from '@/components/ui/SurfaceCard';
 import { Toast } from '@/components/ui/Toast';
 
 type RSVPSectionProps = {
@@ -76,8 +77,9 @@ export const RSVPSection = ({ rsvp, storageKey }: RSVPSectionProps) => {
           </div>
 
           {/* RSVP 폼 */}
-          <form
-            className="flex flex-col gap-4 rounded-[var(--radius-md)] border border-[var(--card-border)] bg-white/70 p-5 shadow-[var(--shadow-soft)]"
+          <SurfaceCard
+            as="form"
+            className="flex flex-col gap-4 p-5"
             onSubmit={handleSubmit}
             data-animate="fade-up"
           >
@@ -144,7 +146,7 @@ export const RSVPSection = ({ rsvp, storageKey }: RSVPSectionProps) => {
             >
               참석 여부 전달하기
             </button>
-          </form>
+          </SurfaceCard>
         </div>
       </section>
 

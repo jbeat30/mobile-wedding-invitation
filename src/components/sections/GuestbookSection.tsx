@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react
 import type { GuestbookEntry, InvitationGuestbook } from '@/mock/invitation.mock';
 import { PasswordModal } from '@/components/ui/PasswordModal';
 import { SectionHeader } from '@/components/ui/SectionHeader';
+import { SurfaceCard } from '@/components/ui/SurfaceCard';
 import { Toast } from '@/components/ui/Toast';
 
 type GuestbookSectionProps = {
@@ -248,8 +249,9 @@ export const GuestbookSection = ({ guestbook, storageKey }: GuestbookSectionProp
             />
           </div>
 
-          <form
-            className="flex flex-col gap-4 rounded-[var(--radius-md)] border border-[var(--card-border)] bg-white/70 p-5 shadow-[var(--shadow-soft)]"
+          <SurfaceCard
+            as="form"
+            className="flex flex-col gap-4 p-5"
             onSubmit={handleSubmit}
             data-animate="fade-up"
           >
@@ -332,7 +334,7 @@ export const GuestbookSection = ({ guestbook, storageKey }: GuestbookSectionProp
             >
               축하 메시지 남기기
             </button>
-          </form>
+          </SurfaceCard>
 
           <div className="flex flex-col gap-3" data-animate="stagger">
             {guestbook.displayMode === 'recent' && (
@@ -349,9 +351,9 @@ export const GuestbookSection = ({ guestbook, storageKey }: GuestbookSectionProp
               const isActive = activeEntryId === entry.id;
 
               return (
-                <div
+                <SurfaceCard
                   key={entry.id}
-                  className="group relative overflow-hidden rounded-[var(--radius-md)] border border-[var(--card-border)] bg-white/70 px-4 py-4 shadow-[var(--shadow-soft)]"
+                  className="group relative overflow-hidden px-4 py-4"
                   data-animate-item
                   onMouseEnter={() => {
                     if (canModify) {
@@ -416,7 +418,7 @@ export const GuestbookSection = ({ guestbook, storageKey }: GuestbookSectionProp
                       </div>
                     </div>
                   )}
-                </div>
+                </SurfaceCard>
               );
             })}
           </div>

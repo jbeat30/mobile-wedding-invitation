@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { InvitationAccounts } from '@/mock/invitation.mock';
 import { SectionHeader } from '@/components/ui/SectionHeader';
+import { SurfaceCard } from '@/components/ui/SurfaceCard';
 import { Toast } from '@/components/ui/Toast';
 
 type AccountsSectionProps = {
@@ -78,9 +79,9 @@ export const AccountsSection = ({ accounts }: AccountsSectionProps) => {
 
         <div className="flex flex-col gap-5" data-animate="stagger">
           {sections.map((section) => (
-            <div
+            <SurfaceCard
               key={section.title}
-              className="rounded-[var(--radius-md)] border border-[var(--card-border)] bg-white/70 p-5 shadow-[var(--shadow-soft)]"
+              className="p-5"
               data-animate-item
             >
               <p className="text-[14px] font-medium text-[var(--text-primary)]">{section.title}</p>
@@ -107,7 +108,7 @@ export const AccountsSection = ({ accounts }: AccountsSectionProps) => {
                   </div>
                 ))}
               </div>
-            </div>
+            </SurfaceCard>
           ))}
         </div>
       </div>
