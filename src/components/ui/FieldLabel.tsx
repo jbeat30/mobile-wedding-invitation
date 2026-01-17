@@ -1,16 +1,11 @@
 import type { ReactNode } from 'react';
 
 type FieldLabelProps = {
-  htmlFor?: string; // 연결된 폼 필드 ID
-  required?: boolean; // 필수 여부
-  children: ReactNode; // 라벨 내용
+  htmlFor?: string;
+  required?: boolean;
+  children: ReactNode;
 };
 
-/**
- * 폼 필드 라벨 컴포넌트
- * @param param FieldLabelProps
- * @returns JSX.Element
- */
 /**
  * 폼 라벨 공통 스타일
  * @param props FieldLabelProps
