@@ -11,12 +11,12 @@ export const ClosingSection = () => {
       <div className="mx-auto flex w-full max-w-[520px] flex-col gap-8 px-6">
         {/* 섹션 헤더 */}
         <div className="text-center" data-animate="fade-up">
-          <span className="font-label text-[11px] text-[var(--accent-rose)]">THANK YOU</span>
+          <span className="font-label text-[12px] text-[var(--accent-rose)]">THANK YOU</span>
         </div>
 
         {/* 마무리 인사 */}
         <div className="text-center" data-animate="fade-up">
-          <p className="font-serif text-[15px] leading-[1.9] text-[var(--text-secondary)]">
+          <p className="font-serif text-[14px] leading-[1.9] text-[var(--text-secondary)]">
             {closing.message}
           </p>
           <p className="flex justify-center items-center gap-3 mt-6 font-serif text-[18px] font-medium text-[var(--text-primary)]">

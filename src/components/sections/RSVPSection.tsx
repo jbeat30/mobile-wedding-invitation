@@ -54,7 +54,7 @@ export const RSVPSection = () => {
         <div className="mx-auto flex w-full max-w-[520px] flex-col gap-8 px-6">
           {/* 섹션 헤더 */}
           <div className="text-center" data-animate="fade-up">
-            <span className="font-label text-[11px] text-[var(--accent-rose)]">RSVP</span>
+            <span className="font-label text-[12px] text-[var(--accent-rose)]">RSVP</span>
             <h2 className="mt-2 text-[24px] font-medium text-[var(--text-primary)]">
               참석 여부
             </h2>
