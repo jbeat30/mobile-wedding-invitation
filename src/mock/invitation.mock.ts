@@ -13,7 +13,7 @@ export type InvitationIntro = {
 
 export type InvitationPerson = {
   fullName: string;
-  displayName: string;
+  lastName: string;
   bio?: string;
   profileImage?: string;
   role?: string;
@@ -194,14 +194,14 @@ export const invitationMock: InvitationMock = {
   couple: {
     groom: {
       fullName: '강신랑',
-      displayName: '강신랑',
+      lastName: '철수',
       bio: '조용한 다정함으로 하루를 따뜻하게 만드는 사람입니다.',
       profileImage: '/mock/groom-front-512.png',
       role: '신랑',
     },
     bride: {
       fullName: '장신부',
-      displayName: '장신부',
+      lastName: '영희',
       bio: '웃음을 나누는 순간이 가장 소중한 사람입니다.',
       profileImage: '/mock/bride-front-512.png',
       role: '신부',
@@ -389,12 +389,14 @@ export const invitationMock: InvitationMock = {
         name: '민지',
         message: '두 분의 새로운 시작을 진심으로 축하해요!',
         createdAt: '2026-05-01T10:30:00+09:00',
+        passwordHash: '134bf72d1eda184a9de23f4fa2512c3364424cbd9163c21a14cde9610e7c570f',
       },
       {
         id: 'guest-2',
         name: '현우',
         message: '행복한 결혼 생활을 응원합니다!',
         createdAt: '2026-05-02T14:15:00+09:00',
+        passwordHash: '134bf72d1eda184a9de23f4fa2512c3364424cbd9163c21a14cde9610e7c570f',
       },
     ],
   },
@@ -418,7 +420,6 @@ export const invitationMock: InvitationMock = {
   },
   closing: {
     message: '소중한 분들과 함께하는 이 자리, 오래 기억하겠습니다.',
-    signature: '강신랑 · 장신부',
     copyright: '© 2026. All rights reserved.',
   },
 };

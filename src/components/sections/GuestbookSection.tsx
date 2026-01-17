@@ -54,6 +54,7 @@ export const GuestbookSection = () => {
   const [consent, setConsent] = useState(false);
   const [page, setPage] = useState(1);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [activeEntryId, setActiveEntryId] = useState<string | null>(null);
 
   // 모달 상태
   const [modalOpen, setModalOpen] = useState(false);
@@ -234,7 +235,7 @@ export const GuestbookSection = () => {
       <section id="guestbook" className="bg-[var(--bg-primary)] py-16">
         <div className="mx-auto flex w-full max-w-[520px] flex-col gap-8 px-6">
           <div className="text-center" data-animate="fade-up">
-            <span className="font-label text-[11px] text-[var(--accent-rose)]">GUESTBOOK</span>
+            <span className="font-label text-[12px] text-[var(--accent-rose)]">GUESTBOOK</span>
             <h2 className="mt-2 text-[24px] font-medium text-[var(--text-primary)]">축하 메시지</h2>
             <p className="mt-2 text-[14px] text-[var(--text-tertiary)]">{guestbook.retentionText}</p>
           </div>
@@ -337,12 +338,28 @@ export const GuestbookSection = () => {
 
             {displayEntries.map((entry) => {
               const canModify = !!entry.passwordHash;
+              const isActive = activeEntryId === entry.id;
 
               return (
                 <div
                   key={entry.id}
-                  className="rounded-[var(--radius-md)] border border-[var(--card-border)] bg-white/70 px-4 py-4 shadow-[var(--shadow-soft)]"
+                  className="group relative overflow-hidden rounded-[var(--radius-md)] border border-[var(--card-border)] bg-white/70 px-4 py-4 shadow-[var(--shadow-soft)]"
                   data-animate-item
+                  onMouseEnter={() => {
+                    if (canModify) {
+                      setActiveEntryId(entry.id);
+                    }
+                  }}
+                  onMouseLeave={() => {
+                    if (canModify) {
+                      setActiveEntryId((prev) => (prev === entry.id ? null : prev));
+                    }
+                  }}
+                  onClick={() => {
+                    if (canModify) {
+                      setActiveEntryId((prev) => (prev === entry.id ? null : entry.id));
+                    }
+                  }}
                 >
                   <div className="flex items-center justify-between">
                     <p className="text-[14px] font-medium text-[var(--text-primary)]">
@@ -357,25 +374,38 @@ export const GuestbookSection = () => {
                   </p>
 
                   {canModify && (guestbook.enableEdit || guestbook.enableDelete) && (
-                    <div className="mt-3 flex justify-end gap-2">
-                      {guestbook.enableEdit && (
-                        <button
-                          type="button"
-                          onClick={() => handleEditClick(entry)}
-                          className="rounded-full border border-[var(--border-light)] px-3 py-1 text-[11px] text-[var(--text-muted)] transition hover:border-[var(--accent)] hover:text-[var(--text-secondary)]"
-                        >
-                          수정
-                        </button>
-                      )}
-                      {guestbook.enableDelete && (
-                        <button
-                          type="button"
-                          onClick={() => handleDeleteClick(entry)}
-                          className="rounded-full border border-[var(--border-light)] px-3 py-1 text-[11px] text-[var(--text-muted)] transition hover:border-[var(--accent-burgundy)] hover:text-[var(--accent-burgundy)]"
-                        >
-                          삭제
-                        </button>
-                      )}
+                    <div
+                      className={`pointer-events-none absolute inset-0 flex items-center justify-center transition ${
+                        isActive ? 'opacity-100' : 'opacity-0'
+                      } group-hover:opacity-100 group-focus-within:opacity-100`}
+                    >
+                      <div className="absolute inset-0 bg-[#2c2420]/45 backdrop-blur-[1px]" />
+                      <div className="relative z-10 flex gap-3">
+                        {guestbook.enableEdit && (
+                          <button
+                            type="button"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              handleEditClick(entry);
+                            }}
+                            className="pointer-events-auto cursor-pointer rounded-full border border-white/70 bg-white/90 px-4 py-1.5 text-[12px] text-[var(--text-primary)] shadow-[0_8px_20px_rgba(0,0,0,0.12)] transition hover:border-white hover:bg-white"
+                          >
+                            수정
+                          </button>
+                        )}
+                        {guestbook.enableDelete && (
+                          <button
+                            type="button"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              handleDeleteClick(entry);
+                            }}
+                            className="pointer-events-auto cursor-pointer rounded-full border border-white/70 bg-white/90 px-4 py-1.5 text-[12px] text-[var(--text-primary)] shadow-[0_8px_20px_rgba(0,0,0,0.12)] transition hover:border-[var(--accent-burgundy)] hover:text-[var(--accent-burgundy)]"
+                          >
+                            삭제
+                          </button>
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>

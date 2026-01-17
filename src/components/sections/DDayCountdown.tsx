@@ -64,7 +64,7 @@ export const DDayCountdown = ({ weddingDateTime }: DDayCountdownProps) => {
     <div className="flex flex-col items-center gap-4" suppressHydrationWarning data-animate="fade-up">
       {/* D-Day 뱃지 */}
       <div className="flex flex-col items-center gap-2">
-        <span className="font-serif-en text-[42px] font-light tracking-wide text-[var(--accent-burgundy)]">
+        <span className="font-serif-en text-[42px] font-light tracking-wide text-[#f87171]">
           {dDayText}
         </span>
         <p className="text-[14px] text-[var(--text-tertiary)]">
@@ -75,25 +75,23 @@ export const DDayCountdown = ({ weddingDateTime }: DDayCountdownProps) => {
       {/* 시간 카운트다운 */}
       {!parts?.isPast && parts && (
         <div className="mt-2 flex items-center gap-3">
-          <div className="flex flex-col items-center">
+          <div className="flex gap-2 items-center">
             <span className="font-serif-en text-[20px] text-[var(--text-primary)]">
               {pad2(parts.hours)}
             </span>
-            <span className="font-label text-[12px] text-[var(--text-muted)]">HOURS</span>
+            <span className="font-label text-[12px] text-[var(--text-muted)]">시간</span>
           </div>
-          <span className="text-[var(--text-muted)]">:</span>
-          <div className="flex flex-col items-center">
+          <div className="flex gap-2 items-center">
             <span className="font-serif-en text-[20px] text-[var(--text-primary)]">
               {pad2(parts.minutes)}
             </span>
-            <span className="font-label text-[12px] text-[var(--text-muted)]">MIN</span>
+            <span className="font-label text-[12px] text-[var(--text-muted)]">분</span>
           </div>
-          <span className="text-[var(--text-muted)]">:</span>
-          <div className="flex flex-col items-center">
+          <div className="flex gap-2 items-center">
             <span className="font-serif-en text-[20px] text-[var(--text-primary)]">
               {pad2(parts.seconds)}
             </span>
-            <span className="font-label text-[12px] text-[var(--text-muted)]">SEC</span>
+            <span className="font-label text-[12px] text-[var(--text-muted)]">초</span>
           </div>
         </div>
       )}
