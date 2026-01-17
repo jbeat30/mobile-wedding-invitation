@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect, useRef } from 'react';
+import { ModalShell } from '@/components/ui/ModalShell';
 import { isFourDigitPassword } from '@/utils/validation';
 
 type PasswordModalProps = {
@@ -13,6 +14,8 @@ type PasswordModalProps = {
 
 /**
  * 비밀번호 확인 모달
+ * @param props PasswordModalProps
+ * @returns JSX.Element
  */
 export const PasswordModal = ({
   isOpen,
@@ -31,19 +34,6 @@ export const PasswordModal = ({
     }
   }, [isOpen]);
 
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onClose();
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
-
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
@@ -54,19 +44,8 @@ export const PasswordModal = ({
     [password, onConfirm]
   );
 
-  const handleBackdropClick = useCallback((e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
-  }, [onClose]);
-
-  if (!isOpen) return null;
-
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-6"
-      onClick={handleBackdropClick}
-    >
+    <ModalShell isOpen={isOpen} onClose={onClose} className="px-6">
       <div className="w-full max-w-[320px] rounded-[var(--radius-md)] bg-white p-6 shadow-[var(--shadow-card)]">
         <h3 className="mb-4 text-center text-[18px] font-medium text-[var(--text-primary)]">
           {title}
@@ -113,6 +92,6 @@ export const PasswordModal = ({
           </div>
         </form>
       </div>
-    </div>
+    </ModalShell>
   );
 };
