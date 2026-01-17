@@ -418,7 +418,6 @@ export const invitationMock: InvitationMock = {
   },
   closing: {
     message: '소중한 분들과 함께하는 이 자리, 오래 기억하겠습니다.',
-    signature: '강신랑 · 장신부',
     copyright: '© 2026. All rights reserved.',
   },
 };

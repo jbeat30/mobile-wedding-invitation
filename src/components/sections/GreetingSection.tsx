@@ -50,7 +50,7 @@ export const GreetingSection = () => {
           <HeartLineDrawing
             width={240}
             height={60}
-            strokeColor="#C4A092"
+            strokeColor="#f87171"
             strokeWidth={1.5}
             duration={2.5}
           />
