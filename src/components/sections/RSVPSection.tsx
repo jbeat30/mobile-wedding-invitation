@@ -9,6 +9,7 @@ import { SelectField } from '@/components/ui/SelectField';
 import { TextArea } from '@/components/ui/TextInput';
 import { Toast } from '@/components/ui/Toast';
 import { Button } from '@/components/ui/Button';
+import { formatMonthDay } from '@/utils/date';
 
 type RSVPSectionProps = {
   rsvp: InvitationRsvp;
@@ -23,7 +24,7 @@ export const RSVPSection = ({ rsvp, storageKey }: RSVPSectionProps) => {
   const [consent, setConsent] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const deadlineText = rsvp.deadline
-    ? `${new Date(rsvp.deadline).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' })}까지 회신 부탁드립니다`
+    ? `${formatMonthDay(rsvp.deadline)}까지 회신 부탁드립니다`
     : '참석 여부를 알려주세요';
 
   const isValid = useCallback(() => {

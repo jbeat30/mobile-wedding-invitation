@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react';
 import type { InvitationEvent, InvitationLocation } from '@/mock/invitation.mock';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { Toast } from '@/components/ui/Toast';
+import { copyText } from '@/utils/clipboard';
 
 type LocationSectionProps = {
   event: InvitationEvent;
@@ -24,19 +25,7 @@ export const LocationSection = ({ event, location }: LocationSectionProps) => {
 
   const copyAddress = useCallback(async () => {
     try {
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(event.address);
-        showToast('주소가 복사되었습니다');
-        return;
-      }
-      const textarea = document.createElement('textarea');
-      textarea.value = event.address;
-      textarea.style.position = 'fixed';
-      textarea.style.opacity = '0';
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand('copy');
-      document.body.removeChild(textarea);
+      await copyText(event.address);
       showToast('주소가 복사되었습니다');
     } catch {
       showToast('복사에 실패했습니다');

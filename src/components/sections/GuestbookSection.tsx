@@ -9,6 +9,7 @@ import { SectionHeader } from '@/components/ui/SectionHeader';
 import { SurfaceCard } from '@/components/ui/SurfaceCard';
 import { TextArea, TextInput } from '@/components/ui/TextInput';
 import { Toast } from '@/components/ui/Toast';
+import { formatMonthDay } from '@/utils/date';
 
 type GuestbookSectionProps = {
   guestbook: InvitationGuestbook;
@@ -105,12 +106,7 @@ export const GuestbookSection = ({ guestbook, storageKey }: GuestbookSectionProp
   }, [name, message, consent, password, guestbook.enablePassword]);
 
   const formatDate = useCallback((value: string) => {
-    const date = new Date(value);
-    const formatter = new Intl.DateTimeFormat('ko-KR', {
-      month: 'long',
-      day: 'numeric',
-    });
-    return formatter.format(date);
+    return formatMonthDay(value);
   }, []);
 
   const handleSubmit = useCallback(

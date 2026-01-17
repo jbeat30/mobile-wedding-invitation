@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { SurfaceCard } from '@/components/ui/SurfaceCard';
 import { Toast } from '@/components/ui/Toast';
+import { copyText } from '@/utils/clipboard';
 
 type AccountsSectionProps = {
   accounts: InvitationAccounts;
@@ -34,21 +35,8 @@ export const AccountsSection = ({ accounts }: AccountsSectionProps) => {
    */
   const copyToClipboard = useCallback(async (text: string) => {
     try {
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(text);
-        setToast({ message: '계좌번호가 복사되었습니다' });
-        return;
-      }
-
-      const textarea = document.createElement('textarea');
-      textarea.value = text;
-      textarea.style.position = 'fixed';
-      textarea.style.opacity = '0';
-      document.body.appendChild(textarea);
-      textarea.select();
-      const result = document.execCommand('copy');
-      document.body.removeChild(textarea);
-      setToast({ message: result ? '계좌번호가 복사되었습니다' : '복사에 실패했습니다' });
+      await copyText(text);
+      setToast({ message: '계좌번호가 복사되었습니다' });
     } catch {
       setToast({ message: '복사에 실패했습니다' });
     }

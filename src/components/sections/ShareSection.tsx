@@ -6,6 +6,7 @@ import { useKakaoSDK } from '@/hooks/useKakaoSDK';
 import { Button } from '@/components/ui/Button';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { Toast } from '@/components/ui/Toast';
+import { copyText } from '@/utils/clipboard';
 
 /**
  * 공유 기능 섹션
@@ -88,21 +89,8 @@ export const ShareSection = ({ share }: ShareSectionProps) => {
   const handleCopyUrl = useCallback(async () => {
     const url = getCurrentUrl();
     try {
-      if (navigator.clipboard && window.isSecureContext) {
-        await navigator.clipboard.writeText(url);
-        showToastMessage('링크가 복사되었습니다');
-      } else {
-        // Fallback for older browsers
-        const textArea = document.createElement('textarea');
-        textArea.value = url;
-        textArea.style.position = 'fixed';
-        textArea.style.left = '-999999px';
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textArea);
-        showToastMessage('링크가 복사되었습니다');
-      }
+      await copyText(url);
+      showToastMessage('링크가 복사되었습니다');
     } catch (error) {
       console.error('Copy URL error:', error);
       showToastMessage('링크 복사에 실패했습니다');
