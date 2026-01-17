@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
 import type { GuestbookEntry, InvitationGuestbook } from '@/mock/invitation.mock';
+import { Button } from '@/components/ui/Button';
 import { FieldLabel } from '@/components/ui/FieldLabel';
 import { PasswordModal } from '@/components/ui/PasswordModal';
 import { SectionHeader } from '@/components/ui/SectionHeader';
@@ -312,13 +313,9 @@ export const GuestbookSection = ({ guestbook, storageKey }: GuestbookSectionProp
               <span>{guestbook.privacyNotice}</span>
             </label>
 
-            <button
-              type="submit"
-              className="rounded-full bg-[var(--accent-burgundy)] py-3 text-[14px] text-white transition hover:opacity-90 disabled:bg-[var(--bg-tertiary)] disabled:text-[var(--text-muted)]"
-              disabled={!isValid}
-            >
+            <Button type="submit" size="full" disabled={!isValid}>
               축하 메시지 남기기
-            </button>
+            </Button>
           </SurfaceCard>
 
           <div className="flex flex-col gap-3" data-animate="stagger">
@@ -377,28 +374,32 @@ export const GuestbookSection = ({ guestbook, storageKey }: GuestbookSectionProp
                       <div className="absolute inset-0 bg-[#2c2420]/45 backdrop-blur-[1px]" />
                       <div className="relative z-10 flex gap-3">
                         {guestbook.enableEdit && (
-                          <button
+                          <Button
                             type="button"
                             onClick={(event) => {
                               event.stopPropagation();
                               handleEditClick(entry);
                             }}
-                            className="pointer-events-auto cursor-pointer rounded-full border border-white/70 bg-white/90 px-4 py-1.5 text-[12px] text-[var(--text-primary)] shadow-[0_8px_20px_rgba(0,0,0,0.12)] transition hover:border-white hover:bg-white"
+                            variant="ghost"
+                            size="pill"
+                            className="pointer-events-auto border-white/70 bg-white/90 text-[var(--text-primary)] shadow-[0_8px_20px_rgba(0,0,0,0.12)] hover:border-white hover:bg-white"
                           >
                             수정
-                          </button>
+                          </Button>
                         )}
                         {guestbook.enableDelete && (
-                          <button
+                          <Button
                             type="button"
                             onClick={(event) => {
                               event.stopPropagation();
                               handleDeleteClick(entry);
                             }}
-                            className="pointer-events-auto cursor-pointer rounded-full border border-white/70 bg-white/90 px-4 py-1.5 text-[12px] text-[var(--text-primary)] shadow-[0_8px_20px_rgba(0,0,0,0.12)] transition hover:border-[var(--accent-burgundy)] hover:text-[var(--accent-burgundy)]"
+                            variant="danger"
+                            size="pill"
+                            className="pointer-events-auto border-white/70 bg-white/90 shadow-[0_8px_20px_rgba(0,0,0,0.12)]"
                           >
                             삭제
-                          </button>
+                          </Button>
                         )}
                       </div>
                     </div>
@@ -512,13 +513,13 @@ export const GuestbookSection = ({ guestbook, storageKey }: GuestbookSectionProp
                 />
               </div>
 
-              <button
+              <Button
                 type="submit"
+                size="full"
                 disabled={!editName.trim() || !editMessage.trim()}
-                className="rounded-full bg-[var(--accent-burgundy)] py-3 text-[14px] text-white transition hover:opacity-90 disabled:bg-[var(--bg-tertiary)] disabled:text-[var(--text-muted)]"
               >
                 수정 완료
-              </button>
+              </Button>
             </form>
           </div>
         </div>

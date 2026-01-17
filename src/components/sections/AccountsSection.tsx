@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { InvitationAccounts } from '@/mock/invitation.mock';
+import { Button } from '@/components/ui/Button';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { SurfaceCard } from '@/components/ui/SurfaceCard';
 import { Toast } from '@/components/ui/Toast';
@@ -98,13 +99,14 @@ export const AccountsSection = ({ accounts }: AccountsSectionProps) => {
                       </span>
                       <span className="text-[12px] text-[var(--text-muted)]">{entry.holder}</span>
                     </div>
-                    <button
+                    <Button
                       type="button"
+                      variant="accent"
+                      size="md"
                       onClick={() => copyToClipboard(entry.accountNumber)}
-                      className="rounded-full border border-[var(--accent)] px-4 py-2 text-[12px] text-[var(--accent-rose-dark)] transition hover:bg-[var(--accent-soft)]"
                     >
                       복사
-                    </button>
+                    </Button>
                   </div>
                 ))}
               </div>

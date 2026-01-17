@@ -3,6 +3,7 @@
 import { useCallback, useState, useEffect } from 'react';
 import type { InvitationShare } from '@/mock/invitation.mock';
 import { useKakaoSDK } from '@/hooks/useKakaoSDK';
+import { Button } from '@/components/ui/Button';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { Toast } from '@/components/ui/Toast';
 
@@ -152,11 +153,12 @@ export const ShareSection = ({ share }: ShareSectionProps) => {
           {/* 공유 버튼 그룹 */}
           <div className="flex flex-col gap-3" data-animate="stagger">
             {/* 카카오톡 공유 */}
-            <button
+            <Button
               onClick={handleKakaoShare}
               disabled={!hasAppKey || !isKakaoReady}
               data-animate-item
-              className="relative flex items-center justify-center gap-3 rounded-full bg-[#FEE500] py-3.5 text-[14px] font-medium text-[#3C1E1E] shadow-[var(--shadow-soft)] transition hover:bg-[#FDD835] disabled:cursor-not-allowed disabled:opacity-40"
+              size="full"
+              className="relative flex items-center justify-center gap-3 bg-[#FEE500] py-3.5 text-[14px] font-medium text-[#3C1E1E] shadow-[var(--shadow-soft)] hover:bg-[#FDD835]"
               title={
                 !hasAppKey
                   ? '카카오 API 키가 설정되지 않았습니다'
@@ -174,13 +176,15 @@ export const ShareSection = ({ share }: ShareSectionProps) => {
                   (API 키 필요)
                 </span>
               )}
-            </button>
+            </Button>
 
             {/* URL 복사 */}
-            <button
+            <Button
               onClick={handleCopyUrl}
               data-animate-item
-              className="flex items-center justify-center gap-3 rounded-full border border-[var(--accent)] bg-white py-3.5 text-[14px] text-[var(--text-primary)] transition hover:bg-[var(--bg-secondary)]"
+              size="full"
+              variant="ghost"
+              className="flex items-center justify-center gap-3 border-[var(--accent)] bg-white py-3.5 text-[14px] text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
             >
               <svg
                 className="h-4 w-4"
@@ -196,14 +200,16 @@ export const ShareSection = ({ share }: ShareSectionProps) => {
                 />
               </svg>
               링크 복사하기
-            </button>
+            </Button>
 
             {/* 네이티브 공유 */}
             {canShare && (
-              <button
+              <Button
                 onClick={handleNativeShare}
                 data-animate-item
-                className="flex items-center justify-center gap-3 rounded-full border border-[var(--border-light)] bg-white py-3.5 text-[14px] text-[var(--text-secondary)] transition hover:bg-[var(--bg-secondary)]"
+                size="full"
+                variant="ghost"
+                className="flex items-center justify-center gap-3 bg-white py-3.5 text-[14px] text-[var(--text-secondary)]"
               >
                 <svg
                   className="h-4 w-4"
@@ -219,7 +225,7 @@ export const ShareSection = ({ share }: ShareSectionProps) => {
                   />
                 </svg>
                 다른 방법으로 공유하기
-              </button>
+              </Button>
             )}
           </div>
         </div>

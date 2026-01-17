@@ -8,6 +8,7 @@ import { SurfaceCard } from '@/components/ui/SurfaceCard';
 import { SelectField } from '@/components/ui/SelectField';
 import { TextArea } from '@/components/ui/TextInput';
 import { Toast } from '@/components/ui/Toast';
+import { Button } from '@/components/ui/Button';
 
 type RSVPSectionProps = {
   rsvp: InvitationRsvp;
@@ -137,13 +138,9 @@ export const RSVPSection = ({ rsvp, storageKey }: RSVPSectionProps) => {
             </label>
 
             {/* 제출 버튼 */}
-            <button
-              type="submit"
-              disabled={!isValid()}
-              className="rounded-full bg-[var(--accent-burgundy)] py-3 text-[14px] text-white transition hover:opacity-90 disabled:bg-[var(--bg-tertiary)] disabled:text-[var(--text-muted)]"
-            >
+            <Button type="submit" size="full" disabled={!isValid()}>
               참석 여부 전달하기
-            </button>
+            </Button>
           </SurfaceCard>
         </div>
       </section>
