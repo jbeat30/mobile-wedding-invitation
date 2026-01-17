@@ -60,7 +60,7 @@ const ClosingSection = dynamic(
  * 퍼블릭 싱글 페이지 레이아웃 스켈레톤 확인
  */
 export default function Page() {
-  const { content, assets } = invitationMock;
+  const { content, assets, storage } = invitationMock;
   const { loading } = content;
   const { isLoading, isHintVisible } = useLoadingState({
     minDuration: loading.minDuration,
@@ -260,22 +260,26 @@ export default function Page() {
           )}
           {showContent && (
             <>
-              <GreetingSection />
-              <IntroSection />
+              <GreetingSection greeting={content.greeting} couple={content.couple} />
+              <IntroSection
+                couple={content.couple}
+                event={content.event}
+                heroImage={assets.heroImage}
+              />
             </>
           )}
         </div>
         {showContent && (
           <>
-            <CoupleSection />
-            <WeddingInfoSection />
-            <LocationSection />
-            <GallerySection />
-            <AccountsSection />
-            <GuestbookSection />
-            <RSVPSection />
-            <ShareSection />
-            <ClosingSection />
+            <CoupleSection couple={content.couple} />
+            <WeddingInfoSection event={content.event} couple={content.couple} />
+            <LocationSection location={content.location} event={content.event} />
+            <GallerySection gallery={content.gallery} />
+            <AccountsSection accounts={content.accounts} />
+            <GuestbookSection guestbook={content.guestbook} storageKey={storage.guestbook.key} />
+            <RSVPSection rsvp={content.rsvp} storageKey={storage.rsvp.key} />
+            <ShareSection share={content.share} />
+            <ClosingSection closing={content.closing} couple={content.couple} />
           </>
         )}
       </main>

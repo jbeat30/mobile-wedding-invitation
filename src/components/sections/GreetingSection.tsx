@@ -1,13 +1,19 @@
-import { invitationMock, type InvitationFamilyMember } from '@/mock/invitation.mock';
+import type {
+  InvitationCouple,
+  InvitationFamilyMember,
+  InvitationGreeting,
+} from '@/mock/invitation.mock';
 import { HeartLineDrawing } from '@/components/ui/HeartLineDrawing';
+
+type GreetingSectionProps = {
+  greeting: InvitationGreeting;
+  couple: InvitationCouple;
+};
 
 /**
  * 인사말 섹션
  */
-export const GreetingSection = () => {
-  const { content } = invitationMock;
-  const { greeting, couple } = content;
-
+export const GreetingSection = ({ greeting, couple }: GreetingSectionProps) => {
   const formatMembers = (members: InvitationFamilyMember[]) =>
     members.map((member) => member.name).join(' · ');
 

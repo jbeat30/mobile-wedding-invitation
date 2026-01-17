@@ -1,15 +1,17 @@
 'use client';
 
 import { useCallback, useState, type FormEvent } from 'react';
-import { invitationMock } from '@/mock/invitation.mock';
+import type { InvitationRsvp } from '@/mock/invitation.mock';
+
+type RSVPSectionProps = {
+  rsvp: InvitationRsvp;
+  storageKey: string;
+};
 
 /**
  * RSVP (참석 여부) 섹션
  */
-export const RSVPSection = () => {
-  const { content, storage } = invitationMock;
-  const { rsvp } = content;
-
+export const RSVPSection = ({ rsvp, storageKey }: RSVPSectionProps) => {
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [consent, setConsent] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -28,7 +30,7 @@ export const RSVPSection = () => {
 
       // localStorage에 저장 (Mock)
       localStorage.setItem(
-        storage.rsvp.key,
+        storageKey,
         JSON.stringify({ ...formData, submittedAt: new Date().toISOString() })
       );
 

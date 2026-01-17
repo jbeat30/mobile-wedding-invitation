@@ -1,12 +1,14 @@
-import { invitationMock } from '@/mock/invitation.mock';
+import type { InvitationClosing, InvitationCouple } from '@/mock/invitation.mock';
+
+type ClosingSectionProps = {
+  closing: InvitationClosing;
+  couple: InvitationCouple;
+};
 
 /**
  * 마무리 섹션
  */
-export const ClosingSection = () => {
-  const { content } = invitationMock;
-  const { closing, couple } = content;
-
+export const ClosingSection = ({ closing, couple }: ClosingSectionProps) => {
   return (
     <section id="closing" className="bg-[var(--bg-primary)] py-16 pb-24">
       <div className="mx-auto flex w-full max-w-[520px] flex-col gap-8 px-6">

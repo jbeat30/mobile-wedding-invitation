@@ -1,13 +1,16 @@
-import { invitationMock } from '@/mock/invitation.mock';
+import type { InvitationCouple, InvitationEvent } from '@/mock/invitation.mock';
 import { IntroCalendar } from '@/components/sections/IntroCalendar';
 import { DDayCountdown } from '@/components/sections/DDayCountdown';
+
+type WeddingInfoSectionProps = {
+  event: InvitationEvent;
+  couple: InvitationCouple;
+};
 
 /**
  * 예식 일시 섹션
  */
-export const WeddingInfoSection = () => {
-  const { content } = invitationMock;
-  const { event, couple } = content;
+export const WeddingInfoSection = ({ event, couple }: WeddingInfoSectionProps) => {
   const weddingDate = new Date(event.dateTime);
   const highlightDates = Number.isNaN(weddingDate.getTime()) ? [] : [weddingDate.getDate()];
 

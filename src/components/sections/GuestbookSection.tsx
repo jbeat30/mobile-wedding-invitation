@@ -1,10 +1,13 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
-import { invitationMock, type GuestbookEntry } from '@/mock/invitation.mock';
+import type { GuestbookEntry, InvitationGuestbook } from '@/mock/invitation.mock';
 import { PasswordModal } from '@/components/ui/PasswordModal';
 
-const STORAGE_KEY = invitationMock.storage.guestbook.key;
+type GuestbookSectionProps = {
+  guestbook: InvitationGuestbook;
+  storageKey: string;
+};
 
 // 간단한 비밀번호 해시 (SHA-256)
 const hashPassword = async (password: string): Promise<string> => {
@@ -21,20 +24,20 @@ const verifyPassword = async (password: string, hash: string): Promise<boolean> 
 };
 
 // localStorage 유틸리티
-const loadEntries = (): GuestbookEntry[] => {
+const loadEntries = (storageKey: string): GuestbookEntry[] => {
   if (typeof window === 'undefined') return [];
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const stored = localStorage.getItem(storageKey);
     return stored ? JSON.parse(stored) : [];
   } catch {
     return [];
   }
 };
 
-const saveEntries = (entries: GuestbookEntry[]) => {
+const saveEntries = (storageKey: string, entries: GuestbookEntry[]) => {
   if (typeof window === 'undefined') return;
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+    localStorage.setItem(storageKey, JSON.stringify(entries));
   } catch (e) {
     console.error('Failed to save guestbook entries:', e);
   }
@@ -43,10 +46,7 @@ const saveEntries = (entries: GuestbookEntry[]) => {
 /**
  * 방명록 섹션
  */
-export const GuestbookSection = () => {
-  const { content } = invitationMock;
-  const { guestbook } = content;
-
+export const GuestbookSection = ({ guestbook, storageKey }: GuestbookSectionProps) => {
   // 폼 상태
   const [entries, setEntries] = useState<GuestbookEntry[]>([]);
   const [name, setName] = useState('');
@@ -73,20 +73,20 @@ export const GuestbookSection = () => {
 
   // 초기 로딩: localStorage + mock 데이터 병합
   useEffect(() => {
-    const stored = loadEntries();
+    const stored = loadEntries(storageKey);
     const mockIds = new Set(guestbook.mockEntries.map((e) => e.id));
     const userEntries = stored.filter((e) => !mockIds.has(e.id));
     setEntries([...guestbook.mockEntries, ...userEntries]);
     setIsLoaded(true);
-  }, [guestbook.mockEntries]);
+  }, [guestbook.mockEntries, storageKey]);
 
   // entries 변경 시 localStorage 저장 (mock 제외)
   useEffect(() => {
     if (!isLoaded) return;
     const mockIds = new Set(guestbook.mockEntries.map((e) => e.id));
     const userEntries = entries.filter((e) => !mockIds.has(e.id));
-    saveEntries(userEntries);
-  }, [entries, isLoaded, guestbook.mockEntries]);
+    saveEntries(storageKey, userEntries);
+  }, [entries, isLoaded, guestbook.mockEntries, storageKey]);
 
   const showToast = useCallback((msg: string) => {
     setToast(msg);

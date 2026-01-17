@@ -1,15 +1,16 @@
 'use client';
 
-import { invitationMock } from '@/mock/invitation.mock';
+import type { InvitationCouple } from '@/mock/invitation.mock';
 import Image from 'next/image';
+
+type CoupleSectionProps = {
+  couple: InvitationCouple;
+};
 
 /**
  * 신랑신부 소개 섹션
  */
-export const CoupleSection = () => {
-  const { content } = invitationMock;
-  const { couple } = content;
-
+export const CoupleSection = ({ couple }: CoupleSectionProps) => {
   return (
     <section id="couple" className="bg-[var(--bg-primary)] py-16">
       <div className="mx-auto flex w-full max-w-[520px] flex-col gap-12 px-6">

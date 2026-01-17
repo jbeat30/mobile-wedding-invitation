@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Thumbs } from 'swiper/modules';
 import type { Swiper as SwiperType } from 'swiper';
-import { invitationMock } from '@/mock/invitation.mock';
+import type { InvitationGallery } from '@/mock/invitation.mock';
 import { ImageModal } from '@/components/ui/ImageModal';
 
 import 'swiper/css';
@@ -16,9 +16,11 @@ import 'swiper/css/thumbs';
  * 갤러리 섹션
  * 메인 이미지 슬라이더 + 썸네일 네비게이션 (좌측 정렬, 반응형 래핑)
  */
-export const GallerySection = () => {
-  const { content } = invitationMock;
-  const { gallery } = content;
+type GallerySectionProps = {
+  gallery: InvitationGallery;
+};
+
+export const GallerySection = ({ gallery }: GallerySectionProps) => {
   const [modalImage, setModalImage] = useState<{ src: string; alt: string } | null>(null);
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null);
   const mainSwiperRef = useRef<SwiperType | null>(null);

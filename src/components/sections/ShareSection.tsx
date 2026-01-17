@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useState, useEffect } from 'react';
-import { invitationMock } from '@/mock/invitation.mock';
+import type { InvitationShare } from '@/mock/invitation.mock';
 import { useKakaoSDK } from '@/hooks/useKakaoSDK';
 
 /**
@@ -10,9 +10,11 @@ import { useKakaoSDK } from '@/hooks/useKakaoSDK';
  * - URL 복사
  * - Web Share API (네이티브 공유)
  */
-export const ShareSection = () => {
-  const { content } = invitationMock;
-  const { share } = content;
+type ShareSectionProps = {
+  share: InvitationShare;
+};
+
+export const ShareSection = ({ share }: ShareSectionProps) => {
   const { isReady: isKakaoReady, hasAppKey } = useKakaoSDK();
 
   const [showToast, setShowToast] = useState(false);

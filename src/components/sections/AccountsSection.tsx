@@ -1,7 +1,11 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { invitationMock } from '@/mock/invitation.mock';
+import type { InvitationAccounts } from '@/mock/invitation.mock';
+
+type AccountsSectionProps = {
+  accounts: InvitationAccounts;
+};
 
 type ToastState = {
   message: string;
@@ -10,9 +14,7 @@ type ToastState = {
 /**
  * 계좌 안내 섹션 구성 확인
  */
-export const AccountsSection = () => {
-  const { content } = invitationMock;
-  const { accounts } = content;
+export const AccountsSection = ({ accounts }: AccountsSectionProps) => {
   const [toast, setToast] = useState<ToastState | null>(null);
 
   const sections = useMemo(

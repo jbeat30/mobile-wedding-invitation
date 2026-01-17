@@ -227,6 +227,17 @@ export type InvitationLocation = {
     lat: number;
     lng: number;
   };
+  navigation?: {
+    naver?: {
+      web?: string;
+    };
+    kakao?: {
+      web?: string;
+    };
+    tmap?: {
+      web?: string;
+    };
+  };
   transportation: {
     subway?: string[];
     bus?: string[];

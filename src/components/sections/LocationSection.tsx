@@ -1,14 +1,17 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { invitationMock } from '@/mock/invitation.mock';
+import type { InvitationEvent, InvitationLocation } from '@/mock/invitation.mock';
+
+type LocationSectionProps = {
+  event: InvitationEvent;
+  location: InvitationLocation;
+};
 
 /**
  * 오시는 길 섹션
  */
-export const LocationSection = () => {
-  const { content } = invitationMock;
-  const { location, event } = content;
+export const LocationSection = ({ event, location }: LocationSectionProps) => {
   const [isTransportOpen, setIsTransportOpen] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
@@ -44,32 +47,15 @@ export const LocationSection = () => {
     const address = encodeURIComponent(event.address);
 
     const urls = {
-      naver: {
-        app: `nmap://place?lat=${lat}&lng=${lng}&name=${name}&appname=wedding`,
-        web: `https://map.naver.com/v5/search/${address}`,
-      },
-      kakao: {
-        app: `kakaomap://look?p=${lat},${lng}`,
-        web: `https://map.kakao.com/link/map/${name},${lat},${lng}`,
-      },
-      tmap: {
-        app: `tmap://route?goalname=${name}&goalx=${lng}&goaly=${lat}`,
-        web: `https://tmap.life/route?goalname=${name}&goalx=${lng}&goaly=${lat}`,
-      },
+      naver: `https://map.naver.com/v5/search/${address}`,
+      kakao: `https://map.kakao.com/link/map/${name},${lat},${lng}`,
+      tmap: `https://tmap.life/route?goalname=${name}&goalx=${lng}&goaly=${lat}`,
     };
 
-    const { app: appUrl, web: webUrl } = urls[app];
-
-    // 모바일에서 앱 딥링크 시도, 실패 시 웹으로 폴백
-    const timeout = setTimeout(() => {
-      window.location.href = webUrl;
-    }, 1500);
-
-    window.location.href = appUrl;
-
-    // 앱이 열리면 타이머 클리어
-    window.addEventListener('blur', () => clearTimeout(timeout), { once: true });
-  }, [location.coordinates, location.placeName, event.address]);
+    const override = location.navigation?.[app]?.web;
+    const targetUrl = override || urls[app];
+    window.location.href = targetUrl;
+  }, [location.coordinates, location.placeName, location.navigation, event.address]);
 
   return (
     <section id="location" className="bg-[var(--bg-primary)] py-16">

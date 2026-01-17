@@ -1,12 +1,14 @@
-import { invitationMock } from '@/mock/invitation.mock';
+import type { InvitationCouple, InvitationEvent } from '@/mock/invitation.mock';
+
+type InfoSectionProps = {
+  event: InvitationEvent;
+  couple: InvitationCouple;
+};
 
 /**
  * 예식 정보 섹션 구성 확인
  */
-export const InfoSection = () => {
-  const { content } = invitationMock;
-  const { event, couple } = content;
-
+export const InfoSection = ({ event, couple }: InfoSectionProps) => {
   return (
     <section
       id="info"
