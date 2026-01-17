@@ -4,7 +4,8 @@ import { invitationMock } from '@/mock/invitation.mock';
  * 예식 정보 섹션 구성 확인
  */
 export const InfoSection = () => {
-  const { info, couple } = invitationMock;
+  const { content } = invitationMock;
+  const { event, couple } = content;
 
   return (
     <section
@@ -15,7 +16,7 @@ export const InfoSection = () => {
         <div className="flex flex-col gap-4 text-center" data-animate="fade-up">
           <span className="text-[11px] tracking-[0.4em] text-[var(--muted)]">WEDDING DAY</span>
           <h2 className="text-[28px] font-semibold text-[var(--text-primary)]">
-            {info.title}
+            {event.title}
           </h2>
           <p className="text-[13px] text-[var(--text-secondary)]">
             {couple.groom.lastName} · {couple.bride.lastName}
@@ -29,14 +30,14 @@ export const InfoSection = () => {
           <div className="grid gap-6 text-[15px] text-[var(--text-primary)]">
             <div className="flex flex-col gap-2">
               <span className="text-[11px] tracking-[0.35em] text-[var(--muted)]">WHEN</span>
-              <p className="text-[18px] font-semibold">{info.dateText}</p>
+              <p className="text-[18px] font-semibold">{event.dateText}</p>
             </div>
             <div className="h-px w-full bg-black/5" />
             <div className="flex flex-col gap-2">
               <span className="text-[11px] tracking-[0.35em] text-[var(--muted)]">WHERE</span>
-              <p className="text-[18px] font-semibold">{info.venue}</p>
+              <p className="text-[18px] font-semibold">{event.venue}</p>
               <p className="text-[14px] leading-relaxed text-[var(--text-secondary)]">
-                {info.address}
+                {event.address}
               </p>
             </div>
           </div>
@@ -60,21 +61,21 @@ export const InfoSection = () => {
               </p>
             </div>
             <ul className="flex list-disc flex-col gap-2 pl-4 text-[13px] leading-relaxed text-[var(--text-secondary)]">
-              {info.directions.map((direction) => (
+              {event.guidance.directions.map((direction) => (
                 <li key={direction}>{direction}</li>
               ))}
             </ul>
           </div>
         </div>
 
-        {info.notices?.length ? (
+        {event.guidance.notices.length ? (
           <div
             className="rounded-[var(--radius-lg)] border border-white/70 bg-white/80 p-6 shadow-[0_16px_36px_rgba(41,32,26,0.08)]"
             data-animate="fade-up"
           >
             <p className="text-[11px] tracking-[0.35em] text-[var(--muted)]">NOTICE</p>
             <ul className="mt-3 flex list-disc flex-col gap-2 pl-4 text-[13px] leading-relaxed text-[var(--text-secondary)]">
-              {info.notices.map((notice) => (
+              {event.guidance.notices.map((notice) => (
                 <li key={notice}>{notice}</li>
               ))}
             </ul>

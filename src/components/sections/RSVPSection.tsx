@@ -7,7 +7,8 @@ import { invitationMock } from '@/mock/invitation.mock';
  * RSVP (참석 여부) 섹션
  */
 export const RSVPSection = () => {
-  const { rsvp } = invitationMock;
+  const { content, storage } = invitationMock;
+  const { rsvp } = content;
 
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [consent, setConsent] = useState(false);
@@ -26,7 +27,10 @@ export const RSVPSection = () => {
       if (!isValid()) return;
 
       // localStorage에 저장 (Mock)
-      localStorage.setItem('wedding-rsvp', JSON.stringify({ ...formData, submittedAt: new Date().toISOString() }));
+      localStorage.setItem(
+        storage.rsvp.key,
+        JSON.stringify({ ...formData, submittedAt: new Date().toISOString() })
+      );
 
       // 토스트 표시
       setShowToast(true);

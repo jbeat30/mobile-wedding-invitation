@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react
 import { invitationMock, type GuestbookEntry } from '@/mock/invitation.mock';
 import { PasswordModal } from '@/components/ui/PasswordModal';
 
-const STORAGE_KEY = 'wedding-guestbook';
+const STORAGE_KEY = invitationMock.storage.guestbook.key;
 
 // 간단한 비밀번호 해시 (SHA-256)
 const hashPassword = async (password: string): Promise<string> => {
@@ -44,7 +44,8 @@ const saveEntries = (entries: GuestbookEntry[]) => {
  * 방명록 섹션
  */
 export const GuestbookSection = () => {
-  const { guestbook } = invitationMock;
+  const { content } = invitationMock;
+  const { guestbook } = content;
 
   // 폼 상태
   const [entries, setEntries] = useState<GuestbookEntry[]>([]);

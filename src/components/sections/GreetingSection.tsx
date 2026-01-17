@@ -5,7 +5,8 @@ import { HeartLineDrawing } from '@/components/ui/HeartLineDrawing';
  * 인사말 섹션
  */
 export const GreetingSection = () => {
-  const { greeting, couple } = invitationMock;
+  const { content } = invitationMock;
+  const { greeting, couple } = content;
 
   const formatMembers = (members: InvitationFamilyMember[]) =>
     members.map((member) => member.name).join(' · ');

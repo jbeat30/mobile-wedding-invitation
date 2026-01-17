@@ -6,7 +6,10 @@ import { DDayCountdown } from '@/components/sections/DDayCountdown';
  * 예식 일시 섹션
  */
 export const WeddingInfoSection = () => {
-  const { weddingDateTime, info, couple } = invitationMock;
+  const { content } = invitationMock;
+  const { event, couple } = content;
+  const weddingDate = new Date(event.dateTime);
+  const highlightDates = Number.isNaN(weddingDate.getTime()) ? [] : [weddingDate.getDate()];
 
   return (
     <section id="wedding-info" className="bg-[var(--bg-primary)] py-16">
@@ -15,27 +18,27 @@ export const WeddingInfoSection = () => {
         <div className="text-center" data-animate="fade-up">
           <span className="font-label text-[13px] text-[var(--accent-rose)]">WEDDING DAY</span>
           <h2 className="mt-2 text-[24px] font-medium text-[var(--text-primary)]">
-            {info.title}
+            {event.title}
           </h2>
         </div>
 
         {/* 날짜/시간 */}
         <div className="text-center" data-animate="fade-up">
           <p className="text-[18px] leading-relaxed text-[var(--text-secondary)]">
-            {info.dateText}
+            {event.dateText}
           </p>
         </div>
 
         {/* 달력 */}
         <div data-animate="scale">
           <IntroCalendar
-            weddingDateTime={weddingDateTime}
-            highlightDates={[16]}
+            weddingDateTime={event.dateTime}
+            highlightDates={highlightDates}
           />
         </div>
 
         {/* D-Day 카운트다운 */}
-        <DDayCountdown weddingDateTime={weddingDateTime} />
+        <DDayCountdown weddingDateTime={event.dateTime} />
 
         {/* 결혼 메시지 */}
         <div className="py-8" data-animate="fade-up">
@@ -48,7 +51,7 @@ export const WeddingInfoSection = () => {
             </span>
             {couple.bride.lastName} 결혼식이{' '}
             <span className="mx-1 text-[#f87171]">
-              {Math.ceil((new Date(weddingDateTime).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))}일
+              {Math.ceil((new Date(event.dateTime).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))}일
             </span>
             남았습니다
           </div>

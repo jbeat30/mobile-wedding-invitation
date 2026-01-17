@@ -60,7 +60,8 @@ const ClosingSection = dynamic(
  * 퍼블릭 싱글 페이지 레이아웃 스켈레톤 확인
  */
 export default function Page() {
-  const { loading } = invitationMock;
+  const { content, assets } = invitationMock;
+  const { loading } = content;
   const { isLoading, isHintVisible } = useLoadingState({
     minDuration: loading.minDuration,
     additionalDuration: loading.additionalDuration,
@@ -252,6 +253,7 @@ export default function Page() {
           {showLoading && (
             <LoadingSection
               message={loading.message}
+              imageSrc={assets.loadingImage}
               isVisible={isLoading}
               isHintVisible={isHintVisible}
             />

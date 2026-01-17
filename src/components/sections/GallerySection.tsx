@@ -17,7 +17,8 @@ import 'swiper/css/thumbs';
  * 메인 이미지 슬라이더 + 썸네일 네비게이션 (좌측 정렬, 반응형 래핑)
  */
 export const GallerySection = () => {
-  const { gallery } = invitationMock;
+  const { content } = invitationMock;
+  const { gallery } = content;
   const [modalImage, setModalImage] = useState<{ src: string; alt: string } | null>(null);
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null);
   const mainSwiperRef = useRef<SwiperType | null>(null);

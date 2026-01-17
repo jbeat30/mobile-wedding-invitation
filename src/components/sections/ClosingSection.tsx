@@ -4,7 +4,8 @@ import { invitationMock } from '@/mock/invitation.mock';
  * 마무리 섹션
  */
 export const ClosingSection = () => {
-  const { closing, couple } = invitationMock;
+  const { content } = invitationMock;
+  const { closing, couple } = content;
 
   return (
     <section id="closing" className="bg-[var(--bg-primary)] py-16 pb-24">

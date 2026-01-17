@@ -5,14 +5,15 @@ import { invitationMock } from '@/mock/invitation.mock';
  * 인트로 섹션 - Hero 영역
  */
 export const IntroSection = () => {
-  const { couple, info } = invitationMock;
+  const { content, assets } = invitationMock;
+  const { couple, event } = content;
 
   return (
     <section id="intro" className="relative bg-[var(--bg-primary)]">
       {/* Hero 영역 */}
       <div className="relative h-[60vh] min-h-[480px] max-h-[640px] overflow-hidden">
         <Image
-          src="/mock/main-image.png"
+          src={assets.heroImage}
           alt="Wedding Main"
           fill
           priority
@@ -34,7 +35,7 @@ export const IntroSection = () => {
               {couple.bride.fullName}
             </h1>
             <p className="mt-3 text-[14px] font-bold tracking-wider text-white/90 drop-shadow-sm">
-              {info.dateText}
+              {event.dateText}
             </p>
           </div>
         </div>

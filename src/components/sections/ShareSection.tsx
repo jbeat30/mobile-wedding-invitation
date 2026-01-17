@@ -11,7 +11,8 @@ import { useKakaoSDK } from '@/hooks/useKakaoSDK';
  * - Web Share API (네이티브 공유)
  */
 export const ShareSection = () => {
-  const { share } = invitationMock;
+  const { content } = invitationMock;
+  const { share } = content;
   const { isReady: isKakaoReady, hasAppKey } = useKakaoSDK();
 
   const [showToast, setShowToast] = useState(false);

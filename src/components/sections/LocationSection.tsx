@@ -7,7 +7,8 @@ import { invitationMock } from '@/mock/invitation.mock';
  * 오시는 길 섹션
  */
 export const LocationSection = () => {
-  const { location } = invitationMock;
+  const { content } = invitationMock;
+  const { location, event } = content;
   const [isTransportOpen, setIsTransportOpen] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
@@ -19,12 +20,12 @@ export const LocationSection = () => {
   const copyAddress = useCallback(async () => {
     try {
       if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(location.address);
+        await navigator.clipboard.writeText(event.address);
         showToast('주소가 복사되었습니다');
         return;
       }
       const textarea = document.createElement('textarea');
-      textarea.value = location.address;
+      textarea.value = event.address;
       textarea.style.position = 'fixed';
       textarea.style.opacity = '0';
       document.body.appendChild(textarea);
@@ -35,12 +36,12 @@ export const LocationSection = () => {
     } catch {
       showToast('복사에 실패했습니다');
     }
-  }, [location.address, showToast]);
+  }, [event.address, showToast]);
 
   const openNavigation = useCallback((app: 'naver' | 'kakao' | 'tmap') => {
     const { lat, lng } = location.coordinates;
     const name = encodeURIComponent(location.placeName);
-    const address = encodeURIComponent(location.address);
+    const address = encodeURIComponent(event.address);
 
     const urls = {
       naver: {
@@ -68,7 +69,7 @@ export const LocationSection = () => {
 
     // 앱이 열리면 타이머 클리어
     window.addEventListener('blur', () => clearTimeout(timeout), { once: true });
-  }, [location.coordinates, location.placeName, location.address]);
+  }, [location.coordinates, location.placeName, event.address]);
 
   return (
     <section id="location" className="bg-[var(--bg-primary)] py-16">
@@ -101,10 +102,10 @@ export const LocationSection = () => {
         {/* 주소 정보 */}
         <div className="flex flex-col gap-2 text-center" data-animate="fade-up">
           <p className="text-[20px] font-medium text-[var(--text-primary)]">
-            {location.venue}
+            {event.venue}
           </p>
           <p className="text-[14px] text-[var(--text-secondary)]">
-            {location.address}
+            {event.address}
           </p>
         </div>
 

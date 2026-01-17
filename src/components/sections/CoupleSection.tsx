@@ -7,7 +7,8 @@ import Image from 'next/image';
  * 신랑신부 소개 섹션
  */
 export const CoupleSection = () => {
-  const { couple } = invitationMock;
+  const { content } = invitationMock;
+  const { couple } = content;
 
   return (
     <section id="couple" className="bg-[var(--bg-primary)] py-16">

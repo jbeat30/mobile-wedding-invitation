@@ -11,7 +11,8 @@ type ToastState = {
  * 계좌 안내 섹션 구성 확인
  */
 export const AccountsSection = () => {
-  const { accounts } = invitationMock;
+  const { content } = invitationMock;
+  const { accounts } = content;
   const [toast, setToast] = useState<ToastState | null>(null);
 
   const sections = useMemo(
