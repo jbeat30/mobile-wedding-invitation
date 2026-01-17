@@ -343,7 +343,7 @@ export const GuestbookSection = () => {
               return (
                 <div
                   key={entry.id}
-                  className="group rounded-[var(--radius-md)] border border-[var(--card-border)] bg-white/70 px-4 py-4 shadow-[var(--shadow-soft)]"
+                  className="group relative overflow-hidden rounded-[var(--radius-md)] border border-[var(--card-border)] bg-white/70 px-4 py-4 shadow-[var(--shadow-soft)]"
                   data-animate-item
                   onMouseEnter={() => {
                     if (canModify) {
@@ -375,34 +375,37 @@ export const GuestbookSection = () => {
 
                   {canModify && (guestbook.enableEdit || guestbook.enableDelete) && (
                     <div
-                      className={`mt-3 flex justify-end gap-2 transition ${
+                      className={`pointer-events-none absolute inset-0 flex items-center justify-center transition ${
                         isActive ? 'opacity-100' : 'opacity-0'
                       } group-hover:opacity-100 group-focus-within:opacity-100`}
                     >
-                      {guestbook.enableEdit && (
-                        <button
-                          type="button"
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            handleEditClick(entry);
-                          }}
-                          className="cursor-pointer rounded-full border border-[var(--border-light)] px-3 py-1 text-[11px] text-[var(--text-muted)] transition hover:border-[var(--accent)] hover:text-[var(--text-secondary)]"
-                        >
-                          수정
-                        </button>
-                      )}
-                      {guestbook.enableDelete && (
-                        <button
-                          type="button"
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            handleDeleteClick(entry);
-                          }}
-                          className="cursor-pointer rounded-full border border-[var(--border-light)] px-3 py-1 text-[11px] text-[var(--text-muted)] transition hover:border-[var(--accent-burgundy)] hover:text-[var(--accent-burgundy)]"
-                        >
-                          삭제
-                        </button>
-                      )}
+                      <div className="absolute inset-0 bg-[#2c2420]/45 backdrop-blur-[1px]" />
+                      <div className="relative z-10 flex gap-3">
+                        {guestbook.enableEdit && (
+                          <button
+                            type="button"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              handleEditClick(entry);
+                            }}
+                            className="pointer-events-auto cursor-pointer rounded-full border border-white/70 bg-white/90 px-4 py-1.5 text-[12px] text-[var(--text-primary)] shadow-[0_8px_20px_rgba(0,0,0,0.12)] transition hover:border-white hover:bg-white"
+                          >
+                            수정
+                          </button>
+                        )}
+                        {guestbook.enableDelete && (
+                          <button
+                            type="button"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              handleDeleteClick(entry);
+                            }}
+                            className="pointer-events-auto cursor-pointer rounded-full border border-white/70 bg-white/90 px-4 py-1.5 text-[12px] text-[var(--text-primary)] shadow-[0_8px_20px_rgba(0,0,0,0.12)] transition hover:border-[var(--accent-burgundy)] hover:text-[var(--accent-burgundy)]"
+                          >
+                            삭제
+                          </button>
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>
