@@ -7,12 +7,18 @@ import { BgmToggle } from '@/components/sections/BgmToggle';
 
 type LoadingSectionProps = {
   message: string;
+  imageSrc: string;
   isVisible: boolean;
   isHintVisible: boolean;
 };
 
 // 로딩 섹션 - 초기 viewport 크기 고정, 주소창/네비바 사라진 공간은 다음 섹션 노출
-export const LoadingSection = ({ message, isVisible, isHintVisible }: LoadingSectionProps) => {
+export const LoadingSection = ({
+  message,
+  imageSrc,
+  isVisible,
+  isHintVisible,
+}: LoadingSectionProps) => {
   const [showHint, setShowHint] = useState(false);
   const initialHeightRef = useRef<number>(0);
   const scrollLockStyles = useRef<{
@@ -119,7 +125,7 @@ export const LoadingSection = ({ message, isVisible, isHintVisible }: LoadingSec
       <div className="relative flex h-full w-full items-center justify-center">
         <div className="absolute inset-0 overflow-hidden">
           <Image
-            src="/mock/main-image.png"
+            src={imageSrc}
             alt=""
             fill
             priority

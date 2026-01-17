@@ -1,18 +1,22 @@
 import Image from 'next/image';
-import { invitationMock } from '@/mock/invitation.mock';
+import type { InvitationCouple, InvitationEvent } from '@/mock/invitation.mock';
+
+type IntroSectionProps = {
+  couple: InvitationCouple;
+  event: InvitationEvent;
+  heroImage: string;
+};
 
 /**
  * 인트로 섹션 - Hero 영역
  */
-export const IntroSection = () => {
-  const { couple, info } = invitationMock;
-
+export const IntroSection = ({ couple, event, heroImage }: IntroSectionProps) => {
   return (
     <section id="intro" className="relative bg-[var(--bg-primary)]">
       {/* Hero 영역 */}
       <div className="relative h-[60vh] min-h-[480px] max-h-[640px] overflow-hidden">
         <Image
-          src="/mock/main-image.png"
+          src={heroImage}
           alt="Wedding Main"
           fill
           priority
@@ -34,7 +38,7 @@ export const IntroSection = () => {
               {couple.bride.fullName}
             </h1>
             <p className="mt-3 text-[14px] font-bold tracking-wider text-white/90 drop-shadow-sm">
-              {info.dateText}
+              {event.dateText}
             </p>
           </div>
         </div>

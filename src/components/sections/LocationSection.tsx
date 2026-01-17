@@ -1,13 +1,20 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { invitationMock } from '@/mock/invitation.mock';
+import type { InvitationEvent, InvitationLocation } from '@/mock/invitation.mock';
+import { SectionHeader } from '@/components/ui/SectionHeader';
+import { Toast } from '@/components/ui/Toast';
+import { copyText } from '@/utils/clipboard';
+
+type LocationSectionProps = {
+  event: InvitationEvent;
+  location: InvitationLocation;
+};
 
 /**
  * 오시는 길 섹션
  */
-export const LocationSection = () => {
-  const { location } = invitationMock;
+export const LocationSection = ({ event, location }: LocationSectionProps) => {
   const [isTransportOpen, setIsTransportOpen] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
@@ -18,67 +25,40 @@ export const LocationSection = () => {
 
   const copyAddress = useCallback(async () => {
     try {
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(location.address);
-        showToast('주소가 복사되었습니다');
-        return;
-      }
-      const textarea = document.createElement('textarea');
-      textarea.value = location.address;
-      textarea.style.position = 'fixed';
-      textarea.style.opacity = '0';
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand('copy');
-      document.body.removeChild(textarea);
+      await copyText(event.address);
       showToast('주소가 복사되었습니다');
     } catch {
       showToast('복사에 실패했습니다');
     }
-  }, [location.address, showToast]);
+  }, [event.address, showToast]);
 
   const openNavigation = useCallback((app: 'naver' | 'kakao' | 'tmap') => {
     const { lat, lng } = location.coordinates;
     const name = encodeURIComponent(location.placeName);
-    const address = encodeURIComponent(location.address);
+    const address = encodeURIComponent(event.address);
 
     const urls = {
-      naver: {
-        app: `nmap://place?lat=${lat}&lng=${lng}&name=${name}&appname=wedding`,
-        web: `https://map.naver.com/v5/search/${address}`,
-      },
-      kakao: {
-        app: `kakaomap://look?p=${lat},${lng}`,
-        web: `https://map.kakao.com/link/map/${name},${lat},${lng}`,
-      },
-      tmap: {
-        app: `tmap://route?goalname=${name}&goalx=${lng}&goaly=${lat}`,
-        web: `https://tmap.life/route?goalname=${name}&goalx=${lng}&goaly=${lat}`,
-      },
+      naver: `https://map.naver.com/v5/search/${address}`,
+      kakao: `https://map.kakao.com/link/map/${name},${lat},${lng}`,
+      tmap: `https://tmap.life/route?goalname=${name}&goalx=${lng}&goaly=${lat}`,
     };
 
-    const { app: appUrl, web: webUrl } = urls[app];
-
-    // 모바일에서 앱 딥링크 시도, 실패 시 웹으로 폴백
-    const timeout = setTimeout(() => {
-      window.location.href = webUrl;
-    }, 1500);
-
-    window.location.href = appUrl;
-
-    // 앱이 열리면 타이머 클리어
-    window.addEventListener('blur', () => clearTimeout(timeout), { once: true });
-  }, [location.coordinates, location.placeName, location.address]);
+    const override = location.navigation?.[app]?.web;
+    const targetUrl = override || urls[app];
+    window.location.href = targetUrl;
+  }, [location.coordinates, location.placeName, location.navigation, event.address]);
 
   return (
     <section id="location" className="bg-[var(--bg-primary)] py-16">
       <div className="mx-auto flex w-full max-w-[520px] flex-col gap-10 px-6">
         {/* 섹션 헤더 */}
         <div className="text-center" data-animate="fade-up">
-          <span className="font-label text-[12px] text-[var(--accent-rose)]">LOCATION</span>
-          <h2 className="mt-2 text-[24px] font-medium text-[var(--text-primary)]">
-            오시는 길
-          </h2>
+          <SectionHeader
+            kicker="LOCATION"
+            title="오시는 길"
+            kickerClassName="font-label text-[12px] text-[var(--accent-rose)]"
+            titleClassName="mt-2 text-[24px] font-medium text-[var(--text-primary)]"
+          />
         </div>
 
         {/* 지도 플레이스홀더 */}
@@ -101,10 +81,10 @@ export const LocationSection = () => {
         {/* 주소 정보 */}
         <div className="flex flex-col gap-2 text-center" data-animate="fade-up">
           <p className="text-[20px] font-medium text-[var(--text-primary)]">
-            {location.venue}
+            {event.venue}
           </p>
           <p className="text-[14px] text-[var(--text-secondary)]">
-            {location.address}
+            {event.address}
           </p>
         </div>
 
@@ -253,13 +233,7 @@ export const LocationSection = () => {
       </div>
 
       {/* 토스트 메시지 */}
-      {toast && (
-        <div className="fixed inset-x-0 bottom-[calc(var(--safe-bottom)+16px)] z-50 flex justify-center px-6">
-          <div className="rounded-full bg-[#2f2f2f] px-5 py-2.5 text-[13px] text-white shadow-[0_12px_30px_rgba(0,0,0,0.3)]">
-            {toast}
-          </div>
-        </div>
-      )}
+      <Toast isOpen={!!toast} message={toast} />
     </section>
   );
 };

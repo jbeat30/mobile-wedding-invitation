@@ -5,8 +5,9 @@ import Image from 'next/image';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Thumbs } from 'swiper/modules';
 import type { Swiper as SwiperType } from 'swiper';
-import { invitationMock } from '@/mock/invitation.mock';
+import type { InvitationGallery } from '@/mock/invitation.mock';
 import { ImageModal } from '@/components/ui/ImageModal';
+import { SectionHeader } from '@/components/ui/SectionHeader';
 
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -16,8 +17,11 @@ import 'swiper/css/thumbs';
  * 갤러리 섹션
  * 메인 이미지 슬라이더 + 썸네일 네비게이션 (좌측 정렬, 반응형 래핑)
  */
-export const GallerySection = () => {
-  const { gallery } = invitationMock;
+type GallerySectionProps = {
+  gallery: InvitationGallery;
+};
+
+export const GallerySection = ({ gallery }: GallerySectionProps) => {
   const [modalImage, setModalImage] = useState<{ src: string; alt: string } | null>(null);
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null);
   const mainSwiperRef = useRef<SwiperType | null>(null);
@@ -28,15 +32,14 @@ export const GallerySection = () => {
         <div className="mx-auto flex w-full max-w-[520px] flex-col gap-8 px-6">
           {/* 헤더 */}
           <div className="text-center" data-animate="fade-up">
-            <span className="font-label text-[12px] text-[var(--accent-rose)]">GALLERY</span>
-            <h2 className="mt-2 text-[24px] font-medium text-[var(--text-primary)]">
-              {gallery.title}
-            </h2>
-            {gallery.description && (
-              <p className="mt-2 text-[14px] text-[var(--text-tertiary)]">
-                {gallery.description}
-              </p>
-            )}
+            <SectionHeader
+              kicker="GALLERY"
+              title={gallery.title}
+              description={gallery.description}
+              kickerClassName="font-label text-[12px] text-[var(--accent-rose)]"
+              titleClassName="mt-2 text-[24px] font-medium text-[var(--text-primary)]"
+              descriptionClassName="mt-2 text-[14px] text-[var(--text-tertiary)]"
+            />
           </div>
 
           {/* 메인 슬라이더 */}

@@ -1,10 +1,21 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
-import { invitationMock, type GuestbookEntry } from '@/mock/invitation.mock';
+import type { GuestbookEntry, InvitationGuestbook } from '@/mock/invitation.mock';
+import { Button } from '@/components/ui/Button';
+import { FieldLabel } from '@/components/ui/FieldLabel';
 import { PasswordModal } from '@/components/ui/PasswordModal';
+import { SectionHeader } from '@/components/ui/SectionHeader';
+import { SurfaceCard } from '@/components/ui/SurfaceCard';
+import { TextArea, TextInput } from '@/components/ui/TextInput';
+import { Toast } from '@/components/ui/Toast';
+import { formatMonthDay } from '@/utils/date';
+import { isFourDigitPassword, isRequiredText } from '@/utils/validation';
 
-const STORAGE_KEY = 'wedding-guestbook';
+type GuestbookSectionProps = {
+  guestbook: InvitationGuestbook;
+  storageKey: string;
+};
 
 // 간단한 비밀번호 해시 (SHA-256)
 const hashPassword = async (password: string): Promise<string> => {
@@ -21,20 +32,20 @@ const verifyPassword = async (password: string, hash: string): Promise<boolean> 
 };
 
 // localStorage 유틸리티
-const loadEntries = (): GuestbookEntry[] => {
+const loadEntries = (storageKey: string): GuestbookEntry[] => {
   if (typeof window === 'undefined') return [];
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const stored = localStorage.getItem(storageKey);
     return stored ? JSON.parse(stored) : [];
   } catch {
     return [];
   }
 };
 
-const saveEntries = (entries: GuestbookEntry[]) => {
+const saveEntries = (storageKey: string, entries: GuestbookEntry[]) => {
   if (typeof window === 'undefined') return;
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+    localStorage.setItem(storageKey, JSON.stringify(entries));
   } catch (e) {
     console.error('Failed to save guestbook entries:', e);
   }
@@ -42,10 +53,10 @@ const saveEntries = (entries: GuestbookEntry[]) => {
 
 /**
  * 방명록 섹션
+ * @param props GuestbookSectionProps
+ * @returns JSX.Element
  */
-export const GuestbookSection = () => {
-  const { guestbook } = invitationMock;
-
+export const GuestbookSection = ({ guestbook, storageKey }: GuestbookSectionProps) => {
   // 폼 상태
   const [entries, setEntries] = useState<GuestbookEntry[]>([]);
   const [name, setName] = useState('');
@@ -72,20 +83,20 @@ export const GuestbookSection = () => {
 
   // 초기 로딩: localStorage + mock 데이터 병합
   useEffect(() => {
-    const stored = loadEntries();
+    const stored = loadEntries(storageKey);
     const mockIds = new Set(guestbook.mockEntries.map((e) => e.id));
     const userEntries = stored.filter((e) => !mockIds.has(e.id));
     setEntries([...guestbook.mockEntries, ...userEntries]);
     setIsLoaded(true);
-  }, [guestbook.mockEntries]);
+  }, [guestbook.mockEntries, storageKey]);
 
   // entries 변경 시 localStorage 저장 (mock 제외)
   useEffect(() => {
     if (!isLoaded) return;
     const mockIds = new Set(guestbook.mockEntries.map((e) => e.id));
     const userEntries = entries.filter((e) => !mockIds.has(e.id));
-    saveEntries(userEntries);
-  }, [entries, isLoaded, guestbook.mockEntries]);
+    saveEntries(storageKey, userEntries);
+  }, [entries, isLoaded, guestbook.mockEntries, storageKey]);
 
   const showToast = useCallback((msg: string) => {
     setToast(msg);
@@ -93,17 +104,12 @@ export const GuestbookSection = () => {
   }, []);
 
   const isValid = useMemo(() => {
-    const hasPassword = !guestbook.enablePassword || password.length === 4;
-    return name.trim().length > 0 && message.trim().length > 0 && consent && hasPassword;
+    const hasPassword = !guestbook.enablePassword || isFourDigitPassword(password);
+    return isRequiredText(name) && isRequiredText(message) && consent && hasPassword;
   }, [name, message, consent, password, guestbook.enablePassword]);
 
   const formatDate = useCallback((value: string) => {
-    const date = new Date(value);
-    const formatter = new Intl.DateTimeFormat('ko-KR', {
-      month: 'long',
-      day: 'numeric',
-    });
-    return formatter.format(date);
+    return formatMonthDay(value);
   }, []);
 
   const handleSubmit = useCallback(
@@ -235,29 +241,29 @@ export const GuestbookSection = () => {
       <section id="guestbook" className="bg-[var(--bg-primary)] py-16">
         <div className="mx-auto flex w-full max-w-[520px] flex-col gap-8 px-6">
           <div className="text-center" data-animate="fade-up">
-            <span className="font-label text-[12px] text-[var(--accent-rose)]">GUESTBOOK</span>
-            <h2 className="mt-2 text-[24px] font-medium text-[var(--text-primary)]">축하 메시지</h2>
-            <p className="mt-2 text-[14px] text-[var(--text-tertiary)]">{guestbook.retentionText}</p>
+            <SectionHeader
+              kicker="GUESTBOOK"
+              title="축하 메시지"
+              description={guestbook.retentionText}
+              kickerClassName="font-label text-[12px] text-[var(--accent-rose)]"
+              titleClassName="mt-2 text-[24px] font-medium text-[var(--text-primary)]"
+              descriptionClassName="mt-2 text-[14px] text-[var(--text-tertiary)]"
+            />
           </div>
 
-          <form
-            className="flex flex-col gap-4 rounded-[var(--radius-md)] border border-[var(--card-border)] bg-white/70 p-5 shadow-[var(--shadow-soft)]"
+          <SurfaceCard
+            as="form"
+            className="flex flex-col gap-4 p-5"
             onSubmit={handleSubmit}
             data-animate="fade-up"
           >
             <div className="flex flex-col gap-2">
-              <label
-                className="font-label text-[10px] text-[var(--text-muted)]"
-                htmlFor="guest-name"
-              >
-                NAME
-              </label>
-              <input
+              <FieldLabel htmlFor="guest-name">NAME</FieldLabel>
+              <TextInput
                 id="guest-name"
                 name="guest-name"
                 value={name}
                 onChange={(event) => setName(event.target.value)}
-                className="rounded-[12px] border border-[var(--border-light)] bg-white px-4 py-3 text-[14px] text-[var(--text-primary)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
                 placeholder="성함을 입력해주세요"
                 maxLength={20}
                 required
@@ -266,13 +272,8 @@ export const GuestbookSection = () => {
 
             {guestbook.enablePassword && (
               <div className="flex flex-col gap-2">
-                <label
-                  className="font-label text-[10px] text-[var(--text-muted)]"
-                  htmlFor="guest-password"
-                >
-                  PASSWORD
-                </label>
-                <input
+                <FieldLabel htmlFor="guest-password">PASSWORD</FieldLabel>
+                <TextInput
                   id="guest-password"
                   name="guest-password"
                   type="password"
@@ -281,7 +282,6 @@ export const GuestbookSection = () => {
                   maxLength={4}
                   value={password}
                   onChange={(event) => setPassword(event.target.value.replace(/\D/g, ''))}
-                  className="rounded-[12px] border border-[var(--border-light)] bg-white px-4 py-3 text-[14px] text-[var(--text-primary)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
                   placeholder="4자리 숫자 (수정/삭제 시 필요)"
                   required
                 />
@@ -289,18 +289,13 @@ export const GuestbookSection = () => {
             )}
 
             <div className="flex flex-col gap-2">
-              <label
-                className="font-label text-[10px] text-[var(--text-muted)]"
-                htmlFor="guest-message"
-              >
-                MESSAGE
-              </label>
-              <textarea
+              <FieldLabel htmlFor="guest-message">MESSAGE</FieldLabel>
+              <TextArea
                 id="guest-message"
                 name="guest-message"
                 value={message}
                 onChange={(event) => setMessage(event.target.value)}
-                className="min-h-[100px] rounded-[12px] border border-[var(--border-light)] bg-white px-4 py-3 text-[14px] text-[var(--text-primary)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
+                className="min-h-[100px]"
                 placeholder="축하의 한마디를 남겨주세요"
                 maxLength={200}
                 required
@@ -317,14 +312,10 @@ export const GuestbookSection = () => {
               <span>{guestbook.privacyNotice}</span>
             </label>
 
-            <button
-              type="submit"
-              className="rounded-full bg-[var(--accent-burgundy)] py-3 text-[14px] text-white transition hover:opacity-90 disabled:bg-[var(--bg-tertiary)] disabled:text-[var(--text-muted)]"
-              disabled={!isValid}
-            >
+            <Button type="submit" size="full" disabled={!isValid}>
               축하 메시지 남기기
-            </button>
-          </form>
+            </Button>
+          </SurfaceCard>
 
           <div className="flex flex-col gap-3" data-animate="stagger">
             {guestbook.displayMode === 'recent' && (
@@ -341,9 +332,9 @@ export const GuestbookSection = () => {
               const isActive = activeEntryId === entry.id;
 
               return (
-                <div
+                <SurfaceCard
                   key={entry.id}
-                  className="group relative overflow-hidden rounded-[var(--radius-md)] border border-[var(--card-border)] bg-white/70 px-4 py-4 shadow-[var(--shadow-soft)]"
+                  className="group relative overflow-hidden px-4 py-4"
                   data-animate-item
                   onMouseEnter={() => {
                     if (canModify) {
@@ -382,33 +373,37 @@ export const GuestbookSection = () => {
                       <div className="absolute inset-0 bg-[#2c2420]/45 backdrop-blur-[1px]" />
                       <div className="relative z-10 flex gap-3">
                         {guestbook.enableEdit && (
-                          <button
+                          <Button
                             type="button"
                             onClick={(event) => {
                               event.stopPropagation();
                               handleEditClick(entry);
                             }}
-                            className="pointer-events-auto cursor-pointer rounded-full border border-white/70 bg-white/90 px-4 py-1.5 text-[12px] text-[var(--text-primary)] shadow-[0_8px_20px_rgba(0,0,0,0.12)] transition hover:border-white hover:bg-white"
+                            variant="ghost"
+                            size="pill"
+                            className="pointer-events-auto border-white/70 bg-white/90 text-[var(--text-primary)] shadow-[0_8px_20px_rgba(0,0,0,0.12)] hover:border-white hover:bg-white"
                           >
                             수정
-                          </button>
+                          </Button>
                         )}
                         {guestbook.enableDelete && (
-                          <button
+                          <Button
                             type="button"
                             onClick={(event) => {
                               event.stopPropagation();
                               handleDeleteClick(entry);
                             }}
-                            className="pointer-events-auto cursor-pointer rounded-full border border-white/70 bg-white/90 px-4 py-1.5 text-[12px] text-[var(--text-primary)] shadow-[0_8px_20px_rgba(0,0,0,0.12)] transition hover:border-[var(--accent-burgundy)] hover:text-[var(--accent-burgundy)]"
+                            variant="danger"
+                            size="pill"
+                            className="pointer-events-auto border-white/70 bg-white/90 shadow-[0_8px_20px_rgba(0,0,0,0.12)]"
                           >
                             삭제
-                          </button>
+                          </Button>
                         )}
                       </div>
                     </div>
                   )}
-                </div>
+                </SurfaceCard>
               );
             })}
           </div>
@@ -495,59 +490,42 @@ export const GuestbookSection = () => {
 
             <form onSubmit={handleEditSubmit} className="flex flex-col gap-4">
               <div className="flex flex-col gap-2">
-                <label
-                  className="font-label text-[10px] text-[var(--text-muted)]"
-                  htmlFor="edit-name"
-                >
-                  NAME
-                </label>
-                <input
+                <FieldLabel htmlFor="edit-name">NAME</FieldLabel>
+                <TextInput
                   id="edit-name"
                   value={editName}
                   onChange={(e) => setEditName(e.target.value)}
-                  className="rounded-[12px] border border-[var(--border-light)] bg-white px-4 py-3 text-[14px] text-[var(--text-primary)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
                   maxLength={20}
                   required
                 />
               </div>
 
               <div className="flex flex-col gap-2">
-                <label
-                  className="font-label text-[10px] text-[var(--text-muted)]"
-                  htmlFor="edit-message"
-                >
-                  MESSAGE
-                </label>
-                <textarea
+                <FieldLabel htmlFor="edit-message">MESSAGE</FieldLabel>
+                <TextArea
                   id="edit-message"
                   value={editMessage}
                   onChange={(e) => setEditMessage(e.target.value)}
-                  className="min-h-[100px] rounded-[12px] border border-[var(--border-light)] bg-white px-4 py-3 text-[14px] text-[var(--text-primary)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
+                  className="min-h-[100px]"
                   maxLength={200}
                   required
                 />
               </div>
 
-              <button
+              <Button
                 type="submit"
+                size="full"
                 disabled={!editName.trim() || !editMessage.trim()}
-                className="rounded-full bg-[var(--accent-burgundy)] py-3 text-[14px] text-white transition hover:opacity-90 disabled:bg-[var(--bg-tertiary)] disabled:text-[var(--text-muted)]"
               >
                 수정 완료
-              </button>
+              </Button>
             </form>
           </div>
         </div>
       )}
 
       {/* 토스트 메시지 */}
-      {toast && (
-        <div className="fixed inset-x-0 bottom-[calc(var(--safe-bottom)+16px)] z-50 flex justify-center px-6">
-          <div className="rounded-full bg-[#2f2f2f] px-5 py-2.5 text-[13px] text-white shadow-[0_12px_30px_rgba(0,0,0,0.3)]">
-            {toast}
-          </div>
-        </div>
-      )}
+      <Toast isOpen={!!toast} message={toast} />
     </>
   );
 };

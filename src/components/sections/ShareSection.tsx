@@ -1,8 +1,12 @@
 'use client';
 
 import { useCallback, useState, useEffect } from 'react';
-import { invitationMock } from '@/mock/invitation.mock';
+import type { InvitationShare } from '@/mock/invitation.mock';
 import { useKakaoSDK } from '@/hooks/useKakaoSDK';
+import { Button } from '@/components/ui/Button';
+import { SectionHeader } from '@/components/ui/SectionHeader';
+import { Toast } from '@/components/ui/Toast';
+import { copyText } from '@/utils/clipboard';
 
 /**
  * 공유 기능 섹션
@@ -10,8 +14,11 @@ import { useKakaoSDK } from '@/hooks/useKakaoSDK';
  * - URL 복사
  * - Web Share API (네이티브 공유)
  */
-export const ShareSection = () => {
-  const { share } = invitationMock;
+type ShareSectionProps = {
+  share: InvitationShare;
+};
+
+export const ShareSection = ({ share }: ShareSectionProps) => {
   const { isReady: isKakaoReady, hasAppKey } = useKakaoSDK();
 
   const [showToast, setShowToast] = useState(false);
@@ -82,21 +89,8 @@ export const ShareSection = () => {
   const handleCopyUrl = useCallback(async () => {
     const url = getCurrentUrl();
     try {
-      if (navigator.clipboard && window.isSecureContext) {
-        await navigator.clipboard.writeText(url);
-        showToastMessage('링크가 복사되었습니다');
-      } else {
-        // Fallback for older browsers
-        const textArea = document.createElement('textarea');
-        textArea.value = url;
-        textArea.style.position = 'fixed';
-        textArea.style.left = '-999999px';
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textArea);
-        showToastMessage('링크가 복사되었습니다');
-      }
+      await copyText(url);
+      showToastMessage('링크가 복사되었습니다');
     } catch (error) {
       console.error('Copy URL error:', error);
       showToastMessage('링크 복사에 실패했습니다');
@@ -134,23 +128,25 @@ export const ShareSection = () => {
         <div className="mx-auto flex w-full max-w-[520px] flex-col gap-8 px-6">
           {/* 섹션 헤더 */}
           <div className="text-center" data-animate="fade-up">
-            <span className="font-label text-[12px] text-[var(--accent-rose)]">SHARE</span>
-            <h2 className="mt-2 text-[24px] font-medium text-[var(--text-primary)]">
-              청첩장 공유하기
-            </h2>
-            <p className="mt-2 text-[14px] text-[var(--text-tertiary)]">
-              소중한 분들과 함께 나눠주세요
-            </p>
+            <SectionHeader
+              kicker="SHARE"
+              title="청첩장 공유하기"
+              description="소중한 분들과 함께 나눠주세요"
+              kickerClassName="font-label text-[12px] text-[var(--accent-rose)]"
+              titleClassName="mt-2 text-[24px] font-medium text-[var(--text-primary)]"
+              descriptionClassName="mt-2 text-[14px] text-[var(--text-tertiary)]"
+            />
           </div>
 
           {/* 공유 버튼 그룹 */}
           <div className="flex flex-col gap-3" data-animate="stagger">
             {/* 카카오톡 공유 */}
-            <button
+            <Button
               onClick={handleKakaoShare}
               disabled={!hasAppKey || !isKakaoReady}
               data-animate-item
-              className="relative flex items-center justify-center gap-3 rounded-full bg-[#FEE500] py-3.5 text-[14px] font-medium text-[#3C1E1E] shadow-[var(--shadow-soft)] transition hover:bg-[#FDD835] disabled:cursor-not-allowed disabled:opacity-40"
+              size="full"
+              className="relative flex items-center justify-center gap-3 bg-[#FEE500] py-3.5 text-[14px] font-medium text-[#3C1E1E] shadow-[var(--shadow-soft)] hover:bg-[#FDD835]"
               title={
                 !hasAppKey
                   ? '카카오 API 키가 설정되지 않았습니다'
@@ -168,13 +164,15 @@ export const ShareSection = () => {
                   (API 키 필요)
                 </span>
               )}
-            </button>
+            </Button>
 
             {/* URL 복사 */}
-            <button
+            <Button
               onClick={handleCopyUrl}
               data-animate-item
-              className="flex items-center justify-center gap-3 rounded-full border border-[var(--accent)] bg-white py-3.5 text-[14px] text-[var(--text-primary)] transition hover:bg-[var(--bg-secondary)]"
+              size="full"
+              variant="ghost"
+              className="flex items-center justify-center gap-3 border-[var(--accent)] bg-white py-3.5 text-[14px] text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
             >
               <svg
                 className="h-4 w-4"
@@ -190,14 +188,16 @@ export const ShareSection = () => {
                 />
               </svg>
               링크 복사하기
-            </button>
+            </Button>
 
             {/* 네이티브 공유 */}
             {canShare && (
-              <button
+              <Button
                 onClick={handleNativeShare}
                 data-animate-item
-                className="flex items-center justify-center gap-3 rounded-full border border-[var(--border-light)] bg-white py-3.5 text-[14px] text-[var(--text-secondary)] transition hover:bg-[var(--bg-secondary)]"
+                size="full"
+                variant="ghost"
+                className="flex items-center justify-center gap-3 bg-white py-3.5 text-[14px] text-[var(--text-secondary)]"
               >
                 <svg
                   className="h-4 w-4"
@@ -213,20 +213,14 @@ export const ShareSection = () => {
                   />
                 </svg>
                 다른 방법으로 공유하기
-              </button>
+              </Button>
             )}
           </div>
         </div>
       </section>
 
       {/* 토스트 메시지 */}
-      {showToast && (
-        <div className="fixed inset-x-0 bottom-[calc(var(--safe-bottom)+16px)] z-50 flex justify-center px-6">
-          <div className="rounded-full bg-[#2f2f2f] px-5 py-2.5 text-[13px] text-white shadow-[0_12px_30px_rgba(0,0,0,0.3)]">
-            {toastMessage}
-          </div>
-        </div>
-      )}
+      <Toast isOpen={showToast} message={toastMessage} />
     </>
   );
 };

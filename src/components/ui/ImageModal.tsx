@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import Image from 'next/image';
+import { ModalShell } from '@/components/ui/ModalShell';
 
 type ImageModalProps = {
   isOpen: boolean;
@@ -12,6 +13,8 @@ type ImageModalProps = {
 
 /**
  * 이미지 확대 모달 - 스크롤 위치 유지, 최상위 z-index
+ * @param props ImageModalProps
+ * @returns JSX.Element | null
  */
 export const ImageModal = ({ isOpen, onClose, imageSrc, imageAlt }: ImageModalProps) => {
   const scrollPosRef = useRef(0);
@@ -45,30 +48,15 @@ export const ImageModal = ({ isOpen, onClose, imageSrc, imageAlt }: ImageModalPr
     };
   }, [isOpen]);
 
-  useEffect(() => {
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onClose();
-      }
-    };
-
-    if (isOpen) {
-      window.addEventListener('keydown', handleEsc);
-    }
-
-    return () => {
-      window.removeEventListener('keydown', handleEsc);
-    };
-  }, [isOpen, onClose]);
-
   if (!isOpen) {
     return null;
   }
 
   return (
-    <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm"
-      onClick={onClose}
+    <ModalShell
+      isOpen={isOpen}
+      onClose={onClose}
+      className="z-[9999] bg-black/85 p-4 backdrop-blur-sm"
       style={{ touchAction: 'none' }}
     >
       <button
@@ -96,6 +84,6 @@ export const ImageModal = ({ isOpen, onClose, imageSrc, imageAlt }: ImageModalPr
           draggable={false}
         />
       </div>
-    </div>
+    </ModalShell>
   );
 };

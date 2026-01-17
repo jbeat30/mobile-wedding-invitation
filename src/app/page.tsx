@@ -60,7 +60,8 @@ const ClosingSection = dynamic(
  * 퍼블릭 싱글 페이지 레이아웃 스켈레톤 확인
  */
 export default function Page() {
-  const { loading } = invitationMock;
+  const { content, assets, storage } = invitationMock;
+  const { loading } = content;
   const { isLoading, isHintVisible } = useLoadingState({
     minDuration: loading.minDuration,
     additionalDuration: loading.additionalDuration,
@@ -241,10 +242,10 @@ export default function Page() {
   }, [showContent]);
 
   return (
-    <div className="bg-[var(--bg-primary)] text-[var(--base-text)]">
+    <div className="bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <main
         ref={contentRef}
-        className="relative overflow-hidden bg-[var(--base-surface)] shadow-[0_40px_120px_rgba(44,34,28,0.12)] min-[481px]:mx-auto min-[481px]:max-w-[480px] min-[481px]:rounded-[28px] min-[481px]:border min-[481px]:border-white/65 min-[481px]:shadow-[0_50px_120px_rgba(41,32,26,0.22)]"
+        className="relative overflow-hidden bg-[var(--bg-primary)] shadow-[0_40px_120px_rgba(44,34,28,0.12)] min-[481px]:mx-auto min-[481px]:max-w-[480px] min-[481px]:rounded-[28px] min-[481px]:border min-[481px]:border-white/65 min-[481px]:shadow-[0_50px_120px_rgba(41,32,26,0.22)]"
       >
         <div className="relative">
           <CherryBlossomCanvas density={35000} zIndex={40} opacity={0.7} minPetalCount={15} />
@@ -252,28 +253,33 @@ export default function Page() {
           {showLoading && (
             <LoadingSection
               message={loading.message}
+              imageSrc={assets.loadingImage}
               isVisible={isLoading}
               isHintVisible={isHintVisible}
             />
           )}
           {showContent && (
             <>
-              <GreetingSection />
-              <IntroSection />
+              <GreetingSection greeting={content.greeting} couple={content.couple} />
+              <IntroSection
+                couple={content.couple}
+                event={content.event}
+                heroImage={assets.heroImage}
+              />
             </>
           )}
         </div>
         {showContent && (
           <>
-            <CoupleSection />
-            <WeddingInfoSection />
-            <LocationSection />
-            <GallerySection />
-            <AccountsSection />
-            <GuestbookSection />
-            <RSVPSection />
-            <ShareSection />
-            <ClosingSection />
+            <CoupleSection couple={content.couple} />
+            <WeddingInfoSection event={content.event} couple={content.couple} />
+            <LocationSection location={content.location} event={content.event} />
+            <GallerySection gallery={content.gallery} />
+            <AccountsSection accounts={content.accounts} />
+            <GuestbookSection guestbook={content.guestbook} storageKey={storage.guestbook.key} />
+            <RSVPSection rsvp={content.rsvp} storageKey={storage.rsvp.key} />
+            <ShareSection share={content.share} />
+            <ClosingSection closing={content.closing} couple={content.couple} />
           </>
         )}
       </main>
