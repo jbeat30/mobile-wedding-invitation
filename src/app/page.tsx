@@ -242,10 +242,10 @@ export default function Page() {
   }, [showContent]);
 
   return (
-    <div className="bg-[var(--bg-primary)] text-[var(--base-text)]">
+    <div className="bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <main
         ref={contentRef}
-        className="relative overflow-hidden bg-[var(--base-surface)] shadow-[0_40px_120px_rgba(44,34,28,0.12)] min-[481px]:mx-auto min-[481px]:max-w-[480px] min-[481px]:rounded-[28px] min-[481px]:border min-[481px]:border-white/65 min-[481px]:shadow-[0_50px_120px_rgba(41,32,26,0.22)]"
+        className="relative overflow-hidden bg-[var(--bg-primary)] shadow-[0_40px_120px_rgba(44,34,28,0.12)] min-[481px]:mx-auto min-[481px]:max-w-[480px] min-[481px]:rounded-[28px] min-[481px]:border min-[481px]:border-white/65 min-[481px]:shadow-[0_50px_120px_rgba(41,32,26,0.22)]"
       >
         <div className="relative">
           <CherryBlossomCanvas density={35000} zIndex={40} opacity={0.7} minPetalCount={15} />
