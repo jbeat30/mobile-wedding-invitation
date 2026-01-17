@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import type { InvitationRsvp } from '@/mock/invitation.mock';
 import { FieldLabel } from '@/components/ui/FieldLabel';
 import { SectionHeader } from '@/components/ui/SectionHeader';
@@ -27,6 +27,21 @@ export const RSVPSection = ({ rsvp, storageKey }: RSVPSectionProps) => {
   const deadlineText = rsvp.deadline
     ? `${formatMonthDay(rsvp.deadline)}까지 회신 부탁드립니다`
     : '참석 여부를 알려주세요';
+  const attendanceValue = formData.attendance || '';
+  const isNotAttending = attendanceValue === '불참';
+
+  useEffect(() => {
+    if (!rsvp.fields.some((field) => field.key === 'companions')) return;
+
+    if (isNotAttending) {
+      setFormData((prev) => ({ ...prev, companions: '0명' }));
+      return;
+    }
+
+    if (formData.companions === '0명') {
+      setFormData((prev) => ({ ...prev, companions: '' }));
+    }
+  }, [isNotAttending, rsvp.fields, formData.companions]);
 
   const isValid = useCallback(() => {
     if (!consent) return false;
@@ -101,13 +116,18 @@ export const RSVPSection = ({ rsvp, storageKey }: RSVPSectionProps) => {
                     value={formData[field.key] || ''}
                     onChange={(e) => handleChange(field.key, e.target.value)}
                     required={field.required}
+                    disabled={field.key === 'companions' && isNotAttending}
                   >
                     <option value="">선택해주세요</option>
-                    {field.options.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
+                    {field.key === 'companions' && isNotAttending ? (
+                      <option value="0명">0명</option>
+                    ) : (
+                      field.options.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))
+                    )}
                   </SelectField>
                 ) : (
                   <TextArea

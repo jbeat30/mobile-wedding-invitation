@@ -524,12 +524,12 @@ export const invitationMock: InvitationMock = {
           required: true,
           options: ['식사함', '식사하지 않음'],
         },
-        {
-          key: 'companions',
-          label: '동반 인원',
-          required: false,
-          options: ['0명', '1명', '2명', '3명', '4명', '5명이상'],
-        },
+      {
+        key: 'companions',
+        label: '동반 인원',
+        required: false,
+        options: ['1명', '2명', '3명', '4명', '5명이상'],
+      },
       ],
       consent: {
         title: '개인정보 수집 및 이용 동의',
