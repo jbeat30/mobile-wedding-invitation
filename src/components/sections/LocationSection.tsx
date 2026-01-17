@@ -2,6 +2,8 @@
 
 import { useState, useCallback } from 'react';
 import type { InvitationEvent, InvitationLocation } from '@/mock/invitation.mock';
+import { SectionHeader } from '@/components/ui/SectionHeader';
+import { Toast } from '@/components/ui/Toast';
 
 type LocationSectionProps = {
   event: InvitationEvent;
@@ -62,10 +64,12 @@ export const LocationSection = ({ event, location }: LocationSectionProps) => {
       <div className="mx-auto flex w-full max-w-[520px] flex-col gap-10 px-6">
         {/* 섹션 헤더 */}
         <div className="text-center" data-animate="fade-up">
-          <span className="font-label text-[12px] text-[var(--accent-rose)]">LOCATION</span>
-          <h2 className="mt-2 text-[24px] font-medium text-[var(--text-primary)]">
-            오시는 길
-          </h2>
+          <SectionHeader
+            kicker="LOCATION"
+            title="오시는 길"
+            kickerClassName="font-label text-[12px] text-[var(--accent-rose)]"
+            titleClassName="mt-2 text-[24px] font-medium text-[var(--text-primary)]"
+          />
         </div>
 
         {/* 지도 플레이스홀더 */}
@@ -240,13 +244,7 @@ export const LocationSection = ({ event, location }: LocationSectionProps) => {
       </div>
 
       {/* 토스트 메시지 */}
-      {toast && (
-        <div className="fixed inset-x-0 bottom-[calc(var(--safe-bottom)+16px)] z-50 flex justify-center px-6">
-          <div className="rounded-full bg-[#2f2f2f] px-5 py-2.5 text-[13px] text-white shadow-[0_12px_30px_rgba(0,0,0,0.3)]">
-            {toast}
-          </div>
-        </div>
-      )}
+      <Toast isOpen={!!toast} message={toast} />
     </section>
   );
 };

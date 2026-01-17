@@ -2,6 +2,7 @@
 
 import type { InvitationCouple } from '@/mock/invitation.mock';
 import Image from 'next/image';
+import { SectionHeader } from '@/components/ui/SectionHeader';
 
 type CoupleSectionProps = {
   couple: InvitationCouple;
@@ -16,10 +17,12 @@ export const CoupleSection = ({ couple }: CoupleSectionProps) => {
       <div className="mx-auto flex w-full max-w-[520px] flex-col gap-12 px-6">
         {/* 섹션 헤더 */}
         <div className="text-center" data-animate="fade-up">
-          <span className="font-label text-[13px] text-[var(--accent-rose)]">COUPLE</span>
-          <h2 className="mt-2 text-[24px] font-medium text-[var(--text-primary)]">
-            두 사람을 소개합니다
-          </h2>
+          <SectionHeader
+            kicker="COUPLE"
+            title="두 사람을 소개합니다"
+            kickerClassName="font-label text-[13px] text-[var(--accent-rose)]"
+            titleClassName="mt-2 text-[24px] font-medium text-[var(--text-primary)]"
+          />
         </div>
 
         {/* 프로필 */}

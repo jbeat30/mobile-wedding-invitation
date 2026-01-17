@@ -3,6 +3,8 @@
 import { useCallback, useState, useEffect } from 'react';
 import type { InvitationShare } from '@/mock/invitation.mock';
 import { useKakaoSDK } from '@/hooks/useKakaoSDK';
+import { SectionHeader } from '@/components/ui/SectionHeader';
+import { Toast } from '@/components/ui/Toast';
 
 /**
  * 공유 기능 섹션
@@ -137,13 +139,14 @@ export const ShareSection = ({ share }: ShareSectionProps) => {
         <div className="mx-auto flex w-full max-w-[520px] flex-col gap-8 px-6">
           {/* 섹션 헤더 */}
           <div className="text-center" data-animate="fade-up">
-            <span className="font-label text-[12px] text-[var(--accent-rose)]">SHARE</span>
-            <h2 className="mt-2 text-[24px] font-medium text-[var(--text-primary)]">
-              청첩장 공유하기
-            </h2>
-            <p className="mt-2 text-[14px] text-[var(--text-tertiary)]">
-              소중한 분들과 함께 나눠주세요
-            </p>
+            <SectionHeader
+              kicker="SHARE"
+              title="청첩장 공유하기"
+              description="소중한 분들과 함께 나눠주세요"
+              kickerClassName="font-label text-[12px] text-[var(--accent-rose)]"
+              titleClassName="mt-2 text-[24px] font-medium text-[var(--text-primary)]"
+              descriptionClassName="mt-2 text-[14px] text-[var(--text-tertiary)]"
+            />
           </div>
 
           {/* 공유 버튼 그룹 */}
@@ -223,13 +226,7 @@ export const ShareSection = ({ share }: ShareSectionProps) => {
       </section>
 
       {/* 토스트 메시지 */}
-      {showToast && (
-        <div className="fixed inset-x-0 bottom-[calc(var(--safe-bottom)+16px)] z-50 flex justify-center px-6">
-          <div className="rounded-full bg-[#2f2f2f] px-5 py-2.5 text-[13px] text-white shadow-[0_12px_30px_rgba(0,0,0,0.3)]">
-            {toastMessage}
-          </div>
-        </div>
-      )}
+      <Toast isOpen={showToast} message={toastMessage} />
     </>
   );
 };

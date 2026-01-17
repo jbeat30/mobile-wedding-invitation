@@ -4,6 +4,7 @@ import type {
   InvitationGreeting,
 } from '@/mock/invitation.mock';
 import { HeartLineDrawing } from '@/components/ui/HeartLineDrawing';
+import { SectionHeader } from '@/components/ui/SectionHeader';
 
 type GreetingSectionProps = {
   greeting: InvitationGreeting;
@@ -25,10 +26,12 @@ export const GreetingSection = ({ greeting, couple }: GreetingSectionProps) => {
       <div className="mx-auto flex w-full max-w-[520px] flex-col gap-12 px-6">
         {/* 섹션 헤더 */}
         <div className="text-center" data-animate="fade-up">
-          <span className="font-label text-[13px] text-[var(--accent-rose)]">INVITATION</span>
-          <h2 className="mt-2 text-[24px] font-medium text-[var(--text-primary)]">
-            초대합니다
-          </h2>
+          <SectionHeader
+            kicker="INVITATION"
+            title="초대합니다"
+            kickerClassName="font-label text-[13px] text-[var(--accent-rose)]"
+            titleClassName="mt-2 text-[24px] font-medium text-[var(--text-primary)]"
+          />
         </div>
 
         {/* 인사말 */}

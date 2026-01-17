@@ -1,6 +1,7 @@
 import type { InvitationCouple, InvitationEvent } from '@/mock/invitation.mock';
 import { IntroCalendar } from '@/components/sections/IntroCalendar';
 import { DDayCountdown } from '@/components/sections/DDayCountdown';
+import { SectionHeader } from '@/components/ui/SectionHeader';
 
 type WeddingInfoSectionProps = {
   event: InvitationEvent;
@@ -19,10 +20,12 @@ export const WeddingInfoSection = ({ event, couple }: WeddingInfoSectionProps) =
       <div className="mx-auto flex w-full max-w-[520px] flex-col gap-10 px-6">
         {/* 섹션 헤더 */}
         <div className="text-center" data-animate="fade-up">
-          <span className="font-label text-[13px] text-[var(--accent-rose)]">WEDDING DAY</span>
-          <h2 className="mt-2 text-[24px] font-medium text-[var(--text-primary)]">
-            {event.title}
-          </h2>
+          <SectionHeader
+            kicker="WEDDING DAY"
+            title={event.title}
+            kickerClassName="font-label text-[13px] text-[var(--accent-rose)]"
+            titleClassName="mt-2 text-[24px] font-medium text-[var(--text-primary)]"
+          />
         </div>
 
         {/* 날짜/시간 */}

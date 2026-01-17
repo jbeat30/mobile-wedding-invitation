@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
 import type { GuestbookEntry, InvitationGuestbook } from '@/mock/invitation.mock';
 import { PasswordModal } from '@/components/ui/PasswordModal';
+import { SectionHeader } from '@/components/ui/SectionHeader';
+import { Toast } from '@/components/ui/Toast';
 
 type GuestbookSectionProps = {
   guestbook: InvitationGuestbook;
@@ -236,9 +238,14 @@ export const GuestbookSection = ({ guestbook, storageKey }: GuestbookSectionProp
       <section id="guestbook" className="bg-[var(--bg-primary)] py-16">
         <div className="mx-auto flex w-full max-w-[520px] flex-col gap-8 px-6">
           <div className="text-center" data-animate="fade-up">
-            <span className="font-label text-[12px] text-[var(--accent-rose)]">GUESTBOOK</span>
-            <h2 className="mt-2 text-[24px] font-medium text-[var(--text-primary)]">축하 메시지</h2>
-            <p className="mt-2 text-[14px] text-[var(--text-tertiary)]">{guestbook.retentionText}</p>
+            <SectionHeader
+              kicker="GUESTBOOK"
+              title="축하 메시지"
+              description={guestbook.retentionText}
+              kickerClassName="font-label text-[12px] text-[var(--accent-rose)]"
+              titleClassName="mt-2 text-[24px] font-medium text-[var(--text-primary)]"
+              descriptionClassName="mt-2 text-[14px] text-[var(--text-tertiary)]"
+            />
           </div>
 
           <form
@@ -542,13 +549,7 @@ export const GuestbookSection = ({ guestbook, storageKey }: GuestbookSectionProp
       )}
 
       {/* 토스트 메시지 */}
-      {toast && (
-        <div className="fixed inset-x-0 bottom-[calc(var(--safe-bottom)+16px)] z-50 flex justify-center px-6">
-          <div className="rounded-full bg-[#2f2f2f] px-5 py-2.5 text-[13px] text-white shadow-[0_12px_30px_rgba(0,0,0,0.3)]">
-            {toast}
-          </div>
-        </div>
-      )}
+      <Toast isOpen={!!toast} message={toast} />
     </>
   );
 };

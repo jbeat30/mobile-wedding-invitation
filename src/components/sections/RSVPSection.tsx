@@ -2,6 +2,8 @@
 
 import { useCallback, useState, type FormEvent } from 'react';
 import type { InvitationRsvp } from '@/mock/invitation.mock';
+import { SectionHeader } from '@/components/ui/SectionHeader';
+import { Toast } from '@/components/ui/Toast';
 
 type RSVPSectionProps = {
   rsvp: InvitationRsvp;
@@ -15,6 +17,9 @@ export const RSVPSection = ({ rsvp, storageKey }: RSVPSectionProps) => {
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [consent, setConsent] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const deadlineText = rsvp.deadline
+    ? `${new Date(rsvp.deadline).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' })}까지 회신 부탁드립니다`
+    : '참석 여부를 알려주세요';
 
   const isValid = useCallback(() => {
     if (!consent) return false;
@@ -60,15 +65,14 @@ export const RSVPSection = ({ rsvp, storageKey }: RSVPSectionProps) => {
         <div className="mx-auto flex w-full max-w-[520px] flex-col gap-8 px-6">
           {/* 섹션 헤더 */}
           <div className="text-center" data-animate="fade-up">
-            <span className="font-label text-[12px] text-[var(--accent-rose)]">RSVP</span>
-            <h2 className="mt-2 text-[24px] font-medium text-[var(--text-primary)]">
-              참석 여부
-            </h2>
-            <p className="mt-2 text-[14px] text-[var(--text-tertiary)]">
-              {rsvp.deadline
-                ? `${new Date(rsvp.deadline).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' })}까지 회신 부탁드립니다`
-                : '참석 여부를 알려주세요'}
-            </p>
+            <SectionHeader
+              kicker="RSVP"
+              title="참석 여부"
+              description={deadlineText}
+              kickerClassName="font-label text-[12px] text-[var(--accent-rose)]"
+              titleClassName="mt-2 text-[24px] font-medium text-[var(--text-primary)]"
+              descriptionClassName="mt-2 text-[14px] text-[var(--text-tertiary)]"
+            />
           </div>
 
           {/* RSVP 폼 */}
@@ -145,13 +149,11 @@ export const RSVPSection = ({ rsvp, storageKey }: RSVPSectionProps) => {
       </section>
 
       {/* 토스트 메시지 */}
-      {showToast && (
-        <div className="fixed inset-x-0 bottom-[calc(var(--safe-bottom)+16px)] z-50 flex justify-center px-6">
-          <div className="rounded-full bg-[#2f2f2f] px-5 py-2 text-[13px] text-white shadow-[0_12px_30px_rgba(0,0,0,0.3)]">
-            참석 여부가 전달되었습니다
-          </div>
-        </div>
-      )}
+      <Toast
+        isOpen={showToast}
+        message="참석 여부가 전달되었습니다"
+        toastClassName="py-2"
+      />
     </>
   );
 };
