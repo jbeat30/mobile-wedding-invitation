@@ -18,7 +18,7 @@ export const InfoSection = () => {
             {info.title}
           </h2>
           <p className="text-[13px] text-[var(--text-secondary)]">
-            {couple.groom.displayName} · {couple.bride.displayName}
+            {couple.groom.lastName} · {couple.bride.lastName}
           </p>
         </div>
 

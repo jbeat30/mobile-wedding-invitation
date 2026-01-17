@@ -28,7 +28,7 @@ export const CoupleSection = () => {
               {couple.groom.profileImage && (
                 <Image
                   src={couple.groom.profileImage}
-                  alt={`${couple.groom.displayName} 프로필`}
+                  alt={`${couple.groom.fullName} 프로필`}
                   fill
                   className="object-cover"
                   unoptimized
@@ -40,7 +40,7 @@ export const CoupleSection = () => {
                 {couple.groom.role || 'GROOM'}
               </p>
               <h3 className="text-[22px] font-medium text-[var(--text-primary)]">
-                {couple.groom.displayName}
+                {couple.groom.fullName}
               </h3>
               {couple.groom.bio && (
                 <p className="mt-1 text-[14px] leading-relaxed text-[var(--text-tertiary)]">
@@ -56,7 +56,7 @@ export const CoupleSection = () => {
               {couple.bride.profileImage && (
                 <Image
                   src={couple.bride.profileImage}
-                  alt={`${couple.bride.displayName} 프로필`}
+                  alt={`${couple.bride.fullName} 프로필`}
                   fill
                   className="object-cover"
                   unoptimized
@@ -68,7 +68,7 @@ export const CoupleSection = () => {
                 {couple.bride.role || 'BRIDE'}
               </p>
               <h3 className="text-[22px] font-medium text-[var(--text-primary)]">
-                {couple.bride.displayName}
+                {couple.bride.fullName}
               </h3>
               {couple.bride.bio && (
                 <p className="mt-1 text-[14px] leading-relaxed text-[var(--text-tertiary)]">

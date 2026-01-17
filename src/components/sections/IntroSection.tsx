@@ -29,9 +29,9 @@ export const IntroSection = () => {
               WEDDING INVITATION
             </p>
             <h1 className="mt-4 font-serif text-[32px] font-medium tracking-wide text-white drop-shadow-lg">
-              {couple.groom.displayName}
+              {couple.groom.fullName}
               <span className="mx-3 text-[18px] text-[var(--accent-rose-light)]">♥</span>
-              {couple.bride.displayName}
+              {couple.bride.fullName}
             </h1>
             <p className="mt-3 text-[14px] font-bold tracking-wider text-white/90 drop-shadow-sm">
               {info.dateText}

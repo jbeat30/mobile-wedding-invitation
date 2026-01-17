@@ -143,27 +143,6 @@ export const ShareSection = () => {
             </p>
           </div>
 
-          <div
-            className="overflow-hidden rounded-[var(--radius-md)] border border-[var(--card-border)] shadow-[var(--shadow-soft)]"
-            data-animate="scale"
-          >
-            <div
-              className="relative h-[140px] w-full"
-              style={{
-                backgroundImage: `linear-gradient(120deg, rgba(255,255,255,0.4), rgba(255,255,255,0)), url(${share.imageUrl})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-              }}
-            >
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-              <div className="absolute bottom-4 left-4 text-white">
-                <p className="font-label text-[10px] text-white/80">Invitation</p>
-                <p className="mt-1.5 text-[16px] font-medium">{share.title}</p>
-                <p className="mt-1 text-[12px] text-white/80">{share.description}</p>
-              </div>
-            </div>
-          </div>
-
           {/* 공유 버튼 그룹 */}
           <div className="flex flex-col gap-3" data-animate="stagger">
             {/* 카카오톡 공유 */}

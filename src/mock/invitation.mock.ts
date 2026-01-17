@@ -13,7 +13,7 @@ export type InvitationIntro = {
 
 export type InvitationPerson = {
   fullName: string;
-  displayName: string;
+  lastName: string;
   bio?: string;
   profileImage?: string;
   role?: string;
@@ -194,14 +194,14 @@ export const invitationMock: InvitationMock = {
   couple: {
     groom: {
       fullName: '강신랑',
-      displayName: '강신랑',
+      lastName: '철수',
       bio: '조용한 다정함으로 하루를 따뜻하게 만드는 사람입니다.',
       profileImage: '/mock/groom-front-512.png',
       role: '신랑',
     },
     bride: {
       fullName: '장신부',
-      displayName: '장신부',
+      lastName: '영희',
       bio: '웃음을 나누는 순간이 가장 소중한 사람입니다.',
       profileImage: '/mock/bride-front-512.png',
       role: '신부',
