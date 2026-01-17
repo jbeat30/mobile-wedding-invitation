@@ -6,6 +6,11 @@ type SurfaceCardProps<T extends ElementType = 'div'> = {
   children: ReactNode;
 } & Omit<ComponentPropsWithoutRef<T>, 'as' | 'className' | 'children'>;
 
+/**
+ * 섹션 카드 표면 스타일 공통화
+ * @param props SurfaceCardProps
+ * @returns JSX.Element
+ */
 export const SurfaceCard = <T extends ElementType = 'div'>(
   props: SurfaceCardProps<T>
 ) => {

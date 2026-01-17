@@ -11,6 +11,11 @@ type FieldLabelProps = {
  * @param param FieldLabelProps
  * @returns JSX.Element
  */
+/**
+ * 폼 라벨 공통 스타일
+ * @param props FieldLabelProps
+ * @returns JSX.Element
+ */
 export const FieldLabel = ({ htmlFor, required, children }: FieldLabelProps) => {
   return (
     <label

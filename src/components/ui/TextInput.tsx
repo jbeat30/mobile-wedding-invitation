@@ -12,18 +12,18 @@ const mergeClassName = (className?: string) => {
 };
 
 /**
- * 텍스트 입력 컴포넌트
- * @param className
- * @param props
+ * 기본 입력 필드 공통화
+ * @param props TextInputProps
+ * @returns JSX.Element
  */
 export const TextInput = ({ className, ...props }: TextInputProps) => {
   return <input className={mergeClassName(className)} {...props} />;
 };
 
 /**
- * 텍스트 영역 컴포넌트
- * @param className
- * @param props
+ * 텍스트 영역 공통화
+ * @param props TextAreaProps
+ * @returns JSX.Element
  */
 export const TextArea = ({ className, ...props }: TextAreaProps) => {
   return <textarea className={mergeClassName(className)} {...props} />;

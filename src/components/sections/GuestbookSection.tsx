@@ -10,6 +10,7 @@ import { SurfaceCard } from '@/components/ui/SurfaceCard';
 import { TextArea, TextInput } from '@/components/ui/TextInput';
 import { Toast } from '@/components/ui/Toast';
 import { formatMonthDay } from '@/utils/date';
+import { isFourDigitPassword, isRequiredText } from '@/utils/validation';
 
 type GuestbookSectionProps = {
   guestbook: InvitationGuestbook;
@@ -52,6 +53,8 @@ const saveEntries = (storageKey: string, entries: GuestbookEntry[]) => {
 
 /**
  * 방명록 섹션
+ * @param props GuestbookSectionProps
+ * @returns JSX.Element
  */
 export const GuestbookSection = ({ guestbook, storageKey }: GuestbookSectionProps) => {
   // 폼 상태
@@ -101,8 +104,8 @@ export const GuestbookSection = ({ guestbook, storageKey }: GuestbookSectionProp
   }, []);
 
   const isValid = useMemo(() => {
-    const hasPassword = !guestbook.enablePassword || password.length === 4;
-    return name.trim().length > 0 && message.trim().length > 0 && consent && hasPassword;
+    const hasPassword = !guestbook.enablePassword || isFourDigitPassword(password);
+    return isRequiredText(name) && isRequiredText(message) && consent && hasPassword;
   }, [name, message, consent, password, guestbook.enablePassword]);
 
   const formatDate = useCallback((value: string) => {

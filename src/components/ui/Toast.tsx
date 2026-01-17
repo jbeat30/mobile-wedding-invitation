@@ -8,10 +8,9 @@ type ToastProps = {
 };
 
 /**
- * 토스트 컴포넌트
- * @param param ToastProps
+ * 토스트 표시
+ * @param props ToastProps
  * @returns JSX.Element | null
- * @constructor
  */
 export const Toast = ({
   isOpen,

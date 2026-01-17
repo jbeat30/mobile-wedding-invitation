@@ -10,8 +10,8 @@ type SectionHeaderProps = {
 };
 
 /**
- * 섹션 헤더 컴포넌트
- * @param param SectionHeaderProps
+ * 섹션 공통 헤더 구성
+ * @param props SectionHeaderProps
  * @returns JSX.Element
  */
 export const SectionHeader = ({

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect, useRef } from 'react';
+import { isFourDigitPassword } from '@/utils/validation';
 
 type PasswordModalProps = {
   isOpen: boolean;
@@ -43,12 +44,15 @@ export const PasswordModal = ({
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
-  const handleSubmit = useCallback((e: React.FormEvent) => {
-    e.preventDefault();
-    if (password.length === 4) {
-      onConfirm(password);
-    }
-  }, [password, onConfirm]);
+  const handleSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      if (isFourDigitPassword(password)) {
+        onConfirm(password);
+      }
+    },
+    [password, onConfirm]
+  );
 
   const handleBackdropClick = useCallback((e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
@@ -101,7 +105,7 @@ export const PasswordModal = ({
             </button>
             <button
               type="submit"
-              disabled={password.length !== 4}
+              disabled={!isFourDigitPassword(password)}
               className="flex-1 rounded-full bg-[var(--accent-burgundy)] py-3 text-[14px] text-white transition hover:opacity-90 disabled:bg-[var(--bg-tertiary)] disabled:text-[var(--text-muted)]"
             >
               확인

@@ -1,7 +1,8 @@
 /**
- * 클립보드에 복사
- * @param text 복사할 텍스트
- * */
+ * 텍스트 클립보드 복사
+ * @param text string
+ * @returns Promise<void>
+ */
 export const copyText = async (text: string) => {
   if (navigator.clipboard?.writeText) {
     await navigator.clipboard.writeText(text);

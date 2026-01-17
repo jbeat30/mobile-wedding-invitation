@@ -34,7 +34,7 @@ const sizeClassMap: Record<ButtonSize, string> = {
 
 /**
  * 버튼 컴포넌트
- * @param param ButtonProps
+ * @param props ButtonProps
  * @returns JSX.Element
  */
 export const Button = ({

@@ -10,6 +10,7 @@ import { TextArea } from '@/components/ui/TextInput';
 import { Toast } from '@/components/ui/Toast';
 import { Button } from '@/components/ui/Button';
 import { formatMonthDay } from '@/utils/date';
+import { isRequiredText } from '@/utils/validation';
 
 type RSVPSectionProps = {
   rsvp: InvitationRsvp;
@@ -31,7 +32,7 @@ export const RSVPSection = ({ rsvp, storageKey }: RSVPSectionProps) => {
     if (!consent) return false;
 
     const requiredFields = rsvp.fields.filter((field) => field.required);
-    return requiredFields.every((field) => formData[field.key]?.trim().length > 0);
+    return requiredFields.every((field) => isRequiredText(formData[field.key] || ''));
   }, [formData, consent, rsvp.fields]);
 
   const handleSubmit = useCallback(
