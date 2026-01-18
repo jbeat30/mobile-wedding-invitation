@@ -788,6 +788,7 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
                 <TextInput
                   id="gallery_autoplay_delay"
                   name="gallery_autoplay_delay"
+                  type="number"
                   defaultValue={data.gallery.autoplay_delay ?? ''}
                 />
               </div>

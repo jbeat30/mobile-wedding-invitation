@@ -125,7 +125,8 @@ export const loadAdminData = async () => {
       title: content.gallery.title,
       description: content.gallery.description || '',
       autoplay: Boolean(content.gallery.autoplay),
-      autoplay_delay: content.gallery.autoplayDelay || null,
+      autoplay_delay:
+        content.gallery.autoplayDelay ?? (content.gallery.autoplay ? 3000 : null),
     },
     galleryImages: content.gallery.images.map((image, index) => ({
       id: image.id,

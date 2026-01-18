@@ -450,7 +450,8 @@ export const invitationMock: InvitationMock = {
           height: 600,
         },
       ],
-      autoplay: false,
+      autoplay: true,
+      autoplayDelay: 3000,
     },
     share: {
       title: '강신랑 · 장신부 결혼식에 초대합니다',
