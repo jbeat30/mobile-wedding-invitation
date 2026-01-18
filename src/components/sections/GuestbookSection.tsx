@@ -11,6 +11,7 @@ import { TextArea, TextInput } from '@/components/ui/TextInput';
 import { Toast } from '@/components/ui/Toast';
 import { formatMonthDay } from '@/utils/date';
 import { isFourDigitPassword, isRequiredText } from '@/utils/validation';
+import { postJson } from '@/utils/api';
 
 type GuestbookSectionProps = {
   guestbook: InvitationGuestbook;
@@ -133,6 +134,14 @@ export const GuestbookSection = ({ guestbook, storageKey }: GuestbookSectionProp
       };
 
       setEntries((prev) => [newEntry, ...prev]);
+      try {
+        const response = await postJson('/api/guestbook', newEntry);
+        if (!response.ok) {
+          throw new Error('Guestbook request failed');
+        }
+      } catch (error) {
+        console.error('Guestbook submit error:', error);
+      }
       setName('');
       setPassword('');
       setMessage('');

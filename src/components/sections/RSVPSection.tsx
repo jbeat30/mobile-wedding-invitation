@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
 import type { InvitationRsvp } from '@/mock/invitation.mock';
 import { FieldLabel } from '@/components/ui/FieldLabel';
 import { SectionHeader } from '@/components/ui/SectionHeader';
@@ -10,7 +10,8 @@ import { TextArea } from '@/components/ui/TextInput';
 import { Toast } from '@/components/ui/Toast';
 import { Button } from '@/components/ui/Button';
 import { formatMonthDay } from '@/utils/date';
-import { isRequiredText } from '@/utils/validation';
+import { postJson } from '@/utils/api';
+import { hasRequiredFields, normalizeCompanions } from '@/utils/rsvp';
 
 type RSVPSectionProps = {
   rsvp: InvitationRsvp;
@@ -43,23 +44,39 @@ export const RSVPSection = ({ rsvp, storageKey }: RSVPSectionProps) => {
     }
   }, [isNotAttending, rsvp.fields, formData.companions]);
 
+  const requiredFieldKeys = useMemo(
+    () => rsvp.fields.filter((field) => field.required).map((field) => field.key),
+    [rsvp.fields]
+  );
+
   const isValid = useCallback(() => {
     if (!consent) return false;
-
-    const requiredFields = rsvp.fields.filter((field) => field.required);
-    return requiredFields.every((field) => isRequiredText(formData[field.key] || ''));
-  }, [formData, consent, rsvp.fields]);
+    return hasRequiredFields(requiredFieldKeys, formData);
+  }, [formData, consent, requiredFieldKeys]);
 
   const handleSubmit = useCallback(
-    (event: FormEvent<HTMLFormElement>) => {
+    async (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();
       if (!isValid()) return;
 
+      const companionsValue = normalizeCompanions(attendanceValue, formData.companions || '');
+      const payload = {
+        ...formData,
+        companions: companionsValue,
+        submittedAt: new Date().toISOString(),
+      };
+
       // localStorage에 저장 (Mock)
-      localStorage.setItem(
-        storageKey,
-        JSON.stringify({ ...formData, submittedAt: new Date().toISOString() })
-      );
+      localStorage.setItem(storageKey, JSON.stringify(payload));
+
+      try {
+        const response = await postJson('/api/rsvp', payload);
+        if (!response.ok) {
+          throw new Error('RSVP request failed');
+        }
+      } catch (error) {
+        console.error('RSVP submit error:', error);
+      }
 
       // 토스트 표시
       setShowToast(true);
