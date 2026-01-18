@@ -26,6 +26,63 @@ export const updateAssetsAction = async (formData: FormData) => {
 };
 
 /**
+ * 메인 이미지 업데이트
+ * @param formData FormData
+ * @returns Promise<void>
+ */
+export const updateHeroImageAction = async (formData: FormData) => {
+  await requireAdminSession();
+  const supabase = createSupabaseAdmin();
+  const { id } = await getOrCreateInvitation();
+
+  await supabase
+    .from('invitation_assets')
+    .update({ hero_image: String(formData.get('hero_image') || '') })
+    .eq('invitation_id', id);
+
+  revalidateAdmin();
+};
+
+/**
+ * 공유 이미지 업데이트
+ * @param formData FormData
+ * @returns Promise<void>
+ */
+export const updateShareImagesAction = async (formData: FormData) => {
+  await requireAdminSession();
+  const supabase = createSupabaseAdmin();
+  const { id } = await getOrCreateInvitation();
+
+  await supabase
+    .from('invitation_assets')
+    .update({
+      share_og_image: String(formData.get('share_og_image') || ''),
+      share_kakao_image: String(formData.get('share_kakao_image') || ''),
+    })
+    .eq('invitation_id', id);
+
+  revalidateAdmin();
+};
+
+/**
+ * 로딩 이미지 업데이트
+ * @param formData FormData
+ * @returns Promise<void>
+ */
+export const updateLoadingImageAction = async (formData: FormData) => {
+  await requireAdminSession();
+  const supabase = createSupabaseAdmin();
+  const { id } = await getOrCreateInvitation();
+
+  await supabase
+    .from('invitation_assets')
+    .update({ loading_image: String(formData.get('loading_image') || '') })
+    .eq('invitation_id', id);
+
+  revalidateAdmin();
+};
+
+/**
  * 갤러리 설정 업데이트
  * @param formData FormData
  * @returns Promise<void>

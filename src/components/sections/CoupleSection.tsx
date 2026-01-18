@@ -29,21 +29,19 @@ export const CoupleSection = ({ couple }: CoupleSectionProps) => {
         <div className="grid gap-10 sm:grid-cols-2" data-animate="stagger">
           {/* 신랑 */}
           <div className="flex flex-col items-center gap-5 text-center" data-animate-item>
-            <div className="relative h-[160px] w-[160px] overflow-hidden rounded-full border-4 border-white shadow-[var(--shadow-card)]">
+            <div className="relative h-[160px] w-[160px] overflow-hidden rounded-full border-4 border-white bg-white shadow-[var(--shadow-card)]">
               {couple.groom.profileImage && (
                 <Image
                   src={couple.groom.profileImage}
                   alt={`${couple.groom.lastName}${couple.groom.firstName} 프로필`}
                   fill
-                  className="object-cover"
+                  className="object-contain"
                   unoptimized
                 />
               )}
             </div>
             <div className="flex flex-col gap-2">
-              <p className="font-label text-[12px] text-[var(--text-muted)]">
-                {couple.groom.role || 'GROOM'}
-              </p>
+              <p className="font-label text-[12px] text-[var(--text-muted)]">신랑</p>
               <h3 className="text-[22px] font-medium text-[var(--text-primary)]">
                 {`${couple.groom.lastName}${couple.groom.firstName}`}
               </h3>
@@ -57,21 +55,19 @@ export const CoupleSection = ({ couple }: CoupleSectionProps) => {
 
           {/* 신부 */}
           <div className="flex flex-col items-center gap-5 text-center" data-animate-item>
-            <div className="relative h-[160px] w-[160px] overflow-hidden rounded-full border-4 border-white shadow-[var(--shadow-card)]">
+            <div className="relative h-[160px] w-[160px] overflow-hidden rounded-full border-4 border-white bg-white shadow-[var(--shadow-card)]">
               {couple.bride.profileImage && (
                 <Image
                   src={couple.bride.profileImage}
                   alt={`${couple.bride.lastName}${couple.bride.firstName} 프로필`}
                   fill
-                  className="object-cover"
+                  className="object-contain"
                   unoptimized
                 />
               )}
             </div>
             <div className="flex flex-col gap-2">
-              <p className="font-label text-[12px] text-[var(--text-muted)]">
-                {couple.bride.role || 'BRIDE'}
-              </p>
+              <p className="font-label text-[12px] text-[var(--text-muted)]">신부</p>
               <h3 className="text-[22px] font-medium text-[var(--text-primary)]">
                 {`${couple.bride.lastName}${couple.bride.firstName}`}
               </h3>

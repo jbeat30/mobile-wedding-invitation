@@ -89,26 +89,23 @@ export type InvitationPerson = {
   lastName: string;
   bio?: string;
   profileImage?: string;
-  role?: string;
 };
 
-export type InvitationFamilyMember = {
-  role: 'father' | 'mother' | 'guardian' | 'other';
-  name: string;
-  prefix?: string;
-  suffix?: string;
-};
-
-export type InvitationFamilyLine = {
-  subject: 'groom' | 'bride';
-  relationshipLabel: string;
-  members: InvitationFamilyMember[];
+export type InvitationParents = {
+  groom: {
+    father?: string;
+    mother?: string;
+  };
+  bride: {
+    father?: string;
+    mother?: string;
+  };
 };
 
 export type InvitationCouple = {
   groom: InvitationPerson;
   bride: InvitationPerson;
-  familyLines?: InvitationFamilyLine[];
+  parents: InvitationParents;
 };
 
 export type InvitationGuidance = {
@@ -221,6 +218,14 @@ export type InvitationGreeting = {
   poeticNote?: string;
 };
 
+export type InvitationBgm = {
+  enabled: boolean;
+  title?: string;
+  audioUrl?: string;
+  autoPlay: boolean;
+  loop: boolean;
+};
+
 export type InvitationLocation = {
   placeName: string;
   coordinates: {
@@ -265,6 +270,7 @@ export type InvitationContent = {
   rsvp: InvitationRsvp;
   guestbook: InvitationGuestbook;
   accounts: InvitationAccounts;
+  bgm: InvitationBgm;
   closing: InvitationClosing;
 };
 
@@ -392,45 +398,23 @@ export const invitationMock: InvitationMock = {
         lastName: '강',
         bio: '조용한 다정함으로 하루를 따뜻하게 만드는 사람입니다.',
         profileImage: '/mock/groom-front-512.png',
-        role: '신랑',
       },
       bride: {
         firstName: '신부',
         lastName: '장',
         bio: '웃음을 나누는 순간이 가장 소중한 사람입니다.',
         profileImage: '/mock/bride-front-512.png',
-        role: '신부',
       },
-      familyLines: [
-        {
-          subject: 'groom',
-          relationshipLabel: '아들',
-          members: [
-            {
-              role: 'father',
-              name: '강아버지',
-            },
-            {
-              role: 'mother',
-              name: '송어머니',
-            },
-          ],
+      parents: {
+        groom: {
+          father: '강아버지',
+          mother: '송어머니',
         },
-        {
-          subject: 'bride',
-          relationshipLabel: '딸',
-          members: [
-            {
-              role: 'father',
-              name: '장아버지',
-            },
-            {
-              role: 'mother',
-              name: '이어머니',
-            },
-          ],
+        bride: {
+          father: '장아버지',
+          mother: '이어머니',
         },
-      ],
+      },
     },
     location: {
       placeName: '채림웨딩홀',
@@ -581,6 +565,13 @@ export const invitationMock: InvitationMock = {
           holder: '장신부',
         },
       ],
+    },
+    bgm: {
+      enabled: false,
+      title: '',
+      audioUrl: '',
+      autoPlay: false,
+      loop: true,
     },
     closing: {
       message: '소중한 분들과 함께하는 이 자리, 오래 기억하겠습니다.',
