@@ -147,6 +147,7 @@ export type InvitationAccount = {
   bankName: string;
   accountNumber: string;
   holder: string;
+  label?: string;
 };
 
 export type InvitationAccounts = {
@@ -545,16 +546,30 @@ export const invitationMock: InvitationMock = {
       description: '축하의 마음만 전해주셔도 감사한 하루입니다.',
       groom: [
         {
+          label: '신랑',
           bankName: '국민은행',
           accountNumber: '123-456-789012',
           holder: '강신랑',
         },
+        {
+          label: '아버지',
+          bankName: '신한은행',
+          accountNumber: '123-456-000000',
+          holder: '강버지',
+        },
       ],
       bride: [
         {
+          label: '신부',
           bankName: '신한은행',
           accountNumber: '110-234-567890',
           holder: '장신부',
+        },
+        {
+          label: '어머니',
+          bankName: '하나은행',
+          accountNumber: '110-000-000000',
+          holder: '장어머니',
         },
       ],
     },

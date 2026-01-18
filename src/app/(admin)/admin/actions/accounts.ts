@@ -39,6 +39,7 @@ export const addAccountEntryAction = async (formData: FormData) => {
     bank_name: String(formData.get('account_bank_name') || ''),
     account_number: String(formData.get('account_number') || ''),
     holder: String(formData.get('account_holder') || ''),
+    label: String(formData.get('account_label') || ''),
   };
 
   await supabase.from('invitation_account_entry').insert(payload);
@@ -60,6 +61,7 @@ export const updateAccountEntryAction = async (formData: FormData) => {
     bank_name: String(formData.get('account_bank_name') || ''),
     account_number: String(formData.get('account_number') || ''),
     holder: String(formData.get('account_holder') || ''),
+    label: String(formData.get('account_label') || ''),
   };
 
   await supabase.from('invitation_account_entry').update(payload).eq('id', entryId);

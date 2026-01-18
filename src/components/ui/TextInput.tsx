@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import type { ComponentPropsWithoutRef } from 'react';
 
 type TextInputProps = ComponentPropsWithoutRef<'input'>;
@@ -16,15 +17,21 @@ const mergeClassName = (className?: string) => {
  * @param props TextInputProps
  * @returns JSX.Element
  */
-export const TextInput = ({ className, ...props }: TextInputProps) => {
-  return <input className={mergeClassName(className)} {...props} />;
-};
+export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
+  ({ className, ...props }, ref) => {
+    return <input ref={ref} className={mergeClassName(className)} {...props} />;
+  }
+);
+TextInput.displayName = 'TextInput';
 
 /**
  * 텍스트 영역 공통화
  * @param props TextAreaProps
  * @returns JSX.Element
  */
-export const TextArea = ({ className, ...props }: TextAreaProps) => {
-  return <textarea className={mergeClassName(className)} {...props} />;
-};
+export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
+  ({ className, ...props }, ref) => {
+    return <textarea ref={ref} className={mergeClassName(className)} {...props} />;
+  }
+);
+TextArea.displayName = 'TextArea';

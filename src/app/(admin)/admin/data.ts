@@ -199,6 +199,7 @@ export const loadAdminData = async () => {
         bank_name: account.bankName,
         account_number: account.accountNumber,
         holder: account.holder,
+        label: account.label || '',
       })),
       ...content.accounts.bride.map((account, index) => ({
         id: `mock-account-bride-${index + 1}`,
@@ -207,6 +208,7 @@ export const loadAdminData = async () => {
         bank_name: account.bankName,
         account_number: account.accountNumber,
         holder: account.holder,
+        label: account.label || '',
       })),
     ],
     closing: {

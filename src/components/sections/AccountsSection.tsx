@@ -81,6 +81,11 @@ export const AccountsSection = ({ accounts }: AccountsSectionProps) => {
                     className="flex items-center justify-between gap-4 rounded-[12px] bg-[var(--bg-secondary)] px-4 py-3"
                   >
                     <div className="flex flex-col gap-0.5">
+                      {entry.label && (
+                        <span className="text-[12px] font-medium text-[var(--text-primary)]">
+                          {entry.label}
+                        </span>
+                      )}
                       <span className="text-[12px] text-[var(--text-muted)]">{entry.bankName}</span>
                       <span className="text-[14px] text-[var(--text-primary)]">
                         {entry.accountNumber}

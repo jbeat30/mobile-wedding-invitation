@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { AdminDashboardData } from '@/app/(admin)/admin/data';
 import {
   addAccountEntryAction,
@@ -36,6 +36,7 @@ import { FieldLabel } from '@/components/ui/FieldLabel';
 import { SelectField } from '@/components/ui/SelectField';
 import { SurfaceCard } from '@/components/ui/SurfaceCard';
 import { TextArea, TextInput } from '@/components/ui/TextInput';
+import { KakaoMap } from '@/components/ui/KakaoMap';
 
 type AdminDashboardProps = {
   data: AdminDashboardData;
@@ -168,6 +169,15 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
   const [draggedImageId, setDraggedImageId] = useState<string | null>(null);
   const [dragOverImageId, setDragOverImageId] = useState<string | null>(null);
   const [orderSaved, setOrderSaved] = useState(false);
+  const [accountFormOpen, setAccountFormOpen] = useState({ groom: false, bride: false });
+  const [locationCoords, setLocationCoords] = useState({
+    lat: data.location.latitude,
+    lng: data.location.longitude,
+  });
+  const [geocodeStatus, setGeocodeStatus] = useState<string | null>(null);
+  const addressInputRef = useRef<HTMLInputElement | null>(null);
+  const latInputRef = useRef<HTMLInputElement | null>(null);
+  const lngInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     setGalleryItems(data.galleryImages);
@@ -187,6 +197,54 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
       return;
     }
   }, [galleryItems]);
+
+  useEffect(() => {
+    setLocationCoords({
+      lat: data.location.latitude,
+      lng: data.location.longitude,
+    });
+  }, [data.location.latitude, data.location.longitude]);
+
+  const groomEntries = data.accountEntries.filter((entry) => entry.group_type === 'groom');
+  const brideEntries = data.accountEntries.filter((entry) => entry.group_type === 'bride');
+
+  const handleGeocode = async () => {
+    const address = addressInputRef.current?.value.trim() || '';
+    if (!address) {
+      setGeocodeStatus('주소를 먼저 입력해주세요');
+      return;
+    }
+    setGeocodeStatus('좌표를 조회하고 있습니다');
+    try {
+      const response = await fetch('/api/geocode', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ address }),
+      });
+      const data = (await response.json()) as {
+        lat?: number;
+        lng?: number;
+        error?: string;
+        status?: string;
+        message?: string;
+      };
+      if (!response.ok) {
+        const detail = [data.status, data.message].filter(Boolean).join(' / ');
+        setGeocodeStatus(detail ? `좌표 조회 실패: ${detail}` : '좌표 조회 실패');
+        return;
+      }
+      if (Number.isFinite(data.lat) && Number.isFinite(data.lng)) {
+        setLocationCoords({ lat: data.lat, lng: data.lng });
+        if (latInputRef.current) latInputRef.current.value = String(data.lat);
+        if (lngInputRef.current) lngInputRef.current.value = String(data.lng);
+        setGeocodeStatus('좌표가 업데이트되었습니다');
+      } else {
+        setGeocodeStatus('좌표 결과를 찾지 못했습니다');
+      }
+    } catch {
+      setGeocodeStatus('좌표 조회에 실패했습니다');
+    }
+  };
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -501,6 +559,7 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
                   <TextInput
                     id="event_address"
                     name="event_address"
+                    ref={addressInputRef}
                     defaultValue={data.event.address}
                   />
                 </div>
@@ -549,12 +608,25 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
                 </div>
               </form>
               <form action={updateLocationAction} className="mt-4 grid gap-4 md:grid-cols-2">
+                <div className="md:col-span-2 overflow-hidden rounded-[12px] border border-[var(--border-light)] bg-white/60">
+                  <div className="h-[220px]">
+                    <KakaoMap lat={locationCoords.lat} lng={locationCoords.lng} />
+                  </div>
+                </div>
                 <div className="flex flex-col gap-2">
                   <FieldLabel htmlFor="location_latitude">위도</FieldLabel>
                   <TextInput
                     id="location_latitude"
                     name="location_latitude"
+                    ref={latInputRef}
                     defaultValue={data.location.latitude}
+                    onChange={(event) => {
+                      const nextLat = Number(event.target.value);
+                      setLocationCoords((prev) => ({
+                        ...prev,
+                        lat: Number.isFinite(nextLat) ? nextLat : prev.lat,
+                      }));
+                    }}
                   />
                 </div>
                 <div className="flex flex-col gap-2">
@@ -562,8 +634,30 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
                   <TextInput
                     id="location_longitude"
                     name="location_longitude"
+                    ref={lngInputRef}
                     defaultValue={data.location.longitude}
+                    onChange={(event) => {
+                      const nextLng = Number(event.target.value);
+                      setLocationCoords((prev) => ({
+                        ...prev,
+                        lng: Number.isFinite(nextLng) ? nextLng : prev.lng,
+                      }));
+                    }}
                   />
+                </div>
+                <div className="flex items-center justify-between md:col-span-2">
+                  <button
+                    type="button"
+                    onClick={handleGeocode}
+                    className="text-[12px] font-medium text-[var(--accent-burgundy)] underline-offset-4 hover:underline"
+                  >
+                    주소로 좌표 조회
+                  </button>
+                  {geocodeStatus ? (
+                    <span className="text-[12px] text-[var(--text-muted)]">
+                      {geocodeStatus}
+                    </span>
+                  ) : null}
                 </div>
                 <div className="md:col-span-2 flex justify-end">
                   <Button type="submit" size="sm">
@@ -958,76 +1052,115 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
             </div>
           </form>
 
-          <form action={addAccountEntryAction} className="grid gap-4 md:grid-cols-2">
-            <input type="hidden" name="accounts_id" value={data.accounts.id} />
-            <div className="flex flex-col gap-2">
-              <FieldLabel htmlFor="account_group_type">구분</FieldLabel>
-              <SelectField id="account_group_type" name="account_group_type" defaultValue="groom">
-                <option value="groom">신랑</option>
-                <option value="bride">신부</option>
-              </SelectField>
-            </div>
-            <div className="flex flex-col gap-2">
-              <FieldLabel htmlFor="account_bank_name">은행명</FieldLabel>
-              <TextInput id="account_bank_name" name="account_bank_name" />
-            </div>
-            <div className="flex flex-col gap-2">
-              <FieldLabel htmlFor="account_number">계좌번호</FieldLabel>
-              <TextInput id="account_number" name="account_number" />
-            </div>
-            <div className="flex flex-col gap-2">
-              <FieldLabel htmlFor="account_holder">예금주</FieldLabel>
-              <TextInput id="account_holder" name="account_holder" />
-            </div>
-            <div className="md:col-span-2 flex justify-end">
-              <Button type="submit" size="sm">
-                계좌 추가
-              </Button>
-            </div>
-          </form>
+          <div className="grid gap-6 md:grid-cols-2">
+            {[
+              { key: 'groom', label: '신랑', entries: groomEntries },
+              { key: 'bride', label: '신부', entries: brideEntries },
+            ].map((group) => {
+              const groupKey = group.key as 'groom' | 'bride';
+              return (
+                <div key={group.key} className="flex flex-col gap-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-[16px] font-semibold text-[var(--text-primary)]">
+                      {group.label}
+                    </h3>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="ghost"
+                      onClick={() =>
+                        setAccountFormOpen((prev) => ({
+                          ...prev,
+                          [groupKey]: !prev[groupKey],
+                        }))
+                      }
+                    >
+                      {accountFormOpen[groupKey] ? '닫기' : '+ 추가'}
+                    </Button>
+                  </div>
 
-          <div className="grid gap-3">
-            {data.accountEntries.map((entry) => (
-              <form
-                key={entry.id}
-                action={updateAccountEntryAction}
-                className="grid gap-3 rounded-[12px] border border-[var(--border-light)] bg-white/60 px-4 py-3 md:grid-cols-2"
-              >
-                <input type="hidden" name="account_entry_id" value={entry.id} />
-                <div className="flex flex-col gap-2">
-                  <FieldLabel>구분</FieldLabel>
-                  <SelectField name="account_group_type" defaultValue={entry.group_type}>
-                    <option value="groom">신랑</option>
-                    <option value="bride">신부</option>
-                  </SelectField>
+                {accountFormOpen[groupKey] ? (
+                  <form action={addAccountEntryAction} className="grid gap-3 rounded-[12px] border border-[var(--border-light)] bg-white/60 px-4 py-3">
+                    <input type="hidden" name="accounts_id" value={data.accounts.id} />
+                    <input type="hidden" name="account_group_type" value={groupKey} />
+                    <div className="flex flex-col gap-2">
+                      <FieldLabel htmlFor={`${group.key}-account-label`}>표시 라벨</FieldLabel>
+                      <TextInput
+                        id={`${group.key}-account-label`}
+                        name="account_label"
+                        placeholder="예: 신랑 아버지"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <FieldLabel htmlFor={`${group.key}-account-bank`}>은행명</FieldLabel>
+                      <TextInput id={`${group.key}-account-bank`} name="account_bank_name" />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <FieldLabel htmlFor={`${group.key}-account-number`}>계좌번호</FieldLabel>
+                      <TextInput id={`${group.key}-account-number`} name="account_number" />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <FieldLabel htmlFor={`${group.key}-account-holder`}>예금주</FieldLabel>
+                      <TextInput id={`${group.key}-account-holder`} name="account_holder" />
+                    </div>
+                    <div className="flex justify-end">
+                      <Button type="submit" size="sm">
+                        계좌 추가
+                      </Button>
+                    </div>
+                  </form>
+                ) : null}
+
+                <div className="grid gap-3">
+                  {group.entries.length > 0 ? (
+                    group.entries.map((entry) => (
+                      <form
+                        key={entry.id}
+                        action={updateAccountEntryAction}
+                        className="grid gap-3 rounded-[12px] border border-[var(--border-light)] bg-white/60 px-4 py-3"
+                      >
+                        <input type="hidden" name="account_entry_id" value={entry.id} />
+                        <input type="hidden" name="account_group_type" value={groupKey} />
+                        <div className="flex flex-col gap-2">
+                          <FieldLabel>표시 라벨</FieldLabel>
+                          <TextInput name="account_label" defaultValue={entry.label || ''} />
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          <FieldLabel>은행명</FieldLabel>
+                          <TextInput name="account_bank_name" defaultValue={entry.bank_name} />
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          <FieldLabel>계좌번호</FieldLabel>
+                          <TextInput name="account_number" defaultValue={entry.account_number} />
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          <FieldLabel>예금주</FieldLabel>
+                          <TextInput name="account_holder" defaultValue={entry.holder} />
+                        </div>
+                        <div className="flex items-center justify-end gap-2">
+                          <Button type="submit" size="sm">
+                            저장
+                          </Button>
+                          <Button
+                            type="submit"
+                            size="sm"
+                            variant="danger"
+                            formAction={deleteAccountEntryAction}
+                          >
+                            삭제
+                          </Button>
+                        </div>
+                      </form>
+                    ))
+                  ) : (
+                    <div className="rounded-[12px] border border-[var(--border-light)] bg-white/50 px-4 py-6 text-center text-[12px] text-[var(--text-muted)]">
+                      등록된 계좌가 없습니다
+                    </div>
+                  )}
                 </div>
-                <div className="flex flex-col gap-2">
-                  <FieldLabel>은행명</FieldLabel>
-                  <TextInput name="account_bank_name" defaultValue={entry.bank_name} />
                 </div>
-                <div className="flex flex-col gap-2">
-                  <FieldLabel>계좌번호</FieldLabel>
-                  <TextInput name="account_number" defaultValue={entry.account_number} />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <FieldLabel>예금주</FieldLabel>
-                  <TextInput name="account_holder" defaultValue={entry.holder} />
-                </div>
-                <div className="flex items-center justify-end gap-2 md:col-span-2">
-                  <Button type="submit" size="sm">
-                    저장
-                  </Button>
-                  <Button
-                    type="submit"
-                    size="sm"
-                    variant="danger"
-                    formAction={deleteAccountEntryAction}
-                  >
-                    삭제
-                  </Button>
-                </div>
-              </form>
-            ))}
+              );
+            })}
           </div>
         </div>
       </SurfaceCard>

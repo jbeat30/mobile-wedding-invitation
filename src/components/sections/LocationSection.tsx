@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react';
 import type { InvitationEvent, InvitationLocation } from '@/mock/invitation.mock';
 import { SectionHeader } from '@/components/ui/SectionHeader';
+import { KakaoMap } from '@/components/ui/KakaoMap';
 import { Toast } from '@/components/ui/Toast';
 import { copyText } from '@/utils/clipboard';
 
@@ -63,20 +64,13 @@ export const LocationSection = ({ event, location, title }: LocationSectionProps
           />
         </div>
 
-        {/* 지도 플레이스홀더 */}
+        {/* 지도 */}
         <div
           className="overflow-hidden rounded-[var(--radius-md)] border border-[var(--card-border)] shadow-[var(--shadow-soft)]"
           data-animate="scale"
         >
-          <div className="relative h-[220px] bg-gradient-to-br from-[var(--bg-secondary)] to-[var(--bg-tertiary)]">
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center">
-                <div className="text-[36px]">📍</div>
-                <p className="mt-2 text-[13px] text-[var(--text-muted)]">
-                  지도 영역
-                </p>
-              </div>
-            </div>
+          <div className="relative h-[220px]">
+            <KakaoMap lat={location.coordinates.lat} lng={location.coordinates.lng} />
           </div>
         </div>
 
