@@ -10,7 +10,7 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 const baseClassName =
-  'rounded-full transition disabled:cursor-not-allowed disabled:opacity-40';
+  'cursor-pointer rounded-full transition disabled:cursor-not-allowed disabled:opacity-40';
 
 const variantClassMap: Record<ButtonVariant, string> = {
   primary: 'bg-[var(--accent-burgundy)] text-white hover:opacity-90',

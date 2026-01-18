@@ -86,7 +86,7 @@ export const RSVPSection = ({ rsvp, storageKey }: RSVPSectionProps) => {
       setFormData({});
       setConsent(false);
     },
-    [isValid, formData]
+    [isValid, formData, attendanceValue, storageKey]
   );
 
   const handleChange = (key: string, value: string) => {
