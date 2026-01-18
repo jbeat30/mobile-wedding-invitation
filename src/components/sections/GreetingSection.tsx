@@ -74,7 +74,7 @@ export const GreetingSection = ({ greeting, couple }: GreetingSectionProps) => {
                 {formatMembers(groomFamily.members)}의 {groomFamily.relationshipLabel}
               </p>
               <p className="text-[20px] font-medium text-[var(--text-primary)]">
-                {couple.groom.fullName}
+                {`${couple.groom.lastName}${couple.groom.firstName}`}
               </p>
             </div>
           )}
@@ -85,7 +85,7 @@ export const GreetingSection = ({ greeting, couple }: GreetingSectionProps) => {
                 {formatMembers(brideFamily.members)}의 {brideFamily.relationshipLabel}
               </p>
               <p className="text-[20px] font-medium text-[var(--text-primary)]">
-                {couple.bride.fullName}
+                {`${couple.bride.lastName}${couple.bride.firstName}`}
               </p>
             </div>
           )}

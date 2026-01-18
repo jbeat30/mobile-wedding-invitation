@@ -5,35 +5,44 @@ import { useState } from 'react';
 import type { AdminDashboardData } from '@/app/(admin)/admin/data';
 import {
   addAccountEntryAction,
-  addFamilyLineAction,
-  addFamilyMemberAction,
-  addGalleryImageAction,
-  addRsvpFieldAction,
   deleteAccountEntryAction,
-  deleteFamilyLineAction,
-  deleteFamilyMemberAction,
-  deleteGalleryImageAction,
-  deleteRsvpFieldAction,
   updateAccountEntryAction,
   updateAccountsAction,
+} from '@/app/(admin)/admin/actions/accounts';
+import {
+  addGalleryImageAction,
+  deleteGalleryImageAction,
   updateAssetsAction,
-  updateBgmAction,
+  updateGalleryAction,
+} from '@/app/(admin)/admin/actions/assets';
+import { updateBgmAction } from '@/app/(admin)/admin/actions/bgm';
+import {
   updateClosingAction,
   updateEventGuidanceAction,
-  updateFamilyLineAction,
-  updateFamilyMemberAction,
-  updateGreetingAction,
-  updateGuestbookAction,
   updateIntroAction,
   updateLoadingAction,
   updateLocationAction,
   updateProfileAction,
+  updateTransportationAction,
+} from '@/app/(admin)/admin/actions/content';
+import {
+  addFamilyLineAction,
+  addFamilyMemberAction,
+  deleteFamilyLineAction,
+  deleteFamilyMemberAction,
+  updateFamilyLineAction,
+  updateFamilyMemberAction,
+} from '@/app/(admin)/admin/actions/family';
+import { updateGreetingAction } from '@/app/(admin)/admin/actions/greeting';
+import { updateGuestbookAction } from '@/app/(admin)/admin/actions/guestbook';
+import {
+  addRsvpFieldAction,
+  deleteRsvpFieldAction,
   updateRsvpAction,
   updateRsvpFieldAction,
-  updateShareAction,
-  updateThemeAction,
-  updateTransportationAction,
-} from '@/app/(admin)/admin/actions';
+} from '@/app/(admin)/admin/actions/rsvp';
+import { updateShareAction } from '@/app/(admin)/admin/actions/share';
+import { updateThemeAction } from '@/app/(admin)/admin/actions/theme';
 import { OverviewCard } from '@/app/(admin)/admin/components/OverviewCard';
 import { Button } from '@/components/ui/Button';
 import { FieldLabel } from '@/components/ui/FieldLabel';
@@ -246,19 +255,19 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
         <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">기본 정보</h2>
         <form action={updateProfileAction} className="mt-4 grid gap-4 md:grid-cols-2">
           <div className="flex flex-col gap-2">
-            <FieldLabel htmlFor="groom_full_name">신랑 이름</FieldLabel>
+            <FieldLabel htmlFor="groom_first_name">신랑 이름</FieldLabel>
             <TextInput
-              id="groom_full_name"
-              name="groom_full_name"
-              defaultValue={data.profile.groom_full_name}
+              id="groom_first_name"
+              name="groom_first_name"
+              defaultValue={data.profile.groom_first_name}
             />
           </div>
           <div className="flex flex-col gap-2">
-            <FieldLabel htmlFor="bride_full_name">신부 이름</FieldLabel>
+            <FieldLabel htmlFor="bride_first_name">신부 이름</FieldLabel>
             <TextInput
-              id="bride_full_name"
-              name="bride_full_name"
-              defaultValue={data.profile.bride_full_name}
+              id="bride_first_name"
+              name="bride_first_name"
+              defaultValue={data.profile.bride_first_name}
             />
           </div>
           <div className="flex flex-col gap-2">
@@ -995,6 +1004,45 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
           <SurfaceCard className="p-6">
         <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">갤러리 이미지</h2>
         <div className="mt-4 flex flex-col gap-4">
+          <form action={updateGalleryAction} className="grid gap-4 md:grid-cols-2">
+            <input type="hidden" name="gallery_id" value={data.gallery.id} />
+            <div className="flex flex-col gap-2">
+              <FieldLabel htmlFor="gallery_title">갤러리 타이틀</FieldLabel>
+              <TextInput
+                id="gallery_title"
+                name="gallery_title"
+                defaultValue={data.gallery.title}
+              />
+            </div>
+            <div className="flex flex-col gap-2 md:col-span-2">
+              <FieldLabel htmlFor="gallery_description">설명</FieldLabel>
+              <TextArea
+                id="gallery_description"
+                name="gallery_description"
+                defaultValue={data.gallery.description || ''}
+              />
+            </div>
+            <label className="flex items-center gap-2 text-[14px]">
+              <input
+                type="checkbox"
+                name="gallery_autoplay"
+                defaultChecked={Boolean(data.gallery.autoplay)}
+              />
+              자동 재생
+            </label>
+            <div className="flex flex-col gap-2">
+              <FieldLabel htmlFor="gallery_autoplay_delay">자동 재생 간격 (ms)</FieldLabel>
+              <TextInput
+                id="gallery_autoplay_delay"
+                name="gallery_autoplay_delay"
+                defaultValue={data.gallery.autoplay_delay ?? ''}
+              />
+            </div>
+            <Button type="submit" size="full" className="md:col-span-2">
+              갤러리 저장
+            </Button>
+          </form>
+
           <form action={addGalleryImageAction} className="grid gap-4 md:grid-cols-2">
             <input type="hidden" name="gallery_id" value={data.gallery.id} />
             <ImagePreviewField id="image_src" name="image_src" label="이미지 URL" />

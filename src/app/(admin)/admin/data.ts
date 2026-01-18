@@ -6,12 +6,12 @@ const DEFAULT_TIMEZONE = 'Asia/Seoul';
 
 type ProfileRow = {
   id: string;
-  groom_full_name: string;
+  groom_first_name: string;
   groom_last_name: string;
   groom_bio: string | null;
   groom_profile_image: string | null;
   groom_role: string | null;
-  bride_full_name: string;
+  bride_first_name: string;
   bride_last_name: string;
   bride_bio: string | null;
   bride_profile_image: string | null;
@@ -357,12 +357,12 @@ export const loadAdminData = async () => {
   const { content, assets, theme } = invitationMock;
 
   const profile = (await ensureSingleRow('invitation_profile', id, {
-    groom_full_name: content.couple.groom.fullName,
+    groom_first_name: content.couple.groom.firstName,
     groom_last_name: content.couple.groom.lastName,
     groom_bio: content.couple.groom.bio || '',
     groom_profile_image: content.couple.groom.profileImage || '',
     groom_role: content.couple.groom.role || '',
-    bride_full_name: content.couple.bride.fullName,
+    bride_first_name: content.couple.bride.firstName,
     bride_last_name: content.couple.bride.lastName,
     bride_bio: content.couple.bride.bio || '',
     bride_profile_image: content.couple.bride.profileImage || '',

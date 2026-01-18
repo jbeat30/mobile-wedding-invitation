@@ -33,9 +33,9 @@ export const IntroSection = ({ couple, event, heroImage }: IntroSectionProps) =>
               WEDDING INVITATION
             </p>
             <h1 className="mt-4 font-serif text-[32px] font-medium tracking-wide text-white drop-shadow-lg">
-              {couple.groom.fullName}
+              {`${couple.groom.lastName}${couple.groom.firstName}`}
               <span className="mx-3 text-[18px] text-[var(--accent-rose-light)]">♥</span>
-              {couple.bride.fullName}
+              {`${couple.bride.lastName}${couple.bride.firstName}`}
             </h1>
             <p className="mt-3 text-[14px] font-bold tracking-wider text-white/90 drop-shadow-sm">
               {event.dateText}

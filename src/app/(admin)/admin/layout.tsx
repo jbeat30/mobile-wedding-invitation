@@ -1,7 +1,13 @@
 import { ReactNode } from 'react';
 import Link from 'next/link';
-import { logoutAction } from '@/app/(admin)/admin/actions';
+import { Noto_Sans_KR } from 'next/font/google';
+import { logoutAction } from '@/app/(admin)/admin/actions/auth';
 import { Button } from '@/components/ui/Button';
+
+const notoSans = Noto_Sans_KR({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+});
 
 /**
  * 관리자 레이아웃
@@ -10,7 +16,9 @@ import { Button } from '@/components/ui/Button';
  */
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="min-h-screen bg-[var(--bg-primary)] font-sans text-[var(--text-primary)]">
+    <div
+      className={`min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] ${notoSans.className}`}
+    >
       <header className="border-b border-[var(--border-light)] bg-white/90 px-6 py-4 backdrop-blur">
         <div className="mx-auto flex max-w-[1200px] items-center justify-between">
           <div>

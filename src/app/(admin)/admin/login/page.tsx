@@ -1,7 +1,7 @@
 'use client';
 
 import { useActionState } from 'react';
-import { loginAction } from '@/app/(admin)/admin/actions';
+import { loginAction } from '@/app/(admin)/admin/actions/auth';
 import { Button } from '@/components/ui/Button';
 import { FieldLabel } from '@/components/ui/FieldLabel';
 import { TextInput } from '@/components/ui/TextInput';
