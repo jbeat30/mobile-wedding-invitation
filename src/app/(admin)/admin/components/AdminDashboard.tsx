@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { AdminDashboardData } from '@/app/(admin)/admin/data';
 import {
   addAccountEntryAction,
@@ -134,6 +134,7 @@ const ImageFileField = ({
  * @returns JSX.Element
  */
 export const AdminDashboard = ({ data }: AdminDashboardProps) => {
+  const galleryOrderStorageKey = 'admin-gallery-order';
   const getImageLabel = (src: string) => {
     if (src.startsWith('data:')) {
       return '업로드 이미지';
@@ -163,6 +164,29 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
   const [activeTab, setActiveTab] = useState(tabs[0]?.id || 'overview');
   const [guestbookPage, setGuestbookPage] = useState(1);
   const [rsvpPage, setRsvpPage] = useState(1);
+  const [galleryItems, setGalleryItems] = useState(data.galleryImages);
+  const [draggedImageId, setDraggedImageId] = useState<string | null>(null);
+  const [dragOverImageId, setDragOverImageId] = useState<string | null>(null);
+  const [orderSaved, setOrderSaved] = useState(false);
+
+  useEffect(() => {
+    setGalleryItems(data.galleryImages);
+  }, [data.galleryImages]);
+
+  useEffect(() => {
+    const stored = window.localStorage.getItem(galleryOrderStorageKey);
+    if (!stored) return;
+    try {
+      const ids = JSON.parse(stored);
+      if (!Array.isArray(ids)) return;
+      const map = new Map(galleryItems.map((image) => [image.id, image]));
+      const ordered = ids.map((id) => map.get(id)).filter(Boolean) as typeof galleryItems;
+      const missing = galleryItems.filter((image) => !ids.includes(image.id));
+      setGalleryItems([...ordered, ...missing]);
+    } catch {
+      return;
+    }
+  }, [galleryItems]);
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -799,17 +823,75 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
               <div className="flex items-center justify-between">
                 <h3 className="text-[14px] font-semibold text-[var(--text-primary)]">이미지 목록</h3>
                 <span className="text-[12px] text-[var(--text-muted)]">
-                  총 {data.galleryImages.length}개
+                  총 {galleryItems.length}개
                 </span>
               </div>
+              <div className="mt-2 flex items-center justify-between text-[12px] text-[var(--text-muted)]">
+                <span>드래그로 순서를 변경하세요</span>
+                <div className="flex items-center gap-2">
+                  {orderSaved ? (
+                    <span className="text-[var(--accent-rose-dark)]">저장됨</span>
+                  ) : null}
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={() => {
+                      window.localStorage.setItem(
+                        galleryOrderStorageKey,
+                        JSON.stringify(galleryItems.map((image) => image.id))
+                      );
+                      setOrderSaved(true);
+                      window.setTimeout(() => setOrderSaved(false), 1500);
+                    }}
+                  >
+                    순서 저장
+                  </Button>
+                </div>
+              </div>
               <div className="mt-3 divide-y divide-[var(--border-light)]">
-                {data.galleryImages.length ? (
-                  data.galleryImages.map((image) => (
+                {galleryItems.length ? (
+                  galleryItems.map((image) => (
                     <div
                       key={image.id}
-                      className="flex flex-col gap-3 py-3 md:flex-row md:items-center md:justify-between"
+                      className={`flex flex-col gap-3 rounded-[10px] px-2 py-3 transition md:flex-row md:items-center md:justify-between ${
+                        draggedImageId === image.id ? 'bg-[var(--bg-secondary)] opacity-70' : ''
+                      } ${
+                        dragOverImageId === image.id ? 'ring-2 ring-[var(--accent-rose)]' : ''
+                      }`}
+                      draggable
+                      onDragStart={() => setDraggedImageId(image.id)}
+                      onDragEnd={() => {
+                        setDraggedImageId(null);
+                        setDragOverImageId(null);
+                      }}
+                      onDragOver={(event) => {
+                        event.preventDefault();
+                        setDragOverImageId(image.id);
+                      }}
+                      onDragLeave={() => {
+                        if (dragOverImageId === image.id) {
+                          setDragOverImageId(null);
+                        }
+                      }}
+                      onDrop={() => {
+                        if (!draggedImageId || draggedImageId === image.id) return;
+                        setGalleryItems((prev) => {
+                          const next = [...prev];
+                          const fromIndex = next.findIndex((item) => item.id === draggedImageId);
+                          const toIndex = next.findIndex((item) => item.id === image.id);
+                          if (fromIndex < 0 || toIndex < 0) return prev;
+                          const [moved] = next.splice(fromIndex, 1);
+                          next.splice(toIndex, 0, moved);
+                          return next;
+                        });
+                        setDraggedImageId(null);
+                        setDragOverImageId(null);
+                      }}
                     >
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-3 cursor-grab active:cursor-grabbing">
+                        <div className="flex h-[48px] w-[28px] items-center justify-center rounded-[8px] border border-[var(--border-light)] bg-white/60 text-[14px] text-[var(--text-muted)]">
+                          <span className="leading-none">⋮</span>
+                        </div>
                         <Image
                           src={image.thumbnail || image.src}
                           alt={image.alt || '갤러리 이미지'}
