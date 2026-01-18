@@ -16,6 +16,7 @@ import { postJson } from '@/utils/api';
 type GuestbookSectionProps = {
   guestbook: InvitationGuestbook;
   storageKey: string;
+  title: string;
 };
 
 // 간단한 비밀번호 해시 (SHA-256)
@@ -57,7 +58,7 @@ const saveEntries = (storageKey: string, entries: GuestbookEntry[]) => {
  * @param props GuestbookSectionProps
  * @returns JSX.Element
  */
-export const GuestbookSection = ({ guestbook, storageKey }: GuestbookSectionProps) => {
+export const GuestbookSection = ({ guestbook, storageKey, title }: GuestbookSectionProps) => {
   // 폼 상태
   const [entries, setEntries] = useState<GuestbookEntry[]>([]);
   const [name, setName] = useState('');
@@ -252,7 +253,7 @@ export const GuestbookSection = ({ guestbook, storageKey }: GuestbookSectionProp
           <div className="text-center" data-animate="fade-up">
             <SectionHeader
               kicker="GUESTBOOK"
-              title="축하 메시지"
+              title={title}
               description={guestbook.retentionText}
               kickerClassName="font-label text-[12px] text-[var(--accent-rose)]"
               titleClassName="mt-2 text-[24px] font-medium text-[var(--text-primary)]"

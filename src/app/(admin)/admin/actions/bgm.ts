@@ -16,7 +16,6 @@ export const updateBgmAction = async (formData: FormData) => {
 
   const payload = {
     enabled: formData.get('bgm_enabled') === 'on',
-    title: String(formData.get('bgm_title') || ''),
     audio_url: String(formData.get('bgm_audio_url') || ''),
     auto_play: formData.get('bgm_auto_play') === 'on',
     loop: formData.get('bgm_loop') === 'on',

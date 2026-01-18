@@ -16,12 +16,13 @@ import { hasRequiredFields, normalizeCompanions } from '@/utils/rsvp';
 type RSVPSectionProps = {
   rsvp: InvitationRsvp;
   storageKey: string;
+  title: string;
 };
 
 /**
  * RSVP (참석 여부) 섹션
  */
-export const RSVPSection = ({ rsvp, storageKey }: RSVPSectionProps) => {
+export const RSVPSection = ({ rsvp, storageKey, title }: RSVPSectionProps) => {
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [consent, setConsent] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -106,7 +107,7 @@ export const RSVPSection = ({ rsvp, storageKey }: RSVPSectionProps) => {
           <div className="text-center" data-animate="fade-up">
             <SectionHeader
               kicker="RSVP"
-              title="참석 여부"
+              title={title}
               description={deadlineText}
               kickerClassName="font-label text-[12px] text-[var(--accent-rose)]"
               titleClassName="mt-2 text-[24px] font-medium text-[var(--text-primary)]"

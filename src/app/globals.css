@@ -117,6 +117,13 @@ body::before {
         text-transform: uppercase;
     }
 
+    .admin-scope .font-label {
+        font-family: inherit;
+        letter-spacing: 0.02em;
+        text-transform: none;
+        color: var(--text-secondary);
+    }
+
     .font-serif-ko {
         font-family: var(--font-serif);
         font-weight: 400;

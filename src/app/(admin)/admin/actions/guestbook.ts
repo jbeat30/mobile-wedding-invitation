@@ -15,6 +15,7 @@ export const updateGuestbookAction = async (formData: FormData) => {
   const { id } = await getOrCreateInvitation();
 
   const payload = {
+    section_title: String(formData.get('guestbook_section_title') || ''),
     privacy_notice: String(formData.get('guestbook_privacy_notice') || ''),
     retention_text: String(formData.get('guestbook_retention_text') || ''),
     display_mode: String(formData.get('guestbook_display_mode') || 'recent'),

@@ -20,24 +20,16 @@ import {
 import { updateBgmAction } from '@/app/(admin)/admin/actions/bgm';
 import {
   updateClosingAction,
-  updateEventGuidanceAction,
-  updateIntroAction,
   updateLoadingAction,
   updateLocationAction,
   updateBasicInfoAction,
   updateProfileAction,
-  updateWeddingInfoAction,
   updateTransportationAction,
 } from '@/app/(admin)/admin/actions/content';
 import { updateGreetingAction } from '@/app/(admin)/admin/actions/greeting';
 import { updateGuestbookAction } from '@/app/(admin)/admin/actions/guestbook';
-import {
-  addRsvpFieldAction,
-  deleteRsvpFieldAction,
-  updateRsvpAction,
-  updateRsvpFieldAction,
-} from '@/app/(admin)/admin/actions/rsvp';
 import { updateShareAction } from '@/app/(admin)/admin/actions/share';
+import { updateRsvpTitleAction } from '@/app/(admin)/admin/actions/rsvp';
 import { OverviewCard } from '@/app/(admin)/admin/components/OverviewCard';
 import { Button } from '@/components/ui/Button';
 import { FieldLabel } from '@/components/ui/FieldLabel';
@@ -122,22 +114,22 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
   const tabs = [
     { id: 'overview', label: '요약' },
     { id: 'basic', label: '기본 정보' },
-    { id: 'loading', label: '로딩' },
-    { id: 'intro', label: '인트로' },
+    { id: 'loading', label: '로딩 섹션' },
+    { id: 'intro', label: '인트로 섹션' },
     { id: 'couple', label: '커플 섹션' },
-    { id: 'wedding', label: '결혼 정보' },
-    { id: 'location', label: '오시는 길' },
-    { id: 'gallery', label: '갤러리' },
-    { id: 'greeting', label: '인사말' },
-    { id: 'accounts', label: '어카운트' },
-    { id: 'guestbook', label: '게스트북' },
-    { id: 'rsvp', label: 'RSVP' },
-    { id: 'share', label: 'share' },
-    { id: 'closing', label: '마무리 인삿말' },
-    { id: 'bgm', label: 'BGM' },
+    { id: 'location', label: '예식 정보 & 오시는 길 섹션' },
+    { id: 'gallery', label: '갤러리 섹션' },
+    { id: 'accounts', label: '어카운트 섹션' },
+    { id: 'guestbook', label: '게스트북 섹션' },
+    { id: 'rsvp', label: 'RSVP 섹션' },
+    { id: 'share', label: '공유 섹션' },
+    { id: 'closing', label: '마무리 인삿말 섹션' },
+    { id: 'bgm', label: 'BGM 섹션' },
   ];
 
   const [activeTab, setActiveTab] = useState(tabs[0]?.id || 'overview');
+  const [guestbookPage, setGuestbookPage] = useState(1);
+  const [rsvpPage, setRsvpPage] = useState(1);
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -168,7 +160,7 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
                   />
                 </div>
                 <div className="flex flex-col gap-2">
-                  <FieldLabel htmlFor="loading_min_duration">최소 노출 (ms)</FieldLabel>
+                  <FieldLabel htmlFor="loading_min_duration">최소 로딩 보장 시간 (ms)</FieldLabel>
                   <TextInput
                     id="loading_min_duration"
                     name="loading_min_duration"
@@ -177,7 +169,7 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
                   />
                 </div>
                 <div className="flex flex-col gap-2">
-                  <FieldLabel htmlFor="loading_additional_duration">추가 노출 (ms)</FieldLabel>
+                  <FieldLabel htmlFor="loading_additional_duration">추가 로딩 시간 (ms)</FieldLabel>
                   <TextInput
                     id="loading_additional_duration"
                     name="loading_additional_duration"
@@ -185,9 +177,11 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
                     defaultValue={data.loading.additional_duration}
                   />
                 </div>
-                <Button type="submit" size="full" className="md:col-span-2">
-                  저장하기
-                </Button>
+                <div className="md:col-span-2 flex justify-end">
+                  <Button type="submit" size="sm">
+                    저장하기
+                  </Button>
+                </div>
               </form>
             </SurfaceCard>
 
@@ -202,9 +196,11 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
                   label="로딩 이미지 URL"
                   defaultValue={data.assets.loading_image}
                 />
-                <Button type="submit" size="full" className="md:col-span-2">
-                  이미지 저장
-                </Button>
+                <div className="md:col-span-2 flex justify-end">
+                  <Button type="submit" size="sm">
+                    이미지 저장
+                  </Button>
+                </div>
               </form>
             </SurfaceCard>
           </div>
@@ -212,61 +208,6 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
       case 'intro':
         return (
           <div className="flex flex-col gap-6">
-            <SurfaceCard className="p-6">
-              <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">
-                인트로
-              </h2>
-              <form action={updateIntroAction} className="mt-4 grid gap-4 md:grid-cols-2">
-                <div className="flex flex-col gap-2 md:col-span-2">
-                  <FieldLabel htmlFor="intro_quote">메인 문구</FieldLabel>
-                  <TextInput id="intro_quote" name="intro_quote" defaultValue={data.intro.quote} />
-                </div>
-                <div className="flex flex-col gap-2 md:col-span-2">
-                  <FieldLabel htmlFor="intro_sub_quote">서브 문구</FieldLabel>
-                  <TextInput
-                    id="intro_sub_quote"
-                    name="intro_sub_quote"
-                    defaultValue={data.intro.sub_quote || ''}
-                  />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <FieldLabel htmlFor="intro_theme_dark_background">다크 배경</FieldLabel>
-                  <TextInput
-                    id="intro_theme_dark_background"
-                    name="intro_theme_dark_background"
-                    defaultValue={data.intro.theme_dark_background}
-                  />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <FieldLabel htmlFor="intro_theme_light_background">라이트 배경</FieldLabel>
-                  <TextInput
-                    id="intro_theme_light_background"
-                    name="intro_theme_light_background"
-                    defaultValue={data.intro.theme_light_background}
-                  />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <FieldLabel htmlFor="intro_theme_text_color">텍스트 컬러</FieldLabel>
-                  <TextInput
-                    id="intro_theme_text_color"
-                    name="intro_theme_text_color"
-                    defaultValue={data.intro.theme_text_color}
-                  />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <FieldLabel htmlFor="intro_theme_accent_color">포인트 컬러</FieldLabel>
-                  <TextInput
-                    id="intro_theme_accent_color"
-                    name="intro_theme_accent_color"
-                    defaultValue={data.intro.theme_accent_color}
-                  />
-                </div>
-                <Button type="submit" size="full" className="md:col-span-2">
-                  저장하기
-                </Button>
-              </form>
-            </SurfaceCard>
-
             <SurfaceCard className="p-6">
               <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">
                 메인 이미지
@@ -278,9 +219,49 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
                   label="메인 이미지 URL"
                   defaultValue={data.assets.hero_image}
                 />
-                <Button type="submit" size="full" className="md:col-span-2">
-                  이미지 저장
-                </Button>
+                <div className="md:col-span-2 flex justify-end">
+                  <Button type="submit" size="sm">
+                    이미지 저장
+                  </Button>
+                </div>
+              </form>
+            </SurfaceCard>
+
+            <SurfaceCard className="p-6">
+              <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">
+                인사말
+              </h2>
+              <form action={updateGreetingAction} className="mt-4 flex flex-col gap-4">
+                <div className="flex flex-col gap-2">
+                  <FieldLabel htmlFor="greeting_section_title">인사말 섹션 타이틀</FieldLabel>
+                  <TextInput
+                    id="greeting_section_title"
+                    name="greeting_section_title"
+                    defaultValue={data.sectionTitles.greeting}
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <FieldLabel htmlFor="poetic_note">시구</FieldLabel>
+                  <TextInput
+                    id="poetic_note"
+                    name="poetic_note"
+                    defaultValue={data.greeting.poetic_note || ''}
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <FieldLabel htmlFor="message_lines">본문 (줄바꿈으로 구분)</FieldLabel>
+                  <TextArea
+                    id="message_lines"
+                    name="message_lines"
+                    className="min-h-[360px]"
+                    defaultValue={(data.greeting.message_lines || []).join('\n')}
+                  />
+                </div>
+                <div className="flex justify-end">
+                  <Button type="submit" size="sm">
+                    저장하기
+                  </Button>
+                </div>
               </form>
             </SurfaceCard>
           </div>
@@ -290,37 +271,41 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
           <SurfaceCard className="p-6">
             <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">기본 정보</h2>
             <form action={updateBasicInfoAction} className="mt-4 grid gap-4 md:grid-cols-2">
-              <div className="flex flex-col gap-2">
-                <FieldLabel htmlFor="groom_last_name">신랑 성</FieldLabel>
-                <TextInput
-                  id="groom_last_name"
-                  name="groom_last_name"
-                  defaultValue={data.profile.groom_last_name}
-                />
+              <div className="flex gap-2">
+                <div className="flex flex-col gap-2">
+                  <FieldLabel htmlFor="groom_last_name">신랑 성</FieldLabel>
+                  <TextInput
+                    id="groom_last_name"
+                    name="groom_last_name"
+                    defaultValue={data.profile.groom_last_name}
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <FieldLabel htmlFor="groom_first_name">신랑 이름</FieldLabel>
+                  <TextInput
+                    id="groom_first_name"
+                    name="groom_first_name"
+                    defaultValue={data.profile.groom_first_name}
+                  />
+                </div>
               </div>
-              <div className="flex flex-col gap-2">
-                <FieldLabel htmlFor="groom_first_name">신랑 이름</FieldLabel>
-                <TextInput
-                  id="groom_first_name"
-                  name="groom_first_name"
-                  defaultValue={data.profile.groom_first_name}
-                />
-              </div>
-              <div className="flex flex-col gap-2">
-                <FieldLabel htmlFor="bride_last_name">신부 성</FieldLabel>
-                <TextInput
-                  id="bride_last_name"
-                  name="bride_last_name"
-                  defaultValue={data.profile.bride_last_name}
-                />
-              </div>
-              <div className="flex flex-col gap-2">
-                <FieldLabel htmlFor="bride_first_name">신부 이름</FieldLabel>
-                <TextInput
-                  id="bride_first_name"
-                  name="bride_first_name"
-                  defaultValue={data.profile.bride_first_name}
-                />
+              <div className="flex gap-2">
+                <div className="flex flex-col gap-2">
+                  <FieldLabel htmlFor="bride_last_name">신부 성</FieldLabel>
+                  <TextInput
+                    id="bride_last_name"
+                    name="bride_last_name"
+                    defaultValue={data.profile.bride_last_name}
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <FieldLabel htmlFor="bride_first_name">신부 이름</FieldLabel>
+                  <TextInput
+                    id="bride_first_name"
+                    name="bride_first_name"
+                    defaultValue={data.profile.bride_first_name}
+                  />
+                </div>
               </div>
               <div className="text-[13px] font-semibold text-[var(--text-secondary)] md:col-span-2">
                 부모님 성함
@@ -357,22 +342,32 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
                   defaultValue={data.parents.bride.mother || ''}
                 />
               </div>
-              <Button type="submit" size="full" className="md:col-span-2">
-                저장하기
-              </Button>
+              <div className="md:col-span-2 flex justify-end">
+                <Button type="submit" size="sm">
+                  저장하기
+                </Button>
+              </div>
             </form>
           </SurfaceCard>
         );
       case 'couple':
         return (
-          <SurfaceCard className="p-6">
-            <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">
-              커플 섹션
-            </h2>
-            <form action={updateProfileAction} className="mt-4 grid gap-4 md:grid-cols-2">
-              <div className="flex flex-col gap-2">
-                <FieldLabel htmlFor="groom_bio">신랑 소개글</FieldLabel>
-                <TextArea
+            <SurfaceCard className="p-6">
+              <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">
+                커플 섹션
+              </h2>
+              <form action={updateProfileAction} className="mt-4 grid gap-4 md:grid-cols-2">
+                <div className="flex flex-col gap-2 md:col-span-2">
+                  <FieldLabel htmlFor="couple_section_title">커플 섹션 타이틀</FieldLabel>
+                  <TextInput
+                    id="couple_section_title"
+                    name="couple_section_title"
+                    defaultValue={data.sectionTitles.couple}
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <FieldLabel htmlFor="groom_bio">신랑 소개글</FieldLabel>
+                  <TextArea
                   id="groom_bio"
                   name="groom_bio"
                   defaultValue={data.profile.groom_bio || ''}
@@ -391,118 +386,108 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
                 name="groom_profile_image"
                 label="신랑 프로필 이미지"
                 defaultValue={data.profile.groom_profile_image || ''}
-                previewClassName="h-[240px]"
+                previewClassName="h-[300px]"
               />
               <ImagePreviewField
                 id="bride_profile_image"
                 name="bride_profile_image"
                 label="신부 프로필 이미지"
                 defaultValue={data.profile.bride_profile_image || ''}
-                previewClassName="h-[240px]"
+                previewClassName="h-[300px]"
               />
-              <Button type="submit" size="full" className="md:col-span-2">
-                저장하기
-              </Button>
+              <div className="md:col-span-2 flex justify-end">
+                <Button type="submit" size="sm">
+                  저장하기
+                </Button>
+              </div>
             </form>
           </SurfaceCard>
-        );
-      case 'wedding':
-        return (
-          <div className="flex flex-col gap-6">
-            <SurfaceCard className="p-6">
-              <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">
-                결혼 정보
-              </h2>
-              <form action={updateWeddingInfoAction} className="mt-4 grid gap-4 md:grid-cols-2">
-                <div className="flex flex-col gap-2">
-                  <FieldLabel htmlFor="event_title">행사 타이틀</FieldLabel>
-                  <TextInput id="event_title" name="event_title" defaultValue={data.event.title} />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <FieldLabel htmlFor="wedding_date_time">예식 일시</FieldLabel>
-                  <TextInput
-                    id="wedding_date_time"
-                    name="wedding_date_time"
-                    defaultValue={data.event.date_time}
-                  />
-                </div>
-                <div className="flex flex-col gap-2 md:col-span-2">
-                  <FieldLabel htmlFor="event_date_text">표시용 날짜</FieldLabel>
-                  <TextInput
-                    id="event_date_text"
-                    name="event_date_text"
-                    defaultValue={data.event.date_text}
-                  />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <FieldLabel htmlFor="venue">예식장</FieldLabel>
-                  <TextInput id="venue" name="venue" defaultValue={data.event.venue} />
-                </div>
-                <div className="flex flex-col gap-2 md:col-span-2">
-                  <FieldLabel htmlFor="address">주소</FieldLabel>
-                  <TextInput id="address" name="address" defaultValue={data.event.address} />
-                </div>
-                <Button type="submit" size="full" className="md:col-span-2">
-                  저장하기
-                </Button>
-              </form>
-            </SurfaceCard>
-
-            <SurfaceCard className="p-6">
-              <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">
-                행사 안내
-              </h2>
-              <form action={updateEventGuidanceAction} className="mt-4 flex flex-col gap-4">
-                <input type="hidden" name="event_id" value={data.event.id} />
-                <div className="flex flex-col gap-2">
-                  <FieldLabel htmlFor="event_directions">오시는 길 (줄바꿈)</FieldLabel>
-                  <TextArea
-                    id="event_directions"
-                    name="event_directions"
-                    className="min-h-[140px]"
-                    defaultValue={(data.eventGuidance.directions || []).join('\n')}
-                  />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <FieldLabel htmlFor="event_notices">안내 문구 (줄바꿈)</FieldLabel>
-                  <TextArea
-                    id="event_notices"
-                    name="event_notices"
-                    className="min-h-[140px]"
-                    defaultValue={(data.eventGuidance.notices || []).join('\n')}
-                  />
-                </div>
-                <Button type="submit" size="full">
-                  저장하기
-                </Button>
-              </form>
-            </SurfaceCard>
-          </div>
         );
       case 'location':
         return (
           <div className="flex flex-col gap-6">
             <SurfaceCard className="p-6">
               <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">
-                오시는 길
+                예식 정보
               </h2>
               <form action={updateLocationAction} className="mt-4 grid gap-4 md:grid-cols-2">
+                <div className="flex flex-col gap-2 md:col-span-2">
+                  <FieldLabel htmlFor="wedding_section_title">예식 섹션 타이틀</FieldLabel>
+                  <TextInput
+                    id="wedding_section_title"
+                    name="wedding_section_title"
+                    defaultValue={data.sectionTitles.wedding}
+                  />
+                </div>
                 <div className="flex flex-col gap-2">
-                  <FieldLabel htmlFor="location_place_name">장소명</FieldLabel>
+                  <FieldLabel htmlFor="event_date_time">예식 일시</FieldLabel>
+                  <TextInput
+                    id="event_date_time"
+                    name="event_date_time"
+                    defaultValue={data.event.date_time}
+                  />
+                </div>
+                <div className="flex flex-col gap-2 md:col-span-2">
+                  <FieldLabel htmlFor="event_venue">예식장</FieldLabel>
+                  <TextInput
+                    id="event_venue"
+                    name="event_venue"
+                    defaultValue={data.event.venue}
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <FieldLabel htmlFor="event_address">주소</FieldLabel>
+                  <TextInput
+                    id="event_address"
+                    name="event_address"
+                    defaultValue={data.event.address}
+                  />
+                </div>
+                <div className="flex flex-col gap-2 md:col-span-2">
+                  <FieldLabel htmlFor="location_place_name">지도 표시명</FieldLabel>
                   <TextInput
                     id="location_place_name"
                     name="location_place_name"
                     defaultValue={data.location.place_name}
                   />
                 </div>
-                <div className="flex flex-col gap-2">
-                  <FieldLabel htmlFor="location_address">주소</FieldLabel>
-                  <TextInput
-                    id="location_address"
-                    name="location_address"
-                    defaultValue={data.location.address}
+                <div className="flex flex-col gap-2 md:col-span-2">
+                  <FieldLabel htmlFor="location_notices">안내 문구 (줄바꿈)</FieldLabel>
+                  <TextArea
+                    id="location_notices"
+                    name="location_notices"
+                    className="min-h-[140px]"
+                    defaultValue={(data.location.notices || []).join('\n')}
                   />
                 </div>
+                <div className="md:col-span-2 flex justify-end">
+                  <Button type="submit" size="sm">
+                    저장하기
+                  </Button>
+                </div>
+              </form>
+            </SurfaceCard>
+
+            <SurfaceCard className="p-6">
+              <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">
+                오시는 길 지도/교통
+              </h2>
+              <form action={updateLocationAction} className="mt-4 flex flex-col gap-4">
+                <div className="flex flex-col gap-2">
+                  <FieldLabel htmlFor="location_section_title">오시는 길 섹션 타이틀</FieldLabel>
+                  <TextInput
+                    id="location_section_title"
+                    name="location_section_title"
+                    defaultValue={data.sectionTitles.location}
+                  />
+                </div>
+                <div className="flex justify-end">
+                  <Button type="submit" size="sm">
+                    타이틀 저장
+                  </Button>
+                </div>
+              </form>
+              <form action={updateLocationAction} className="mt-4 grid gap-4 md:grid-cols-2">
                 <div className="flex flex-col gap-2">
                   <FieldLabel htmlFor="location_latitude">위도</FieldLabel>
                   <TextInput
@@ -519,50 +504,14 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
                     defaultValue={data.location.longitude}
                   />
                 </div>
-                <div className="flex flex-col gap-2">
-                  <FieldLabel htmlFor="location_nav_naver">네이버 지도 URL</FieldLabel>
-                  <TextInput
-                    id="location_nav_naver"
-                    name="location_nav_naver"
-                    defaultValue={data.location.navigation_naver_web || ''}
-                  />
+                <div className="md:col-span-2 flex justify-end">
+                  <Button type="submit" size="sm">
+                    좌표 저장
+                  </Button>
                 </div>
-                <div className="flex flex-col gap-2">
-                  <FieldLabel htmlFor="location_nav_kakao">카카오맵 URL</FieldLabel>
-                  <TextInput
-                    id="location_nav_kakao"
-                    name="location_nav_kakao"
-                    defaultValue={data.location.navigation_kakao_web || ''}
-                  />
-                </div>
-                <div className="flex flex-col gap-2 md:col-span-2">
-                  <FieldLabel htmlFor="location_nav_tmap">티맵 URL</FieldLabel>
-                  <TextInput
-                    id="location_nav_tmap"
-                    name="location_nav_tmap"
-                    defaultValue={data.location.navigation_tmap_web || ''}
-                  />
-                </div>
-                <div className="flex flex-col gap-2 md:col-span-2">
-                  <FieldLabel htmlFor="location_notices">안내 문구 (줄바꿈)</FieldLabel>
-                  <TextArea
-                    id="location_notices"
-                    name="location_notices"
-                    className="min-h-[140px]"
-                    defaultValue={(data.location.notices || []).join('\n')}
-                  />
-                </div>
-                <Button type="submit" size="full" className="md:col-span-2">
-                  저장하기
-                </Button>
               </form>
-            </SurfaceCard>
 
-            <SurfaceCard className="p-6">
-              <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">
-                교통 안내
-              </h2>
-              <form action={updateTransportationAction} className="mt-4 flex flex-col gap-4">
+              <form action={updateTransportationAction} className="mt-6 flex flex-col gap-4">
                 <input type="hidden" name="location_id" value={data.location.id} />
                 <div className="flex flex-col gap-2">
                   <FieldLabel htmlFor="transport_subway">지하철 (줄바꿈)</FieldLabel>
@@ -598,47 +547,29 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
                     defaultValue={data.transportation.parking || ''}
                   />
                 </div>
-                <Button type="submit" size="full">
-                  저장하기
-                </Button>
+                <div className="flex justify-end">
+                  <Button type="submit" size="sm">
+                    교통 안내 저장
+                  </Button>
+                </div>
               </form>
             </SurfaceCard>
           </div>
         );
-      case 'greeting':
-        return (
-          <SurfaceCard className="p-6">
-        <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">인사말</h2>
-        <form action={updateGreetingAction} className="mt-4 flex flex-col gap-4">
-          <div className="flex flex-col gap-2">
-            <FieldLabel htmlFor="poetic_note">시구</FieldLabel>
-            <TextInput
-              id="poetic_note"
-              name="poetic_note"
-              defaultValue={data.greeting.poetic_note || ''}
-            />
-          </div>
-          <div className="flex flex-col gap-2">
-            <FieldLabel htmlFor="message_lines">본문 (줄바꿈으로 구분)</FieldLabel>
-            <TextArea
-              id="message_lines"
-              name="message_lines"
-              className="min-h-[360px]"
-              defaultValue={(data.greeting.message_lines || []).join('\n')}
-            />
-          </div>
-          <Button type="submit" size="full">
-            저장하기
-          </Button>
-        </form>
-      </SurfaceCard>
-        );
       case 'share':
         return (
           <div className="flex flex-col gap-6">
-            <SurfaceCard className="p-6">
+          <SurfaceCard className="p-6">
         <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">공유 설정</h2>
         <form action={updateShareAction} className="mt-4 grid gap-4 md:grid-cols-2">
+          <div className="flex flex-col gap-2 md:col-span-2">
+            <FieldLabel htmlFor="share_section_title">공유 섹션 타이틀</FieldLabel>
+            <TextInput
+              id="share_section_title"
+              name="share_section_title"
+              defaultValue={data.sectionTitles.share}
+            />
+          </div>
           <div className="flex flex-col gap-2">
             <FieldLabel htmlFor="share_title">공유 타이틀</FieldLabel>
             <TextInput id="share_title" name="share_title" defaultValue={data.share.title} />
@@ -687,9 +618,11 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
               defaultValue={data.share.kakao_button_label || ''}
             />
           </div>
-          <Button type="submit" size="full" className="md:col-span-2">
-            저장하기
-          </Button>
+              <div className="md:col-span-2 flex justify-end">
+                <Button type="submit" size="sm">
+                  저장하기
+                </Button>
+              </div>
         </form>
       </SurfaceCard>
 
@@ -710,9 +643,11 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
             label="카카오 이미지 URL"
             defaultValue={data.assets.share_kakao_image}
           />
-          <Button type="submit" size="full" className="md:col-span-2">
-            이미지 저장
-          </Button>
+          <div className="md:col-span-2 flex justify-end">
+            <Button type="submit" size="sm">
+              이미지 저장
+            </Button>
+          </div>
         </form>
       </SurfaceCard>
           </div>
@@ -735,10 +670,6 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
             반복 재생
           </label>
           <div className="flex flex-col gap-2 md:col-span-2">
-            <FieldLabel htmlFor="bgm_title">BGM 제목</FieldLabel>
-            <TextInput id="bgm_title" name="bgm_title" defaultValue={data.bgm.title || ''} />
-          </div>
-          <div className="flex flex-col gap-2 md:col-span-2">
             <FieldLabel htmlFor="bgm_audio_url">BGM URL</FieldLabel>
             <TextInput
               id="bgm_audio_url"
@@ -746,9 +677,11 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
               defaultValue={data.bgm.audio_url || ''}
             />
           </div>
-          <Button type="submit" size="full" className="md:col-span-2">
-            저장하기
-          </Button>
+                <div className="md:col-span-2 flex justify-end">
+                  <Button type="submit" size="sm">
+                    저장하기
+                  </Button>
+                </div>
         </form>
       </SurfaceCard>
         );
@@ -791,31 +724,21 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
                 defaultValue={data.gallery.autoplay_delay ?? ''}
               />
             </div>
-            <Button type="submit" size="full" className="md:col-span-2">
-              갤러리 저장
-            </Button>
+            <div className="md:col-span-2 flex justify-end">
+              <Button type="submit" size="sm">
+                갤러리 저장
+              </Button>
+            </div>
           </form>
 
           <form action={addGalleryImageAction} className="grid gap-4 md:grid-cols-2">
             <input type="hidden" name="gallery_id" value={data.gallery.id} />
             <ImagePreviewField id="image_src" name="image_src" label="이미지 URL" />
-            <ImagePreviewField
-              id="image_thumbnail"
-              name="image_thumbnail"
-              label="썸네일 URL"
-              previewClassName="h-[120px]"
-            />
-            <div className="flex flex-col gap-2">
-              <FieldLabel htmlFor="image_alt">대체 텍스트</FieldLabel>
-              <TextInput id="image_alt" name="image_alt" />
+            <div className="md:col-span-2 flex justify-end">
+              <Button type="submit" size="sm">
+                이미지 추가
+              </Button>
             </div>
-            <div className="flex flex-col gap-2">
-              <FieldLabel htmlFor="sort_order">정렬 순서</FieldLabel>
-              <TextInput id="sort_order" name="sort_order" />
-            </div>
-            <Button type="submit" size="full" className="md:col-span-2">
-              이미지 추가
-            </Button>
           </form>
           <div className="grid gap-3">
             {data.galleryImages.map((image) => (
@@ -873,9 +796,11 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
                 defaultValue={data.accounts.description}
               />
             </div>
-            <Button type="submit" size="full" className="md:col-span-2">
-              저장하기
-            </Button>
+            <div className="md:col-span-2 flex justify-end">
+              <Button type="submit" size="sm">
+                저장하기
+              </Button>
+            </div>
           </form>
 
           <form action={addAccountEntryAction} className="grid gap-4 md:grid-cols-2">
@@ -899,9 +824,11 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
               <FieldLabel htmlFor="account_holder">예금주</FieldLabel>
               <TextInput id="account_holder" name="account_holder" />
             </div>
-            <Button type="submit" size="full" className="md:col-span-2">
-              계좌 추가
-            </Button>
+            <div className="md:col-span-2 flex justify-end">
+              <Button type="submit" size="sm">
+                계좌 추가
+              </Button>
+            </div>
           </form>
 
           <div className="grid gap-3">
@@ -955,6 +882,14 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
           <SurfaceCard className="p-6">
         <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">게스트북 설정</h2>
         <form action={updateGuestbookAction} className="mt-4 grid gap-4 md:grid-cols-2">
+          <div className="flex flex-col gap-2 md:col-span-2">
+            <FieldLabel htmlFor="guestbook_section_title">게스트북 섹션 타이틀</FieldLabel>
+            <TextInput
+              id="guestbook_section_title"
+              name="guestbook_section_title"
+              defaultValue={data.sectionTitles.guestbook}
+            />
+          </div>
           <div className="flex flex-col gap-2 md:col-span-2">
             <FieldLabel htmlFor="guestbook_privacy_notice">개인정보 안내</FieldLabel>
             <TextInput
@@ -1023,190 +958,168 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
             />
             삭제 허용
           </label>
-          <Button type="submit" size="full" className="md:col-span-2">
-            저장하기
-          </Button>
+          <div className="md:col-span-2 flex justify-end">
+            <Button type="submit" size="sm">
+              저장하기
+            </Button>
+          </div>
         </form>
+        <div className="mt-6">
+          <div className="overflow-hidden rounded-[12px] border border-[var(--border-light)] bg-white/70">
+            <div className="grid grid-cols-3 gap-2 border-b border-[var(--border-light)] px-4 py-2 text-[12px] font-semibold text-[var(--text-secondary)]">
+              <span>이름</span>
+              <span>메시지</span>
+              <span>작성일</span>
+            </div>
+            <div className="divide-y divide-[var(--border-light)]">
+              {(() => {
+                const pageSize = 6;
+                const totalPages = Math.max(
+                  1,
+                  Math.ceil(data.guestbookEntries.length / pageSize)
+                );
+                const currentPage = Math.min(guestbookPage, totalPages);
+                const startIndex = (currentPage - 1) * pageSize;
+                const pageItems = data.guestbookEntries.slice(
+                  startIndex,
+                  startIndex + pageSize
+                );
+
+                return pageItems.map((entry) => (
+                  <div
+                    key={entry.id}
+                    className="grid grid-cols-3 gap-2 px-4 py-3 text-[13px] text-[var(--text-primary)]"
+                  >
+                    <span className="font-medium">{entry.name}</span>
+                    <span className="line-clamp-2 text-[var(--text-secondary)]">
+                      {entry.message}
+                    </span>
+                    <span className="text-[var(--text-muted)]">
+                      {new Date(entry.createdAt).toLocaleDateString('ko-KR')}
+                    </span>
+                  </div>
+                ));
+              })()}
+            </div>
+          </div>
+          <div className="mt-3 flex items-center justify-between text-[12px] text-[var(--text-muted)]">
+            <span>총 {data.guestbookEntries.length}건</span>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setGuestbookPage((prev) => Math.max(1, prev - 1))}
+                className="rounded-[8px] border border-[var(--border-light)] px-2 py-1 text-[12px] text-[var(--text-secondary)]"
+              >
+                이전
+              </button>
+              <button
+                type="button"
+                onClick={() =>
+                  setGuestbookPage((prev) =>
+                    Math.min(
+                      Math.max(1, Math.ceil(data.guestbookEntries.length / 6)),
+                      prev + 1
+                    )
+                  )
+                }
+                className="rounded-[8px] border border-[var(--border-light)] px-2 py-1 text-[12px] text-[var(--text-secondary)]"
+              >
+                다음
+              </button>
+            </div>
+          </div>
+        </div>
       </SurfaceCard>
         );
       case 'rsvp':
         return (
-          <div className="flex flex-col gap-6">
-            <SurfaceCard className="p-6">
-              <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">
-                RSVP 설정
-              </h2>
-              <form action={updateRsvpAction} className="mt-4 grid gap-4 md:grid-cols-2">
-                <label className="flex items-center gap-2 text-[14px] md:col-span-2">
-                  <input type="checkbox" name="rsvp_enabled" defaultChecked={data.rsvp.enabled} />
-                  사용
-                </label>
-                <div className="flex flex-col gap-2 md:col-span-2">
-                  <FieldLabel htmlFor="rsvp_deadline">응답 마감</FieldLabel>
+          <SurfaceCard className="p-6">
+            <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">
+              RSVP 응답 목록
+            </h2>
+            <div className="mt-4 flex flex-col gap-4">
+              <form action={updateRsvpTitleAction} className="flex flex-col gap-3">
+                <div className="flex flex-col gap-2">
+                  <FieldLabel htmlFor="rsvp_section_title">RSVP 섹션 타이틀</FieldLabel>
                   <TextInput
-                    id="rsvp_deadline"
-                    name="rsvp_deadline"
-                    defaultValue={data.rsvp.deadline || ''}
+                    id="rsvp_section_title"
+                    name="rsvp_section_title"
+                    defaultValue={data.sectionTitles.rsvp}
                   />
                 </div>
-                <div className="flex flex-col gap-2 md:col-span-2">
-                  <FieldLabel htmlFor="rsvp_consent_title">동의 타이틀</FieldLabel>
-                  <TextInput
-                    id="rsvp_consent_title"
-                    name="rsvp_consent_title"
-                    defaultValue={data.rsvp.consent_title}
-                  />
-                </div>
-                <div className="flex flex-col gap-2 md:col-span-2">
-                  <FieldLabel htmlFor="rsvp_consent_description">동의 설명</FieldLabel>
-                  <TextArea
-                    id="rsvp_consent_description"
-                    name="rsvp_consent_description"
-                    defaultValue={data.rsvp.consent_description}
-                  />
-                </div>
-                <div className="flex flex-col gap-2 md:col-span-2">
-                  <FieldLabel htmlFor="rsvp_consent_retention">보관 기간</FieldLabel>
-                  <TextArea
-                    id="rsvp_consent_retention"
-                    name="rsvp_consent_retention"
-                    defaultValue={data.rsvp.consent_retention}
-                  />
-                </div>
-                <div className="flex flex-col gap-2 md:col-span-2">
-                  <FieldLabel htmlFor="rsvp_consent_notice">동의 안내</FieldLabel>
-                  <TextArea
-                    id="rsvp_consent_notice"
-                    name="rsvp_consent_notice"
-                    defaultValue={data.rsvp.consent_notice}
-                  />
-                </div>
-                <Button type="submit" size="full" className="md:col-span-2">
-                  저장하기
+                <Button type="submit" size="sm" className="self-end">
+                  타이틀 저장
                 </Button>
               </form>
-            </SurfaceCard>
+              <div className="overflow-hidden rounded-[12px] border border-[var(--border-light)] bg-white/70">
+                <div className="grid grid-cols-5 gap-2 border-b border-[var(--border-light)] px-4 py-2 text-[12px] font-semibold text-[var(--text-secondary)]">
+                  <span>이름</span>
+                  <span>참석</span>
+                  <span>인원</span>
+                  <span>식사</span>
+                  <span>작성일</span>
+                </div>
+                <div className="divide-y divide-[var(--border-light)]">
+                  {(() => {
+                    const pageSize = 8;
+                    const totalPages = Math.max(
+                      1,
+                      Math.ceil(data.rsvpResponses.length / pageSize)
+                    );
+                    const currentPage = Math.min(rsvpPage, totalPages);
+                    const startIndex = (currentPage - 1) * pageSize;
+                    const pageItems = data.rsvpResponses.slice(
+                      startIndex,
+                      startIndex + pageSize
+                    );
 
-            <SurfaceCard className="p-6">
-              <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">
-                RSVP 입력 필드
-              </h2>
-              <div className="mt-4 flex flex-col gap-4">
-                <form action={addRsvpFieldAction} className="grid gap-4 md:grid-cols-2">
-                  <input type="hidden" name="rsvp_id" value={data.rsvp.id} />
-                  <div className="flex flex-col gap-2">
-                    <FieldLabel htmlFor="rsvp_field_key">키</FieldLabel>
-                    <SelectField id="rsvp_field_key" name="rsvp_field_key">
-                      <option value="attendance">attendance</option>
-                      <option value="meal">meal</option>
-                      <option value="companions">companions</option>
-                      <option value="notes">notes</option>
-                    </SelectField>
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <FieldLabel htmlFor="rsvp_field_label">라벨</FieldLabel>
-                    <TextInput id="rsvp_field_label" name="rsvp_field_label" />
-                  </div>
-                  <label className="flex items-center gap-2 text-[14px]">
-                    <input type="checkbox" name="rsvp_field_required" />
-                    필수
-                  </label>
-                  <div className="flex flex-col gap-2 md:col-span-2">
-                    <FieldLabel htmlFor="rsvp_field_placeholder">플레이스홀더</FieldLabel>
-                    <TextInput id="rsvp_field_placeholder" name="rsvp_field_placeholder" />
-                  </div>
-                  <div className="flex flex-col gap-2 md:col-span-2">
-                    <FieldLabel htmlFor="rsvp_field_options">옵션 (줄바꿈)</FieldLabel>
-                    <TextArea
-                      id="rsvp_field_options"
-                      name="rsvp_field_options"
-                      className="min-h-[120px]"
-                    />
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <FieldLabel htmlFor="rsvp_field_sort_order">정렬 순서</FieldLabel>
-                    <TextInput
-                      id="rsvp_field_sort_order"
-                      name="rsvp_field_sort_order"
-                      type="number"
-                    />
-                  </div>
-                  <Button type="submit" size="full" className="md:col-span-2">
-                    필드 추가
-                  </Button>
-                </form>
-
-                <div className="grid gap-3">
-                  {data.rsvpFields.map((field) => (
-                    <form
-                      key={field.id}
-                      action={updateRsvpFieldAction}
-                      className="grid gap-3 rounded-[12px] border border-[var(--border-light)] bg-white/60 px-4 py-3 md:grid-cols-2"
-                    >
-                      <input type="hidden" name="rsvp_field_id" value={field.id} />
-                      <div className="flex flex-col gap-2">
-                        <FieldLabel>키</FieldLabel>
-                        <SelectField name="rsvp_field_key" defaultValue={field.field_key}>
-                          <option value="attendance">attendance</option>
-                          <option value="meal">meal</option>
-                          <option value="companions">companions</option>
-                          <option value="notes">notes</option>
-                        </SelectField>
+                    return pageItems.map((entry) => (
+                      <div
+                        key={entry.id}
+                        className="grid grid-cols-5 gap-2 px-4 py-3 text-[13px] text-[var(--text-primary)]"
+                      >
+                        <span className="font-medium">{entry.name}</span>
+                        <span>{entry.attendance}</span>
+                        <span>{entry.companions || '-'}</span>
+                        <span>{entry.meal || '-'}</span>
+                        <span className="text-[var(--text-muted)]">
+                          {new Date(entry.submittedAt).toLocaleDateString('ko-KR')}
+                        </span>
                       </div>
-                      <div className="flex flex-col gap-2">
-                        <FieldLabel>라벨</FieldLabel>
-                        <TextInput name="rsvp_field_label" defaultValue={field.label} />
-                      </div>
-                      <label className="flex items-center gap-2 text-[14px]">
-                        <input
-                          type="checkbox"
-                          name="rsvp_field_required"
-                          defaultChecked={field.required}
-                        />
-                        필수
-                      </label>
-                      <div className="flex flex-col gap-2 md:col-span-2">
-                        <FieldLabel>플레이스홀더</FieldLabel>
-                        <TextInput
-                          name="rsvp_field_placeholder"
-                          defaultValue={field.placeholder || ''}
-                        />
-                      </div>
-                      <div className="flex flex-col gap-2 md:col-span-2">
-                        <FieldLabel>옵션 (줄바꿈)</FieldLabel>
-                        <TextArea
-                          name="rsvp_field_options"
-                          className="min-h-[120px]"
-                          defaultValue={(field.options || []).join('\n')}
-                        />
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <FieldLabel>정렬 순서</FieldLabel>
-                        <TextInput
-                          name="rsvp_field_sort_order"
-                          type="number"
-                          defaultValue={field.sort_order ?? ''}
-                        />
-                      </div>
-                      <div className="flex items-center justify-end gap-2 md:col-span-2">
-                        <Button type="submit" size="sm">
-                          저장
-                        </Button>
-                        <Button
-                          type="submit"
-                          size="sm"
-                          variant="danger"
-                          formAction={deleteRsvpFieldAction}
-                        >
-                          삭제
-                        </Button>
-                      </div>
-                    </form>
-                  ))}
+                    ));
+                  })()}
                 </div>
               </div>
-            </SurfaceCard>
-          </div>
+              <div className="flex items-center justify-between text-[12px] text-[var(--text-muted)]">
+                <span>
+                  총 {data.rsvpResponses.length}건
+                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setRsvpPage((prev) => Math.max(1, prev - 1))}
+                    className="rounded-[8px] border border-[var(--border-light)] px-2 py-1 text-[12px] text-[var(--text-secondary)]"
+                  >
+                    이전
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setRsvpPage((prev) =>
+                        Math.min(
+                          Math.max(1, Math.ceil(data.rsvpResponses.length / 8)),
+                          prev + 1
+                        )
+                      )
+                    }
+                    className="rounded-[8px] border border-[var(--border-light)] px-2 py-1 text-[12px] text-[var(--text-secondary)]"
+                  >
+                    다음
+                  </button>
+                </div>
+              </div>
+            </div>
+          </SurfaceCard>
         );
       case 'closing':
         return (
@@ -1218,14 +1131,6 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
             <TextArea id="closing_message" name="closing_message" defaultValue={data.closing.message} />
           </div>
           <div className="flex flex-col gap-2">
-            <FieldLabel htmlFor="closing_signature">서명</FieldLabel>
-            <TextInput
-              id="closing_signature"
-              name="closing_signature"
-              defaultValue={data.closing.signature || ''}
-            />
-          </div>
-          <div className="flex flex-col gap-2">
             <FieldLabel htmlFor="closing_copyright">저작권 표기</FieldLabel>
             <TextInput
               id="closing_copyright"
@@ -1233,9 +1138,11 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
               defaultValue={data.closing.copyright || ''}
             />
           </div>
-          <Button type="submit" size="full">
-            저장하기
-          </Button>
+          <div className="flex justify-end">
+            <Button type="submit" size="sm">
+              저장하기
+            </Button>
+          </div>
         </form>
       </SurfaceCard>
         );

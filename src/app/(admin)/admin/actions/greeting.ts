@@ -21,6 +21,7 @@ export const updateGreetingAction = async (formData: FormData) => {
   await supabase
     .from('invitation_greeting')
     .update({
+      section_title: String(formData.get('greeting_section_title') || ''),
       poetic_note: String(formData.get('poetic_note') || ''),
       message_lines: lines,
     })

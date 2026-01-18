@@ -87,26 +87,9 @@ export const loadAdminData = async () => {
     },
     event: {
       id: eventId,
-      title: content.event.title,
       date_time: content.event.dateTime,
-      date_text: content.event.dateText,
       venue: content.event.venue,
       address: content.event.address,
-    },
-    eventGuidance: {
-      id: 'mock-event-guidance',
-      event_id: eventId,
-      directions: content.event.guidance.directions || [],
-      notices: content.event.guidance.notices || [],
-    },
-    intro: {
-      id: 'mock-intro',
-      quote: content.intro.quote,
-      sub_quote: content.intro.subQuote || '',
-      theme_dark_background: content.intro.theme.darkBackground,
-      theme_light_background: content.intro.theme.lightBackground,
-      theme_text_color: content.intro.theme.textColor,
-      theme_accent_color: content.intro.theme.accentColor,
     },
     assets: {
       id: 'mock-assets',
@@ -133,7 +116,6 @@ export const loadAdminData = async () => {
     bgm: {
       id: 'mock-bgm',
       enabled: content.bgm.enabled,
-      title: content.bgm.title || '',
       audio_url: content.bgm.audioUrl || '',
       auto_play: content.bgm.autoPlay,
       loop: content.bgm.loop,
@@ -161,9 +143,6 @@ export const loadAdminData = async () => {
       address: content.event.address,
       latitude: content.location.coordinates.lat,
       longitude: content.location.coordinates.lng,
-      navigation_naver_web: content.location.navigation?.naver?.web || '',
-      navigation_kakao_web: content.location.navigation?.kakao?.web || '',
-      navigation_tmap_web: content.location.navigation?.tmap?.web || '',
       notices: content.location.notices || [],
     },
     transportation: {
@@ -185,6 +164,7 @@ export const loadAdminData = async () => {
       enable_edit: content.guestbook.enableEdit,
       enable_delete: content.guestbook.enableDelete,
     },
+    guestbookEntries: content.guestbook.mockEntries,
     rsvp: {
       id: rsvpId,
       enabled: content.rsvp.enabled,
@@ -204,6 +184,7 @@ export const loadAdminData = async () => {
       options: field.options || [],
       sort_order: index + 1,
     })),
+    rsvpResponses: content.rsvpResponses,
     accounts: {
       id: accountsId,
       title: content.accounts.title,
@@ -230,9 +211,9 @@ export const loadAdminData = async () => {
     closing: {
       id: 'mock-closing',
       message: content.closing.message,
-      signature: content.closing.signature || '',
       copyright: content.closing.copyright || '',
     },
+    sectionTitles: content.sectionTitles,
   };
 };
 

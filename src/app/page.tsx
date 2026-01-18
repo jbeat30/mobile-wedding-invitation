@@ -61,7 +61,7 @@ const ClosingSection = dynamic(
  */
 export default function Page() {
   const { content, assets, storage } = invitationMock;
-  const { loading } = content;
+  const { loading, sectionTitles } = content;
   const { isLoading, isHintVisible } = useLoadingState({
     minDuration: loading.minDuration,
     additionalDuration: loading.additionalDuration,
@@ -260,7 +260,11 @@ export default function Page() {
           )}
           {showContent && (
             <>
-              <GreetingSection greeting={content.greeting} couple={content.couple} />
+              <GreetingSection
+                greeting={content.greeting}
+                couple={content.couple}
+                title={sectionTitles.greeting}
+              />
               <IntroSection
                 couple={content.couple}
                 event={content.event}
@@ -271,14 +275,30 @@ export default function Page() {
         </div>
         {showContent && (
           <>
-            <CoupleSection couple={content.couple} />
-            <WeddingInfoSection event={content.event} couple={content.couple} />
-            <LocationSection location={content.location} event={content.event} />
+            <CoupleSection couple={content.couple} title={sectionTitles.couple} />
+            <WeddingInfoSection
+              event={content.event}
+              couple={content.couple}
+              title={sectionTitles.wedding}
+            />
+            <LocationSection
+              location={content.location}
+              event={content.event}
+              title={sectionTitles.location}
+            />
             <GallerySection gallery={content.gallery} />
             <AccountsSection accounts={content.accounts} />
-            <GuestbookSection guestbook={content.guestbook} storageKey={storage.guestbook.key} />
-            <RSVPSection rsvp={content.rsvp} storageKey={storage.rsvp.key} />
-            <ShareSection share={content.share} />
+            <GuestbookSection
+              guestbook={content.guestbook}
+              storageKey={storage.guestbook.key}
+              title={sectionTitles.guestbook}
+            />
+            <RSVPSection
+              rsvp={content.rsvp}
+              storageKey={storage.rsvp.key}
+              title={sectionTitles.rsvp}
+            />
+            <ShareSection share={content.share} title={sectionTitles.share} />
             <ClosingSection closing={content.closing} couple={content.couple} />
           </>
         )}

@@ -5,12 +5,13 @@ import { SectionHeader } from '@/components/ui/SectionHeader';
 type GreetingSectionProps = {
   greeting: InvitationGreeting;
   couple: InvitationCouple;
+  title: string;
 };
 
 /**
  * 인사말 섹션
  */
-export const GreetingSection = ({ greeting, couple }: GreetingSectionProps) => {
+export const GreetingSection = ({ greeting, couple, title }: GreetingSectionProps) => {
   const getParentLines = (parents: { father?: string; mother?: string }) =>
     [
       parents.father ? `아버지 ${parents.father}` : null,
@@ -27,7 +28,7 @@ export const GreetingSection = ({ greeting, couple }: GreetingSectionProps) => {
         <div className="text-center" data-animate="fade-up">
           <SectionHeader
             kicker="INVITATION"
-            title="초대합니다"
+            title={title}
             kickerClassName="font-label text-[13px] text-[var(--accent-rose)]"
             titleClassName="mt-2 text-[24px] font-medium text-[var(--text-primary)]"
           />

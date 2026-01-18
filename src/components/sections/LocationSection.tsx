@@ -9,12 +9,13 @@ import { copyText } from '@/utils/clipboard';
 type LocationSectionProps = {
   event: InvitationEvent;
   location: InvitationLocation;
+  title: string;
 };
 
 /**
  * 오시는 길 섹션
  */
-export const LocationSection = ({ event, location }: LocationSectionProps) => {
+export const LocationSection = ({ event, location, title }: LocationSectionProps) => {
   const [isTransportOpen, setIsTransportOpen] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
@@ -32,21 +33,22 @@ export const LocationSection = ({ event, location }: LocationSectionProps) => {
     }
   }, [event.address, showToast]);
 
-  const openNavigation = useCallback((app: 'naver' | 'kakao' | 'tmap') => {
-    const { lat, lng } = location.coordinates;
-    const name = encodeURIComponent(location.placeName);
-    const address = encodeURIComponent(event.address);
+  const openNavigation = useCallback(
+    (app: 'naver' | 'kakao' | 'tmap') => {
+      const { lat, lng } = location.coordinates;
+      const name = encodeURIComponent(location.placeName);
+      const address = encodeURIComponent(event.address);
 
-    const urls = {
-      naver: `https://map.naver.com/v5/search/${address}`,
-      kakao: `https://map.kakao.com/link/map/${name},${lat},${lng}`,
-      tmap: `https://tmap.life/route?goalname=${name}&goalx=${lng}&goaly=${lat}`,
-    };
+      const urls = {
+        naver: `https://map.naver.com/v5/search/${address}`,
+        kakao: `https://map.kakao.com/link/map/${name},${lat},${lng}`,
+        tmap: `https://tmap.life/route?goalname=${name}&goalx=${lng}&goaly=${lat}`,
+      };
 
-    const override = location.navigation?.[app]?.web;
-    const targetUrl = override || urls[app];
-    window.location.href = targetUrl;
-  }, [location.coordinates, location.placeName, location.navigation, event.address]);
+      window.location.href = urls[app];
+    },
+    [location.coordinates, location.placeName, event.address]
+  );
 
   return (
     <section id="location" className="bg-[var(--bg-primary)] py-16">
@@ -55,7 +57,7 @@ export const LocationSection = ({ event, location }: LocationSectionProps) => {
         <div className="text-center" data-animate="fade-up">
           <SectionHeader
             kicker="LOCATION"
-            title="오시는 길"
+            title={title}
             kickerClassName="font-label text-[12px] text-[var(--accent-rose)]"
             titleClassName="mt-2 text-[24px] font-medium text-[var(--text-primary)]"
           />

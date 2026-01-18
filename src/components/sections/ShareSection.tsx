@@ -16,9 +16,10 @@ import { copyText } from '@/utils/clipboard';
  */
 type ShareSectionProps = {
   share: InvitationShare;
+  title: string;
 };
 
-export const ShareSection = ({ share }: ShareSectionProps) => {
+export const ShareSection = ({ share, title }: ShareSectionProps) => {
   const { isReady: isKakaoReady, hasAppKey } = useKakaoSDK();
 
   const [showToast, setShowToast] = useState(false);
@@ -130,7 +131,7 @@ export const ShareSection = ({ share }: ShareSectionProps) => {
           <div className="text-center" data-animate="fade-up">
             <SectionHeader
               kicker="SHARE"
-              title="청첩장 공유하기"
+              title={title}
               description="소중한 분들과 함께 나눠주세요"
               kickerClassName="font-label text-[12px] text-[var(--accent-rose)]"
               titleClassName="mt-2 text-[24px] font-medium text-[var(--text-primary)]"

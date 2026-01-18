@@ -15,6 +15,7 @@ export const updateShareAction = async (formData: FormData) => {
   const { id } = await getOrCreateInvitation();
 
   const payload = {
+    section_title: String(formData.get('share_section_title') || ''),
     title: String(formData.get('share_title') || ''),
     description: String(formData.get('share_description') || ''),
     image_url: String(formData.get('share_image_url') || ''),

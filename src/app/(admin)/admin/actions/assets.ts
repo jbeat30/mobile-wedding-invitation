@@ -116,11 +116,11 @@ export const addGalleryImageAction = async (formData: FormData) => {
   const payload = {
     gallery_id: galleryId,
     src: String(formData.get('image_src') || ''),
-    alt: String(formData.get('image_alt') || ''),
-    thumbnail: String(formData.get('image_thumbnail') || ''),
-    width: toNumber(formData.get('image_width'), 0) || null,
-    height: toNumber(formData.get('image_height'), 0) || null,
-    sort_order: toNumber(formData.get('sort_order'), 0) || 0,
+    alt: '',
+    thumbnail: null,
+    width: null,
+    height: null,
+    sort_order: 0,
   };
 
   await supabase.from('invitation_gallery_image').insert(payload);

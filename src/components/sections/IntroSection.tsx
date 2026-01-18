@@ -11,6 +11,20 @@ type IntroSectionProps = {
  * 인트로 섹션 - Hero 영역
  */
 export const IntroSection = ({ couple, event, heroImage }: IntroSectionProps) => {
+  const introDate = new Date(event.dateTime);
+  const formattedDateTime = Number.isNaN(introDate.getTime())
+    ? event.dateTime
+    : `${new Intl.DateTimeFormat('ko-KR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        weekday: 'short',
+      }).format(introDate)} ${new Intl.DateTimeFormat('ko-KR', {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true,
+      }).format(introDate)}`;
+
   return (
     <section id="intro" className="relative bg-[var(--bg-primary)]">
       {/* Hero 영역 */}
@@ -38,7 +52,7 @@ export const IntroSection = ({ couple, event, heroImage }: IntroSectionProps) =>
               {`${couple.bride.lastName}${couple.bride.firstName}`}
             </h1>
             <p className="mt-3 text-[14px] font-bold tracking-wider text-white/90 drop-shadow-sm">
-              {event.dateText}
+              {formattedDateTime}
             </p>
           </div>
         </div>

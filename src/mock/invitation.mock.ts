@@ -71,19 +71,6 @@ export type InvitationMeta = {
   timeZone: string;
 };
 
-export type InvitationIntroTheme = {
-  darkBackground: string;
-  lightBackground: string;
-  textColor: string;
-  accentColor: string;
-};
-
-export type InvitationIntro = {
-  quote: string;
-  subQuote?: string;
-  theme: InvitationIntroTheme;
-};
-
 export type InvitationPerson = {
   firstName: string;
   lastName: string;
@@ -108,18 +95,10 @@ export type InvitationCouple = {
   parents: InvitationParents;
 };
 
-export type InvitationGuidance = {
-  directions: string[];
-  notices: string[];
-};
-
 export type InvitationEvent = {
-  title: string;
   dateTime: string;
-  dateText: string;
   venue: string;
   address: string;
-  guidance: InvitationGuidance;
 };
 
 export type GuestbookEntry = {
@@ -218,9 +197,28 @@ export type InvitationGreeting = {
   poeticNote?: string;
 };
 
+export type InvitationSectionTitles = {
+  greeting: string;
+  couple: string;
+  wedding: string;
+  location: string;
+  guestbook: string;
+  rsvp: string;
+  share: string;
+};
+
+export type InvitationRsvpResponse = {
+  id: string;
+  name: string;
+  attendance: string;
+  companions?: string;
+  meal?: string;
+  notes?: string;
+  submittedAt: string;
+};
+
 export type InvitationBgm = {
   enabled: boolean;
-  title?: string;
   audioUrl?: string;
   autoPlay: boolean;
   loop: boolean;
@@ -231,17 +229,6 @@ export type InvitationLocation = {
   coordinates: {
     lat: number;
     lng: number;
-  };
-  navigation?: {
-    naver?: {
-      web?: string;
-    };
-    kakao?: {
-      web?: string;
-    };
-    tmap?: {
-      web?: string;
-    };
   };
   transportation: {
     subway?: string[];
@@ -254,24 +241,24 @@ export type InvitationLocation = {
 
 export type InvitationClosing = {
   message: string;
-  signature?: string;
   copyright?: string;
 };
 
 export type InvitationContent = {
   loading: InvitationLoading;
   event: InvitationEvent;
-  intro: InvitationIntro;
   greeting: InvitationGreeting;
   couple: InvitationCouple;
   location: InvitationLocation;
   gallery: InvitationGallery;
   share: InvitationShare;
   rsvp: InvitationRsvp;
+  rsvpResponses: InvitationRsvpResponse[];
   guestbook: InvitationGuestbook;
   accounts: InvitationAccounts;
   bgm: InvitationBgm;
   closing: InvitationClosing;
+  sectionTitles: InvitationSectionTitles;
 };
 
 export type InvitationMock = {
@@ -362,25 +349,9 @@ export const invitationMock: InvitationMock = {
       additionalDuration: 1000,
     },
     event: {
-      title: '결혼합니다',
       dateTime: '2026-05-16T15:00:00+09:00',
-      dateText: '2026년 5월 16일 (토) 오후 3시',
       venue: '채림 웨딩홀',
       address: '경기도 부천시 원미구 심곡동 173-1',
-      guidance: {
-        directions: [],
-        notices: [],
-      },
-    },
-    intro: {
-      quote: '서로의 오늘이 되어, 함께 걸어가려 합니다.',
-      subQuote: '소중한 분들을 모시고 작은 약속을 나누고자 합니다.',
-      theme: {
-        darkBackground: '#2f2722',
-        lightBackground: '#f7f2ec',
-        textColor: '#4d4036',
-        accentColor: '#c19a7b',
-      },
     },
     greeting: {
       message: [
@@ -522,6 +493,26 @@ export const invitationMock: InvitationMock = {
         notice: '동의하지 않을 경우 참석 여부 접수가 제한됩니다.',
       },
     },
+    rsvpResponses: [
+      {
+        id: 'rsvp-1',
+        name: '민지',
+        attendance: '참석',
+        companions: '2명',
+        meal: '식사함',
+        notes: '축하드립니다!',
+        submittedAt: '2026-05-01T09:20:00+09:00',
+      },
+      {
+        id: 'rsvp-2',
+        name: '현우',
+        attendance: '불참',
+        companions: '0명',
+        meal: '식사하지 않음',
+        notes: '멀리서 축하할게요.',
+        submittedAt: '2026-05-02T14:15:00+09:00',
+      },
+    ],
     guestbook: {
       privacyNotice: '개인정보는 예식 이후 최대 12개월 보관 후 삭제됩니다.',
       retentionText: '축하 메시지는 예식 당일 함께 공유됩니다.',
@@ -568,7 +559,6 @@ export const invitationMock: InvitationMock = {
     },
     bgm: {
       enabled: false,
-      title: '',
       audioUrl: '',
       autoPlay: false,
       loop: true,
@@ -576,6 +566,15 @@ export const invitationMock: InvitationMock = {
     closing: {
       message: '소중한 분들과 함께하는 이 자리, 오래 기억하겠습니다.',
       copyright: '© 2026. All rights reserved.',
+    },
+    sectionTitles: {
+      greeting: '초대합니다',
+      couple: '두 사람을 소개합니다',
+      wedding: '결혼합니다',
+      location: '오시는 길',
+      guestbook: '축하 메시지',
+      rsvp: '참석 여부',
+      share: '청첩장 공유하기',
     },
   },
 };

@@ -29,6 +29,24 @@ export const updateRsvpAction = async (formData: FormData) => {
 };
 
 /**
+ * RSVP 섹션 타이틀 업데이트
+ * @param formData FormData
+ * @returns Promise<void>
+ */
+export const updateRsvpTitleAction = async (formData: FormData) => {
+  await requireAdminSession();
+  const supabase = createSupabaseAdmin();
+  const { id } = await getOrCreateInvitation();
+
+  await supabase
+    .from('invitation_rsvp')
+    .update({ section_title: String(formData.get('rsvp_section_title') || '') })
+    .eq('invitation_id', id);
+
+  revalidateAdmin();
+};
+
+/**
  * RSVP 필드 추가
  * @param formData FormData
  * @returns Promise<void>

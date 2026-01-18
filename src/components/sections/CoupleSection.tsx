@@ -6,12 +6,13 @@ import { SectionHeader } from '@/components/ui/SectionHeader';
 
 type CoupleSectionProps = {
   couple: InvitationCouple;
+  title: string;
 };
 
 /**
  * 신랑신부 소개 섹션
  */
-export const CoupleSection = ({ couple }: CoupleSectionProps) => {
+export const CoupleSection = ({ couple, title }: CoupleSectionProps) => {
   return (
     <section id="couple" className="bg-[var(--bg-primary)] py-16">
       <div className="mx-auto flex w-full max-w-[520px] flex-col gap-12 px-6">
@@ -19,7 +20,7 @@ export const CoupleSection = ({ couple }: CoupleSectionProps) => {
         <div className="text-center" data-animate="fade-up">
           <SectionHeader
             kicker="COUPLE"
-            title="두 사람을 소개합니다"
+            title={title}
             kickerClassName="font-label text-[13px] text-[var(--accent-rose)]"
             titleClassName="mt-2 text-[24px] font-medium text-[var(--text-primary)]"
           />
