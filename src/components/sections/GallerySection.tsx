@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react';
 import Image from 'next/image';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Thumbs } from 'swiper/modules';
+import { Autoplay, Navigation, Thumbs } from 'swiper/modules';
 import type { Swiper as SwiperType } from 'swiper';
 import type { InvitationGallery } from '@/mock/invitation.mock';
 import { ImageModal } from '@/components/ui/ImageModal';
@@ -45,10 +45,18 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
           {/* 메인 슬라이더 */}
           <div className="relative" data-animate="scale">
             <Swiper
-              modules={[Navigation, Thumbs]}
+              modules={[Navigation, Thumbs, Autoplay]}
               spaceBetween={0}
               slidesPerView={1}
               thumbs={{ swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null }}
+              autoplay={
+                gallery.autoplay
+                  ? {
+                      delay: gallery.autoplayDelay ?? 3000,
+                      disableOnInteraction: false,
+                    }
+                  : false
+              }
               navigation={{
                 nextEl: '.gallery-next',
                 prevEl: '.gallery-prev',

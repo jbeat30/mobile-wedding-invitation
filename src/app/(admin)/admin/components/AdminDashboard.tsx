@@ -41,45 +41,69 @@ type AdminDashboardProps = {
   data: AdminDashboardData;
 };
 
-type ImagePreviewFieldProps = {
+type ImageFileFieldProps = {
   id: string;
   name: string;
   label: string;
   defaultValue?: string | null;
   hint?: string;
   previewClassName?: string;
+  required?: boolean;
 };
 
 /**
- * 이미지 URL 입력 + 로컬 미리보기
- * @param props ImagePreviewFieldProps
+ * 이미지 파일 업로드 + 로컬 미리보기
+ * @param props ImageFileFieldProps
  * @returns JSX.Element
  */
-const ImagePreviewField = ({
+const ImageFileField = ({
   id,
   name,
   label,
   defaultValue = '',
   hint,
   previewClassName = 'h-[360px]',
-}: ImagePreviewFieldProps) => {
+  required = false,
+}: ImageFileFieldProps) => {
   const [value, setValue] = useState<string>(defaultValue || '');
-  const [hasError, setHasError] = useState(false);
-  const showPreview = value.trim().length > 0 && !hasError;
+  const [errorMessage, setErrorMessage] = useState('');
+  const showPreview = value.trim().length > 0 && !errorMessage;
+  const maxSize = 2 * 1024 * 1024;
 
   return (
     <div className="flex flex-col gap-2">
       <FieldLabel htmlFor={id}>{label}</FieldLabel>
-      <TextInput
+      <input
         id={id}
-        name={name}
-        value={value}
+        type="file"
+        accept="image/*"
+        required={required}
         onChange={(event) => {
-          setValue(event.target.value);
-          setHasError(false);
+          const file = event.target.files?.[0];
+          if (!file) return;
+          if (!file.type.startsWith('image/')) {
+            setErrorMessage('이미지 파일만 업로드할 수 있습니다');
+            return;
+          }
+          if (file.size > maxSize) {
+            setErrorMessage('이미지 파일은 2MB 이하만 가능합니다');
+            return;
+          }
+          const reader = new FileReader();
+          reader.onload = () => {
+            const nextValue = String(reader.result || '');
+            setValue(nextValue);
+            setErrorMessage('');
+          };
+          reader.readAsDataURL(file);
         }}
+        className="w-full rounded-[10px] border border-[var(--border-light)] bg-white/70 px-3 py-2 text-[13px] text-[var(--text-primary)] file:mr-3 file:rounded-[8px] file:border-0 file:bg-[var(--bg-secondary)] file:px-3 file:py-1.5 file:text-[12px] file:text-[var(--text-secondary)]"
       />
+      <input type="hidden" name={name} value={value} />
       {hint ? <p className="text-[11px] text-[var(--text-muted)]">{hint}</p> : null}
+      {errorMessage ? (
+        <p className="text-[11px] text-[var(--accent-burgundy)]">{errorMessage}</p>
+      ) : null}
       {value.trim().length > 0 ? (
         <div className="relative overflow-hidden rounded-[12px] border border-[var(--border-light)] bg-white/60">
           {showPreview ? (
@@ -90,7 +114,6 @@ const ImagePreviewField = ({
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover"
-                onError={() => setHasError(true)}
                 unoptimized
               />
             </div>
@@ -111,6 +134,16 @@ const ImagePreviewField = ({
  * @returns JSX.Element
  */
 export const AdminDashboard = ({ data }: AdminDashboardProps) => {
+  const getImageLabel = (src: string) => {
+    if (src.startsWith('data:')) {
+      return '업로드 이미지';
+    }
+    if (src.length > 60) {
+      return `${src.slice(0, 60)}...`;
+    }
+    return src;
+  };
+
   const tabs = [
     { id: 'overview', label: '요약' },
     { id: 'basic', label: '기본 정보' },
@@ -190,11 +223,12 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
                 로딩 이미지
               </h2>
               <form action={updateLoadingImageAction} className="mt-4 grid gap-4 md:grid-cols-2">
-                <ImagePreviewField
+                <ImageFileField
                   id="loading_image"
                   name="loading_image"
-                  label="로딩 이미지 URL"
+                  label="로딩 이미지"
                   defaultValue={data.assets.loading_image}
+                  hint="2MB 이하 이미지 파일"
                 />
                 <div className="md:col-span-2 flex justify-end">
                   <Button type="submit" size="sm">
@@ -213,11 +247,12 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
                 메인 이미지
               </h2>
               <form action={updateHeroImageAction} className="mt-4 grid gap-4 md:grid-cols-2">
-                <ImagePreviewField
+                <ImageFileField
                   id="hero_image"
                   name="hero_image"
-                  label="메인 이미지 URL"
+                  label="메인 이미지"
                   defaultValue={data.assets.hero_image}
+                  hint="2MB 이하 이미지 파일"
                 />
                 <div className="md:col-span-2 flex justify-end">
                   <Button type="submit" size="sm">
@@ -381,19 +416,21 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
                   defaultValue={data.profile.bride_bio || ''}
                 />
               </div>
-              <ImagePreviewField
+              <ImageFileField
                 id="groom_profile_image"
                 name="groom_profile_image"
                 label="신랑 프로필 이미지"
                 defaultValue={data.profile.groom_profile_image || ''}
                 previewClassName="h-[300px]"
+                hint="2MB 이하 이미지 파일"
               />
-              <ImagePreviewField
+              <ImageFileField
                 id="bride_profile_image"
                 name="bride_profile_image"
                 label="신부 프로필 이미지"
                 defaultValue={data.profile.bride_profile_image || ''}
                 previewClassName="h-[300px]"
+                hint="2MB 이하 이미지 파일"
               />
               <div className="md:col-span-2 flex justify-end">
                 <Button type="submit" size="sm">
@@ -582,11 +619,12 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
               defaultValue={data.share.description}
             />
           </div>
-          <ImagePreviewField
+          <ImageFileField
             id="share_image_url"
             name="share_image_url"
             label="공유 이미지"
             defaultValue={data.share.image_url}
+            hint="2MB 이하 이미지 파일"
           />
           <div className="flex flex-col gap-2">
             <FieldLabel htmlFor="kakao_title">카카오 타이틀</FieldLabel>
@@ -604,11 +642,12 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
               defaultValue={data.share.kakao_description || ''}
             />
           </div>
-          <ImagePreviewField
+          <ImageFileField
             id="kakao_image_url"
             name="kakao_image_url"
             label="카카오 이미지"
             defaultValue={data.share.kakao_image_url || ''}
+            hint="2MB 이하 이미지 파일"
           />
           <div className="flex flex-col gap-2 md:col-span-2">
             <FieldLabel htmlFor="kakao_button_label">카카오 버튼 라벨</FieldLabel>
@@ -631,17 +670,19 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
           공유 이미지
         </h2>
         <form action={updateShareImagesAction} className="mt-4 grid gap-4 md:grid-cols-2">
-          <ImagePreviewField
+          <ImageFileField
             id="share_og_image"
             name="share_og_image"
-            label="OG 이미지 URL"
+            label="OG 이미지"
             defaultValue={data.assets.share_og_image}
+            hint="2MB 이하 이미지 파일"
           />
-          <ImagePreviewField
+          <ImageFileField
             id="share_kakao_image"
             name="share_kakao_image"
-            label="카카오 이미지 URL"
+            label="카카오 이미지"
             defaultValue={data.assets.share_kakao_image}
+            hint="2MB 이하 이미지 파일"
           />
           <div className="md:col-span-2 flex justify-end">
             <Button type="submit" size="sm">
@@ -689,87 +730,118 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
         return (
           <SurfaceCard className="p-6">
         <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">갤러리 이미지</h2>
-        <div className="mt-4 flex flex-col gap-4">
-          <form action={updateGalleryAction} className="grid gap-4 md:grid-cols-2">
-            <input type="hidden" name="gallery_id" value={data.gallery.id} />
-            <div className="flex flex-col gap-2">
-              <FieldLabel htmlFor="gallery_title">갤러리 타이틀</FieldLabel>
-              <TextInput
-                id="gallery_title"
-                name="gallery_title"
-                defaultValue={data.gallery.title}
-              />
-            </div>
-            <div className="flex flex-col gap-2 md:col-span-2">
-              <FieldLabel htmlFor="gallery_description">설명</FieldLabel>
-              <TextArea
-                id="gallery_description"
-                name="gallery_description"
-                defaultValue={data.gallery.description || ''}
-              />
-            </div>
-            <label className="flex items-center gap-2 text-[14px]">
-              <input
-                type="checkbox"
-                name="gallery_autoplay"
-                defaultChecked={Boolean(data.gallery.autoplay)}
-              />
-              자동 재생
-            </label>
-            <div className="flex flex-col gap-2">
-              <FieldLabel htmlFor="gallery_autoplay_delay">자동 재생 간격 (ms)</FieldLabel>
-              <TextInput
-                id="gallery_autoplay_delay"
-                name="gallery_autoplay_delay"
-                defaultValue={data.gallery.autoplay_delay ?? ''}
-              />
-            </div>
-            <div className="md:col-span-2 flex justify-end">
-              <Button type="submit" size="sm">
-                갤러리 저장
-              </Button>
-            </div>
-          </form>
-
-          <form action={addGalleryImageAction} className="grid gap-4 md:grid-cols-2">
-            <input type="hidden" name="gallery_id" value={data.gallery.id} />
-            <ImagePreviewField id="image_src" name="image_src" label="이미지 URL" />
-            <div className="md:col-span-2 flex justify-end">
-              <Button type="submit" size="sm">
-                이미지 추가
-              </Button>
-            </div>
-          </form>
-          <div className="grid gap-3">
-            {data.galleryImages.map((image) => (
-              <div
-                key={image.id}
-                className="flex flex-col gap-3 rounded-[12px] border border-[var(--border-light)] bg-white/60 px-4 py-3 md:flex-row md:items-center md:justify-between"
-              >
-                <div className="flex items-center gap-3">
-                  <Image
-                    src={image.thumbnail || image.src}
-                    alt={image.alt || '갤러리 이미지'}
-                    width={64}
-                    height={64}
-                    className="h-[64px] w-[64px] rounded-[10px] object-cover"
-                    unoptimized
-                  />
-                  <div>
-                    <p className="text-[13px] font-medium text-[var(--text-primary)]">
-                      {image.alt || '이미지'}
-                    </p>
-                    <p className="text-[12px] text-[var(--text-muted)]">{image.src}</p>
-                  </div>
-                </div>
-                <form action={deleteGalleryImageAction}>
-                  <input type="hidden" name="image_id" value={image.id} />
-                  <Button type="submit" variant="danger" size="sm">
-                    삭제
-                  </Button>
-                </form>
+        <div className="mt-4 flex flex-col gap-6">
+          <div className="rounded-[12px] border border-[var(--border-light)] bg-white/70 p-4">
+            <h3 className="text-[14px] font-semibold text-[var(--text-primary)]">갤러리 설정</h3>
+            <form action={updateGalleryAction} className="mt-4 grid gap-4 md:grid-cols-2">
+              <input type="hidden" name="gallery_id" value={data.gallery.id} />
+              <div className="flex flex-col gap-2 md:col-span-2">
+                <FieldLabel htmlFor="gallery_title">갤러리 타이틀</FieldLabel>
+                <TextInput
+                  id="gallery_title"
+                  name="gallery_title"
+                  defaultValue={data.gallery.title}
+                />
               </div>
-            ))}
+              <div className="flex flex-col gap-2 md:col-span-2">
+                <FieldLabel htmlFor="gallery_description">설명</FieldLabel>
+                <TextArea
+                  id="gallery_description"
+                  name="gallery_description"
+                  defaultValue={data.gallery.description || ''}
+                />
+              </div>
+              <label className="flex items-center gap-2 text-[14px] md:col-span-2">
+                <input
+                  type="checkbox"
+                  name="gallery_autoplay"
+                  defaultChecked={Boolean(data.gallery.autoplay)}
+                />
+                자동 재생
+              </label>
+              <div className="flex flex-col gap-2 md:col-span-2">
+                <FieldLabel htmlFor="gallery_autoplay_delay">자동 재생 간격 (ms)</FieldLabel>
+                <TextInput
+                  id="gallery_autoplay_delay"
+                  name="gallery_autoplay_delay"
+                  defaultValue={data.gallery.autoplay_delay ?? ''}
+                />
+              </div>
+              <div className="md:col-span-2 flex justify-end">
+                <Button type="submit" size="sm">
+                  갤러리 저장
+                </Button>
+              </div>
+            </form>
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <div className="rounded-[12px] border border-[var(--border-light)] bg-white/70 p-4">
+              <h3 className="text-[14px] font-semibold text-[var(--text-primary)]">이미지 추가</h3>
+              <form action={addGalleryImageAction} className="mt-4 grid gap-4 md:grid-cols-2">
+                <input type="hidden" name="gallery_id" value={data.gallery.id} />
+                <ImageFileField
+                  id="image_src"
+                  name="image_src"
+                  label="이미지 파일"
+                  hint="2MB 이하 이미지 파일"
+                  required
+                />
+                <div className="md:col-span-2 flex justify-end">
+                  <Button type="submit" size="sm">
+                    이미지 추가
+                  </Button>
+                </div>
+              </form>
+            </div>
+
+            <div className="rounded-[12px] border border-[var(--border-light)] bg-white/70 p-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-[14px] font-semibold text-[var(--text-primary)]">이미지 목록</h3>
+                <span className="text-[12px] text-[var(--text-muted)]">
+                  총 {data.galleryImages.length}개
+                </span>
+              </div>
+              <div className="mt-3 divide-y divide-[var(--border-light)]">
+                {data.galleryImages.length ? (
+                  data.galleryImages.map((image) => (
+                    <div
+                      key={image.id}
+                      className="flex flex-col gap-3 py-3 md:flex-row md:items-center md:justify-between"
+                    >
+                      <div className="flex items-center gap-3">
+                        <Image
+                          src={image.thumbnail || image.src}
+                          alt={image.alt || '갤러리 이미지'}
+                          width={64}
+                          height={64}
+                          className="h-[64px] w-[64px] rounded-[10px] object-cover"
+                          unoptimized
+                        />
+                        <div>
+                          <p className="text-[13px] font-medium text-[var(--text-primary)]">
+                            {image.alt || '이미지'}
+                          </p>
+                          <p className="text-[12px] text-[var(--text-muted)]">
+                            {getImageLabel(image.src)}
+                          </p>
+                        </div>
+                      </div>
+                      <form action={deleteGalleryImageAction} className="flex justify-end">
+                        <input type="hidden" name="image_id" value={image.id} />
+                        <Button type="submit" variant="danger" size="sm">
+                          삭제
+                        </Button>
+                      </form>
+                    </div>
+                  ))
+                ) : (
+                  <div className="py-6 text-center text-[12px] text-[var(--text-muted)]">
+                    등록된 이미지가 없습니다
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </SurfaceCard>
