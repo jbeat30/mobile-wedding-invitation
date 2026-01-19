@@ -364,7 +364,13 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
           />
         );
       case 'couple':
-        return <AdminSectionCouple profile={data.profile} sectionTitles={data.sectionTitles} />;
+        return (
+          <AdminSectionCouple
+            profile={data.profile}
+            sectionTitles={data.sectionTitles}
+            profileSectionId={data.invitationId}
+          />
+        );
       case 'location':
         return <AdminSectionLocation data={data} />;
       case 'gallery':

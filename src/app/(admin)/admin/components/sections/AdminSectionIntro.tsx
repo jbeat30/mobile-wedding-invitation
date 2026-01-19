@@ -34,6 +34,7 @@ export const AdminSectionIntro = ({
             id="hero_image"
             name="hero_image"
             label="메인 이미지"
+            sectionId={assets.id}
             defaultValue={assets.hero_image}
             hint="2MB 이하 이미지 파일"
           />

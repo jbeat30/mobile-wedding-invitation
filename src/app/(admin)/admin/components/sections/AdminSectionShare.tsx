@@ -94,6 +94,7 @@ export const AdminSectionShare = ({ share, assets, sectionTitles }: AdminSection
             id="kakao_image_url"
             name="kakao_image_url"
             label="카카오 카드 이미지"
+            sectionId={share.id}
             defaultValue={share.kakao_image_url || ''}
             hint="비어있으면 OG 이미지가 대신 사용됩니다 (2MB 이하)"
           />
@@ -124,6 +125,7 @@ export const AdminSectionShare = ({ share, assets, sectionTitles }: AdminSection
             id="share_og_image"
             name="share_og_image"
             label="OG 이미지"
+            sectionId={assets.id}
             defaultValue={assets.share_og_image}
             hint="메신저/브라우저 미리보기용 (2MB 이하)"
           />

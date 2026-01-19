@@ -8,6 +8,7 @@ type AdminImageFileFieldProps = {
   id: string;
   name: string;
   label: string;
+  sectionId: string;
   defaultValue?: string | null;
   hint?: string;
   previewClassName?: string;
@@ -23,14 +24,20 @@ export const AdminImageFileField = ({
   id,
   name,
   label,
+  sectionId,
   defaultValue = '',
   hint,
   previewClassName = 'h-[360px]',
   required = false,
 }: AdminImageFileFieldProps) => {
   const [value, setValue] = useState<string>(defaultValue || '');
+  const [previewUrl, setPreviewUrl] = useState<string>(defaultValue || '');
   const [errorMessage, setErrorMessage] = useState('');
-  const showPreview = value.trim().length > 0 && !errorMessage;
+  const [uploading, setUploading] = useState(false);
+  const [uploadedMeta, setUploadedMeta] = useState<{ uuid: string; filename: string } | null>(
+    null
+  );
+  const showPreview = previewUrl.trim().length > 0 && !errorMessage;
   const maxSize = 2 * 1024 * 1024;
 
   return (
@@ -41,7 +48,7 @@ export const AdminImageFileField = ({
         type="file"
         accept="image/*"
         required={required}
-        onChange={(event) => {
+        onChange={async (event) => {
           const file = event.target.files?.[0];
           if (!file) return;
           if (!file.type.startsWith('image/')) {
@@ -52,27 +59,56 @@ export const AdminImageFileField = ({
             setErrorMessage('이미지 파일은 2MB 이하만 가능합니다');
             return;
           }
+          setUploading(true);
+          setErrorMessage('');
           const reader = new FileReader();
           reader.onload = () => {
-            const nextValue = String(reader.result || '');
-            setValue(nextValue);
-            setErrorMessage('');
+            setPreviewUrl(String(reader.result || ''));
           };
           reader.readAsDataURL(file);
+          const formData = new FormData();
+          formData.append('file', file);
+          formData.append('sectionId', sectionId);
+          try {
+            const response = await fetch('/api/admin/upload', {
+              method: 'POST',
+              body: formData,
+            });
+            if (!response.ok) {
+              throw new Error('upload failed');
+            }
+            const result = (await response.json()) as {
+              url: string;
+              uuid: string;
+              originalName: string;
+            };
+            setValue(result.url);
+            setUploadedMeta({ uuid: result.uuid, filename: result.originalName });
+          } catch (error) {
+            console.error('Image upload failed:', error);
+            setErrorMessage('업로드에 실패했습니다. 다시 시도해 주세요.');
+          } finally {
+            setUploading(false);
+          }
         }}
         className="w-full rounded-[10px] border border-[var(--border-light)] bg-white/70 px-3 py-2 text-[13px] text-[var(--text-primary)] file:mr-3 file:rounded-[8px] file:border-0 file:bg-[var(--bg-secondary)] file:px-3 file:py-1.5 file:text-[12px] file:text-[var(--text-secondary)]"
       />
       <input type="hidden" name={name} value={value} />
+      <input type="hidden" name={`${name}_uuid`} value={uploadedMeta?.uuid || ''} />
+      <input type="hidden" name={`${name}_filename`} value={uploadedMeta?.filename || ''} />
       {hint ? <p className="text-[11px] text-[var(--text-muted)]">{hint}</p> : null}
+      {uploading ? (
+        <p className="text-[11px] text-[var(--text-secondary)]">업로드 중...</p>
+      ) : null}
       {errorMessage ? (
         <p className="text-[11px] text-[var(--accent-burgundy)]">{errorMessage}</p>
       ) : null}
-      {value.trim().length > 0 ? (
+      {previewUrl.trim().length > 0 ? (
         <div className="relative overflow-hidden rounded-[12px] border border-[var(--border-light)] bg-white/60">
           {showPreview ? (
             <div className={`relative w-full ${previewClassName}`}>
               <Image
-                src={value}
+                src={previewUrl}
                 alt={`${label} 미리보기`}
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
