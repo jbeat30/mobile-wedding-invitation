@@ -233,7 +233,12 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
         setGeocodeStatus(detail ? `좌표 조회 실패: ${detail}` : '좌표 조회 실패');
         return;
       }
-      if (Number.isFinite(data.lat) && Number.isFinite(data.lng)) {
+      if (
+        typeof data.lat === 'number' &&
+        typeof data.lng === 'number' &&
+        Number.isFinite(data.lat) &&
+        Number.isFinite(data.lng)
+      ) {
         setLocationCoords({ lat: data.lat, lng: data.lng });
         if (latInputRef.current) latInputRef.current.value = String(data.lat);
         if (lngInputRef.current) lngInputRef.current.value = String(data.lng);

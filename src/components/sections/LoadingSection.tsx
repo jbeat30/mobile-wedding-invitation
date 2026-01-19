@@ -70,43 +70,27 @@ export const LoadingSection = ({
       window.scrollTo(0, 0);
     } else {
       // 로딩 완료 후 스크롤 허용
-      const previous = scrollLockStyles.current;
-      if (previous) {
-        body.style.overflow = previous.bodyOverflow;
-        html.style.overflow = previous.htmlOverflow;
-        body.style.touchAction = previous.bodyTouchAction;
-        html.style.touchAction = previous.htmlTouchAction;
-        body.style.height = previous.bodyHeight;
-        html.style.height = previous.htmlHeight;
-        scrollLockStyles.current = null;
-      } else {
-        body.style.overflow = '';
-        html.style.overflow = '';
-        body.style.touchAction = '';
-        html.style.touchAction = '';
-        body.style.height = '';
-        html.style.height = '';
-      }
+      body.style.overflow = '';
+      html.style.overflow = '';
+      body.style.touchAction = '';
+      html.style.touchAction = '';
+      body.style.height = '';
+      html.style.height = '';
+
+      // 저장된 값 초기화
+      scrollLockStyles.current = null;
     }
 
     return () => {
-      const previous = scrollLockStyles.current;
-      if (previous) {
-        body.style.overflow = previous.bodyOverflow;
-        html.style.overflow = previous.htmlOverflow;
-        body.style.touchAction = previous.bodyTouchAction;
-        html.style.touchAction = previous.htmlTouchAction;
-        body.style.height = previous.bodyHeight;
-        html.style.height = previous.htmlHeight;
-        scrollLockStyles.current = null;
-      } else {
-        body.style.overflow = '';
-        html.style.overflow = '';
-        body.style.touchAction = '';
-        html.style.touchAction = '';
-        body.style.height = '';
-        html.style.height = '';
-      }
+      // cleanup: 컴포넌트 unmount 시 스크롤 복원
+      body.style.overflow = '';
+      html.style.overflow = '';
+      body.style.touchAction = '';
+      html.style.touchAction = '';
+      body.style.height = '';
+      html.style.height = '';
+
+      scrollLockStyles.current = null;
     };
   }, [isVisible]);
 

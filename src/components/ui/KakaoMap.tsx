@@ -2,9 +2,36 @@
 
 import { useEffect, useRef, useState } from 'react';
 
+type KakaoLatLng = {
+  getLat: () => number;
+  getLng: () => number;
+};
+
+type KakaoMapInstance = {
+  setCenter: (latlng: KakaoLatLng) => void;
+  getLevel: () => number;
+  setLevel: (level: number) => void;
+};
+
+type KakaoMarker = {
+  setMap: (map: KakaoMapInstance | null) => void;
+  setPosition: (latlng: KakaoLatLng) => void;
+};
+
+type KakaoMaps = {
+  LatLng: new (lat: number, lng: number) => KakaoLatLng;
+  Map: new (container: HTMLElement, options: { center: KakaoLatLng; level: number }) => KakaoMapInstance;
+  Marker: new (options: { position: KakaoLatLng }) => KakaoMarker;
+  load: (callback: () => void) => void;
+};
+
+type KakaoNamespace = {
+  maps: KakaoMaps;
+};
+
 declare global {
   interface Window {
-    kakao?: any;
+    kakao?: KakaoNamespace;
   }
 }
 
@@ -52,8 +79,8 @@ type KakaoMapProps = {
  */
 export const KakaoMap = ({ lat, lng, level = 3, className = '' }: KakaoMapProps) => {
   const mapRef = useRef<HTMLDivElement | null>(null);
-  const mapInstanceRef = useRef<any>(null);
-  const markerRef = useRef<any>(null);
+  const mapInstanceRef = useRef<KakaoMapInstance | null>(null);
+  const markerRef = useRef<KakaoMarker | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const appKey = process.env.NEXT_PUBLIC_KAKAO_APP_KEY;
 
