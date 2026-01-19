@@ -175,9 +175,25 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
     lng: data.location.longitude,
   });
   const [geocodeStatus, setGeocodeStatus] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<
+    Array<{
+      id: string;
+      placeName: string;
+      address: string;
+      roadAddress: string;
+      latitude: number;
+      longitude: number;
+      category: string;
+    }>
+  >([]);
+  const [showSearchResults, setShowSearchResults] = useState(false);
   const addressInputRef = useRef<HTMLInputElement | null>(null);
+  const venueInputRef = useRef<HTMLInputElement | null>(null);
+  const placeNameInputRef = useRef<HTMLInputElement | null>(null);
   const latInputRef = useRef<HTMLInputElement | null>(null);
   const lngInputRef = useRef<HTMLInputElement | null>(null);
+  const searchTimeoutRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     setGalleryItems(data.galleryImages);
@@ -208,47 +224,84 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
   const groomEntries = data.accountEntries.filter((entry) => entry.group_type === 'groom');
   const brideEntries = data.accountEntries.filter((entry) => entry.group_type === 'bride');
 
-  const handleGeocode = async () => {
-    const address = addressInputRef.current?.value.trim() || '';
-    if (!address) {
-      setGeocodeStatus('주소를 먼저 입력해주세요');
+  const handleSearch = async (query: string) => {
+    if (!query.trim()) {
+      setSearchResults([]);
+      setShowSearchResults(false);
       return;
     }
-    setGeocodeStatus('좌표를 조회하고 있습니다');
+
     try {
-      const response = await fetch('/api/geocode', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ address }),
-      });
-      const data = (await response.json()) as {
-        lat?: number;
-        lng?: number;
-        error?: string;
-        status?: string;
-        message?: string;
-      };
+      const response = await fetch(`/api/kakao/search?query=${encodeURIComponent(query)}`);
       if (!response.ok) {
-        const detail = [data.status, data.message].filter(Boolean).join(' / ');
-        setGeocodeStatus(detail ? `좌표 조회 실패: ${detail}` : '좌표 조회 실패');
+        console.error('Search failed');
         return;
       }
-      if (
-        typeof data.lat === 'number' &&
-        typeof data.lng === 'number' &&
-        Number.isFinite(data.lat) &&
-        Number.isFinite(data.lng)
-      ) {
-        setLocationCoords({ lat: data.lat, lng: data.lng });
-        if (latInputRef.current) latInputRef.current.value = String(data.lat);
-        if (lngInputRef.current) lngInputRef.current.value = String(data.lng);
-        setGeocodeStatus('좌표가 업데이트되었습니다');
-      } else {
-        setGeocodeStatus('좌표 결과를 찾지 못했습니다');
-      }
-    } catch {
-      setGeocodeStatus('좌표 조회에 실패했습니다');
+      const data = (await response.json()) as {
+        results: Array<{
+          id: string;
+          placeName: string;
+          address: string;
+          roadAddress: string;
+          latitude: number;
+          longitude: number;
+          category: string;
+        }>;
+      };
+      setSearchResults(data.results);
+      setShowSearchResults(data.results.length > 0);
+    } catch (error) {
+      console.error('Search error:', error);
     }
+  };
+
+  const handleSearchInput = (value: string) => {
+    setSearchQuery(value);
+
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    searchTimeoutRef.current = window.setTimeout(() => {
+      void handleSearch(value);
+    }, 300);
+  };
+
+  const handleSelectResult = (result: (typeof searchResults)[0]) => {
+    // 장소명 설정
+    if (venueInputRef.current) {
+      venueInputRef.current.value = result.placeName;
+    }
+
+    // 주소 설정 (도로명 우선, 없으면 지번)
+    const selectedAddress = result.roadAddress || result.address;
+    if (addressInputRef.current) {
+      addressInputRef.current.value = selectedAddress;
+    }
+
+    // 지도 표시명 설정
+    if (placeNameInputRef.current) {
+      placeNameInputRef.current.value = result.placeName;
+    }
+
+    // 좌표 설정
+    setLocationCoords({
+      lat: result.latitude,
+      lng: result.longitude,
+    });
+
+    if (latInputRef.current) {
+      latInputRef.current.value = String(result.latitude);
+    }
+
+    if (lngInputRef.current) {
+      lngInputRef.current.value = String(result.longitude);
+    }
+
+    // 검색 결과 닫기
+    setSearchQuery('');
+    setShowSearchResults(false);
+    setGeocodeStatus('장소가 선택되었습니다');
   };
 
   const renderTabContent = () => {
@@ -534,6 +587,46 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
               <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">
                 예식 정보
               </h2>
+              {/* 장소 검색 */}
+              <div className="relative mt-4">
+                <div className="flex flex-col gap-2">
+                  <FieldLabel htmlFor="place_search">장소 검색</FieldLabel>
+                  <TextInput
+                    id="place_search"
+                    value={searchQuery}
+                    onChange={(e) => handleSearchInput(e.target.value)}
+                    placeholder="예식장 이름이나 주소를 검색하세요 (예: 채림 웨딩홀)"
+                    autoComplete="off"
+                  />
+                </div>
+
+                {/* 검색 결과 드롭다운 */}
+                {showSearchResults && searchResults.length > 0 && (
+                  <div className="absolute z-10 mt-1 max-h-[300px] w-full overflow-y-auto rounded-[12px] border border-[var(--border-light)] bg-white shadow-[var(--shadow-card)]">
+                    {searchResults.map((result) => (
+                      <button
+                        key={result.id}
+                        type="button"
+                        onClick={() => handleSelectResult(result)}
+                        className="w-full border-b border-[var(--border-light)] px-4 py-3 text-left transition last:border-b-0 hover:bg-[var(--bg-secondary)]"
+                      >
+                        <div className="text-[14px] font-medium text-[var(--text-primary)]">
+                          {result.placeName}
+                        </div>
+                        <div className="mt-1 text-[12px] text-[var(--text-muted)]">
+                          {result.roadAddress || result.address}
+                        </div>
+                        {result.category && (
+                          <div className="mt-1 text-[11px] text-[var(--text-tertiary)]">
+                            {result.category}
+                          </div>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               <form action={updateLocationAction} className="mt-4 grid gap-4 md:grid-cols-2">
                 <div className="flex flex-col gap-2 md:col-span-2">
                   <FieldLabel htmlFor="wedding_section_title">예식 섹션 타이틀</FieldLabel>
@@ -556,6 +649,7 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
                   <TextInput
                     id="event_venue"
                     name="event_venue"
+                    ref={venueInputRef}
                     defaultValue={data.event.venue}
                   />
                 </div>
@@ -573,6 +667,7 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
                   <TextInput
                     id="location_place_name"
                     name="location_place_name"
+                    ref={placeNameInputRef}
                     defaultValue={data.location.place_name}
                   />
                 </div>
@@ -650,20 +745,11 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
                     }}
                   />
                 </div>
-                <div className="flex items-center justify-between md:col-span-2">
-                  <button
-                    type="button"
-                    onClick={handleGeocode}
-                    className="text-[12px] font-medium text-[var(--accent-burgundy)] underline-offset-4 hover:underline"
-                  >
-                    주소로 좌표 조회
-                  </button>
-                  {geocodeStatus ? (
-                    <span className="text-[12px] text-[var(--text-muted)]">
-                      {geocodeStatus}
-                    </span>
-                  ) : null}
-                </div>
+                {geocodeStatus && (
+                  <div className="md:col-span-2">
+                    <p className="text-[12px] text-[var(--text-muted)]">{geocodeStatus}</p>
+                  </div>
+                )}
                 <div className="md:col-span-2 flex justify-end">
                   <Button type="submit" size="sm">
                     좌표 저장
