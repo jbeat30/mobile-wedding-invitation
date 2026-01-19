@@ -34,21 +34,42 @@ export const LocationSection = ({ event, location, title }: LocationSectionProps
     }
   }, [event.address, showToast]);
 
+  const encodeBase64 = useCallback((value: string) => {
+    try {
+      return window.btoa(unescape(encodeURIComponent(value)));
+    } catch {
+      return '';
+    }
+  }, []);
+
   const openNavigation = useCallback(
     (app: 'naver' | 'kakao' | 'tmap') => {
       const { lat, lng } = location.coordinates;
       const name = encodeURIComponent(location.placeName);
       const address = encodeURIComponent(event.address);
 
+      if (app === 'tmap') {
+        const appUrl = `tmap://route?goalname=${name}&goalx=${lng}&goaly=${lat}&reqCoordType=WGS84GEO&resCoordType=WGS84GEO`;
+        const tmapPayload = `type=2&poiName=${location.placeName}&centerX=${lng}&centerY=${lat}&addr=${event.address}`;
+        const tmapContents = encodeBase64(tmapPayload);
+        const webUrl = tmapContents
+          ? `https://poi.tmobiweb.com/app/share/position?contents=${tmapContents}`
+          : `https://map.tmap.co.kr/search?searchKeyword=${address}`;
+        window.location.href = appUrl;
+        window.setTimeout(() => {
+          window.location.href = webUrl;
+        }, 1200);
+        return;
+      }
+
       const urls = {
         naver: `https://map.naver.com/v5/search/${address}`,
-        kakao: `https://map.kakao.com/link/map/${name},${lat},${lng}`,
-        tmap: `https://tmap.life/route?goalname=${name}&goalx=${lng}&goaly=${lat}`,
+        kakao: `https://map.kakao.com/link/to/${name},${lat},${lng}`,
       };
 
       window.location.href = urls[app];
     },
-    [location.coordinates, location.placeName, event.address]
+    [location.coordinates, location.placeName, event.address, encodeBase64]
   );
 
   return (

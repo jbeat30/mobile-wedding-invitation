@@ -2,42 +2,14 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-type KakaoLatLng = {
-  getLat: () => number;
-  getLng: () => number;
-};
-
-type KakaoMapInstance = {
-  setCenter: (latlng: KakaoLatLng) => void;
-  getLevel: () => number;
-  setLevel: (level: number) => void;
-};
-
-type KakaoMarker = {
-  setMap: (map: KakaoMapInstance | null) => void;
-  setPosition: (latlng: KakaoLatLng) => void;
-};
-
-type KakaoMaps = {
-  LatLng: new (lat: number, lng: number) => KakaoLatLng;
-  Map: new (container: HTMLElement, options: { center: KakaoLatLng; level: number }) => KakaoMapInstance;
-  Marker: new (options: { position: KakaoLatLng }) => KakaoMarker;
-  load: (callback: () => void) => void;
-};
-
-type KakaoNamespace = {
-  maps: KakaoMaps;
-};
-
-declare global {
-  interface Window {
-    kakao?: KakaoNamespace;
-  }
-}
-
 let kakaoMapLoader: Promise<void> | null = null;
 
-const loadKakaoMap = (appKey: string) => {
+/**
+ * 카카오 지도 SDK 로드
+ * @param appKey string
+ * @returns Promise<void>
+ */
+export const loadKakaoMap = (appKey: string) => {
   if (typeof window === 'undefined') {
     return Promise.resolve();
   }
@@ -49,7 +21,7 @@ const loadKakaoMap = (appKey: string) => {
   }
   kakaoMapLoader = new Promise((resolve, reject) => {
     const script = document.createElement('script');
-    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${appKey}&autoload=false`;
+    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${appKey}&autoload=false&libraries=services`;
     script.async = true;
     script.dataset.kakaoMap = 'true';
     script.onload = () => {
@@ -101,8 +73,9 @@ export const KakaoMap = ({ lat, lng, level = 3, className = '' }: KakaoMapProps)
             center,
             level,
           });
-          markerRef.current = new window.kakao.maps.Marker({ position: center });
-          markerRef.current.setMap(mapInstanceRef.current);
+          const marker = new window.kakao.maps.Marker({ position: center });
+          marker.setMap(mapInstanceRef.current);
+          markerRef.current = marker;
           return;
         }
         mapInstanceRef.current.setCenter(center);

@@ -93,8 +93,6 @@ export const updateLocationAction = async (formData: FormData) => {
     address: eventAddress,
     latitude: toNumber(formData.get('location_latitude')),
     longitude: toNumber(formData.get('location_longitude')),
-    notices: parseLines(String(formData.get('location_notices') || '')),
-    section_title: String(formData.get('location_section_title') || ''),
   };
 
   await supabase.from('invitation_location').update(payload).eq('invitation_id', id);
@@ -118,18 +116,44 @@ export const updateLocationAction = async (formData: FormData) => {
 };
 
 /**
- * 예식 섹션 타이틀 업데이트
+ * 오시는 길 섹션 타이틀 업데이트
  * @param formData FormData
  * @returns Promise<void>
  */
-export const updateWeddingSectionTitleAction = async (formData: FormData) => {
+export const updateLocationSectionTitleAction = async (formData: FormData) => {
   await requireAdminSession();
   const supabase = createSupabaseAdmin();
   const { id } = await getOrCreateInvitation();
 
   await supabase
+    .from('invitation_location')
+    .update({ section_title: String(formData.get('location_section_title') || '') })
+    .eq('invitation_id', id);
+
+  revalidateAdmin();
+};
+
+/**
+ * 예식 정보 섹션 업데이트
+ * @param formData FormData
+ * @returns Promise<void>
+ */
+export const updateWeddingInfoSectionAction = async (formData: FormData) => {
+  await requireAdminSession();
+  const supabase = createSupabaseAdmin();
+  const { id } = await getOrCreateInvitation();
+
+  const sectionTitle = String(formData.get('wedding_section_title') || '');
+  const notices = parseLines(String(formData.get('location_notices') || ''));
+
+  await supabase
     .from('invitation_event')
-    .update({ section_title: String(formData.get('wedding_section_title') || '') })
+    .update({ section_title: sectionTitle })
+    .eq('invitation_id', id);
+
+  await supabase
+    .from('invitation_location')
+    .update({ notices })
     .eq('invitation_id', id);
   revalidateAdmin();
 };
