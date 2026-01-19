@@ -71,58 +71,34 @@ export type InvitationMeta = {
   timeZone: string;
 };
 
-export type InvitationIntroTheme = {
-  darkBackground: string;
-  lightBackground: string;
-  textColor: string;
-  accentColor: string;
-};
-
-export type InvitationIntro = {
-  quote: string;
-  subQuote?: string;
-  theme: InvitationIntroTheme;
-};
-
 export type InvitationPerson = {
-  fullName: string;
+  firstName: string;
   lastName: string;
   bio?: string;
   profileImage?: string;
-  role?: string;
 };
 
-export type InvitationFamilyMember = {
-  role: 'father' | 'mother' | 'guardian' | 'other';
-  name: string;
-  prefix?: string;
-  suffix?: string;
-};
-
-export type InvitationFamilyLine = {
-  subject: 'groom' | 'bride';
-  relationshipLabel: string;
-  members: InvitationFamilyMember[];
+export type InvitationParents = {
+  groom: {
+    father?: string;
+    mother?: string;
+  };
+  bride: {
+    father?: string;
+    mother?: string;
+  };
 };
 
 export type InvitationCouple = {
   groom: InvitationPerson;
   bride: InvitationPerson;
-  familyLines?: InvitationFamilyLine[];
-};
-
-export type InvitationGuidance = {
-  directions: string[];
-  notices: string[];
+  parents: InvitationParents;
 };
 
 export type InvitationEvent = {
-  title: string;
   dateTime: string;
-  dateText: string;
   venue: string;
   address: string;
-  guidance: InvitationGuidance;
 };
 
 export type GuestbookEntry = {
@@ -171,6 +147,7 @@ export type InvitationAccount = {
   bankName: string;
   accountNumber: string;
   holder: string;
+  label?: string;
 };
 
 export type InvitationAccounts = {
@@ -221,22 +198,38 @@ export type InvitationGreeting = {
   poeticNote?: string;
 };
 
+export type InvitationSectionTitles = {
+  greeting: string;
+  couple: string;
+  wedding: string;
+  location: string;
+  guestbook: string;
+  rsvp: string;
+  share: string;
+};
+
+export type InvitationRsvpResponse = {
+  id: string;
+  name: string;
+  attendance: string;
+  companions?: string;
+  meal?: string;
+  notes?: string;
+  submittedAt: string;
+};
+
+export type InvitationBgm = {
+  enabled: boolean;
+  audioUrl?: string;
+  autoPlay: boolean;
+  loop: boolean;
+};
+
 export type InvitationLocation = {
   placeName: string;
   coordinates: {
     lat: number;
     lng: number;
-  };
-  navigation?: {
-    naver?: {
-      web?: string;
-    };
-    kakao?: {
-      web?: string;
-    };
-    tmap?: {
-      web?: string;
-    };
   };
   transportation: {
     subway?: string[];
@@ -248,24 +241,26 @@ export type InvitationLocation = {
 };
 
 export type InvitationClosing = {
+  title: string;
   message: string;
-  signature?: string;
   copyright?: string;
 };
 
 export type InvitationContent = {
   loading: InvitationLoading;
   event: InvitationEvent;
-  intro: InvitationIntro;
   greeting: InvitationGreeting;
   couple: InvitationCouple;
   location: InvitationLocation;
   gallery: InvitationGallery;
   share: InvitationShare;
   rsvp: InvitationRsvp;
+  rsvpResponses: InvitationRsvpResponse[];
   guestbook: InvitationGuestbook;
   accounts: InvitationAccounts;
+  bgm: InvitationBgm;
   closing: InvitationClosing;
+  sectionTitles: InvitationSectionTitles;
 };
 
 export type InvitationMock = {
@@ -356,25 +351,9 @@ export const invitationMock: InvitationMock = {
       additionalDuration: 1000,
     },
     event: {
-      title: '결혼합니다',
       dateTime: '2026-05-16T15:00:00+09:00',
-      dateText: '2026년 5월 16일 (토) 오후 3시',
       venue: '채림 웨딩홀',
       address: '경기도 부천시 원미구 심곡동 173-1',
-      guidance: {
-        directions: [],
-        notices: [],
-      },
-    },
-    intro: {
-      quote: '서로의 오늘이 되어, 함께 걸어가려 합니다.',
-      subQuote: '소중한 분들을 모시고 작은 약속을 나누고자 합니다.',
-      theme: {
-        darkBackground: '#2f2722',
-        lightBackground: '#f7f2ec',
-        textColor: '#4d4036',
-        accentColor: '#c19a7b',
-      },
     },
     greeting: {
       message: [
@@ -388,55 +367,33 @@ export const invitationMock: InvitationMock = {
     },
     couple: {
       groom: {
-        fullName: '강신랑',
-        lastName: '철수',
+        firstName: '신랑',
+        lastName: '강',
         bio: '조용한 다정함으로 하루를 따뜻하게 만드는 사람입니다.',
         profileImage: '/mock/groom-front-512.png',
-        role: '신랑',
       },
       bride: {
-        fullName: '장신부',
-        lastName: '영희',
+        firstName: '신부',
+        lastName: '장',
         bio: '웃음을 나누는 순간이 가장 소중한 사람입니다.',
         profileImage: '/mock/bride-front-512.png',
-        role: '신부',
       },
-      familyLines: [
-        {
-          subject: 'groom',
-          relationshipLabel: '아들',
-          members: [
-            {
-              role: 'father',
-              name: '강아버지',
-            },
-            {
-              role: 'mother',
-              name: '송어머니',
-            },
-          ],
+      parents: {
+        groom: {
+          father: '강아버지',
+          mother: '송어머니',
         },
-        {
-          subject: 'bride',
-          relationshipLabel: '딸',
-          members: [
-            {
-              role: 'father',
-              name: '장아버지',
-            },
-            {
-              role: 'mother',
-              name: '이어머니',
-            },
-          ],
+        bride: {
+          father: '장아버지',
+          mother: '이어머니',
         },
-      ],
+      },
     },
     location: {
       placeName: '채림웨딩홀',
       coordinates: {
-        lat: 37.4843,
-        lng: 126.7832,
+        lat: 37.48466092361281,
+        lng: 126.78204185207186,
       },
       transportation: {
         subway: ['지하철 1호선 부천역 3번, 4번, 7번 출구'],
@@ -495,7 +452,8 @@ export const invitationMock: InvitationMock = {
           height: 600,
         },
       ],
-      autoplay: false,
+      autoplay: true,
+      autoplayDelay: 3000,
     },
     share: {
       title: '강신랑 · 장신부 결혼식에 초대합니다',
@@ -538,6 +496,26 @@ export const invitationMock: InvitationMock = {
         notice: '동의하지 않을 경우 참석 여부 접수가 제한됩니다.',
       },
     },
+    rsvpResponses: [
+      {
+        id: 'rsvp-1',
+        name: '민지',
+        attendance: '참석',
+        companions: '2명',
+        meal: '식사함',
+        notes: '축하드립니다!',
+        submittedAt: '2026-05-01T09:20:00+09:00',
+      },
+      {
+        id: 'rsvp-2',
+        name: '현우',
+        attendance: '불참',
+        companions: '0명',
+        meal: '식사하지 않음',
+        notes: '멀리서 축하할게요.',
+        submittedAt: '2026-05-02T14:15:00+09:00',
+      },
+    ],
     guestbook: {
       privacyNotice: '개인정보는 예식 이후 최대 12개월 보관 후 삭제됩니다.',
       retentionText: '축하 메시지는 예식 당일 함께 공유됩니다.',
@@ -569,22 +547,52 @@ export const invitationMock: InvitationMock = {
       description: '축하의 마음만 전해주셔도 감사한 하루입니다.',
       groom: [
         {
+          label: '신랑',
           bankName: '국민은행',
           accountNumber: '123-456-789012',
           holder: '강신랑',
         },
+        {
+          label: '아버지',
+          bankName: '신한은행',
+          accountNumber: '123-456-000000',
+          holder: '강버지',
+        },
       ],
       bride: [
         {
+          label: '신부',
           bankName: '신한은행',
           accountNumber: '110-234-567890',
           holder: '장신부',
         },
+        {
+          label: '어머니',
+          bankName: '하나은행',
+          accountNumber: '110-000-000000',
+          holder: '한머니',
+        },
       ],
     },
+    bgm: {
+      enabled: true,
+      audioUrl: '/mock/bgm-sample.mp3',
+      autoPlay: true,
+      loop: true,
+    },
     closing: {
+      title: 'THANK YOU',
       message: '소중한 분들과 함께하는 이 자리, 오래 기억하겠습니다.',
       copyright: '© 2026. All rights reserved.',
+    },
+    sectionTitles: {
+      greeting: '초대합니다',
+      couple: '두 사람을 소개합니다',
+      wedding: '결혼합니다',
+      location: '오시는 길',
+      guestbook: '축하 메시지',
+      rsvp: '참석 여부',
+      share: '청첩장 공유하기',
     },
   },
 };

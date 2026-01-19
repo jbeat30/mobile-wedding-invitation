@@ -1,25 +1,25 @@
-import type {
-  InvitationCouple,
-  InvitationFamilyMember,
-  InvitationGreeting,
-} from '@/mock/invitation.mock';
+import type { InvitationCouple, InvitationGreeting } from '@/mock/invitation.mock';
 import { HeartLineDrawing } from '@/components/ui/HeartLineDrawing';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 
 type GreetingSectionProps = {
   greeting: InvitationGreeting;
   couple: InvitationCouple;
+  title: string;
 };
 
 /**
  * 인사말 섹션
  */
-export const GreetingSection = ({ greeting, couple }: GreetingSectionProps) => {
-  const formatMembers = (members: InvitationFamilyMember[]) =>
-    members.map((member) => member.name).join(' · ');
+export const GreetingSection = ({ greeting, couple, title }: GreetingSectionProps) => {
+  const getParentLines = (parents: { father?: string; mother?: string }) =>
+    [
+      parents.father ? `아버지 ${parents.father}` : null,
+      parents.mother ? `어머니 ${parents.mother}` : null,
+    ].filter(Boolean);
 
-  const groomFamily = couple.familyLines?.find((line) => line.subject === 'groom');
-  const brideFamily = couple.familyLines?.find((line) => line.subject === 'bride');
+  const groomParentsLines = getParentLines(couple.parents.groom);
+  const brideParentsLines = getParentLines(couple.parents.bride);
 
   return (
     <section id="greeting" className="bg-[var(--bg-primary)] py-16">
@@ -28,7 +28,7 @@ export const GreetingSection = ({ greeting, couple }: GreetingSectionProps) => {
         <div className="text-center" data-animate="fade-up">
           <SectionHeader
             kicker="INVITATION"
-            title="초대합니다"
+            title={title}
             kickerClassName="font-label text-[13px] text-[var(--accent-rose)]"
             titleClassName="mt-2 text-[24px] font-medium text-[var(--text-primary)]"
           />
@@ -67,28 +67,38 @@ export const GreetingSection = ({ greeting, couple }: GreetingSectionProps) => {
         </div>
 
         {/* 부모님 성함 */}
-        <div className="flex gap-6 text-center justify-center" data-animate="fade-up">
-          {groomFamily && (
-            <div className="flex flex-col gap-1.5">
-              <p className="text-[13px] text-[var(--text-muted)]">
-                {formatMembers(groomFamily.members)}의 {groomFamily.relationshipLabel}
-              </p>
-              <p className="text-[20px] font-medium text-[var(--text-primary)]">
-                {couple.groom.fullName}
-              </p>
+        <div className="flex gap-12 justify-center text-center" data-animate="fade-up">
+          {groomParentsLines.length ? (
+            <div className="flex flex-col justify-between gap-1.5">
+              <div className="flex flex-col gap-1 text-[13px] text-[var(--text-muted)]">
+                {groomParentsLines.map((line) => (
+                  <p key={line}>{line}</p>
+                ))}
+              </div>
+              <div className={'flex items-center gap-3'}>
+                <p className="text-[13px] text-[var(--text-muted)]">아들</p>
+                <p className="text-[20px] font-medium text-[var(--text-primary)]">
+                  {`${couple.groom.lastName}${couple.groom.firstName}`}
+                </p>
+              </div>
             </div>
-          )}
+          ) : null}
 
-          {brideFamily && (
-            <div className="flex flex-col gap-1.5">
-              <p className="text-[13px] text-[var(--text-muted)]">
-                {formatMembers(brideFamily.members)}의 {brideFamily.relationshipLabel}
-              </p>
-              <p className="text-[20px] font-medium text-[var(--text-primary)]">
-                {couple.bride.fullName}
-              </p>
+          {brideParentsLines.length ? (
+            <div className="flex flex-col justify-between gap-1.5">
+              <div className="flex flex-col gap-1 text-[13px] text-[var(--text-muted)]">
+                {brideParentsLines.map((line) => (
+                  <p key={line}>{line}</p>
+                ))}
+              </div>
+              <div className={'flex items-center gap-3'}>
+                <p className="text-[13px] text-[var(--text-muted)]">딸</p>
+                <p className="text-[20px] font-medium text-[var(--text-primary)]">
+                  {`${couple.bride.lastName}${couple.bride.firstName}`}
+                </p>
+              </div>
             </div>
-          )}
+          ) : null}
         </div>
       </div>
     </section>

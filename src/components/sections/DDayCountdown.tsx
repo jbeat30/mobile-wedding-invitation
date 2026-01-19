@@ -100,7 +100,7 @@ export const DDayCountdown = ({ weddingDateTime, couple }: DDayCountdownProps) =
       )}
 
       <div className="flex items-center justify-center text-[0.875em] leading-snug">
-        <span>{couple.groom.fullName}</span>
+        <span>{`${couple.groom.firstName}`}</span>
         <span className="mx-1">
           <svg
             width="12"
@@ -115,7 +115,7 @@ export const DDayCountdown = ({ weddingDateTime, couple }: DDayCountdownProps) =
             ></path>
           </svg>
         </span>
-        <span>{couple.bride.fullName}</span>
+        <span>{`${couple.bride.firstName}`}</span>
         {parts?.isPast ? (
           <span className="ml-1">오늘 결혼해요</span>
         ) : (

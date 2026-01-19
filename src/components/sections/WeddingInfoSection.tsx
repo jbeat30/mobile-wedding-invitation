@@ -6,14 +6,27 @@ import { SectionHeader } from '@/components/ui/SectionHeader';
 type WeddingInfoSectionProps = {
   event: InvitationEvent;
   couple: InvitationCouple;
+  title: string;
 };
 
 /**
  * 예식 일시 섹션
  */
-export const WeddingInfoSection = ({ event, couple }: WeddingInfoSectionProps) => {
+export const WeddingInfoSection = ({ event, couple, title }: WeddingInfoSectionProps) => {
   const weddingDate = new Date(event.dateTime);
   const highlightDates = Number.isNaN(weddingDate.getTime()) ? [] : [weddingDate.getDate()];
+  const formattedDateTime = Number.isNaN(weddingDate.getTime())
+    ? event.dateTime
+    : `${new Intl.DateTimeFormat('ko-KR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        weekday: 'short',
+      }).format(weddingDate)} ${new Intl.DateTimeFormat('ko-KR', {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true,
+      }).format(weddingDate)}`;
 
   return (
     <section id="wedding-info" className="bg-[var(--bg-primary)] py-16">
@@ -22,7 +35,7 @@ export const WeddingInfoSection = ({ event, couple }: WeddingInfoSectionProps) =
         <div className="text-center" data-animate="fade-up">
           <SectionHeader
             kicker="WEDDING DAY"
-            title={event.title}
+            title={title}
             kickerClassName="font-label text-[13px] text-[var(--accent-rose)]"
             titleClassName="mt-2 text-[24px] font-medium text-[var(--text-primary)]"
           />
@@ -31,7 +44,7 @@ export const WeddingInfoSection = ({ event, couple }: WeddingInfoSectionProps) =
         {/* 날짜/시간 */}
         <div className="text-center" data-animate="fade-up">
           <p className="text-[18px] leading-relaxed text-[var(--text-secondary)]">
-            {event.dateText}
+            {formattedDateTime}
           </p>
         </div>
 

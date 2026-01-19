@@ -5,11 +5,14 @@ import Image from 'next/image';
 import { ScrollIndicator } from '@/components/ui/ScrollIndicator';
 import { BgmToggle } from '@/components/sections/BgmToggle';
 
-type LoadingSectionProps = {
+export type LoadingSectionProps = {
   message: string;
   imageSrc: string;
   isVisible: boolean;
   isHintVisible: boolean;
+  bgmEnabled: boolean;
+  bgmDisabled: boolean;
+  onBgmToggle: () => void;
 };
 
 // 로딩 섹션 - 초기 viewport 크기 고정, 주소창/네비바 사라진 공간은 다음 섹션 노출
@@ -18,6 +21,9 @@ export const LoadingSection = ({
   imageSrc,
   isVisible,
   isHintVisible,
+  bgmEnabled,
+  bgmDisabled,
+  onBgmToggle,
 }: LoadingSectionProps) => {
   const [showHint, setShowHint] = useState(false);
   const initialHeightRef = useRef<number>(0);
@@ -38,9 +44,7 @@ export const LoadingSection = ({
   }, []);
 
   useEffect(() => {
-    if (isHintVisible || !isVisible) {
-      setShowHint(true);
-    }
+    setShowHint(!isVisible && isHintVisible);
   }, [isHintVisible, isVisible]);
 
   // 스크롤 제어
@@ -70,43 +74,27 @@ export const LoadingSection = ({
       window.scrollTo(0, 0);
     } else {
       // 로딩 완료 후 스크롤 허용
-      const previous = scrollLockStyles.current;
-      if (previous) {
-        body.style.overflow = previous.bodyOverflow;
-        html.style.overflow = previous.htmlOverflow;
-        body.style.touchAction = previous.bodyTouchAction;
-        html.style.touchAction = previous.htmlTouchAction;
-        body.style.height = previous.bodyHeight;
-        html.style.height = previous.htmlHeight;
-        scrollLockStyles.current = null;
-      } else {
-        body.style.overflow = '';
-        html.style.overflow = '';
-        body.style.touchAction = '';
-        html.style.touchAction = '';
-        body.style.height = '';
-        html.style.height = '';
-      }
+      body.style.overflow = '';
+      html.style.overflow = '';
+      body.style.touchAction = '';
+      html.style.touchAction = '';
+      body.style.height = '';
+      html.style.height = '';
+
+      // 저장된 값 초기화
+      scrollLockStyles.current = null;
     }
 
     return () => {
-      const previous = scrollLockStyles.current;
-      if (previous) {
-        body.style.overflow = previous.bodyOverflow;
-        html.style.overflow = previous.htmlOverflow;
-        body.style.touchAction = previous.bodyTouchAction;
-        html.style.touchAction = previous.htmlTouchAction;
-        body.style.height = previous.bodyHeight;
-        html.style.height = previous.htmlHeight;
-        scrollLockStyles.current = null;
-      } else {
-        body.style.overflow = '';
-        html.style.overflow = '';
-        body.style.touchAction = '';
-        html.style.touchAction = '';
-        body.style.height = '';
-        html.style.height = '';
-      }
+      // cleanup: 컴포넌트 unmount 시 스크롤 복원
+      body.style.overflow = '';
+      html.style.overflow = '';
+      body.style.touchAction = '';
+      html.style.touchAction = '';
+      body.style.height = '';
+      html.style.height = '';
+
+      scrollLockStyles.current = null;
     };
   }, [isVisible]);
 
@@ -181,14 +169,8 @@ export const LoadingSection = ({
         </div>
 
         {/* BGM 토글 */}
-        <div
-          className={`absolute right-8 top-8 z-[70] transition duration-500 ease-out ${
-            showHint
-              ? 'translate-y-0 opacity-100 pointer-events-auto'
-              : 'translate-y-2.5 opacity-0 pointer-events-none'
-          }`}
-        >
-          <BgmToggle />
+        <div className="absolute right-8 top-8 z-[70] translate-y-0 opacity-100 pointer-events-auto transition duration-500 ease-out">
+          <BgmToggle enabled={bgmEnabled} disabled={bgmDisabled} onToggle={onBgmToggle} />
         </div>
 
         {/* 스크롤 인디케이터 */}

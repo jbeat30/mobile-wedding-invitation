@@ -3,18 +3,20 @@
 import { useState, useCallback } from 'react';
 import type { InvitationEvent, InvitationLocation } from '@/mock/invitation.mock';
 import { SectionHeader } from '@/components/ui/SectionHeader';
+import { KakaoMap } from '@/components/ui/KakaoMap';
 import { Toast } from '@/components/ui/Toast';
 import { copyText } from '@/utils/clipboard';
 
 type LocationSectionProps = {
   event: InvitationEvent;
   location: InvitationLocation;
+  title: string;
 };
 
 /**
  * 오시는 길 섹션
  */
-export const LocationSection = ({ event, location }: LocationSectionProps) => {
+export const LocationSection = ({ event, location, title }: LocationSectionProps) => {
   const [isTransportOpen, setIsTransportOpen] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
@@ -32,21 +34,43 @@ export const LocationSection = ({ event, location }: LocationSectionProps) => {
     }
   }, [event.address, showToast]);
 
-  const openNavigation = useCallback((app: 'naver' | 'kakao' | 'tmap') => {
-    const { lat, lng } = location.coordinates;
-    const name = encodeURIComponent(location.placeName);
-    const address = encodeURIComponent(event.address);
+  const encodeBase64 = useCallback((value: string) => {
+    try {
+      return window.btoa(unescape(encodeURIComponent(value)));
+    } catch {
+      return '';
+    }
+  }, []);
 
-    const urls = {
-      naver: `https://map.naver.com/v5/search/${address}`,
-      kakao: `https://map.kakao.com/link/map/${name},${lat},${lng}`,
-      tmap: `https://tmap.life/route?goalname=${name}&goalx=${lng}&goaly=${lat}`,
-    };
+  const openNavigation = useCallback(
+    (app: 'naver' | 'kakao' | 'tmap') => {
+      const { lat, lng } = location.coordinates;
+      const name = encodeURIComponent(location.placeName);
+      const address = encodeURIComponent(event.address);
 
-    const override = location.navigation?.[app]?.web;
-    const targetUrl = override || urls[app];
-    window.location.href = targetUrl;
-  }, [location.coordinates, location.placeName, location.navigation, event.address]);
+      if (app === 'tmap') {
+        const appUrl = `tmap://route?goalname=${name}&goalx=${lng}&goaly=${lat}&reqCoordType=WGS84GEO&resCoordType=WGS84GEO`;
+        const tmapPayload = `type=2&poiName=${location.placeName}&centerX=${lng}&centerY=${lat}&addr=${event.address}`;
+        const tmapContents = encodeBase64(tmapPayload);
+        const webUrl = tmapContents
+          ? `https://poi.tmobiweb.com/app/share/position?contents=${tmapContents}`
+          : `https://map.tmap.co.kr/search?searchKeyword=${address}`;
+        window.location.href = appUrl;
+        window.setTimeout(() => {
+          window.location.href = webUrl;
+        }, 1200);
+        return;
+      }
+
+      const urls = {
+        naver: `https://map.naver.com/v5/search/${address}`,
+        kakao: `https://map.kakao.com/link/to/${name},${lat},${lng}`,
+      };
+
+      window.location.href = urls[app];
+    },
+    [location.coordinates, location.placeName, event.address, encodeBase64]
+  );
 
   return (
     <section id="location" className="bg-[var(--bg-primary)] py-16">
@@ -55,26 +79,19 @@ export const LocationSection = ({ event, location }: LocationSectionProps) => {
         <div className="text-center" data-animate="fade-up">
           <SectionHeader
             kicker="LOCATION"
-            title="오시는 길"
+            title={title}
             kickerClassName="font-label text-[12px] text-[var(--accent-rose)]"
             titleClassName="mt-2 text-[24px] font-medium text-[var(--text-primary)]"
           />
         </div>
 
-        {/* 지도 플레이스홀더 */}
+        {/* 지도 */}
         <div
           className="overflow-hidden rounded-[var(--radius-md)] border border-[var(--card-border)] shadow-[var(--shadow-soft)]"
           data-animate="scale"
         >
-          <div className="relative h-[220px] bg-gradient-to-br from-[var(--bg-secondary)] to-[var(--bg-tertiary)]">
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center">
-                <div className="text-[36px]">📍</div>
-                <p className="mt-2 text-[13px] text-[var(--text-muted)]">
-                  지도 영역
-                </p>
-              </div>
-            </div>
+          <div className="relative h-[220px]">
+            <KakaoMap lat={location.coordinates.lat} lng={location.coordinates.lng} />
           </div>
         </div>
 

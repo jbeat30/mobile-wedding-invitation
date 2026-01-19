@@ -16,12 +16,13 @@ import { hasRequiredFields, normalizeCompanions } from '@/utils/rsvp';
 type RSVPSectionProps = {
   rsvp: InvitationRsvp;
   storageKey: string;
+  title: string;
 };
 
 /**
  * RSVP (참석 여부) 섹션
  */
-export const RSVPSection = ({ rsvp, storageKey }: RSVPSectionProps) => {
+export const RSVPSection = ({ rsvp, storageKey, title }: RSVPSectionProps) => {
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [consent, setConsent] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -32,17 +33,36 @@ export const RSVPSection = ({ rsvp, storageKey }: RSVPSectionProps) => {
   const isNotAttending = attendanceValue === '불참';
 
   useEffect(() => {
-    if (!rsvp.fields.some((field) => field.key === 'companions')) return;
-
     if (isNotAttending) {
-      setFormData((prev) => ({ ...prev, companions: '0명' }));
+      const updates: Record<string, string> = {};
+
+      if (rsvp.fields.some((field) => field.key === 'companions')) {
+        updates.companions = '0명';
+      }
+
+      if (rsvp.fields.some((field) => field.key === 'meal')) {
+        updates.meal = '식사하지 않음';
+      }
+
+      setFormData((prev) => ({ ...prev, ...updates }));
       return;
     }
 
+    // 참석으로 변경 시 자동 설정된 값 초기화
+    const resetUpdates: Record<string, string> = {};
+
     if (formData.companions === '0명') {
-      setFormData((prev) => ({ ...prev, companions: '' }));
+      resetUpdates.companions = '';
     }
-  }, [isNotAttending, rsvp.fields, formData.companions]);
+
+    if (formData.meal === '식사하지 않음') {
+      resetUpdates.meal = '';
+    }
+
+    if (Object.keys(resetUpdates).length > 0) {
+      setFormData((prev) => ({ ...prev, ...resetUpdates }));
+    }
+  }, [isNotAttending, rsvp.fields, formData.companions, formData.meal]);
 
   const requiredFieldKeys = useMemo(
     () => rsvp.fields.filter((field) => field.required).map((field) => field.key),
@@ -86,7 +106,7 @@ export const RSVPSection = ({ rsvp, storageKey }: RSVPSectionProps) => {
       setFormData({});
       setConsent(false);
     },
-    [isValid, formData]
+    [isValid, formData, attendanceValue, storageKey]
   );
 
   const handleChange = (key: string, value: string) => {
@@ -106,7 +126,7 @@ export const RSVPSection = ({ rsvp, storageKey }: RSVPSectionProps) => {
           <div className="text-center" data-animate="fade-up">
             <SectionHeader
               kicker="RSVP"
-              title="참석 여부"
+              title={title}
               description={deadlineText}
               kickerClassName="font-label text-[12px] text-[var(--accent-rose)]"
               titleClassName="mt-2 text-[24px] font-medium text-[var(--text-primary)]"
@@ -133,11 +153,13 @@ export const RSVPSection = ({ rsvp, storageKey }: RSVPSectionProps) => {
                     value={formData[field.key] || ''}
                     onChange={(e) => handleChange(field.key, e.target.value)}
                     required={field.required}
-                    disabled={field.key === 'companions' && isNotAttending}
+                    disabled={(field.key === 'companions' || field.key === 'meal') && isNotAttending}
                   >
                     <option value="">선택해주세요</option>
                     {field.key === 'companions' && isNotAttending ? (
                       <option value="0명">0명</option>
+                    ) : field.key === 'meal' && isNotAttending ? (
+                      <option value="식사하지 않음">식사하지 않음</option>
                     ) : (
                       field.options.map((option) => (
                         <option key={option} value={option}>
