@@ -391,8 +391,8 @@ export const invitationMock: InvitationMock = {
     location: {
       placeName: '채림웨딩홀',
       coordinates: {
-        lat: 37.4843,
-        lng: 126.7832,
+        lat: 37.48466092361281,
+        lng: 126.78204185207186,
       },
       transportation: {
         subway: ['지하철 1호선 부천역 3번, 4번, 7번 출구'],
