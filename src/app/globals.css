@@ -81,13 +81,16 @@ body::before {
 @layer base {
     html {
         width: 100%;
+        height: 100%;
         overflow-x: hidden;
+        overflow-y: auto;
     }
 
     body {
         width: 100%;
         min-height: 100%;
         overflow-x: hidden;
+        overflow-y: auto;
         position: relative;
         font-family: var(--font-serif);
         font-weight: 400;
@@ -100,7 +103,6 @@ body::before {
         -moz-osx-font-smoothing: grayscale;
         touch-action: pan-y pan-x;
         -webkit-text-size-adjust: 100%;
-        overscroll-behavior-y: none;
     }
 
     img,
