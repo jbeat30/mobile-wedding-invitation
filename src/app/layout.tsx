@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Geist, Nanum_Myeongjo, Gowun_Batang, Crimson_Pro } from 'next/font/google';
 import './globals.css';
-import { invitationMock } from '@/mock/invitation.mock';
+import { loadInvitationTheme } from '@/app/invitationData';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -48,15 +48,17 @@ export const viewport: Viewport = {
   viewportFit: 'cover',
 };
 
+export const dynamic = 'force-dynamic';
+
 /**
  * 루트 레이아웃 설정 확인
  */
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { theme } = invitationMock;
+  const theme = await loadInvitationTheme();
   const themeStyle = {
     '--font-serif': theme.fonts.serif,
     '--font-serif-en': theme.fonts.serifEn,

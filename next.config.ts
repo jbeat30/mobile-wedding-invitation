@@ -7,6 +7,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'placehold.co',
       },
+      {
+        protocol: 'https',
+        hostname: 'pub-ecba8b247b734521bfc0133916cd8ccd.r2.dev',
+      },
     ],
   },
 };
