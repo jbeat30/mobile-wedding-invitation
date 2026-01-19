@@ -5,7 +5,7 @@ import { getOrCreateInvitation } from '@/app/(admin)/admin/data';
 import { requireAdminSession, revalidateAdmin, toNumber } from './shared';
 
 /**
- * 방명록 설정 업데이트
+ * 게스트북 설정/섹션 타이틀 업데이트
  * @param formData FormData
  * @returns Promise<void>
  */
@@ -13,9 +13,9 @@ export const updateGuestbookAction = async (formData: FormData) => {
   await requireAdminSession();
   const supabase = createSupabaseAdmin();
   const { id } = await getOrCreateInvitation();
+  const guestbookSectionTitle = formData.get('guestbook_section_title');
 
   const payload = {
-    section_title: String(formData.get('guestbook_section_title') || ''),
     privacy_notice: String(formData.get('guestbook_privacy_notice') || ''),
     retention_text: String(formData.get('guestbook_retention_text') || ''),
     display_mode: String(formData.get('guestbook_display_mode') || 'recent'),
@@ -27,5 +27,11 @@ export const updateGuestbookAction = async (formData: FormData) => {
   };
 
   await supabase.from('invitation_guestbook').update(payload).eq('invitation_id', id);
+  if (guestbookSectionTitle !== null) {
+    await supabase
+      .from('invitation_section_titles')
+      .update({ guestbook: String(guestbookSectionTitle || '') })
+      .eq('invitation_id', id);
+  }
   revalidateAdmin();
 };

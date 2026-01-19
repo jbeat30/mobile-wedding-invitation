@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { useState } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
 import type { AdminDashboardData } from '@/app/(admin)/admin/data';
 import {
@@ -26,7 +27,6 @@ type AdminSectionGalleryProps = {
   setDragOverImageId: Dispatch<SetStateAction<string | null>>;
   orderSaved: boolean;
   setOrderSaved: Dispatch<SetStateAction<boolean>>;
-  galleryOrderStorageKey: string;
 };
 
 /**
@@ -44,8 +44,14 @@ export const AdminSectionGallery = ({
   setDragOverImageId,
   orderSaved,
   setOrderSaved,
-  galleryOrderStorageKey,
 }: AdminSectionGalleryProps) => {
+  const [orderSaving, setOrderSaving] = useState(false);
+  const [orderError, setOrderError] = useState<string | null>(null);
+  /**
+   * 이미지 라벨 정리
+   * @param src string
+   * @returns string
+   */
   const getImageLabel = (src: string) => {
     if (src.startsWith('data:')) {
       return '업로드 이미지';
@@ -130,19 +136,40 @@ export const AdminSectionGallery = ({
                 <Button
                   type="button"
                   size="sm"
+                  disabled={orderSaving}
                   onClick={() => {
-                    window.localStorage.setItem(
-                      galleryOrderStorageKey,
-                      JSON.stringify(galleryItems.map((image) => image.id))
-                    );
-                    setOrderSaved(true);
-                    window.setTimeout(() => setOrderSaved(false), 1500);
+                    setOrderSaving(true);
+                    setOrderError(null);
+                    fetch('/api/admin/gallery-order', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        galleryId: gallery.id,
+                        orderedIds: galleryItems.map((image) => image.id),
+                      }),
+                    })
+                      .then((response) => {
+                        if (!response.ok) {
+                          throw new Error('save failed');
+                        }
+                        setOrderSaved(true);
+                        window.setTimeout(() => setOrderSaved(false), 1500);
+                      })
+                      .catch(() => {
+                        setOrderError('순서 저장에 실패했습니다. 다시 시도해 주세요.');
+                      })
+                      .finally(() => {
+                        setOrderSaving(false);
+                      });
                   }}
                 >
-                  순서 저장
+                  {orderSaving ? '저장 중...' : '순서 저장'}
                 </Button>
               </div>
             </div>
+            {orderError ? (
+              <p className="mt-2 text-[12px] text-[var(--accent-burgundy)]">{orderError}</p>
+            ) : null}
             <div className="mt-3 divide-y divide-[var(--border-light)]">
               {galleryItems.length ? (
                 galleryItems.map((image) => (

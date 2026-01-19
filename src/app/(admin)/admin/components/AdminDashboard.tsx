@@ -38,7 +38,6 @@ type KakaoPlace = {
  * @returns JSX.Element
  */
 export const AdminDashboard = ({ data }: AdminDashboardProps) => {
-  const galleryOrderStorageKey = 'admin-gallery-order';
   let daumPostcodeLoader: Promise<void> | null = null;
 
   /**
@@ -113,21 +112,6 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
   useEffect(() => {
     setGalleryItems(data.galleryImages);
   }, [data.galleryImages]);
-
-  useEffect(() => {
-    const stored = window.localStorage.getItem(galleryOrderStorageKey);
-    if (!stored) return;
-    try {
-      const ids = JSON.parse(stored);
-      if (!Array.isArray(ids)) return;
-      const map = new Map(galleryItems.map((image) => [image.id, image]));
-      const ordered = ids.map((id) => map.get(id)).filter(Boolean) as typeof galleryItems;
-      const missing = galleryItems.filter((image) => !ids.includes(image.id));
-      setGalleryItems([...ordered, ...missing]);
-    } catch {
-      return;
-    }
-  }, [galleryItems]);
 
   useEffect(() => {
     setLocationCoords({
@@ -385,7 +369,6 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
             setDragOverImageId={setDragOverImageId}
             orderSaved={orderSaved}
             setOrderSaved={setOrderSaved}
-            galleryOrderStorageKey={galleryOrderStorageKey}
           />
         );
       case 'accounts':
@@ -403,6 +386,7 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
           <AdminSectionGuestbook
             guestbook={data.guestbook}
             guestbookEntries={data.guestbookEntries}
+            sectionTitles={data.sectionTitles}
             guestbookPage={guestbookPage}
             setGuestbookPage={setGuestbookPage}
           />
@@ -410,6 +394,8 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
       case 'rsvp':
         return (
           <AdminSectionRsvp
+            rsvp={data.rsvp}
+            rsvpFields={data.rsvpFields}
             rsvpResponses={data.rsvpResponses}
             sectionTitles={data.sectionTitles}
             rsvpPage={rsvpPage}

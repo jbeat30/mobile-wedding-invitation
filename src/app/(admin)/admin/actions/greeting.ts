@@ -21,10 +21,14 @@ export const updateGreetingAction = async (formData: FormData) => {
   await supabase
     .from('invitation_greeting')
     .update({
-      section_title: String(formData.get('greeting_section_title') || ''),
       poetic_note: String(formData.get('poetic_note') || ''),
       message_lines: lines,
     })
+    .eq('invitation_id', id);
+
+  await supabase
+    .from('invitation_section_titles')
+    .update({ greeting: String(formData.get('greeting_section_title') || '') })
     .eq('invitation_id', id);
 
   revalidateAdmin();

@@ -108,7 +108,7 @@ export const updateGalleryAction = async (formData: FormData) => {
 };
 
 /**
- * 갤러리 이미지 추가
+ * 갤러리 이미지 추가(마지막 순서로 추가)
  * @param formData FormData
  * @returns Promise<void>
  */
@@ -117,6 +117,14 @@ export const addGalleryImageAction = async (formData: FormData) => {
   const supabase = createSupabaseAdmin();
 
   const galleryId = String(formData.get('gallery_id') || '');
+  const { data: latestSort } = await supabase
+    .from('invitation_gallery_images')
+    .select('sort_order')
+    .eq('gallery_id', galleryId)
+    .order('sort_order', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  const nextSortOrder = (latestSort?.sort_order ?? 0) + 1;
   const payload = {
     gallery_id: galleryId,
     src: String(formData.get('image_src') || ''),
@@ -124,10 +132,10 @@ export const addGalleryImageAction = async (formData: FormData) => {
     thumbnail: null,
     width: null,
     height: null,
-    sort_order: 0,
+    sort_order: nextSortOrder,
   };
 
-  await supabase.from('invitation_gallery_image').insert(payload);
+  await supabase.from('invitation_gallery_images').insert(payload);
   revalidateAdmin();
 };
 
@@ -140,6 +148,6 @@ export const deleteGalleryImageAction = async (formData: FormData) => {
   await requireAdminSession();
   const supabase = createSupabaseAdmin();
   const imageId = String(formData.get('image_id') || '');
-  await supabase.from('invitation_gallery_image').delete().eq('id', imageId);
+  await supabase.from('invitation_gallery_images').delete().eq('id', imageId);
   revalidateAdmin();
 };

@@ -5,7 +5,7 @@ import { getOrCreateInvitation } from '@/app/(admin)/admin/data';
 import { parseLines, requireAdminSession, revalidateAdmin, toNumber } from './shared';
 
 /**
- * 기본 정보 업데이트
+ * 기본 정보/부모님 정보 업데이트
  * @param formData FormData
  * @returns Promise<void>
  */
@@ -14,24 +14,28 @@ export const updateBasicInfoAction = async (formData: FormData) => {
   const supabase = createSupabaseAdmin();
   const { id } = await getOrCreateInvitation();
 
-  const payload = {
+  const profilePayload = {
     groom_first_name: String(formData.get('groom_first_name') || ''),
     groom_last_name: String(formData.get('groom_last_name') || ''),
     bride_first_name: String(formData.get('bride_first_name') || ''),
     bride_last_name: String(formData.get('bride_last_name') || ''),
-    groom_father_name: String(formData.get('groom_father_name') || ''),
-    groom_mother_name: String(formData.get('groom_mother_name') || ''),
-    bride_father_name: String(formData.get('bride_father_name') || ''),
-    bride_mother_name: String(formData.get('bride_mother_name') || ''),
   };
 
-  await supabase.from('invitation_profile').update(payload).eq('invitation_id', id);
+  const parentsPayload = {
+    groom_father: String(formData.get('groom_father_name') || ''),
+    groom_mother: String(formData.get('groom_mother_name') || ''),
+    bride_father: String(formData.get('bride_father_name') || ''),
+    bride_mother: String(formData.get('bride_mother_name') || ''),
+  };
+
+  await supabase.from('invitation_profile').update(profilePayload).eq('invitation_id', id);
+  await supabase.from('invitation_parents').update(parentsPayload).eq('invitation_id', id);
 
   revalidateAdmin();
 };
 
 /**
- * 커플 섹션 업데이트
+ * 커플 섹션(소개/이미지/타이틀) 업데이트
  * @param formData FormData
  * @returns Promise<void>
  */
@@ -41,7 +45,6 @@ export const updateProfileAction = async (formData: FormData) => {
   const { id } = await getOrCreateInvitation();
 
   const payload = {
-    section_title: String(formData.get('couple_section_title') || ''),
     groom_bio: String(formData.get('groom_bio') || ''),
     groom_profile_image: String(formData.get('groom_profile_image') || ''),
     bride_bio: String(formData.get('bride_bio') || ''),
@@ -49,6 +52,10 @@ export const updateProfileAction = async (formData: FormData) => {
   };
 
   await supabase.from('invitation_profile').update(payload).eq('invitation_id', id);
+  await supabase
+    .from('invitation_section_titles')
+    .update({ couple: String(formData.get('couple_section_title') || '') })
+    .eq('invitation_id', id);
 
   revalidateAdmin();
 };
@@ -104,14 +111,6 @@ export const updateLocationAction = async (formData: FormData) => {
       address: eventAddress,
     })
     .eq('invitation_id', id);
-  await supabase
-    .from('invitation_profile')
-    .update({
-      wedding_date_time: eventDateTime,
-      venue: eventVenue,
-      address: eventAddress,
-    })
-    .eq('invitation_id', id);
   revalidateAdmin();
 };
 
@@ -126,8 +125,8 @@ export const updateLocationSectionTitleAction = async (formData: FormData) => {
   const { id } = await getOrCreateInvitation();
 
   await supabase
-    .from('invitation_location')
-    .update({ section_title: String(formData.get('location_section_title') || '') })
+    .from('invitation_section_titles')
+    .update({ location: String(formData.get('location_section_title') || '') })
     .eq('invitation_id', id);
 
   revalidateAdmin();
@@ -147,8 +146,8 @@ export const updateWeddingInfoSectionAction = async (formData: FormData) => {
   const notices = parseLines(String(formData.get('location_notices') || ''));
 
   await supabase
-    .from('invitation_event')
-    .update({ section_title: sectionTitle })
+    .from('invitation_section_titles')
+    .update({ wedding: sectionTitle })
     .eq('invitation_id', id);
 
   await supabase

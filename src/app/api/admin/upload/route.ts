@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { createSupabaseAdmin } from '@/lib/supabaseAdmin';
 import { requireAdminAuth } from '@/lib/adminAuth';
 import { uploadToR2 } from '@/lib/r2';
+import { getOrCreateInvitation } from '@/app/(admin)/admin/data';
 
 /**
  * 업로드 가능한 파일 타입 체크
@@ -40,6 +41,21 @@ export const POST = async (req: Request) => {
 
   try {
     const result = await uploadToR2({ sectionId, file });
+    const { id: invitationId } = await getOrCreateInvitation();
+    const { error: insertError } = await supabase.from('uploaded_files').insert({
+      invitation_id: invitationId,
+      section_id: sectionId,
+      original_name: result.originalName,
+      file_uuid: result.uuid,
+      file_key: result.key,
+      file_url: result.url,
+      file_type: file.type || null,
+      file_size: Number.isFinite(file.size) ? Math.round(file.size) : null,
+    });
+
+    if (insertError) {
+      throw insertError;
+    }
     return NextResponse.json(result);
   } catch (error) {
     console.error('R2 upload error:', error);

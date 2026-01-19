@@ -35,14 +35,14 @@ export const addAccountEntryAction = async (formData: FormData) => {
 
   const payload = {
     accounts_id: accountsId,
-    group_type: String(formData.get('account_group_type') || ''),
-    bank_name: String(formData.get('account_bank_name') || ''),
+    group_type: String(formData.get('group_type') || ''),
+    bank_name: String(formData.get('bank_name') || ''),
     account_number: String(formData.get('account_number') || ''),
-    holder: String(formData.get('account_holder') || ''),
-    label: String(formData.get('account_label') || ''),
+    holder: String(formData.get('holder') || ''),
+    label: String(formData.get('label') || ''),
   };
 
-  await supabase.from('invitation_account_entry').insert(payload);
+  await supabase.from('invitation_account_entries').insert(payload);
   revalidateAdmin();
 };
 
@@ -54,17 +54,16 @@ export const addAccountEntryAction = async (formData: FormData) => {
 export const updateAccountEntryAction = async (formData: FormData) => {
   await requireAdminSession();
   const supabase = createSupabaseAdmin();
-  const entryId = String(formData.get('account_entry_id') || '');
+  const entryId = String(formData.get('entry_id') || '');
 
   const payload = {
-    group_type: String(formData.get('account_group_type') || ''),
-    bank_name: String(formData.get('account_bank_name') || ''),
+    bank_name: String(formData.get('bank_name') || ''),
     account_number: String(formData.get('account_number') || ''),
-    holder: String(formData.get('account_holder') || ''),
-    label: String(formData.get('account_label') || ''),
+    holder: String(formData.get('holder') || ''),
+    label: String(formData.get('label') || ''),
   };
 
-  await supabase.from('invitation_account_entry').update(payload).eq('id', entryId);
+  await supabase.from('invitation_account_entries').update(payload).eq('id', entryId);
   revalidateAdmin();
 };
 
@@ -76,7 +75,7 @@ export const updateAccountEntryAction = async (formData: FormData) => {
 export const deleteAccountEntryAction = async (formData: FormData) => {
   await requireAdminSession();
   const supabase = createSupabaseAdmin();
-  const entryId = String(formData.get('account_entry_id') || '');
-  await supabase.from('invitation_account_entry').delete().eq('id', entryId);
+  const entryId = String(formData.get('entry_id') || '');
+  await supabase.from('invitation_account_entries').delete().eq('id', entryId);
   revalidateAdmin();
 };

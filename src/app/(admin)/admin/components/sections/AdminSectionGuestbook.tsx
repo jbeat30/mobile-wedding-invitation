@@ -12,6 +12,7 @@ import { TextInput } from '@/components/ui/TextInput';
 type AdminSectionGuestbookProps = {
   guestbook: AdminDashboardData['guestbook'];
   guestbookEntries: AdminDashboardData['guestbookEntries'];
+  sectionTitles: AdminDashboardData['sectionTitles'];
   guestbookPage: number;
   setGuestbookPage: Dispatch<SetStateAction<number>>;
 };
@@ -24,6 +25,7 @@ type AdminSectionGuestbookProps = {
 export const AdminSectionGuestbook = ({
   guestbook,
   guestbookEntries,
+  sectionTitles,
   guestbookPage,
   setGuestbookPage,
 }: AdminSectionGuestbookProps) => {
@@ -31,6 +33,14 @@ export const AdminSectionGuestbook = ({
     <SurfaceCard className="p-6">
       <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">게스트북</h2>
       <form action={updateGuestbookAction} className="mt-4 grid gap-4 md:grid-cols-2">
+        <div className="flex flex-col gap-2 md:col-span-2">
+          <FieldLabel htmlFor="guestbook_section_title">게스트북 섹션 타이틀</FieldLabel>
+          <TextInput
+            id="guestbook_section_title"
+            name="guestbook_section_title"
+            defaultValue={sectionTitles.guestbook}
+          />
+        </div>
         <div className="flex flex-col gap-2 md:col-span-2">
           <FieldLabel htmlFor="guestbook_privacy_notice">개인정보 안내 문구</FieldLabel>
           <TextInput

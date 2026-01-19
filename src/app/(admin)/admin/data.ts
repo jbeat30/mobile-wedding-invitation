@@ -1,4 +1,3 @@
-import { invitationMock } from '@/mock/invitation.mock';
 import { createSupabaseAdmin } from '@/lib/supabaseAdmin';
 
 const DEFAULT_LOCALE = 'ko-KR';
@@ -44,180 +43,302 @@ export const getOrCreateInvitation = async () => {
 };
 
 /**
+ * 단일 로우 보장(없으면 생성)
+ * @param supabase SupabaseClient
+ * @param table string
+ * @param match Record<string, string>
+ * @param insertPayload Record<string, unknown>
+ * @returns Promise<T>
+ */
+const ensureSingleRow = async <T extends { id: string }>(
+  supabase: ReturnType<typeof createSupabaseAdmin>,
+  table: string,
+  match: Record<string, string>,
+  insertPayload: Record<string, unknown>
+) => {
+  const { data, error } = await supabase.from(table).select('*').match(match).maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  if (data) {
+    return data as T;
+  }
+
+  const { data: created, error: insertError } = await supabase
+    .from(table)
+    .insert(insertPayload)
+    .select('*')
+    .single();
+
+  if (insertError) {
+    throw insertError;
+  }
+
+  return created as T;
+};
+
+/**
  * 관리자 데이터 로드
  * @returns Promise<Record<string, unknown>>
  */
 export const loadAdminData = async () => {
-  const { content, assets } = invitationMock;
-  const invitationId = 'mock-invitation';
-  const eventId = 'mock-event';
-  const locationId = 'mock-location';
-  const galleryId = 'mock-gallery';
-  const rsvpId = 'mock-rsvp';
-  const accountsId = 'mock-accounts';
+  const supabase = createSupabaseAdmin();
+  const invitation = await getOrCreateInvitation();
+
+  const [loading, profile, parents, assets, greeting, share, bgm, gallery, location, guestbook, rsvp, accounts, closing, sectionTitles, event] =
+    await Promise.all([
+      ensureSingleRow(supabase, 'invitation_loading', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
+      ensureSingleRow(supabase, 'invitation_profile', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
+      ensureSingleRow(supabase, 'invitation_parents', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
+      ensureSingleRow(supabase, 'invitation_assets', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
+      ensureSingleRow(supabase, 'invitation_greeting', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
+      ensureSingleRow(supabase, 'invitation_share', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
+      ensureSingleRow(supabase, 'invitation_bgm', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
+      ensureSingleRow(supabase, 'invitation_gallery', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
+      ensureSingleRow(supabase, 'invitation_location', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
+      ensureSingleRow(supabase, 'invitation_guestbook', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
+      ensureSingleRow(supabase, 'invitation_rsvp', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
+      ensureSingleRow(supabase, 'invitation_accounts', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
+      ensureSingleRow(supabase, 'invitation_closing', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
+      ensureSingleRow(supabase, 'invitation_section_titles', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
+      ensureSingleRow(supabase, 'invitation_event', { invitation_id: invitation.id }, { invitation_id: invitation.id, date_time: new Date().toISOString() }),
+    ]);
+
+  const transportation = await ensureSingleRow(supabase, 'invitation_transportation', { location_id: location.id }, { location_id: location.id });
+
+  const { data: galleryImages, error: galleryError } = await supabase
+    .from('invitation_gallery_images')
+    .select('*')
+    .eq('gallery_id', gallery.id)
+    .order('sort_order', { ascending: true })
+    .order('created_at', { ascending: true });
+
+  if (galleryError) {
+    throw galleryError;
+  }
+
+  const { data: rsvpFields, error: rsvpFieldsError } = await supabase
+    .from('invitation_rsvp_fields')
+    .select('*')
+    .eq('rsvp_id', rsvp.id)
+    .order('sort_order', { ascending: true })
+    .order('created_at', { ascending: true });
+
+  if (rsvpFieldsError) {
+    throw rsvpFieldsError;
+  }
+
+  const { data: accountEntries, error: accountEntriesError } = await supabase
+    .from('invitation_account_entries')
+    .select('*')
+    .eq('accounts_id', accounts.id)
+    .order('sort_order', { ascending: true })
+    .order('created_at', { ascending: true });
+
+  if (accountEntriesError) {
+    throw accountEntriesError;
+  }
+
+  const { data: guestbookEntries, error: guestbookEntriesError } = await supabase
+    .from('invitation_guestbook_entries')
+    .select('*')
+    .eq('guestbook_id', guestbook.id)
+    .order('created_at', { ascending: false });
+
+  if (guestbookEntriesError) {
+    throw guestbookEntriesError;
+  }
+
+  const { data: rsvpResponses, error: rsvpResponsesError } = await supabase
+    .from('invitation_rsvp_responses')
+    .select('*')
+    .eq('rsvp_id', rsvp.id)
+    .order('submitted_at', { ascending: false });
+
+  if (rsvpResponsesError) {
+    throw rsvpResponsesError;
+  }
 
   return {
-    invitationId,
+    invitationId: invitation.id,
     loading: {
-      id: 'mock-loading',
-      enabled: content.loading.enabled,
-      message: content.loading.message,
-      min_duration: content.loading.minDuration,
-      additional_duration: content.loading.additionalDuration,
+      id: loading.id,
+      enabled: loading.enabled,
+      message: loading.message,
+      min_duration: loading.min_duration,
+      additional_duration: loading.additional_duration,
     },
     profile: {
-      groom_first_name: content.couple.groom.firstName,
-      groom_last_name: content.couple.groom.lastName,
-      groom_bio: content.couple.groom.bio || '',
-      groom_profile_image: content.couple.groom.profileImage || '',
-      bride_first_name: content.couple.bride.firstName,
-      bride_last_name: content.couple.bride.lastName,
-      bride_bio: content.couple.bride.bio || '',
-      bride_profile_image: content.couple.bride.profileImage || '',
+      groom_first_name: profile.groom_first_name,
+      groom_last_name: profile.groom_last_name,
+      groom_bio: profile.groom_bio || '',
+      groom_profile_image: profile.groom_profile_image || '',
+      bride_first_name: profile.bride_first_name,
+      bride_last_name: profile.bride_last_name,
+      bride_bio: profile.bride_bio || '',
+      bride_profile_image: profile.bride_profile_image || '',
     },
     parents: {
       groom: {
-        father: content.couple.parents.groom.father || '',
-        mother: content.couple.parents.groom.mother || '',
+        father: parents.groom_father || '',
+        mother: parents.groom_mother || '',
       },
       bride: {
-        father: content.couple.parents.bride.father || '',
-        mother: content.couple.parents.bride.mother || '',
+        father: parents.bride_father || '',
+        mother: parents.bride_mother || '',
       },
     },
     event: {
-      id: eventId,
-      date_time: content.event.dateTime,
-      venue: content.event.venue,
-      address: content.event.address,
+      id: event.id,
+      date_time: event.date_time,
+      venue: event.venue,
+      address: event.address,
     },
     assets: {
-      id: 'mock-assets',
-      hero_image: assets.heroImage,
-      loading_image: assets.loadingImage,
-      share_og_image: assets.share.ogImage,
-      share_kakao_image: assets.share.kakaoImage,
+      id: assets.id,
+      hero_image: assets.hero_image,
+      loading_image: assets.loading_image,
+      share_og_image: assets.share_og_image,
+      share_kakao_image: assets.share_kakao_image,
     },
     greeting: {
-      id: 'mock-greeting',
-      poetic_note: content.greeting.poeticNote || '',
-      message_lines: content.greeting.message,
+      id: greeting.id,
+      poetic_note: greeting.poetic_note || '',
+      message_lines: greeting.message_lines || [],
     },
     share: {
-      id: 'mock-share',
-      title: content.share.title,
-      description: content.share.description,
-      image_url: content.share.imageUrl,
-      kakao_title: content.share.kakaoTemplate?.title || '',
-      kakao_description: content.share.kakaoTemplate?.description || '',
-      kakao_image_url: content.share.kakaoTemplate?.imageUrl || '',
-      kakao_button_label: content.share.kakaoTemplate?.buttonLabel || '',
+      id: share.id,
+      title: share.title,
+      description: share.description,
+      image_url: share.image_url,
+      kakao_title: share.kakao_title || '',
+      kakao_description: share.kakao_description || '',
+      kakao_image_url: share.kakao_image_url || '',
+      kakao_button_label: share.kakao_button_label || '',
     },
     bgm: {
-      id: 'mock-bgm',
-      enabled: content.bgm.enabled,
-      audio_url: content.bgm.audioUrl || '',
-      auto_play: content.bgm.autoPlay,
-      loop: content.bgm.loop,
+      id: bgm.id,
+      enabled: bgm.enabled,
+      audio_url: bgm.audio_url || '',
+      auto_play: bgm.auto_play,
+      loop: bgm.loop,
     },
     gallery: {
-      id: galleryId,
-      title: content.gallery.title,
-      description: content.gallery.description || '',
-      autoplay: Boolean(content.gallery.autoplay),
-      autoplay_delay:
-        content.gallery.autoplayDelay ?? (content.gallery.autoplay ? 3000 : null),
+      id: gallery.id,
+      title: gallery.title,
+      description: gallery.description || '',
+      autoplay: gallery.autoplay,
+      autoplay_delay: gallery.autoplay_delay,
     },
-    galleryImages: content.gallery.images.map((image, index) => ({
+    galleryImages: (galleryImages || []).map((image) => ({
       id: image.id,
-      gallery_id: galleryId,
+      gallery_id: image.gallery_id,
       src: image.src,
       alt: image.alt,
-      thumbnail: image.thumbnail || null,
-      width: image.width || null,
-      height: image.height || null,
-      sort_order: index + 1,
+      thumbnail: image.thumbnail,
+      width: image.width,
+      height: image.height,
+      sort_order: image.sort_order,
     })),
     location: {
-      id: locationId,
-      place_name: content.location.placeName,
-      address: content.event.address,
-      latitude: content.location.coordinates.lat,
-      longitude: content.location.coordinates.lng,
-      notices: content.location.notices || [],
+      id: location.id,
+      place_name: location.place_name,
+      address: location.address,
+      latitude:
+        location.latitude === null || location.latitude === undefined
+          ? Number.NaN
+          : Number(location.latitude),
+      longitude:
+        location.longitude === null || location.longitude === undefined
+          ? Number.NaN
+          : Number(location.longitude),
+      notices: location.notices || [],
     },
     transportation: {
-      id: 'mock-transportation',
-      location_id: locationId,
-      subway: content.location.transportation.subway || [],
-      bus: content.location.transportation.bus || [],
-      car: content.location.transportation.car || '',
-      parking: content.location.transportation.parking || '',
+      id: transportation.id,
+      location_id: transportation.location_id,
+      subway: transportation.subway || [],
+      bus: transportation.bus || [],
+      car: transportation.car || '',
+      parking: transportation.parking || '',
     },
     guestbook: {
-      id: 'mock-guestbook',
-      privacy_notice: content.guestbook.privacyNotice,
-      retention_text: content.guestbook.retentionText,
-      display_mode: content.guestbook.displayMode,
-      page_size: content.guestbook.pageSize,
-      recent_notice: content.guestbook.recentNotice,
-      enable_password: content.guestbook.enablePassword,
-      enable_edit: content.guestbook.enableEdit,
-      enable_delete: content.guestbook.enableDelete,
+      id: guestbook.id,
+      privacy_notice: guestbook.privacy_notice,
+      retention_text: guestbook.retention_text,
+      display_mode: guestbook.display_mode,
+      page_size: guestbook.page_size,
+      recent_notice: guestbook.recent_notice,
+      enable_password: guestbook.enable_password,
+      enable_edit: guestbook.enable_edit,
+      enable_delete: guestbook.enable_delete,
     },
-    guestbookEntries: content.guestbook.mockEntries,
+    guestbookEntries: (guestbookEntries || []).map((entry) => ({
+      id: entry.id,
+      name: entry.name,
+      message: entry.message,
+      createdAt: entry.created_at,
+    })),
     rsvp: {
-      id: rsvpId,
-      enabled: content.rsvp.enabled,
-      deadline: content.rsvp.deadline,
-      consent_title: content.rsvp.consent.title,
-      consent_description: content.rsvp.consent.description,
-      consent_retention: content.rsvp.consent.retention,
-      consent_notice: content.rsvp.consent.notice,
+      id: rsvp.id,
+      enabled: rsvp.enabled,
+      deadline: rsvp.deadline,
+      consent_title: rsvp.consent_title || '',
+      consent_description: rsvp.consent_description || '',
+      consent_retention: rsvp.consent_retention || '',
+      consent_notice: rsvp.consent_notice || '',
     },
-    rsvpFields: content.rsvp.fields.map((field, index) => ({
-      id: `mock-rsvp-field-${index + 1}`,
-      rsvp_id: rsvpId,
-      field_key: field.key,
+    rsvpFields: (rsvpFields || []).map((field) => ({
+      id: field.id,
+      rsvp_id: field.rsvp_id,
+      field_key: field.field_key,
       label: field.label,
       required: field.required,
       placeholder: field.placeholder || '',
       options: field.options || [],
-      sort_order: index + 1,
+      sort_order: field.sort_order,
     })),
-    rsvpResponses: content.rsvpResponses,
+    rsvpResponses: (rsvpResponses || []).map((entry) => ({
+      id: entry.id,
+      name: entry.name,
+      attendance: entry.attendance,
+      companions: entry.companions || '',
+      meal: entry.meal || '',
+      notes: entry.notes || '',
+      submittedAt: entry.submitted_at,
+    })),
     accounts: {
-      id: accountsId,
-      title: content.accounts.title,
-      description: content.accounts.description,
+      id: accounts.id,
+      title: accounts.title,
+      description: accounts.description || '',
     },
-    accountEntries: [
-      ...content.accounts.groom.map((account, index) => ({
-        id: `mock-account-groom-${index + 1}`,
-        accounts_id: accountsId,
-        group_type: 'groom',
-        bank_name: account.bankName,
-        account_number: account.accountNumber,
-        holder: account.holder,
-        label: account.label || '',
-      })),
-      ...content.accounts.bride.map((account, index) => ({
-        id: `mock-account-bride-${index + 1}`,
-        accounts_id: accountsId,
-        group_type: 'bride',
-        bank_name: account.bankName,
-        account_number: account.accountNumber,
-        holder: account.holder,
-        label: account.label || '',
-      })),
-    ],
+    accountEntries: (accountEntries || []).map((entry) => ({
+      id: entry.id,
+      accounts_id: entry.accounts_id,
+      group_type: entry.group_type,
+      bank_name: entry.bank_name,
+      account_number: entry.account_number,
+      holder: entry.holder,
+      label: entry.label || '',
+      sort_order: entry.sort_order,
+    })),
     closing: {
-      id: 'mock-closing',
-      title: content.closing.title,
-      message: content.closing.message,
-      copyright: content.closing.copyright || '',
+      id: closing.id,
+      title: closing.title,
+      message: closing.message,
+      copyright: closing.copyright || '',
     },
-    sectionTitles: content.sectionTitles,
+    sectionTitles: {
+      greeting: sectionTitles.greeting,
+      couple: sectionTitles.couple,
+      wedding: sectionTitles.wedding,
+      location: sectionTitles.location,
+      guestbook: sectionTitles.guestbook,
+      rsvp: sectionTitles.rsvp,
+      share: sectionTitles.share,
+    },
   };
 };
 

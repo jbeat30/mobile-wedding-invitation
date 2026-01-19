@@ -5,7 +5,7 @@ import { getOrCreateInvitation } from '@/app/(admin)/admin/data';
 import { parseLines, requireAdminSession, revalidateAdmin, toNumber } from './shared';
 
 /**
- * RSVP 설정 업데이트
+ * RSVP 기본 설정/동의 문구 업데이트
  * @param formData FormData
  * @returns Promise<void>
  */
@@ -39,8 +39,8 @@ export const updateRsvpTitleAction = async (formData: FormData) => {
   const { id } = await getOrCreateInvitation();
 
   await supabase
-    .from('invitation_rsvp')
-    .update({ section_title: String(formData.get('rsvp_section_title') || '') })
+    .from('invitation_section_titles')
+    .update({ rsvp: String(formData.get('rsvp_section_title') || '') })
     .eq('invitation_id', id);
 
   revalidateAdmin();
@@ -66,7 +66,7 @@ export const addRsvpFieldAction = async (formData: FormData) => {
     sort_order: toNumber(formData.get('rsvp_field_sort_order')),
   };
 
-  await supabase.from('invitation_rsvp_field').insert(payload);
+  await supabase.from('invitation_rsvp_fields').insert(payload);
   revalidateAdmin();
 };
 
@@ -89,7 +89,7 @@ export const updateRsvpFieldAction = async (formData: FormData) => {
     sort_order: toNumber(formData.get('rsvp_field_sort_order')),
   };
 
-  await supabase.from('invitation_rsvp_field').update(payload).eq('id', fieldId);
+  await supabase.from('invitation_rsvp_fields').update(payload).eq('id', fieldId);
   revalidateAdmin();
 };
 
@@ -102,6 +102,6 @@ export const deleteRsvpFieldAction = async (formData: FormData) => {
   await requireAdminSession();
   const supabase = createSupabaseAdmin();
   const fieldId = String(formData.get('rsvp_field_id') || '');
-  await supabase.from('invitation_rsvp_field').delete().eq('id', fieldId);
+  await supabase.from('invitation_rsvp_fields').delete().eq('id', fieldId);
   revalidateAdmin();
 };
