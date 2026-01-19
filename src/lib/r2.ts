@@ -100,22 +100,26 @@ const signRequest = ({
   const host = config.endpoint.host;
 
   const canonicalUri = `/${config.bucket}/${encodePath(key)}`;
-  const canonicalHeaders: string[] = [
-    `host:${host}`,
-    `x-amz-content-sha256:${payloadHash}`,
-    `x-amz-date:${amzDate}`,
-  ];
-  const signedHeadersList = ['host', 'x-amz-content-sha256', 'x-amz-date'];
 
-  if (copySource) {
-    canonicalHeaders.push(`x-amz-copy-source:${copySource}`);
-    signedHeadersList.push('x-amz-copy-source');
-  }
+  // AWS4 서명에서 canonical headers와 signed headers는 알파벳 순으로 정렬되어야 함
+  const headerPairs: Array<{ name: string; value: string }> = [
+    { name: 'host', value: host },
+    { name: 'x-amz-content-sha256', value: payloadHash },
+    { name: 'x-amz-date', value: amzDate },
+  ];
 
   if (contentType) {
-    canonicalHeaders.push(`content-type:${contentType}`);
-    signedHeadersList.push('content-type');
+    headerPairs.push({ name: 'content-type', value: contentType });
   }
+  if (copySource) {
+    headerPairs.push({ name: 'x-amz-copy-source', value: copySource });
+  }
+
+  // 알파벳 순 정렬
+  headerPairs.sort((a, b) => a.name.localeCompare(b.name));
+
+  const canonicalHeaders = headerPairs.map((h) => `${h.name}:${h.value}`);
+  const signedHeadersList = headerPairs.map((h) => h.name);
 
   const canonicalRequest = [
     method,

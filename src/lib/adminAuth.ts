@@ -1,17 +1,19 @@
 import { createHash, randomBytes } from 'crypto';
 import { SignJWT, jwtVerify } from 'jose';
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 const ACCESS_COOKIE = 'admin_access_token';
 const REFRESH_COOKIE = 'admin_refresh_token';
-const ACCESS_TTL_SEC = 60 * 15;
-const REFRESH_TTL_SEC = 60 * 60 * 24 * 14;
+const ACCESS_TTL_SEC = 60 * 15; // 15분
+const REFRESH_TTL_SEC = 60 * 60 * 24 * 1; // 7일
+const REFRESH_THRESHOLD_SEC = 60 * 2; // AT 만료 2분 전에 갱신
 
 export type AdminJwtPayload = {
   sub: string;
   username: string;
   role: string;
+  exp?: number;
 };
 
 type AuthCookies = {
@@ -22,6 +24,19 @@ type AuthCookies = {
 
 type RequireAuthOptions = {
   allowRefresh?: boolean;
+};
+
+/**
+ * 클라이언트 IP 주소 조회
+ * @returns Promise<string | null>
+ */
+export const getClientIp = async () => {
+  const headersList = await headers();
+  return (
+    headersList.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+    headersList.get('x-real-ip') ||
+    null
+  );
 };
 
 const getJwtSecret = () => {
@@ -137,32 +152,12 @@ export const getRefreshTokenCookie = async () => {
 };
 
 /**
- * 관리자 인증 확인
+ * RT로 AT, RT 갱신 수행
  * @param supabase SupabaseClient
- * @param options RequireAuthOptions
+ * @param refreshToken string
  * @returns Promise<AdminJwtPayload>
  */
-export const requireAdminAuth = async (
-  supabase: SupabaseClient,
-  options: RequireAuthOptions = {}
-) => {
-  const accessToken = await getAccessTokenCookie();
-  if (accessToken) {
-    const payload = await verifyAccessToken(accessToken);
-    if (payload) {
-      return payload;
-    }
-  }
-
-  if (options.allowRefresh === false) {
-    throw new Error('Unauthorized');
-  }
-
-  const refreshToken = await getRefreshTokenCookie();
-  if (!refreshToken) {
-    throw new Error('Unauthorized');
-  }
-
+const performTokenRefresh = async (supabase: SupabaseClient, refreshToken: string) => {
   const tokenHash = hashRefreshToken(refreshToken);
   const { data, error } = await supabase
     .from('admin_refresh_tokens')
@@ -185,15 +180,20 @@ export const requireAdminAuth = async (
     role,
   });
   const newRefresh = createRefreshToken();
+  const clientIp = await getClientIp();
 
+  // 기존 RT 폐기
   await supabase
     .from('admin_refresh_tokens')
     .update({ revoked_at: new Date().toISOString() })
     .eq('id', data.id);
+
+  // 새 RT 저장 (IP 포함)
   await supabase.from('admin_refresh_tokens').insert({
     admin_user_id: data.admin_user_id,
     token_hash: newRefresh.hash,
     expires_at: newRefresh.expiresAt.toISOString(),
+    ip_address: clientIp,
   });
 
   await setAuthCookies({
@@ -203,6 +203,57 @@ export const requireAdminAuth = async (
   });
 
   return { sub: data.admin_user_id, username, role };
+};
+
+/**
+ * 관리자 인증 확인
+ * - AT 유효: 반환
+ * - AT 만료 2분 전 & 접속 중: RT로 AT, RT 자동 갱신
+ * - AT 만료: RT로 AT, RT 갱신 시도
+ * @param supabase SupabaseClient
+ * @param options RequireAuthOptions
+ * @returns Promise<AdminJwtPayload>
+ */
+export const requireAdminAuth = async (
+  supabase: SupabaseClient,
+  options: RequireAuthOptions = {}
+) => {
+  const accessToken = await getAccessTokenCookie();
+  const refreshToken = await getRefreshTokenCookie();
+
+  if (accessToken) {
+    const payload = await verifyAccessToken(accessToken);
+    if (payload) {
+      // AT가 유효한 경우 - 만료 2분 전인지 확인
+      const exp = payload.exp;
+      if (exp && refreshToken) {
+        const nowSec = Math.floor(Date.now() / 1000);
+        const remainingSec = exp - nowSec;
+
+        // 만료 2분 전이면 접속 중이므로 자동 갱신
+        if (remainingSec <= REFRESH_THRESHOLD_SEC && remainingSec > 0) {
+          try {
+            return await performTokenRefresh(supabase, refreshToken);
+          } catch {
+            // 갱신 실패해도 현재 AT가 유효하므로 계속 사용
+            return payload;
+          }
+        }
+      }
+      return payload;
+    }
+  }
+
+  // AT 만료됨 - RT로 갱신 시도
+  if (options.allowRefresh === false) {
+    throw new Error('Unauthorized');
+  }
+
+  if (!refreshToken) {
+    throw new Error('Unauthorized');
+  }
+
+  return await performTokenRefresh(supabase, refreshToken);
 };
 
 /**
