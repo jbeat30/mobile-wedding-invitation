@@ -42,7 +42,7 @@ type InvitationAssetsRow = {
 type InvitationGreetingRow = {
   id: string;
   poetic_note: string | null;
-  message_lines: string[] | null;
+  message_lines: string[];
 };
 
 type InvitationShareRow = {
@@ -76,8 +76,8 @@ type InvitationLocationRow = {
   id: string;
   place_name: string;
   address: string;
-  latitude: number | null;
-  longitude: number | null;
+  latitude: number | string | null;
+  longitude: number | string | null;
   notices: string[] | null;
 };
 
@@ -141,6 +141,48 @@ type InvitationTransportationRow = {
   bus: string[] | null;
   car: string | null;
   parking: string | null;
+};
+
+type InvitationGalleryImageRow = {
+  id: string;
+  gallery_id: string;
+  src: string;
+  alt: string | null;
+  thumbnail: string | null;
+  width: number | null;
+  height: number | null;
+  sort_order: number;
+};
+
+type InvitationAccountEntryRow = {
+  id: string;
+  accounts_id: string;
+  group_type: 'groom' | 'bride';
+  bank_name: string;
+  account_number: string;
+  holder: string;
+  label: string | null;
+  sort_order: number;
+};
+
+type InvitationGuestbookEntryRow = {
+  id: string;
+  guestbook_id: string;
+  name: string;
+  message: string;
+  password_hash: string | null;
+  created_at: string;
+};
+
+type InvitationRsvpResponseRow = {
+  id: string;
+  rsvp_id: string;
+  name: string;
+  attendance: string;
+  companions: string | null;
+  meal: string | null;
+  notes: string | null;
+  submitted_at: string;
 };
 
 /**
@@ -264,7 +306,7 @@ export const loadAdminData = async () => {
 
   const transportation = (await ensureSingleRow(supabase, 'invitation_transportation', { location_id: location.id }, { location_id: location.id })) as InvitationTransportationRow;
 
-  const { data: galleryImages, error: galleryError } = await supabase
+  const { data: galleryImagesRaw, error: galleryError } = await supabase
     .from('invitation_gallery_images')
     .select('*')
     .eq('gallery_id', gallery.id)
@@ -275,7 +317,7 @@ export const loadAdminData = async () => {
     throw galleryError;
   }
 
-  const { data: accountEntries, error: accountEntriesError } = await supabase
+  const { data: accountEntriesRaw, error: accountEntriesError } = await supabase
     .from('invitation_account_entries')
     .select('*')
     .eq('accounts_id', accounts.id)
@@ -286,7 +328,7 @@ export const loadAdminData = async () => {
     throw accountEntriesError;
   }
 
-  const { data: guestbookEntries, error: guestbookEntriesError } = await supabase
+  const { data: guestbookEntriesRaw, error: guestbookEntriesError } = await supabase
     .from('invitation_guestbook_entries')
     .select('*')
     .eq('guestbook_id', guestbook.id)
@@ -296,7 +338,7 @@ export const loadAdminData = async () => {
     throw guestbookEntriesError;
   }
 
-  const { data: rsvpResponses, error: rsvpResponsesError } = await supabase
+  const { data: rsvpResponsesRaw, error: rsvpResponsesError } = await supabase
     .from('invitation_rsvp_responses')
     .select('*')
     .eq('rsvp_id', rsvp.id)
@@ -305,6 +347,11 @@ export const loadAdminData = async () => {
   if (rsvpResponsesError) {
     throw rsvpResponsesError;
   }
+
+  const galleryImages = (galleryImagesRaw || []) as InvitationGalleryImageRow[];
+  const accountEntries = (accountEntriesRaw || []) as InvitationAccountEntryRow[];
+  const guestbookEntries = (guestbookEntriesRaw || []) as InvitationGuestbookEntryRow[];
+  const rsvpResponses = (rsvpResponsesRaw || []) as InvitationRsvpResponseRow[];
 
   return {
     invitationId: invitation.id,
@@ -377,12 +424,12 @@ export const loadAdminData = async () => {
       autoplay: gallery.autoplay,
       autoplay_delay: gallery.autoplay_delay,
     },
-    galleryImages: (galleryImages || []).map((image) => ({
+    galleryImages: galleryImages.map((image) => ({
       id: image.id,
       gallery_id: image.gallery_id,
       src: image.src,
-      alt: image.alt,
-      thumbnail: image.thumbnail,
+      alt: image.alt || '',
+      thumbnail: image.thumbnail || null,
       width: image.width,
       height: image.height,
       sort_order: image.sort_order,
@@ -420,7 +467,7 @@ export const loadAdminData = async () => {
       enable_edit: guestbook.enable_edit,
       enable_delete: guestbook.enable_delete,
     },
-    guestbookEntries: (guestbookEntries || []).map((entry) => ({
+    guestbookEntries: guestbookEntries.map((entry) => ({
       id: entry.id,
       name: entry.name,
       message: entry.message,
@@ -435,7 +482,7 @@ export const loadAdminData = async () => {
       consent_retention: rsvp.consent_retention || '',
       consent_notice: rsvp.consent_notice || '',
     },
-    rsvpResponses: (rsvpResponses || []).map((entry) => ({
+    rsvpResponses: rsvpResponses.map((entry) => ({
       id: entry.id,
       name: entry.name,
       attendance: entry.attendance,
@@ -449,7 +496,7 @@ export const loadAdminData = async () => {
       title: accounts.title,
       description: accounts.description || '',
     },
-    accountEntries: (accountEntries || []).map((entry) => ({
+    accountEntries: accountEntries.map((entry) => ({
       id: entry.id,
       accounts_id: entry.accounts_id,
       group_type: entry.group_type,
