@@ -41,7 +41,7 @@ export const AdminSectionBasic = ({
       <SurfaceCard className="p-6">
         <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">기본 정보</h2>
         <form action={updateBasicInfoAction} className="mt-4 grid gap-4 md:grid-cols-2">
-          <div className="flex gap-2">
+          <div className="grid gap-2 sm:grid-cols-2">
             <div className="flex flex-col gap-2">
               <FieldLabel htmlFor="groom_last_name">신랑 성</FieldLabel>
               <TextInput
@@ -59,7 +59,7 @@ export const AdminSectionBasic = ({
               />
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="grid gap-2 sm:grid-cols-2">
             <div className="flex flex-col gap-2">
               <FieldLabel htmlFor="bride_last_name">신부 성</FieldLabel>
               <TextInput
@@ -81,36 +81,40 @@ export const AdminSectionBasic = ({
             부모님 성함
           </div>
           <div className="flex flex-col gap-2">
-            <FieldLabel htmlFor="groom_father_name">신랑 아버지</FieldLabel>
-            <TextInput
-              id="groom_father_name"
-              name="groom_father_name"
-              defaultValue={data.parents.groom.father || ''}
-            />
+            <div className="flex flex-col gap-2">
+              <FieldLabel htmlFor="groom_father_name">신랑 아버지</FieldLabel>
+              <TextInput
+                id="groom_father_name"
+                name="groom_father_name"
+                defaultValue={data.parents.groom.father || ''}
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <FieldLabel htmlFor="groom_mother_name">신랑 어머니</FieldLabel>
+              <TextInput
+                id="groom_mother_name"
+                name="groom_mother_name"
+                defaultValue={data.parents.groom.mother || ''}
+              />
+            </div>
           </div>
           <div className="flex flex-col gap-2">
-            <FieldLabel htmlFor="groom_mother_name">신랑 어머니</FieldLabel>
-            <TextInput
-              id="groom_mother_name"
-              name="groom_mother_name"
-              defaultValue={data.parents.groom.mother || ''}
-            />
-          </div>
-          <div className="flex flex-col gap-2">
-            <FieldLabel htmlFor="bride_father_name">신부 아버지</FieldLabel>
-            <TextInput
-              id="bride_father_name"
-              name="bride_father_name"
-              defaultValue={data.parents.bride.father || ''}
-            />
-          </div>
-          <div className="flex flex-col gap-2">
-            <FieldLabel htmlFor="bride_mother_name">신부 어머니</FieldLabel>
-            <TextInput
-              id="bride_mother_name"
-              name="bride_mother_name"
-              defaultValue={data.parents.bride.mother || ''}
-            />
+            <div className="flex flex-col gap-2">
+              <FieldLabel htmlFor="bride_father_name">신부 아버지</FieldLabel>
+              <TextInput
+                id="bride_father_name"
+                name="bride_father_name"
+                defaultValue={data.parents.bride.father || ''}
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <FieldLabel htmlFor="bride_mother_name">신부 어머니</FieldLabel>
+              <TextInput
+                id="bride_mother_name"
+                name="bride_mother_name"
+                defaultValue={data.parents.bride.mother || ''}
+              />
+            </div>
           </div>
           <div className="md:col-span-2 flex justify-end">
             <Button type="submit" size="sm">
@@ -152,15 +156,6 @@ export const AdminSectionBasic = ({
                 </Button>
               </div>
             </div>
-          </div>
-          <div className="flex flex-col gap-2 md:col-span-2">
-            <FieldLabel htmlFor="location_place_name">지도 표시명</FieldLabel>
-            <TextInput
-              id="location_place_name"
-              name="location_place_name"
-              ref={placeNameInputRef}
-              defaultValue={data.location.place_name}
-            />
           </div>
           <div className="md:col-span-2 relative overflow-hidden rounded-[12px] border border-[var(--border-light)] bg-white/60">
             <div className="h-[220px]">

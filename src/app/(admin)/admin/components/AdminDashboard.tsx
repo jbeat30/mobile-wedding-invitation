@@ -473,10 +473,15 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
             aria-label="장소 검색 닫기"
           />
           <div className="relative z-10 w-full max-w-[960px] overflow-hidden rounded-[16px] border border-[var(--border-light)] bg-white shadow-[var(--shadow-card)]">
-            <div className="flex flex-col gap-3 border-b border-[var(--border-light)] px-4 py-3 md:flex-row md:items-center">
-              <h3 className="text-[14px] font-semibold text-[var(--text-primary)]">
-                카카오 장소 검색
-              </h3>
+            <div className="flex flex-col gap-3 border-b border-[var(--border-light)] px-4 py-3">
+              <div className="flex items-center justify-between gap-2">
+                <h3 className="text-[14px] font-semibold text-[var(--text-primary)]">
+                  카카오 장소 검색
+                </h3>
+                <Button type="button" size="sm" variant="ghost" onClick={closePlaceSearchModal}>
+                  닫기
+                </Button>
+              </div>
               <div className="flex flex-1 gap-2">
                 <TextInput
                   value={placeSearchQuery}
@@ -490,13 +495,15 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
                   }}
                   className="flex-1"
                 />
-                <Button type="button" size="sm" onClick={handlePlaceSearch}>
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={handlePlaceSearch}
+                  className="shrink-0 whitespace-nowrap"
+                >
                   검색
                 </Button>
               </div>
-              <Button type="button" size="sm" variant="ghost" onClick={closePlaceSearchModal}>
-                닫기
-              </Button>
             </div>
             <div className="grid gap-4 p-4 md:grid-cols-[1.2fr_1fr]">
               <div className="h-[360px] overflow-hidden rounded-[12px] border border-[var(--border-light)] bg-white/60">
