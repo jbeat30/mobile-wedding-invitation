@@ -276,6 +276,7 @@ export const GuestbookSection = ({ guestbook, storageKey, title }: GuestbookSect
                 onChange={(event) => setName(event.target.value)}
                 placeholder="성함을 입력해주세요"
                 maxLength={20}
+                autoComplete="off"
                 required
               />
             </div>
@@ -506,6 +507,7 @@ export const GuestbookSection = ({ guestbook, storageKey, title }: GuestbookSect
                   value={editName}
                   onChange={(e) => setEditName(e.target.value)}
                   maxLength={20}
+                  autoComplete="off"
                   required
                 />
               </div>
