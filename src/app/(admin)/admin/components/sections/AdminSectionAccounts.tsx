@@ -115,9 +115,15 @@ export const AdminSectionAccounts = ({
                 <div className="rounded-[12px] border border-[var(--border-light)] bg-white/70">
                   {group.entries.length ? (
                     <div className="divide-y divide-[var(--border-light)]">
-                      {group.entries.map((entry) => (
-                        <div key={entry.id} className="flex flex-col gap-4 px-4 py-4">
-                          <form action={updateAccountEntryAction} className="grid gap-3">
+                      {group.entries.map((entry) => {
+                        const formId = `account_entry_${entry.id}`;
+                        return (
+                          <div key={entry.id} className="flex flex-col gap-4 px-4 py-4">
+                            <form
+                              id={formId}
+                              action={updateAccountEntryAction}
+                              className="grid gap-3"
+                            >
                             <input type="hidden" name="entry_id" value={entry.id} />
                             <div className="grid gap-3 md:grid-cols-2">
                               <div className="flex flex-col gap-2">
@@ -157,20 +163,21 @@ export const AdminSectionAccounts = ({
                                 />
                               </div>
                             </div>
-                            <div className="flex justify-end">
-                              <Button type="submit" size="sm">
+                            </form>
+                            <div className="flex items-center justify-end gap-2">
+                              <Button type="submit" size="sm" form={formId}>
                                 저장
                               </Button>
+                              <form action={deleteAccountEntryAction}>
+                                <input type="hidden" name="entry_id" value={entry.id} />
+                                <Button type="submit" variant="danger" size="sm">
+                                  삭제
+                                </Button>
+                              </form>
                             </div>
-                          </form>
-                          <form action={deleteAccountEntryAction} className="flex justify-end">
-                            <input type="hidden" name="entry_id" value={entry.id} />
-                            <Button type="submit" variant="danger" size="sm">
-                              삭제
-                            </Button>
-                          </form>
-                        </div>
-                      ))}
+                          </div>
+                        );
+                      })}
                     </div>
                   ) : (
                     <div className="px-4 py-6 text-center text-[12px] text-[var(--text-muted)]">
