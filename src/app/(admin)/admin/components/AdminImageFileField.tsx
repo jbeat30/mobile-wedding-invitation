@@ -97,12 +97,6 @@ export const AdminImageFileField = ({
       <input type="hidden" name={`${name}_uuid`} value={uploadedMeta?.uuid || ''} />
       <input type="hidden" name={`${name}_filename`} value={uploadedMeta?.filename || ''} />
       {hint ? <p className="text-[11px] text-[var(--text-muted)]">{hint}</p> : null}
-      {uploading ? (
-        <p className="text-[11px] text-[var(--text-secondary)]">업로드 중...</p>
-      ) : null}
-      {errorMessage ? (
-        <p className="text-[11px] text-[var(--accent-burgundy)]">{errorMessage}</p>
-      ) : null}
       {previewUrl.trim().length > 0 ? (
         <div className="relative overflow-hidden rounded-[12px] border border-[var(--border-light)] bg-white/60">
           {showPreview ? (
@@ -122,6 +116,12 @@ export const AdminImageFileField = ({
             </div>
           )}
         </div>
+      ) : null}
+      {uploading ? (
+        <p className="text-[11px] text-[var(--text-secondary)]">업로드 중...</p>
+      ) : null}
+      {errorMessage ? (
+        <p className="text-[11px] text-[var(--accent-burgundy)]">{errorMessage}</p>
       ) : null}
     </div>
   );
