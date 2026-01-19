@@ -32,7 +32,7 @@ export const AdminSectionBgm = ({ bgm }: AdminSectionBgmProps) => {
 
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('sectionId', bgm.id);
+    formData.append('sectionId', 'bgm/audio');
 
     try {
       const response = await fetch('/api/admin/upload', {

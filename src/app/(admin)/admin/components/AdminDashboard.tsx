@@ -352,7 +352,6 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
           <AdminSectionCouple
             profile={data.profile}
             sectionTitles={data.sectionTitles}
-            profileSectionId={data.invitationId}
           />
         );
       case 'location':

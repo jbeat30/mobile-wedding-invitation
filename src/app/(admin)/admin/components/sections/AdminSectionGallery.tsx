@@ -112,7 +112,7 @@ export const AdminSectionGallery = ({
                 id="image_src"
                 name="image_src"
                 label="이미지 파일"
-                sectionId={gallery.id}
+                sectionId="gallery/images"
                 hint="2MB 이하 이미지 파일"
                 required
               />

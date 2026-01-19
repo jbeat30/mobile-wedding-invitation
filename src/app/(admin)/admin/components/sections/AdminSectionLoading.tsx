@@ -72,7 +72,7 @@ export const AdminSectionLoading = ({ loading, assets }: AdminSectionLoadingProp
             id="loading_image"
             name="loading_image"
             label="로딩 이미지"
-            sectionId={assets.id}
+            sectionId="loading/image"
             defaultValue={assets.loading_image}
             hint="2MB 이하 이미지 파일"
           />
