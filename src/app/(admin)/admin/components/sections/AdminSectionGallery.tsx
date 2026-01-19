@@ -10,6 +10,7 @@ import {
   updateGalleryAction,
 } from '@/app/(admin)/admin/actions/assets';
 import { Button } from '@/components/ui/Button';
+import { AdminSubmitButton } from '@/app/(admin)/admin/components/AdminSubmitButton';
 import { FieldLabel } from '@/components/ui/FieldLabel';
 import { SurfaceCard } from '@/components/ui/SurfaceCard';
 import { TextArea, TextInput } from '@/components/ui/TextInput';
@@ -96,9 +97,9 @@ export const AdminSectionGallery = ({
               />
             </div>
             <div className="md:col-span-2 flex justify-end">
-              <Button type="submit" size="sm">
+              <AdminSubmitButton size="sm" pendingText="저장 중...">
                 갤러리 저장
-              </Button>
+              </AdminSubmitButton>
             </div>
           </form>
         </div>
@@ -117,9 +118,9 @@ export const AdminSectionGallery = ({
                 required
               />
               <div className="md:col-span-2 flex justify-end">
-                <Button type="submit" size="sm">
+                <AdminSubmitButton size="sm" pendingText="추가 중...">
                   이미지 추가
-                </Button>
+                </AdminSubmitButton>
               </div>
             </form>
           </div>

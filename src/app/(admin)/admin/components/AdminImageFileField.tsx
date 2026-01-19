@@ -1,8 +1,9 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FieldLabel } from '@/components/ui/FieldLabel';
+import { Toast } from '@/components/ui/Toast';
 
 type AdminImageFileFieldProps = {
   id: string;
@@ -34,17 +35,48 @@ export const AdminImageFileField = ({
   const [previewUrl, setPreviewUrl] = useState<string>(defaultValue || '');
   const [errorMessage, setErrorMessage] = useState('');
   const [uploading, setUploading] = useState(false);
+  const [showToast, setShowToast] = useState(false);
   const [uploadedMeta, setUploadedMeta] = useState<{ uuid: string; filename: string } | null>(
     null
   );
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const showPreview = previewUrl.trim().length > 0 && !errorMessage;
   const maxSize = 2 * 1024 * 1024;
+
+  const toggleFormSubmit = (disabled: boolean) => {
+    const form = fileInputRef.current?.form;
+    if (!form) return;
+    const submitButtons = form.querySelectorAll<HTMLButtonElement | HTMLInputElement>(
+      'button[type="submit"], input[type="submit"]'
+    );
+    submitButtons.forEach((button) => {
+      if (disabled) {
+        if (!button.disabled) {
+          button.dataset.uploadDisabled = 'true';
+          button.disabled = true;
+        }
+        return;
+      }
+      if (button.dataset.uploadDisabled === 'true') {
+        button.disabled = false;
+        delete button.dataset.uploadDisabled;
+      }
+    });
+  };
+
+  useEffect(() => {
+    toggleFormSubmit(uploading);
+    return () => {
+      toggleFormSubmit(false);
+    };
+  }, [uploading]);
 
   return (
     <div className="flex flex-col gap-2">
       <FieldLabel htmlFor={id}>{label}</FieldLabel>
       <input
         id={id}
+        ref={fileInputRef}
         type="file"
         accept="image/*"
         required={required}
@@ -84,6 +116,8 @@ export const AdminImageFileField = ({
             };
             setValue(result.url);
             setUploadedMeta({ uuid: result.uuid, filename: result.originalName });
+            setShowToast(true);
+            window.setTimeout(() => setShowToast(false), 2000);
           } catch (error) {
             console.error('Image upload failed:', error);
             setErrorMessage('업로드에 실패했습니다. 다시 시도해 주세요.');
@@ -118,11 +152,15 @@ export const AdminImageFileField = ({
         </div>
       ) : null}
       {uploading ? (
-        <p className="text-[11px] text-[var(--text-secondary)]">업로드 중...</p>
+        <p className="inline-flex items-center gap-2 text-[11px] text-[var(--text-secondary)]">
+          <span className="h-3 w-3 animate-spin rounded-full border border-[var(--text-secondary)] border-t-transparent" />
+          업로드 중...
+        </p>
       ) : null}
       {errorMessage ? (
         <p className="text-[11px] text-[var(--accent-burgundy)]">{errorMessage}</p>
       ) : null}
+      <Toast isOpen={showToast} message="업로드 완료" />
     </div>
   );
 };

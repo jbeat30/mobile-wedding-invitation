@@ -3,7 +3,7 @@
 import type { Dispatch, SetStateAction } from 'react';
 import type { AdminDashboardData } from '@/app/(admin)/admin/data';
 import { updateRsvpAction } from '@/app/(admin)/admin/actions/rsvp';
-import { Button } from '@/components/ui/Button';
+import { AdminSubmitButton } from '@/app/(admin)/admin/components/AdminSubmitButton';
 import { FieldLabel } from '@/components/ui/FieldLabel';
 import { SurfaceCard } from '@/components/ui/SurfaceCard';
 import { TextArea, TextInput } from '@/components/ui/TextInput';
@@ -87,9 +87,9 @@ export const AdminSectionRsvp = ({
             />
           </div>
           <div className="md:col-span-2 flex justify-end">
-            <Button type="submit" size="sm">
+            <AdminSubmitButton size="sm" pendingText="저장 중...">
               저장하기
-            </Button>
+            </AdminSubmitButton>
           </div>
         </form>
       </SurfaceCard>

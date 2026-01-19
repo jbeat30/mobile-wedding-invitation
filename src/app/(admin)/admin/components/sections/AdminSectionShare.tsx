@@ -3,7 +3,7 @@
 import type { AdminDashboardData } from '@/app/(admin)/admin/data';
 import { updateShareAction } from '@/app/(admin)/admin/actions/share';
 import { updateShareImagesAction } from '@/app/(admin)/admin/actions/assets';
-import { Button } from '@/components/ui/Button';
+import { AdminSubmitButton } from '@/app/(admin)/admin/components/AdminSubmitButton';
 import { FieldLabel } from '@/components/ui/FieldLabel';
 import { SurfaceCard } from '@/components/ui/SurfaceCard';
 import { TextInput } from '@/components/ui/TextInput';
@@ -58,9 +58,9 @@ export const AdminSectionShare = ({ share, assets, sectionTitles }: AdminSection
             />
           </div>
           <div className="md:col-span-2 flex justify-end">
-            <Button type="submit" size="sm">
+            <AdminSubmitButton size="sm" pendingText="저장 중...">
               저장하기
-            </Button>
+            </AdminSubmitButton>
           </div>
         </form>
       </SurfaceCard>
@@ -108,9 +108,9 @@ export const AdminSectionShare = ({ share, assets, sectionTitles }: AdminSection
             />
           </div>
           <div className="md:col-span-2 flex justify-end">
-            <Button type="submit" size="sm">
+            <AdminSubmitButton size="sm" pendingText="저장 중...">
               저장하기
-            </Button>
+            </AdminSubmitButton>
           </div>
         </form>
       </SurfaceCard>
@@ -130,9 +130,9 @@ export const AdminSectionShare = ({ share, assets, sectionTitles }: AdminSection
             hint="메신저/브라우저 미리보기용 (2MB 이하)"
           />
           <div className="md:col-span-2 flex justify-end">
-            <Button type="submit" size="sm">
+            <AdminSubmitButton size="sm" pendingText="저장 중...">
               이미지 저장
-            </Button>
+            </AdminSubmitButton>
           </div>
         </form>
       </SurfaceCard>

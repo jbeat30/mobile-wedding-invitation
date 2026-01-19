@@ -6,7 +6,7 @@ import {
   updateWeddingInfoSectionAction,
   updateTransportationAction,
 } from '@/app/(admin)/admin/actions/content';
-import { Button } from '@/components/ui/Button';
+import { AdminSubmitButton } from '@/app/(admin)/admin/components/AdminSubmitButton';
 import { FieldLabel } from '@/components/ui/FieldLabel';
 import { SurfaceCard } from '@/components/ui/SurfaceCard';
 import { TextArea, TextInput } from '@/components/ui/TextInput';
@@ -44,9 +44,9 @@ export const AdminSectionLocation = ({ data }: AdminSectionLocationProps) => {
             />
           </div>
           <div className="flex justify-end">
-            <Button type="submit" size="sm">
+            <AdminSubmitButton size="sm" pendingText="저장 중...">
               저장하기
-            </Button>
+            </AdminSubmitButton>
           </div>
         </form>
       </SurfaceCard>
@@ -63,9 +63,9 @@ export const AdminSectionLocation = ({ data }: AdminSectionLocationProps) => {
             />
           </div>
           <div className="flex justify-end">
-            <Button type="submit" size="sm">
+            <AdminSubmitButton size="sm" pendingText="저장 중...">
               타이틀 저장
-            </Button>
+            </AdminSubmitButton>
           </div>
         </form>
 
@@ -106,9 +106,9 @@ export const AdminSectionLocation = ({ data }: AdminSectionLocationProps) => {
             />
           </div>
           <div className="flex justify-end">
-            <Button type="submit" size="sm">
+            <AdminSubmitButton size="sm" pendingText="저장 중...">
               교통 안내 저장
-            </Button>
+            </AdminSubmitButton>
           </div>
         </form>
       </SurfaceCard>

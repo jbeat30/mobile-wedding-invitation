@@ -3,7 +3,7 @@
 import type { Dispatch, SetStateAction } from 'react';
 import type { AdminDashboardData } from '@/app/(admin)/admin/data';
 import { updateGuestbookAction } from '@/app/(admin)/admin/actions/guestbook';
-import { Button } from '@/components/ui/Button';
+import { AdminSubmitButton } from '@/app/(admin)/admin/components/AdminSubmitButton';
 import { FieldLabel } from '@/components/ui/FieldLabel';
 import { SelectField } from '@/components/ui/SelectField';
 import { SurfaceCard } from '@/components/ui/SurfaceCard';
@@ -102,9 +102,9 @@ export const AdminSectionGuestbook = ({
           삭제 허용
         </label>
         <div className="flex justify-end md:col-span-2">
-          <Button type="submit" size="sm">
+          <AdminSubmitButton size="sm" pendingText="저장 중...">
             저장하기
-          </Button>
+          </AdminSubmitButton>
         </div>
       </form>
 

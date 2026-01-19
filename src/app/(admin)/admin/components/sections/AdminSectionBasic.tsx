@@ -4,6 +4,7 @@ import type { RefObject } from 'react';
 import type { AdminDashboardData } from '@/app/(admin)/admin/data';
 import { updateBasicInfoAction, updateLocationAction } from '@/app/(admin)/admin/actions/content';
 import { Button } from '@/components/ui/Button';
+import { AdminSubmitButton } from '@/app/(admin)/admin/components/AdminSubmitButton';
 import { FieldLabel } from '@/components/ui/FieldLabel';
 import { SurfaceCard } from '@/components/ui/SurfaceCard';
 import { TextInput } from '@/components/ui/TextInput';
@@ -115,9 +116,9 @@ export const AdminSectionBasic = ({
             </div>
           </div>
           <div className="md:col-span-2 flex justify-end">
-            <Button type="submit" size="sm">
+            <AdminSubmitButton size="sm" pendingText="저장 중...">
               저장하기
-            </Button>
+            </AdminSubmitButton>
           </div>
         </form>
       </SurfaceCard>
@@ -180,9 +181,9 @@ export const AdminSectionBasic = ({
             </p>
           </div>
           <div className="md:col-span-2 flex justify-end">
-            <Button type="submit" size="sm">
+            <AdminSubmitButton size="sm" pendingText="저장 중...">
               저장하기
-            </Button>
+            </AdminSubmitButton>
           </div>
         </form>
       </SurfaceCard>
