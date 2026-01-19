@@ -2,22 +2,14 @@
 
 import type { Dispatch, SetStateAction } from 'react';
 import type { AdminDashboardData } from '@/app/(admin)/admin/data';
-import {
-  addRsvpFieldAction,
-  deleteRsvpFieldAction,
-  updateRsvpAction,
-  updateRsvpFieldAction,
-  updateRsvpTitleAction,
-} from '@/app/(admin)/admin/actions/rsvp';
+import { updateRsvpAction } from '@/app/(admin)/admin/actions/rsvp';
 import { Button } from '@/components/ui/Button';
 import { FieldLabel } from '@/components/ui/FieldLabel';
-import { SelectField } from '@/components/ui/SelectField';
 import { SurfaceCard } from '@/components/ui/SurfaceCard';
 import { TextArea, TextInput } from '@/components/ui/TextInput';
 
 type AdminSectionRsvpProps = {
   rsvp: AdminDashboardData['rsvp'];
-  rsvpFields: AdminDashboardData['rsvpFields'];
   rsvpResponses: AdminDashboardData['rsvpResponses'];
   sectionTitles: AdminDashboardData['sectionTitles'];
   rsvpPage: number;
@@ -31,7 +23,6 @@ type AdminSectionRsvpProps = {
  */
 export const AdminSectionRsvp = ({
   rsvp,
-  rsvpFields,
   rsvpResponses,
   sectionTitles,
   rsvpPage,
@@ -42,6 +33,14 @@ export const AdminSectionRsvp = ({
       <SurfaceCard className="p-6">
         <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">RSVP 설정</h2>
         <form action={updateRsvpAction} className="mt-4 grid gap-4 md:grid-cols-2">
+          <div className="flex flex-col gap-2 md:col-span-2">
+            <FieldLabel htmlFor="rsvp_section_title">RSVP 섹션 타이틀</FieldLabel>
+            <TextInput
+              id="rsvp_section_title"
+              name="rsvp_section_title"
+              defaultValue={sectionTitles.rsvp}
+            />
+          </div>
           <label className="flex items-center gap-2 text-[14px] md:col-span-2">
             <input type="checkbox" name="rsvp_enabled" defaultChecked={rsvp.enabled} />
             RSVP 사용
@@ -93,156 +92,6 @@ export const AdminSectionRsvp = ({
             </Button>
           </div>
         </form>
-      </SurfaceCard>
-
-      <SurfaceCard className="p-6">
-        <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">RSVP 필드</h2>
-        <form action={updateRsvpTitleAction} className="mt-4 flex flex-col gap-3">
-          <div className="flex flex-col gap-2">
-            <FieldLabel htmlFor="rsvp_section_title">RSVP 섹션 타이틀</FieldLabel>
-            <TextInput
-              id="rsvp_section_title"
-              name="rsvp_section_title"
-              defaultValue={sectionTitles.rsvp}
-            />
-          </div>
-          <Button type="submit" size="sm" className="self-end">
-            타이틀 저장
-          </Button>
-        </form>
-
-        <div className="mt-6 rounded-[12px] border border-[var(--border-light)] bg-white/70 p-4">
-          <h3 className="text-[14px] font-semibold text-[var(--text-primary)]">필드 추가</h3>
-          <form action={addRsvpFieldAction} className="mt-4 grid gap-4 md:grid-cols-2">
-            <input type="hidden" name="rsvp_id" value={rsvp.id} />
-            <div className="flex flex-col gap-2">
-              <FieldLabel htmlFor="rsvp_field_key">필드 키</FieldLabel>
-              <SelectField id="rsvp_field_key" name="rsvp_field_key" defaultValue="attendance">
-                <option value="attendance">참석 여부</option>
-                <option value="companions">동반 인원</option>
-                <option value="meal">식사 여부</option>
-                <option value="notes">비고</option>
-              </SelectField>
-            </div>
-            <div className="flex flex-col gap-2">
-              <FieldLabel htmlFor="rsvp_field_label">라벨</FieldLabel>
-              <TextInput id="rsvp_field_label" name="rsvp_field_label" />
-            </div>
-            <label className="flex items-center gap-2 text-[14px] md:col-span-2">
-              <input type="checkbox" name="rsvp_field_required" />
-              필수 항목
-            </label>
-            <div className="flex flex-col gap-2 md:col-span-2">
-              <FieldLabel htmlFor="rsvp_field_placeholder">플레이스홀더</FieldLabel>
-              <TextInput id="rsvp_field_placeholder" name="rsvp_field_placeholder" />
-            </div>
-            <div className="flex flex-col gap-2 md:col-span-2">
-              <FieldLabel htmlFor="rsvp_field_options">옵션 (줄바꿈)</FieldLabel>
-              <TextArea id="rsvp_field_options" name="rsvp_field_options" />
-            </div>
-            <div className="flex flex-col gap-2 md:col-span-2">
-              <FieldLabel htmlFor="rsvp_field_sort_order">정렬 순서</FieldLabel>
-              <TextInput id="rsvp_field_sort_order" name="rsvp_field_sort_order" type="number" />
-            </div>
-            <div className="md:col-span-2 flex justify-end">
-              <Button type="submit" size="sm">
-                추가하기
-              </Button>
-            </div>
-          </form>
-        </div>
-
-        <div className="mt-4 rounded-[12px] border border-[var(--border-light)] bg-white/70">
-          {rsvpFields.length ? (
-            <div className="divide-y divide-[var(--border-light)]">
-              {rsvpFields.map((field) => {
-                const formId = `rsvp_field_${field.id}`;
-                return (
-                  <div key={field.id} className="flex flex-col gap-4 px-4 py-4">
-                    <form id={formId} action={updateRsvpFieldAction} className="grid gap-3">
-                      <input type="hidden" name="rsvp_field_id" value={field.id} />
-                      <div className="grid gap-3 md:grid-cols-2">
-                        <div className="flex flex-col gap-2">
-                          <FieldLabel htmlFor={`field_key_${field.id}`}>필드 키</FieldLabel>
-                          <SelectField
-                            id={`field_key_${field.id}`}
-                            name="rsvp_field_key"
-                            defaultValue={field.field_key}
-                          >
-                            <option value="attendance">참석 여부</option>
-                            <option value="companions">동반 인원</option>
-                            <option value="meal">식사 여부</option>
-                            <option value="notes">비고</option>
-                          </SelectField>
-                        </div>
-                        <div className="flex flex-col gap-2">
-                          <FieldLabel htmlFor={`field_label_${field.id}`}>라벨</FieldLabel>
-                          <TextInput
-                            id={`field_label_${field.id}`}
-                            name="rsvp_field_label"
-                            defaultValue={field.label}
-                          />
-                        </div>
-                      </div>
-                      <label className="flex items-center gap-2 text-[14px]">
-                        <input
-                          type="checkbox"
-                          name="rsvp_field_required"
-                          defaultChecked={field.required}
-                        />
-                        필수 항목
-                      </label>
-                      <div className="flex flex-col gap-2">
-                        <FieldLabel htmlFor={`field_placeholder_${field.id}`}>
-                          플레이스홀더
-                        </FieldLabel>
-                        <TextInput
-                          id={`field_placeholder_${field.id}`}
-                          name="rsvp_field_placeholder"
-                          defaultValue={field.placeholder || ''}
-                        />
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <FieldLabel htmlFor={`field_options_${field.id}`}>
-                          옵션 (줄바꿈)
-                        </FieldLabel>
-                        <TextArea
-                          id={`field_options_${field.id}`}
-                          name="rsvp_field_options"
-                          defaultValue={(field.options || []).join('\n')}
-                        />
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <FieldLabel htmlFor={`field_sort_${field.id}`}>정렬 순서</FieldLabel>
-                        <TextInput
-                          id={`field_sort_${field.id}`}
-                          name="rsvp_field_sort_order"
-                          type="number"
-                          defaultValue={field.sort_order}
-                        />
-                      </div>
-                    </form>
-                    <div className="flex items-center justify-end gap-2">
-                      <Button type="submit" size="sm" form={formId}>
-                        저장
-                      </Button>
-                      <form action={deleteRsvpFieldAction}>
-                        <input type="hidden" name="rsvp_field_id" value={field.id} />
-                        <Button type="submit" variant="danger" size="sm">
-                          삭제
-                        </Button>
-                      </form>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            <div className="px-4 py-6 text-center text-[12px] text-[var(--text-muted)]">
-              등록된 필드가 없습니다
-            </div>
-          )}
-        </div>
       </SurfaceCard>
 
       <SurfaceCard className="p-6">

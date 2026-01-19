@@ -14,6 +14,7 @@ export const updateRsvpAction = async (formData: FormData) => {
   const supabase = createSupabaseAdmin();
   const { id } = await getOrCreateInvitation();
   const deadlineValue = String(formData.get('rsvp_deadline') || '').trim();
+  const rsvpSectionTitle = formData.get('rsvp_section_title');
 
   const payload = {
     enabled: formData.get('rsvp_enabled') === 'on',
@@ -25,6 +26,12 @@ export const updateRsvpAction = async (formData: FormData) => {
   };
 
   await supabase.from('invitation_rsvp').update(payload).eq('invitation_id', id);
+  if (rsvpSectionTitle !== null) {
+    await supabase
+      .from('invitation_section_titles')
+      .update({ rsvp: String(rsvpSectionTitle || '') })
+      .eq('invitation_id', id);
+  }
   revalidateAdmin();
 };
 

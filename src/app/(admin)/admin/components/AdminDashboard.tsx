@@ -395,7 +395,6 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
         return (
           <AdminSectionRsvp
             rsvp={data.rsvp}
-            rsvpFields={data.rsvpFields}
             rsvpResponses={data.rsvpResponses}
             sectionTitles={data.sectionTitles}
             rsvpPage={rsvpPage}
