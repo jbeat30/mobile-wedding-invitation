@@ -44,13 +44,7 @@ export const LoadingSection = ({
   }, []);
 
   useEffect(() => {
-    if (isVisible) {
-      setShowHint(true);
-      return;
-    }
-    if (isHintVisible || !isVisible) {
-      setShowHint(true);
-    }
+    setShowHint(!isVisible && isHintVisible);
   }, [isHintVisible, isVisible]);
 
   // 스크롤 제어
@@ -175,13 +169,7 @@ export const LoadingSection = ({
         </div>
 
         {/* BGM 토글 */}
-        <div
-          className={`absolute right-8 top-8 z-[70] transition duration-500 ease-out ${
-            showHint
-              ? 'translate-y-0 opacity-100 pointer-events-auto'
-              : 'translate-y-2.5 opacity-0 pointer-events-none'
-          }`}
-        >
+        <div className="absolute right-8 top-8 z-[70] translate-y-0 opacity-100 pointer-events-auto transition duration-500 ease-out">
           <BgmToggle enabled={bgmEnabled} disabled={bgmDisabled} onToggle={onBgmToggle} />
         </div>
 
