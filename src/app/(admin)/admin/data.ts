@@ -3,6 +3,146 @@ import { createSupabaseAdmin } from '@/lib/supabaseAdmin';
 const DEFAULT_LOCALE = 'ko-KR';
 const DEFAULT_TIMEZONE = 'Asia/Seoul';
 
+type InvitationLoadingRow = {
+  id: string;
+  enabled: boolean;
+  message: string;
+  min_duration: number;
+  additional_duration: number;
+};
+
+type InvitationProfileRow = {
+  id: string;
+  groom_first_name: string;
+  groom_last_name: string;
+  groom_bio: string | null;
+  groom_profile_image: string | null;
+  bride_first_name: string;
+  bride_last_name: string;
+  bride_bio: string | null;
+  bride_profile_image: string | null;
+};
+
+type InvitationParentsRow = {
+  id: string;
+  groom_father: string | null;
+  groom_mother: string | null;
+  bride_father: string | null;
+  bride_mother: string | null;
+};
+
+type InvitationAssetsRow = {
+  id: string;
+  hero_image: string | null;
+  loading_image: string | null;
+  share_og_image: string | null;
+  share_kakao_image: string | null;
+};
+
+type InvitationGreetingRow = {
+  id: string;
+  poetic_note: string | null;
+  message_lines: string[] | null;
+};
+
+type InvitationShareRow = {
+  id: string;
+  title: string;
+  description: string;
+  image_url: string | null;
+  kakao_title: string | null;
+  kakao_description: string | null;
+  kakao_image_url: string | null;
+  kakao_button_label: string | null;
+};
+
+type InvitationBgmRow = {
+  id: string;
+  enabled: boolean;
+  audio_url: string | null;
+  auto_play: boolean;
+  loop: boolean;
+};
+
+type InvitationGalleryRow = {
+  id: string;
+  title: string;
+  description: string | null;
+  autoplay: boolean;
+  autoplay_delay: number | null;
+};
+
+type InvitationLocationRow = {
+  id: string;
+  place_name: string;
+  address: string;
+  latitude: number | null;
+  longitude: number | null;
+  notices: string[] | null;
+};
+
+type InvitationGuestbookRow = {
+  id: string;
+  privacy_notice: string;
+  retention_text: string;
+  display_mode: string;
+  page_size: number;
+  recent_notice: string | null;
+  enable_password: boolean;
+  enable_edit: boolean;
+  enable_delete: boolean;
+};
+
+type InvitationRsvpRow = {
+  id: string;
+  enabled: boolean;
+  deadline: string | null;
+  consent_title: string | null;
+  consent_description: string | null;
+  consent_retention: string | null;
+  consent_notice: string | null;
+};
+
+type InvitationAccountsRow = {
+  id: string;
+  title: string;
+  description: string | null;
+};
+
+type InvitationClosingRow = {
+  id: string;
+  title: string;
+  message: string;
+  copyright: string | null;
+};
+
+type InvitationSectionTitlesRow = {
+  id: string;
+  greeting: string;
+  couple: string;
+  wedding: string;
+  location: string;
+  guestbook: string;
+  rsvp: string;
+  share: string;
+};
+
+type InvitationEventRow = {
+  id: string;
+  date_time: string;
+  venue: string;
+  address: string;
+};
+
+type InvitationTransportationRow = {
+  id: string;
+  location_id: string;
+  subway: string[] | null;
+  bus: string[] | null;
+  car: string | null;
+  parking: string | null;
+};
+
 /**
  * 초대장 기본 레코드 확보
  * @returns Promise<{ id: string }>
@@ -50,12 +190,12 @@ export const getOrCreateInvitation = async () => {
  * @param insertPayload Record<string, unknown>
  * @returns Promise<T>
  */
-const ensureSingleRow = async <T extends { id: string }>(
+const ensureSingleRow = async (
   supabase: ReturnType<typeof createSupabaseAdmin>,
   table: string,
   match: Record<string, string>,
   insertPayload: Record<string, unknown>
-) => {
+): Promise<Record<string, unknown>> => {
   const { data, error } = await supabase.from(table).select('*').match(match).maybeSingle();
 
   if (error) {
@@ -63,7 +203,7 @@ const ensureSingleRow = async <T extends { id: string }>(
   }
 
   if (data) {
-    return data as T;
+    return data as Record<string, unknown>;
   }
 
   const { data: created, error: insertError } = await supabase
@@ -76,7 +216,7 @@ const ensureSingleRow = async <T extends { id: string }>(
     throw insertError;
   }
 
-  return created as T;
+  return created as Record<string, unknown>;
 };
 
 /**
@@ -88,7 +228,7 @@ export const loadAdminData = async () => {
   const invitation = await getOrCreateInvitation();
 
   const [loading, profile, parents, assets, greeting, share, bgm, gallery, location, guestbook, rsvp, accounts, closing, sectionTitles, event] =
-    await Promise.all([
+    (await Promise.all([
       ensureSingleRow(supabase, 'invitation_loading', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
       ensureSingleRow(supabase, 'invitation_profile', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
       ensureSingleRow(supabase, 'invitation_parents', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
@@ -104,9 +244,25 @@ export const loadAdminData = async () => {
       ensureSingleRow(supabase, 'invitation_closing', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
       ensureSingleRow(supabase, 'invitation_section_titles', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
       ensureSingleRow(supabase, 'invitation_event', { invitation_id: invitation.id }, { invitation_id: invitation.id, date_time: new Date().toISOString() }),
-    ]);
+    ])) as [
+      InvitationLoadingRow,
+      InvitationProfileRow,
+      InvitationParentsRow,
+      InvitationAssetsRow,
+      InvitationGreetingRow,
+      InvitationShareRow,
+      InvitationBgmRow,
+      InvitationGalleryRow,
+      InvitationLocationRow,
+      InvitationGuestbookRow,
+      InvitationRsvpRow,
+      InvitationAccountsRow,
+      InvitationClosingRow,
+      InvitationSectionTitlesRow,
+      InvitationEventRow
+    ];
 
-  const transportation = await ensureSingleRow(supabase, 'invitation_transportation', { location_id: location.id }, { location_id: location.id });
+  const transportation = (await ensureSingleRow(supabase, 'invitation_transportation', { location_id: location.id }, { location_id: location.id })) as InvitationTransportationRow;
 
   const { data: galleryImages, error: galleryError } = await supabase
     .from('invitation_gallery_images')
@@ -117,17 +273,6 @@ export const loadAdminData = async () => {
 
   if (galleryError) {
     throw galleryError;
-  }
-
-  const { data: rsvpFields, error: rsvpFieldsError } = await supabase
-    .from('invitation_rsvp_fields')
-    .select('*')
-    .eq('rsvp_id', rsvp.id)
-    .order('sort_order', { ascending: true })
-    .order('created_at', { ascending: true });
-
-  if (rsvpFieldsError) {
-    throw rsvpFieldsError;
   }
 
   const { data: accountEntries, error: accountEntriesError } = await supabase
@@ -290,16 +435,6 @@ export const loadAdminData = async () => {
       consent_retention: rsvp.consent_retention || '',
       consent_notice: rsvp.consent_notice || '',
     },
-    rsvpFields: (rsvpFields || []).map((field) => ({
-      id: field.id,
-      rsvp_id: field.rsvp_id,
-      field_key: field.field_key,
-      label: field.label,
-      required: field.required,
-      placeholder: field.placeholder || '',
-      options: field.options || [],
-      sort_order: field.sort_order,
-    })),
     rsvpResponses: (rsvpResponses || []).map((entry) => ({
       id: entry.id,
       name: entry.name,

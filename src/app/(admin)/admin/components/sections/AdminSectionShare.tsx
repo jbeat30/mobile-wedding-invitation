@@ -29,7 +29,7 @@ export const AdminSectionShare = ({ share, assets, sectionTitles }: AdminSection
           청첩장 화면에 표시되는 공유 섹션의 제목/문구를 설정합니다.
         </p>
         <form action={updateShareAction} className="mt-4 grid gap-4 md:grid-cols-2">
-          <input type="hidden" name="share_image_url" value={assets.share_og_image} />
+          <input type="hidden" name="share_image_url" value={assets.share_og_image || ''} />
           <div className="flex flex-col gap-2 md:col-span-2">
             <FieldLabel htmlFor="share_section_title">공유 섹션 타이틀</FieldLabel>
             <TextInput
@@ -71,7 +71,7 @@ export const AdminSectionShare = ({ share, assets, sectionTitles }: AdminSection
           카카오톡 공유 카드에 표시되는 문구/이미지를 설정합니다.
         </p>
         <form action={updateShareAction} className="mt-4 grid gap-4 md:grid-cols-2">
-          <input type="hidden" name="share_image_url" value={assets.share_og_image} />
+          <input type="hidden" name="share_image_url" value={assets.share_og_image || ''} />
           <div className="flex flex-col gap-2">
             <FieldLabel htmlFor="kakao_title">카카오 타이틀</FieldLabel>
             <TextInput

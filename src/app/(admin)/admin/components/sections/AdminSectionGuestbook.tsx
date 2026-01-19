@@ -82,7 +82,7 @@ export const AdminSectionGuestbook = ({
           <TextInput
             id="guestbook_recent_notice"
             name="guestbook_recent_notice"
-            defaultValue={guestbook.recent_notice}
+            defaultValue={guestbook.recent_notice || ''}
           />
         </div>
         <label className="flex items-center gap-2 text-[14px]">
