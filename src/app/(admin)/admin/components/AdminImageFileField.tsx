@@ -3,7 +3,6 @@
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { FieldLabel } from '@/components/ui/FieldLabel';
-import { Toast } from '@/components/ui/Toast';
 
 type AdminImageFileFieldProps = {
   id: string;
@@ -35,7 +34,6 @@ export const AdminImageFileField = ({
   const [previewUrl, setPreviewUrl] = useState<string>(defaultValue || '');
   const [errorMessage, setErrorMessage] = useState('');
   const [uploading, setUploading] = useState(false);
-  const [showToast, setShowToast] = useState(false);
   const [uploadedMeta, setUploadedMeta] = useState<{ uuid: string; filename: string } | null>(
     null
   );
@@ -116,8 +114,6 @@ export const AdminImageFileField = ({
             };
             setValue(result.url);
             setUploadedMeta({ uuid: result.uuid, filename: result.originalName });
-            setShowToast(true);
-            window.setTimeout(() => setShowToast(false), 2000);
           } catch (error) {
             console.error('Image upload failed:', error);
             setErrorMessage('업로드에 실패했습니다. 다시 시도해 주세요.');
@@ -160,7 +156,6 @@ export const AdminImageFileField = ({
       {errorMessage ? (
         <p className="text-[11px] text-[var(--accent-burgundy)]">{errorMessage}</p>
       ) : null}
-      <Toast isOpen={showToast} message="업로드 완료" />
     </div>
   );
 };

@@ -3,6 +3,7 @@
 import type { Dispatch, SetStateAction } from 'react';
 import type { AdminDashboardData } from '@/app/(admin)/admin/data';
 import { updateGuestbookAction } from '@/app/(admin)/admin/actions/guestbook';
+import { AdminForm } from '@/app/(admin)/admin/components/AdminForm';
 import { AdminSubmitButton } from '@/app/(admin)/admin/components/AdminSubmitButton';
 import { FieldLabel } from '@/components/ui/FieldLabel';
 import { SelectField } from '@/components/ui/SelectField';
@@ -32,7 +33,11 @@ export const AdminSectionGuestbook = ({
   return (
     <SurfaceCard className="p-6">
       <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">게스트북</h2>
-      <form action={updateGuestbookAction} className="mt-4 grid gap-4 md:grid-cols-2">
+      <AdminForm
+        action={updateGuestbookAction}
+        successMessage="게스트북 설정이 저장되었습니다"
+        className="mt-4 grid gap-4 md:grid-cols-2"
+      >
         <div className="flex flex-col gap-2 md:col-span-2">
           <FieldLabel htmlFor="guestbook_section_title">게스트북 섹션 타이틀</FieldLabel>
           <TextInput
@@ -106,7 +111,7 @@ export const AdminSectionGuestbook = ({
             저장하기
           </AdminSubmitButton>
         </div>
-      </form>
+      </AdminForm>
 
       <div className="mt-6">
         <div className="overflow-hidden rounded-[12px] border border-[var(--border-light)] bg-white/70">

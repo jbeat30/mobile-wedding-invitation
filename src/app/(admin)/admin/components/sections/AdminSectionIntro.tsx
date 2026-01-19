@@ -3,6 +3,7 @@
 import type { AdminDashboardData } from '@/app/(admin)/admin/data';
 import { updateHeroImageAction } from '@/app/(admin)/admin/actions/assets';
 import { updateGreetingAction } from '@/app/(admin)/admin/actions/greeting';
+import { AdminForm } from '@/app/(admin)/admin/components/AdminForm';
 import { AdminSubmitButton } from '@/app/(admin)/admin/components/AdminSubmitButton';
 import { FieldLabel } from '@/components/ui/FieldLabel';
 import { SurfaceCard } from '@/components/ui/SurfaceCard';
@@ -29,7 +30,11 @@ export const AdminSectionIntro = ({
     <div className="flex flex-col gap-6">
       <SurfaceCard className="p-6">
         <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">메인 이미지</h2>
-        <form action={updateHeroImageAction} className="mt-4 grid gap-4 md:grid-cols-2">
+        <AdminForm
+          action={updateHeroImageAction}
+          successMessage="이미지가 저장되었습니다"
+          className="mt-4 grid gap-4 md:grid-cols-2"
+        >
           <AdminImageFileField
             id="hero_image"
             name="hero_image"
@@ -43,12 +48,16 @@ export const AdminSectionIntro = ({
               이미지 저장
             </AdminSubmitButton>
           </div>
-        </form>
+        </AdminForm>
       </SurfaceCard>
 
       <SurfaceCard className="p-6">
         <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">인사말</h2>
-        <form action={updateGreetingAction} className="mt-4 flex flex-col gap-4">
+        <AdminForm
+          action={updateGreetingAction}
+          successMessage="인사말이 저장되었습니다"
+          className="mt-4 flex flex-col gap-4"
+        >
           <div className="flex flex-col gap-2">
             <FieldLabel htmlFor="greeting_section_title">인사말 섹션 타이틀</FieldLabel>
             <TextInput
@@ -75,7 +84,7 @@ export const AdminSectionIntro = ({
               저장하기
             </AdminSubmitButton>
           </div>
-        </form>
+        </AdminForm>
       </SurfaceCard>
     </div>
   );

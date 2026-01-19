@@ -4,6 +4,7 @@ import type { RefObject } from 'react';
 import type { AdminDashboardData } from '@/app/(admin)/admin/data';
 import { updateBasicInfoAction, updateLocationAction } from '@/app/(admin)/admin/actions/content';
 import { Button } from '@/components/ui/Button';
+import { AdminForm } from '@/app/(admin)/admin/components/AdminForm';
 import { AdminSubmitButton } from '@/app/(admin)/admin/components/AdminSubmitButton';
 import { FieldLabel } from '@/components/ui/FieldLabel';
 import { SurfaceCard } from '@/components/ui/SurfaceCard';
@@ -39,7 +40,11 @@ export const AdminSectionBasic = ({
     <div className="flex flex-col gap-6">
       <SurfaceCard className="p-6">
         <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">기본 정보</h2>
-        <form action={updateBasicInfoAction} className="mt-4 grid gap-4 md:grid-cols-2">
+        <AdminForm
+          action={updateBasicInfoAction}
+          successMessage="기본 정보가 저장되었습니다"
+          className="mt-4 grid gap-4 md:grid-cols-2"
+        >
           <div className="grid gap-2 sm:grid-cols-2">
             <div className="flex flex-col gap-2">
               <FieldLabel htmlFor="groom_last_name">신랑 성</FieldLabel>
@@ -120,12 +125,16 @@ export const AdminSectionBasic = ({
               저장하기
             </AdminSubmitButton>
           </div>
-        </form>
+        </AdminForm>
       </SurfaceCard>
 
       <SurfaceCard className="p-6">
         <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">예식장 정보</h2>
-        <form action={updateLocationAction} className="mt-4 grid gap-4 md:grid-cols-2">
+        <AdminForm
+          action={updateLocationAction}
+          successMessage="예식장 정보가 저장되었습니다"
+          className="mt-4 grid gap-4 md:grid-cols-2"
+        >
           <div className="flex flex-col gap-2 md:col-span-2">
             <FieldLabel htmlFor="event_date_time">예식 일시</FieldLabel>
             <TextInput id="event_date_time" name="event_date_time" defaultValue={data.event.date_time} />
@@ -185,7 +194,7 @@ export const AdminSectionBasic = ({
               저장하기
             </AdminSubmitButton>
           </div>
-        </form>
+        </AdminForm>
       </SurfaceCard>
     </div>
   );

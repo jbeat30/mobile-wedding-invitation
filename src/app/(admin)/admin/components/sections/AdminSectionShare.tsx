@@ -3,6 +3,7 @@
 import type { AdminDashboardData } from '@/app/(admin)/admin/data';
 import { updateShareAction } from '@/app/(admin)/admin/actions/share';
 import { updateShareImagesAction } from '@/app/(admin)/admin/actions/assets';
+import { AdminForm } from '@/app/(admin)/admin/components/AdminForm';
 import { AdminSubmitButton } from '@/app/(admin)/admin/components/AdminSubmitButton';
 import { FieldLabel } from '@/components/ui/FieldLabel';
 import { SurfaceCard } from '@/components/ui/SurfaceCard';
@@ -28,7 +29,11 @@ export const AdminSectionShare = ({ share, assets, sectionTitles }: AdminSection
         <p className="mt-1 text-[12px] text-[var(--text-muted)]">
           청첩장 화면에 표시되는 공유 섹션의 제목/문구를 설정합니다.
         </p>
-        <form action={updateShareAction} className="mt-4 grid gap-4 md:grid-cols-2">
+        <AdminForm
+          action={updateShareAction}
+          successMessage="공유 섹션이 저장되었습니다"
+          className="mt-4 grid gap-4 md:grid-cols-2"
+        >
           <input type="hidden" name="share_image_url" value={assets.share_og_image || ''} />
           <div className="flex flex-col gap-2 md:col-span-2">
             <FieldLabel htmlFor="share_section_title">공유 섹션 타이틀</FieldLabel>
@@ -62,7 +67,7 @@ export const AdminSectionShare = ({ share, assets, sectionTitles }: AdminSection
               저장하기
             </AdminSubmitButton>
           </div>
-        </form>
+        </AdminForm>
       </SurfaceCard>
 
       <SurfaceCard className="p-6">
@@ -70,7 +75,11 @@ export const AdminSectionShare = ({ share, assets, sectionTitles }: AdminSection
         <p className="mt-1 text-[12px] text-[var(--text-muted)]">
           카카오톡 공유 카드에 표시되는 문구/이미지를 설정합니다.
         </p>
-        <form action={updateShareAction} className="mt-4 grid gap-4 md:grid-cols-2">
+        <AdminForm
+          action={updateShareAction}
+          successMessage="카카오 공유 카드가 저장되었습니다"
+          className="mt-4 grid gap-4 md:grid-cols-2"
+        >
           <input type="hidden" name="share_image_url" value={assets.share_og_image || ''} />
           <div className="flex flex-col gap-2">
             <FieldLabel htmlFor="kakao_title">카카오 타이틀</FieldLabel>
@@ -112,7 +121,7 @@ export const AdminSectionShare = ({ share, assets, sectionTitles }: AdminSection
               저장하기
             </AdminSubmitButton>
           </div>
-        </form>
+        </AdminForm>
       </SurfaceCard>
 
       <SurfaceCard className="p-6">
@@ -120,7 +129,11 @@ export const AdminSectionShare = ({ share, assets, sectionTitles }: AdminSection
         <p className="mt-1 text-[12px] text-[var(--text-muted)]">
           카카오 외 외부 메신저/브라우저 미리보기에서 사용하는 이미지입니다.
         </p>
-        <form action={updateShareImagesAction} className="mt-4 grid gap-4 md:grid-cols-2">
+        <AdminForm
+          action={updateShareImagesAction}
+          successMessage="OG 이미지가 저장되었습니다"
+          className="mt-4 grid gap-4 md:grid-cols-2"
+        >
           <AdminImageFileField
             id="share_og_image"
             name="share_og_image"
@@ -134,7 +147,7 @@ export const AdminSectionShare = ({ share, assets, sectionTitles }: AdminSection
               이미지 저장
             </AdminSubmitButton>
           </div>
-        </form>
+        </AdminForm>
       </SurfaceCard>
     </div>
   );

@@ -1,4 +1,5 @@
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 import { createSupabaseAdmin } from '@/lib/supabaseAdmin';
 import { requireAdminAuth } from '@/lib/adminAuth';
 
@@ -41,5 +42,20 @@ export const revalidateAdmin = () => {
  */
 export const requireAdminSession = async () => {
   const supabase = createSupabaseAdmin();
-  await requireAdminAuth(supabase, { allowRefresh: false });
+  try {
+    await requireAdminAuth(supabase);
+  } catch {
+    redirect('/admin/login');
+  }
+};
+
+/**
+ * Supabase 에러 처리
+ * @param result { error: unknown }
+ * @returns void
+ */
+export const assertNoError = (result: { error: unknown }) => {
+  if (result.error) {
+    throw result.error;
+  }
 };

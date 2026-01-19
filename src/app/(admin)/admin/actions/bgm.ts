@@ -2,7 +2,7 @@
 
 import { createSupabaseAdmin } from '@/lib/supabaseAdmin';
 import { getOrCreateInvitation } from '@/app/(admin)/admin/data';
-import { requireAdminSession, revalidateAdmin } from './shared';
+import { assertNoError, requireAdminSession, revalidateAdmin } from './shared';
 
 /**
  * BGM 설정 업데이트
@@ -21,6 +21,6 @@ export const updateBgmAction = async (formData: FormData) => {
     loop: formData.get('bgm_loop') === 'on',
   };
 
-  await supabase.from('invitation_bgm').update(payload).eq('invitation_id', id);
+  assertNoError(await supabase.from('invitation_bgm').update(payload).eq('invitation_id', id));
   revalidateAdmin();
 };

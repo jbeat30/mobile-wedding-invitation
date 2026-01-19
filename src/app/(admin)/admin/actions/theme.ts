@@ -2,7 +2,7 @@
 
 import { createSupabaseAdmin } from '@/lib/supabaseAdmin';
 import { getOrCreateInvitation } from '@/app/(admin)/admin/data';
-import { requireAdminSession, revalidateAdmin } from './shared';
+import { assertNoError, requireAdminSession, revalidateAdmin } from './shared';
 
 /**
  * 테마 업데이트
@@ -44,6 +44,8 @@ export const updateThemeAction = async (formData: FormData) => {
     radius_sm: String(formData.get('radius_sm') || ''),
   };
 
-  await supabase.from('invitation_theme').update(payload).eq('invitation_id', id);
+  assertNoError(
+    await supabase.from('invitation_theme').update(payload).eq('invitation_id', id)
+  );
   revalidateAdmin();
 };

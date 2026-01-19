@@ -10,6 +10,7 @@ import {
   updateGalleryAction,
 } from '@/app/(admin)/admin/actions/assets';
 import { Button } from '@/components/ui/Button';
+import { AdminForm } from '@/app/(admin)/admin/components/AdminForm';
 import { AdminSubmitButton } from '@/app/(admin)/admin/components/AdminSubmitButton';
 import { FieldLabel } from '@/components/ui/FieldLabel';
 import { SurfaceCard } from '@/components/ui/SurfaceCard';
@@ -69,7 +70,11 @@ export const AdminSectionGallery = ({
       <div className="mt-4 flex flex-col gap-6">
         <div className="rounded-[12px] border border-[var(--border-light)] bg-white/70 p-4">
           <h3 className="text-[14px] font-semibold text-[var(--text-primary)]">갤러리 설정</h3>
-          <form action={updateGalleryAction} className="mt-4 grid gap-4 md:grid-cols-2">
+          <AdminForm
+            action={updateGalleryAction}
+            successMessage="갤러리 설정이 저장되었습니다"
+            className="mt-4 grid gap-4 md:grid-cols-2"
+          >
             <input type="hidden" name="gallery_id" value={gallery.id} />
             <div className="flex flex-col gap-2 md:col-span-2">
               <FieldLabel htmlFor="gallery_title">갤러리 타이틀</FieldLabel>
@@ -101,13 +106,17 @@ export const AdminSectionGallery = ({
                 갤러리 저장
               </AdminSubmitButton>
             </div>
-          </form>
+          </AdminForm>
         </div>
 
         <div className="flex flex-col gap-4">
           <div className="rounded-[12px] border border-[var(--border-light)] bg-white/70 p-4">
             <h3 className="text-[14px] font-semibold text-[var(--text-primary)]">이미지 추가</h3>
-            <form action={addGalleryImageAction} className="mt-4 grid gap-4 md:grid-cols-2">
+            <AdminForm
+              action={addGalleryImageAction}
+              successMessage="이미지가 추가되었습니다"
+              className="mt-4 grid gap-4 md:grid-cols-2"
+            >
               <input type="hidden" name="gallery_id" value={gallery.id} />
               <AdminImageFileField
                 id="image_src"
@@ -118,11 +127,11 @@ export const AdminSectionGallery = ({
                 required
               />
               <div className="md:col-span-2 flex justify-end">
-                <AdminSubmitButton size="sm" pendingText="추가 중...">
-                  이미지 추가
-                </AdminSubmitButton>
+              <AdminSubmitButton size="sm" pendingText="추가 중...">
+                이미지 추가
+              </AdminSubmitButton>
               </div>
-            </form>
+            </AdminForm>
           </div>
 
           <div className="rounded-[12px] border border-[var(--border-light)] bg-white/70 p-4">

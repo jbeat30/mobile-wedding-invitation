@@ -9,6 +9,7 @@ import {
   updateAccountsAction,
 } from '@/app/(admin)/admin/actions/accounts';
 import { Button } from '@/components/ui/Button';
+import { AdminForm } from '@/app/(admin)/admin/components/AdminForm';
 import { AdminSubmitButton } from '@/app/(admin)/admin/components/AdminSubmitButton';
 import { FieldLabel } from '@/components/ui/FieldLabel';
 import { SurfaceCard } from '@/components/ui/SurfaceCard';
@@ -38,7 +39,11 @@ export const AdminSectionAccounts = ({
     <SurfaceCard className="p-6">
       <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">어카운트</h2>
       <div className="mt-4 flex flex-col gap-6">
-        <form action={updateAccountsAction} className="grid gap-4 md:grid-cols-2">
+        <AdminForm
+          action={updateAccountsAction}
+          successMessage="계좌 정보가 저장되었습니다"
+          className="grid gap-4 md:grid-cols-2"
+        >
           <div className="flex flex-col gap-2">
             <FieldLabel htmlFor="accounts_title">타이틀</FieldLabel>
             <TextInput id="accounts_title" name="accounts_title" defaultValue={accounts.title} />
@@ -56,7 +61,7 @@ export const AdminSectionAccounts = ({
               저장하기
             </AdminSubmitButton>
           </div>
-        </form>
+        </AdminForm>
 
         <div className="grid gap-6 md:grid-cols-2">
           {[
@@ -86,7 +91,11 @@ export const AdminSectionAccounts = ({
                 </div>
 
                 {accountFormOpen[groupKey] ? (
-                  <form action={addAccountEntryAction} className="grid gap-3">
+                  <AdminForm
+                    action={addAccountEntryAction}
+                    successMessage="계좌가 추가되었습니다"
+                    className="grid gap-3"
+                  >
                     <input type="hidden" name="accounts_id" value={accounts.id} />
                     <input type="hidden" name="group_type" value={groupKey} />
                     <div className="flex flex-col gap-2">
@@ -110,19 +119,17 @@ export const AdminSectionAccounts = ({
                         추가하기
                       </AdminSubmitButton>
                     </div>
-                  </form>
+                  </AdminForm>
                 ) : null}
 
                 <div className="rounded-[12px] border border-[var(--border-light)] bg-white/70">
                   {group.entries.length ? (
                     <div className="divide-y divide-[var(--border-light)]">
-                      {group.entries.map((entry) => {
-                        const formId = `account_entry_${entry.id}`;
-                        return (
+                      {group.entries.map((entry) => (
                           <div key={entry.id} className="flex flex-col gap-4 px-4 py-4">
-                            <form
-                              id={formId}
+                            <AdminForm
                               action={updateAccountEntryAction}
+                              successMessage="계좌가 저장되었습니다"
                               className="grid gap-3"
                             >
                             <input type="hidden" name="entry_id" value={entry.id} />
@@ -169,7 +176,7 @@ export const AdminSectionAccounts = ({
                                 저장
                               </AdminSubmitButton>
                             </div>
-                            </form>
+                            </AdminForm>
                             <div className="flex items-center justify-end gap-2">
                               <form action={deleteAccountEntryAction}>
                                 <input type="hidden" name="entry_id" value={entry.id} />
@@ -179,8 +186,7 @@ export const AdminSectionAccounts = ({
                               </form>
                             </div>
                           </div>
-                        );
-                      })}
+                        ))}
                     </div>
                   ) : (
                     <div className="px-4 py-6 text-center text-[12px] text-[var(--text-muted)]">

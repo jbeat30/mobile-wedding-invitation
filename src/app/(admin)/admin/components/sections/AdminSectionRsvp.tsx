@@ -3,6 +3,7 @@
 import type { Dispatch, SetStateAction } from 'react';
 import type { AdminDashboardData } from '@/app/(admin)/admin/data';
 import { updateRsvpAction } from '@/app/(admin)/admin/actions/rsvp';
+import { AdminForm } from '@/app/(admin)/admin/components/AdminForm';
 import { AdminSubmitButton } from '@/app/(admin)/admin/components/AdminSubmitButton';
 import { FieldLabel } from '@/components/ui/FieldLabel';
 import { SurfaceCard } from '@/components/ui/SurfaceCard';
@@ -32,7 +33,11 @@ export const AdminSectionRsvp = ({
     <div className="flex flex-col gap-6">
       <SurfaceCard className="p-6">
         <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">RSVP 설정</h2>
-        <form action={updateRsvpAction} className="mt-4 grid gap-4 md:grid-cols-2">
+        <AdminForm
+          action={updateRsvpAction}
+          successMessage="RSVP 설정이 저장되었습니다"
+          className="mt-4 grid gap-4 md:grid-cols-2"
+        >
           <div className="flex flex-col gap-2 md:col-span-2">
             <FieldLabel htmlFor="rsvp_section_title">RSVP 섹션 타이틀</FieldLabel>
             <TextInput
@@ -91,7 +96,7 @@ export const AdminSectionRsvp = ({
               저장하기
             </AdminSubmitButton>
           </div>
-        </form>
+        </AdminForm>
       </SurfaceCard>
 
       <SurfaceCard className="p-6">

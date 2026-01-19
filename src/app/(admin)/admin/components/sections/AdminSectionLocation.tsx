@@ -6,6 +6,7 @@ import {
   updateWeddingInfoSectionAction,
   updateTransportationAction,
 } from '@/app/(admin)/admin/actions/content';
+import { AdminForm } from '@/app/(admin)/admin/components/AdminForm';
 import { AdminSubmitButton } from '@/app/(admin)/admin/components/AdminSubmitButton';
 import { FieldLabel } from '@/components/ui/FieldLabel';
 import { SurfaceCard } from '@/components/ui/SurfaceCard';
@@ -25,7 +26,11 @@ export const AdminSectionLocation = ({ data }: AdminSectionLocationProps) => {
     <div className="flex flex-col gap-6">
       <SurfaceCard className="p-6">
         <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">예식 정보</h2>
-        <form action={updateWeddingInfoSectionAction} className="mt-4 flex flex-col gap-4">
+        <AdminForm
+          action={updateWeddingInfoSectionAction}
+          successMessage="예식 정보가 저장되었습니다"
+          className="mt-4 flex flex-col gap-4"
+        >
           <div className="flex flex-col gap-2">
             <FieldLabel htmlFor="wedding_section_title">예식 섹션 타이틀</FieldLabel>
             <TextInput
@@ -48,12 +53,16 @@ export const AdminSectionLocation = ({ data }: AdminSectionLocationProps) => {
               저장하기
             </AdminSubmitButton>
           </div>
-        </form>
+        </AdminForm>
       </SurfaceCard>
 
       <SurfaceCard className="p-6">
         <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">오시는 길 안내</h2>
-        <form action={updateLocationSectionTitleAction} className="mt-4 flex flex-col gap-4">
+        <AdminForm
+          action={updateLocationSectionTitleAction}
+          successMessage="오시는 길 타이틀이 저장되었습니다"
+          className="mt-4 flex flex-col gap-4"
+        >
           <div className="flex flex-col gap-2">
             <FieldLabel htmlFor="location_section_title">오시는 길 섹션 타이틀</FieldLabel>
             <TextInput
@@ -67,9 +76,13 @@ export const AdminSectionLocation = ({ data }: AdminSectionLocationProps) => {
               타이틀 저장
             </AdminSubmitButton>
           </div>
-        </form>
+        </AdminForm>
 
-        <form action={updateTransportationAction} className="mt-6 flex flex-col gap-4">
+        <AdminForm
+          action={updateTransportationAction}
+          successMessage="교통 안내가 저장되었습니다"
+          className="mt-6 flex flex-col gap-4"
+        >
           <input type="hidden" name="location_id" value={data.location.id} />
           <div className="flex flex-col gap-2">
             <FieldLabel htmlFor="transport_subway">지하철 (줄바꿈)</FieldLabel>
@@ -110,7 +123,7 @@ export const AdminSectionLocation = ({ data }: AdminSectionLocationProps) => {
               교통 안내 저장
             </AdminSubmitButton>
           </div>
-        </form>
+        </AdminForm>
       </SurfaceCard>
     </div>
   );

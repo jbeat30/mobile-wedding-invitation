@@ -2,7 +2,7 @@
 
 import { createSupabaseAdmin } from '@/lib/supabaseAdmin';
 import { getOrCreateInvitation } from '@/app/(admin)/admin/data';
-import { requireAdminSession, revalidateAdmin } from './shared';
+import { assertNoError, requireAdminSession, revalidateAdmin } from './shared';
 
 /**
  * 공유 설정/섹션 타이틀 업데이트
@@ -38,12 +38,16 @@ export const updateShareAction = async (formData: FormData) => {
     payload.kakao_button_label = String(formData.get('kakao_button_label') || '');
   }
 
-  await supabase.from('invitation_share').update(payload).eq('invitation_id', id);
+  assertNoError(
+    await supabase.from('invitation_share').update(payload).eq('invitation_id', id)
+  );
   if (shareSectionTitle !== null) {
-    await supabase
-      .from('invitation_section_titles')
-      .update({ share: String(shareSectionTitle || '') })
-      .eq('invitation_id', id);
+    assertNoError(
+      await supabase
+        .from('invitation_section_titles')
+        .update({ share: String(shareSectionTitle || '') })
+        .eq('invitation_id', id)
+    );
   }
   revalidateAdmin();
 };

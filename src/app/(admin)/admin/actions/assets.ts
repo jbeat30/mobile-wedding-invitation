@@ -2,7 +2,7 @@
 
 import { createSupabaseAdmin } from '@/lib/supabaseAdmin';
 import { getOrCreateInvitation } from '@/app/(admin)/admin/data';
-import { requireAdminSession, revalidateAdmin, toNumber } from './shared';
+import { assertNoError, requireAdminSession, revalidateAdmin, toNumber } from './shared';
 
 /**
  * 에셋 업데이트
@@ -21,7 +21,9 @@ export const updateAssetsAction = async (formData: FormData) => {
     share_kakao_image: String(formData.get('share_kakao_image') || ''),
   };
 
-  await supabase.from('invitation_assets').update(payload).eq('invitation_id', id);
+  assertNoError(
+    await supabase.from('invitation_assets').update(payload).eq('invitation_id', id)
+  );
   revalidateAdmin();
 };
 
@@ -35,10 +37,12 @@ export const updateHeroImageAction = async (formData: FormData) => {
   const supabase = createSupabaseAdmin();
   const { id } = await getOrCreateInvitation();
 
-  await supabase
-    .from('invitation_assets')
-    .update({ hero_image: String(formData.get('hero_image') || '') })
-    .eq('invitation_id', id);
+  assertNoError(
+    await supabase
+      .from('invitation_assets')
+      .update({ hero_image: String(formData.get('hero_image') || '') })
+      .eq('invitation_id', id)
+  );
 
   revalidateAdmin();
 };
@@ -54,16 +58,17 @@ export const updateShareImagesAction = async (formData: FormData) => {
   const { id } = await getOrCreateInvitation();
   const ogImage = String(formData.get('share_og_image') || '');
 
-  await supabase
-    .from('invitation_assets')
-    .update({
-      share_og_image: ogImage,
-    })
-    .eq('invitation_id', id);
-  await supabase
-    .from('invitation_share')
-    .update({ image_url: ogImage })
-    .eq('invitation_id', id);
+  assertNoError(
+    await supabase
+      .from('invitation_assets')
+      .update({
+        share_og_image: ogImage,
+      })
+      .eq('invitation_id', id)
+  );
+  assertNoError(
+    await supabase.from('invitation_share').update({ image_url: ogImage }).eq('invitation_id', id)
+  );
 
   revalidateAdmin();
 };
@@ -78,10 +83,12 @@ export const updateLoadingImageAction = async (formData: FormData) => {
   const supabase = createSupabaseAdmin();
   const { id } = await getOrCreateInvitation();
 
-  await supabase
-    .from('invitation_assets')
-    .update({ loading_image: String(formData.get('loading_image') || '') })
-    .eq('invitation_id', id);
+  assertNoError(
+    await supabase
+      .from('invitation_assets')
+      .update({ loading_image: String(formData.get('loading_image') || '') })
+      .eq('invitation_id', id)
+  );
 
   revalidateAdmin();
 };
@@ -103,7 +110,9 @@ export const updateGalleryAction = async (formData: FormData) => {
     autoplay_delay: toNumber(formData.get('gallery_autoplay_delay'), 0) || null,
   };
 
-  await supabase.from('invitation_gallery').update(payload).eq('id', galleryId);
+  assertNoError(
+    await supabase.from('invitation_gallery').update(payload).eq('id', galleryId)
+  );
   revalidateAdmin();
 };
 
@@ -135,7 +144,7 @@ export const addGalleryImageAction = async (formData: FormData) => {
     sort_order: nextSortOrder,
   };
 
-  await supabase.from('invitation_gallery_images').insert(payload);
+  assertNoError(await supabase.from('invitation_gallery_images').insert(payload));
   revalidateAdmin();
 };
 
@@ -148,6 +157,6 @@ export const deleteGalleryImageAction = async (formData: FormData) => {
   await requireAdminSession();
   const supabase = createSupabaseAdmin();
   const imageId = String(formData.get('image_id') || '');
-  await supabase.from('invitation_gallery_images').delete().eq('id', imageId);
+  assertNoError(await supabase.from('invitation_gallery_images').delete().eq('id', imageId));
   revalidateAdmin();
 };

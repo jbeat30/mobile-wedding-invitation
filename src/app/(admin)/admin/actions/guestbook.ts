@@ -2,7 +2,7 @@
 
 import { createSupabaseAdmin } from '@/lib/supabaseAdmin';
 import { getOrCreateInvitation } from '@/app/(admin)/admin/data';
-import { requireAdminSession, revalidateAdmin, toNumber } from './shared';
+import { assertNoError, requireAdminSession, revalidateAdmin, toNumber } from './shared';
 
 /**
  * 게스트북 설정/섹션 타이틀 업데이트
@@ -26,12 +26,16 @@ export const updateGuestbookAction = async (formData: FormData) => {
     enable_delete: formData.get('guestbook_enable_delete') === 'on',
   };
 
-  await supabase.from('invitation_guestbook').update(payload).eq('invitation_id', id);
+  assertNoError(
+    await supabase.from('invitation_guestbook').update(payload).eq('invitation_id', id)
+  );
   if (guestbookSectionTitle !== null) {
-    await supabase
-      .from('invitation_section_titles')
-      .update({ guestbook: String(guestbookSectionTitle || '') })
-      .eq('invitation_id', id);
+    assertNoError(
+      await supabase
+        .from('invitation_section_titles')
+        .update({ guestbook: String(guestbookSectionTitle || '') })
+        .eq('invitation_id', id)
+    );
   }
   revalidateAdmin();
 };

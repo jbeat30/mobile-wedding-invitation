@@ -3,6 +3,7 @@
 import type { AdminDashboardData } from '@/app/(admin)/admin/data';
 import { updateLoadingAction } from '@/app/(admin)/admin/actions/content';
 import { updateLoadingImageAction } from '@/app/(admin)/admin/actions/assets';
+import { AdminForm } from '@/app/(admin)/admin/components/AdminForm';
 import { AdminSubmitButton } from '@/app/(admin)/admin/components/AdminSubmitButton';
 import { FieldLabel } from '@/components/ui/FieldLabel';
 import { SurfaceCard } from '@/components/ui/SurfaceCard';
@@ -24,7 +25,11 @@ export const AdminSectionLoading = ({ loading, assets }: AdminSectionLoadingProp
     <div className="flex flex-col gap-6">
       <SurfaceCard className="p-6">
         <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">로딩 설정</h2>
-        <form action={updateLoadingAction} className="mt-4 grid gap-4 md:grid-cols-2">
+        <AdminForm
+          action={updateLoadingAction}
+          successMessage="로딩 설정이 저장되었습니다"
+          className="mt-4 grid gap-4 md:grid-cols-2"
+        >
           <label className="flex items-center gap-2 text-[14px] md:col-span-2">
             <input type="checkbox" name="loading_enabled" defaultChecked={loading.enabled} />
             사용
@@ -60,14 +65,18 @@ export const AdminSectionLoading = ({ loading, assets }: AdminSectionLoadingProp
               저장하기
             </AdminSubmitButton>
           </div>
-        </form>
+        </AdminForm>
       </SurfaceCard>
 
       <SurfaceCard className="p-6">
         <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">
           로딩 이미지
         </h2>
-        <form action={updateLoadingImageAction} className="mt-4 grid gap-4 md:grid-cols-2">
+        <AdminForm
+          action={updateLoadingImageAction}
+          successMessage="로딩 이미지가 저장되었습니다"
+          className="mt-4 grid gap-4 md:grid-cols-2"
+        >
           <AdminImageFileField
             id="loading_image"
             name="loading_image"
@@ -81,7 +90,7 @@ export const AdminSectionLoading = ({ loading, assets }: AdminSectionLoadingProp
               이미지 저장
             </AdminSubmitButton>
           </div>
-        </form>
+        </AdminForm>
       </SurfaceCard>
     </div>
   );

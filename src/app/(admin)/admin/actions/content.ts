@@ -2,7 +2,7 @@
 
 import { createSupabaseAdmin } from '@/lib/supabaseAdmin';
 import { getOrCreateInvitation } from '@/app/(admin)/admin/data';
-import { parseLines, requireAdminSession, revalidateAdmin, toNumber } from './shared';
+import { assertNoError, parseLines, requireAdminSession, revalidateAdmin, toNumber } from './shared';
 
 /**
  * 기본 정보/부모님 정보 업데이트
@@ -28,8 +28,12 @@ export const updateBasicInfoAction = async (formData: FormData) => {
     bride_mother: String(formData.get('bride_mother_name') || ''),
   };
 
-  await supabase.from('invitation_profile').update(profilePayload).eq('invitation_id', id);
-  await supabase.from('invitation_parents').update(parentsPayload).eq('invitation_id', id);
+  assertNoError(
+    await supabase.from('invitation_profile').update(profilePayload).eq('invitation_id', id)
+  );
+  assertNoError(
+    await supabase.from('invitation_parents').update(parentsPayload).eq('invitation_id', id)
+  );
 
   revalidateAdmin();
 };
@@ -51,11 +55,15 @@ export const updateProfileAction = async (formData: FormData) => {
     bride_profile_image: String(formData.get('bride_profile_image') || ''),
   };
 
-  await supabase.from('invitation_profile').update(payload).eq('invitation_id', id);
-  await supabase
-    .from('invitation_section_titles')
-    .update({ couple: String(formData.get('couple_section_title') || '') })
-    .eq('invitation_id', id);
+  assertNoError(
+    await supabase.from('invitation_profile').update(payload).eq('invitation_id', id)
+  );
+  assertNoError(
+    await supabase
+      .from('invitation_section_titles')
+      .update({ couple: String(formData.get('couple_section_title') || '') })
+      .eq('invitation_id', id)
+  );
 
   revalidateAdmin();
 };
@@ -77,7 +85,9 @@ export const updateLoadingAction = async (formData: FormData) => {
     additional_duration: toNumber(formData.get('loading_additional_duration')),
   };
 
-  await supabase.from('invitation_loading').update(payload).eq('invitation_id', id);
+  assertNoError(
+    await supabase.from('invitation_loading').update(payload).eq('invitation_id', id)
+  );
   revalidateAdmin();
 };
 
@@ -102,15 +112,19 @@ export const updateLocationAction = async (formData: FormData) => {
     longitude: toNumber(formData.get('location_longitude')),
   };
 
-  await supabase.from('invitation_location').update(payload).eq('invitation_id', id);
-  await supabase
-    .from('invitation_event')
-    .update({
-      date_time: eventDateTime,
-      venue: eventVenue,
-      address: eventAddress,
-    })
-    .eq('invitation_id', id);
+  assertNoError(
+    await supabase.from('invitation_location').update(payload).eq('invitation_id', id)
+  );
+  assertNoError(
+    await supabase
+      .from('invitation_event')
+      .update({
+        date_time: eventDateTime,
+        venue: eventVenue,
+        address: eventAddress,
+      })
+      .eq('invitation_id', id)
+  );
   revalidateAdmin();
 };
 
@@ -124,10 +138,12 @@ export const updateLocationSectionTitleAction = async (formData: FormData) => {
   const supabase = createSupabaseAdmin();
   const { id } = await getOrCreateInvitation();
 
-  await supabase
-    .from('invitation_section_titles')
-    .update({ location: String(formData.get('location_section_title') || '') })
-    .eq('invitation_id', id);
+  assertNoError(
+    await supabase
+      .from('invitation_section_titles')
+      .update({ location: String(formData.get('location_section_title') || '') })
+      .eq('invitation_id', id)
+  );
 
   revalidateAdmin();
 };
@@ -145,15 +161,19 @@ export const updateWeddingInfoSectionAction = async (formData: FormData) => {
   const sectionTitle = String(formData.get('wedding_section_title') || '');
   const notices = parseLines(String(formData.get('location_notices') || ''));
 
-  await supabase
-    .from('invitation_section_titles')
-    .update({ wedding: sectionTitle })
-    .eq('invitation_id', id);
+  assertNoError(
+    await supabase
+      .from('invitation_section_titles')
+      .update({ wedding: sectionTitle })
+      .eq('invitation_id', id)
+  );
 
-  await supabase
-    .from('invitation_location')
-    .update({ notices })
-    .eq('invitation_id', id);
+  assertNoError(
+    await supabase
+      .from('invitation_location')
+      .update({ notices })
+      .eq('invitation_id', id)
+  );
   revalidateAdmin();
 };
 
@@ -174,7 +194,9 @@ export const updateTransportationAction = async (formData: FormData) => {
     parking: String(formData.get('transport_parking') || ''),
   };
 
-  await supabase.from('invitation_transportation').update(payload).eq('location_id', locationId);
+  assertNoError(
+    await supabase.from('invitation_transportation').update(payload).eq('location_id', locationId)
+  );
   revalidateAdmin();
 };
 
@@ -194,6 +216,8 @@ export const updateClosingAction = async (formData: FormData) => {
     copyright: String(formData.get('closing_copyright') || ''),
   };
 
-  await supabase.from('invitation_closing').update(payload).eq('invitation_id', id);
+  assertNoError(
+    await supabase.from('invitation_closing').update(payload).eq('invitation_id', id)
+  );
   revalidateAdmin();
 };

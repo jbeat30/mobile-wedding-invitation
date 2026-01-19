@@ -2,6 +2,7 @@
 
 import type { AdminDashboardData } from '@/app/(admin)/admin/data';
 import { updateProfileAction } from '@/app/(admin)/admin/actions/content';
+import { AdminForm } from '@/app/(admin)/admin/components/AdminForm';
 import { AdminSubmitButton } from '@/app/(admin)/admin/components/AdminSubmitButton';
 import { FieldLabel } from '@/components/ui/FieldLabel';
 import { SurfaceCard } from '@/components/ui/SurfaceCard';
@@ -25,7 +26,11 @@ export const AdminSectionCouple = ({
   return (
     <SurfaceCard className="p-6">
       <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">커플 섹션</h2>
-      <form action={updateProfileAction} className="mt-4 grid gap-4 md:grid-cols-2">
+      <AdminForm
+        action={updateProfileAction}
+        successMessage="커플 섹션이 저장되었습니다"
+        className="mt-4 grid gap-4 md:grid-cols-2"
+      >
         <div className="flex flex-col gap-2 md:col-span-2">
           <FieldLabel htmlFor="couple_section_title">커플 섹션 타이틀</FieldLabel>
           <TextInput
@@ -65,7 +70,7 @@ export const AdminSectionCouple = ({
             저장하기
           </AdminSubmitButton>
         </div>
-      </form>
+      </AdminForm>
     </SurfaceCard>
   );
 };

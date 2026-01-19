@@ -2,6 +2,7 @@
 
 import type { AdminDashboardData } from '@/app/(admin)/admin/data';
 import { updateClosingAction } from '@/app/(admin)/admin/actions/content';
+import { AdminForm } from '@/app/(admin)/admin/components/AdminForm';
 import { AdminSubmitButton } from '@/app/(admin)/admin/components/AdminSubmitButton';
 import { FieldLabel } from '@/components/ui/FieldLabel';
 import { SurfaceCard } from '@/components/ui/SurfaceCard';
@@ -20,7 +21,11 @@ export const AdminSectionClosing = ({ closing }: AdminSectionClosingProps) => {
   return (
     <SurfaceCard className="p-6">
       <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">마무리 인삿말</h2>
-      <form action={updateClosingAction} className="mt-4 flex flex-col gap-4">
+      <AdminForm
+        action={updateClosingAction}
+        successMessage="마무리 인삿말이 저장되었습니다"
+        className="mt-4 flex flex-col gap-4"
+      >
         <div className="flex flex-col gap-2">
           <FieldLabel htmlFor="closing_title">섹션 타이틀</FieldLabel>
           <TextInput
@@ -47,7 +52,7 @@ export const AdminSectionClosing = ({ closing }: AdminSectionClosingProps) => {
             저장하기
           </AdminSubmitButton>
         </div>
-      </form>
+      </AdminForm>
     </SurfaceCard>
   );
 };

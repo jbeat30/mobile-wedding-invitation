@@ -2,7 +2,7 @@
 
 import { createSupabaseAdmin } from '@/lib/supabaseAdmin';
 import { getOrCreateInvitation } from '@/app/(admin)/admin/data';
-import { requireAdminSession, revalidateAdmin } from './shared';
+import { assertNoError, requireAdminSession, revalidateAdmin } from './shared';
 
 /**
  * 계좌 정보 업데이트
@@ -19,7 +19,9 @@ export const updateAccountsAction = async (formData: FormData) => {
     description: String(formData.get('accounts_description') || ''),
   };
 
-  await supabase.from('invitation_accounts').update(payload).eq('invitation_id', id);
+  assertNoError(
+    await supabase.from('invitation_accounts').update(payload).eq('invitation_id', id)
+  );
   revalidateAdmin();
 };
 
@@ -42,7 +44,7 @@ export const addAccountEntryAction = async (formData: FormData) => {
     label: String(formData.get('label') || ''),
   };
 
-  await supabase.from('invitation_account_entries').insert(payload);
+  assertNoError(await supabase.from('invitation_account_entries').insert(payload));
   revalidateAdmin();
 };
 
@@ -63,7 +65,7 @@ export const updateAccountEntryAction = async (formData: FormData) => {
     label: String(formData.get('label') || ''),
   };
 
-  await supabase.from('invitation_account_entries').update(payload).eq('id', entryId);
+  assertNoError(await supabase.from('invitation_account_entries').update(payload).eq('id', entryId));
   revalidateAdmin();
 };
 
@@ -76,6 +78,6 @@ export const deleteAccountEntryAction = async (formData: FormData) => {
   await requireAdminSession();
   const supabase = createSupabaseAdmin();
   const entryId = String(formData.get('entry_id') || '');
-  await supabase.from('invitation_account_entries').delete().eq('id', entryId);
+  assertNoError(await supabase.from('invitation_account_entries').delete().eq('id', entryId));
   revalidateAdmin();
 };

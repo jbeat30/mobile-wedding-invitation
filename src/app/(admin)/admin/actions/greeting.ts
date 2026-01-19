@@ -2,7 +2,7 @@
 
 import { createSupabaseAdmin } from '@/lib/supabaseAdmin';
 import { getOrCreateInvitation } from '@/app/(admin)/admin/data';
-import { requireAdminSession, revalidateAdmin } from './shared';
+import { assertNoError, requireAdminSession, revalidateAdmin } from './shared';
 
 /**
  * 인사말 업데이트
@@ -18,18 +18,22 @@ export const updateGreetingAction = async (formData: FormData) => {
     .split('\n')
     .map((line) => line.trimEnd());
 
-  await supabase
-    .from('invitation_greeting')
-    .update({
-      poetic_note: String(formData.get('poetic_note') || ''),
-      message_lines: lines,
-    })
-    .eq('invitation_id', id);
+  assertNoError(
+    await supabase
+      .from('invitation_greeting')
+      .update({
+        poetic_note: String(formData.get('poetic_note') || ''),
+        message_lines: lines,
+      })
+      .eq('invitation_id', id)
+  );
 
-  await supabase
-    .from('invitation_section_titles')
-    .update({ greeting: String(formData.get('greeting_section_title') || '') })
-    .eq('invitation_id', id);
+  assertNoError(
+    await supabase
+      .from('invitation_section_titles')
+      .update({ greeting: String(formData.get('greeting_section_title') || '') })
+      .eq('invitation_id', id)
+  );
 
   revalidateAdmin();
 };

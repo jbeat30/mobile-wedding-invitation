@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import type { AdminDashboardData } from '@/app/(admin)/admin/data';
 import { updateBgmAction } from '@/app/(admin)/admin/actions/bgm';
+import { AdminForm } from '@/app/(admin)/admin/components/AdminForm';
 import { AdminSubmitButton } from '@/app/(admin)/admin/components/AdminSubmitButton';
 import { FieldLabel } from '@/components/ui/FieldLabel';
 import { SurfaceCard } from '@/components/ui/SurfaceCard';
@@ -55,7 +56,11 @@ export const AdminSectionBgm = ({ bgm }: AdminSectionBgmProps) => {
   return (
     <SurfaceCard className="p-6">
       <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">BGM 설정</h2>
-      <form action={updateBgmAction} className="mt-4 grid gap-4 md:grid-cols-2">
+      <AdminForm
+        action={updateBgmAction}
+        successMessage="BGM 설정이 저장되었습니다"
+        className="mt-4 grid gap-4 md:grid-cols-2"
+      >
         <label className="flex items-center gap-2 text-[14px]">
           <input type="checkbox" name="bgm_enabled" defaultChecked={Boolean(bgm.enabled)} />
           사용
@@ -95,7 +100,7 @@ export const AdminSectionBgm = ({ bgm }: AdminSectionBgmProps) => {
             저장하기
           </AdminSubmitButton>
         </div>
-      </form>
+      </AdminForm>
       <div className="mt-6 grid gap-3">
         <div className="flex flex-col gap-2">
           <FieldLabel htmlFor="bgm_audio_file">BGM 파일 업로드</FieldLabel>
