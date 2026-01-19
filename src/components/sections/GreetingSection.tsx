@@ -67,7 +67,7 @@ export const GreetingSection = ({ greeting, couple, title }: GreetingSectionProp
         </div>
 
         {/* 부모님 성함 */}
-        <div className="flex gap-6 justify-center text-center" data-animate="fade-up">
+        <div className="flex gap-12 justify-center text-center" data-animate="fade-up">
           {groomParentsLines.length ? (
             <div className="flex flex-col justify-between gap-1.5">
               <div className="flex flex-col gap-1 text-[13px] text-[var(--text-muted)]">
