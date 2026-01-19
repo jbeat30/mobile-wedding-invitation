@@ -5,11 +5,14 @@ import Image from 'next/image';
 import { ScrollIndicator } from '@/components/ui/ScrollIndicator';
 import { BgmToggle } from '@/components/sections/BgmToggle';
 
-type LoadingSectionProps = {
+export type LoadingSectionProps = {
   message: string;
   imageSrc: string;
   isVisible: boolean;
   isHintVisible: boolean;
+  bgmEnabled: boolean;
+  bgmDisabled: boolean;
+  onBgmToggle: () => void;
 };
 
 // 로딩 섹션 - 초기 viewport 크기 고정, 주소창/네비바 사라진 공간은 다음 섹션 노출
@@ -18,6 +21,9 @@ export const LoadingSection = ({
   imageSrc,
   isVisible,
   isHintVisible,
+  bgmEnabled,
+  bgmDisabled,
+  onBgmToggle,
 }: LoadingSectionProps) => {
   const [showHint, setShowHint] = useState(false);
   const initialHeightRef = useRef<number>(0);
@@ -38,6 +44,10 @@ export const LoadingSection = ({
   }, []);
 
   useEffect(() => {
+    if (isVisible) {
+      setShowHint(true);
+      return;
+    }
     if (isHintVisible || !isVisible) {
       setShowHint(true);
     }
@@ -172,7 +182,7 @@ export const LoadingSection = ({
               : 'translate-y-2.5 opacity-0 pointer-events-none'
           }`}
         >
-          <BgmToggle />
+          <BgmToggle enabled={bgmEnabled} disabled={bgmDisabled} onToggle={onBgmToggle} />
         </div>
 
         {/* 스크롤 인디케이터 */}

@@ -6,7 +6,9 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { LoadingSection } from '@/components/sections/LoadingSection';
 import { CherryBlossomCanvas } from '@/components/sections/CherryBlossomCanvas';
+import { BgmPlayer } from '@/components/sections/BgmPlayer';
 import { useLoadingState } from '@/hooks/useLoadingState';
+import { useBgmPreference } from '@/hooks/useBgmPreference';
 import { invitationMock } from '@/mock/invitation.mock';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -69,6 +71,11 @@ export default function Page() {
   const showLoading = loading.enabled;
   const showContent = !loading.enabled || !isLoading;
   const contentRef = useRef<HTMLElement | null>(null);
+  const bgmAvailable = Boolean(content.bgm.enabled);
+  const { enabled: bgmEnabled, setEnabled: setBgmEnabled } = useBgmPreference(
+    content.bgm.autoPlay
+  );
+  const isBgmActive = bgmAvailable && bgmEnabled;
 
   useEffect(() => {
     // 모바일/웹뷰 리사이즈 리프레시 과다 방지용 설정임
@@ -256,6 +263,11 @@ export default function Page() {
               imageSrc={assets.loadingImage}
               isVisible={isLoading}
               isHintVisible={isHintVisible}
+              bgmEnabled={isBgmActive}
+              bgmDisabled={!bgmAvailable}
+              onBgmToggle={() => {
+                setBgmEnabled(!bgmEnabled);
+              }}
             />
           )}
           {showContent && (
@@ -303,6 +315,11 @@ export default function Page() {
           </>
         )}
       </main>
+      <BgmPlayer
+        audioUrl={content.bgm.audioUrl || ''}
+        enabled={isBgmActive}
+        loop={content.bgm.loop}
+      />
     </div>
   );
 }

@@ -570,14 +570,14 @@ export const invitationMock: InvitationMock = {
           label: '어머니',
           bankName: '하나은행',
           accountNumber: '110-000-000000',
-          holder: '장어머니',
+          holder: '한머니',
         },
       ],
     },
     bgm: {
-      enabled: false,
-      audioUrl: '',
-      autoPlay: false,
+      enabled: true,
+      audioUrl: '/mock/bgm-sample.mp3',
+      autoPlay: true,
       loop: true,
     },
     closing: {
