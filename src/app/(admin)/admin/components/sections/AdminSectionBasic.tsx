@@ -16,7 +16,6 @@ type AdminSectionBasicProps = {
   onOpenPostcodeModal: () => void | Promise<void>;
   addressInputRef: RefObject<HTMLInputElement | null>;
   venueInputRef: RefObject<HTMLInputElement | null>;
-  placeNameInputRef: RefObject<HTMLInputElement | null>;
 };
 
 /**
@@ -31,7 +30,6 @@ export const AdminSectionBasic = ({
   onOpenPostcodeModal,
   addressInputRef,
   venueInputRef,
-  placeNameInputRef,
 }: AdminSectionBasicProps) => {
   const formatCoordinate = (value: number) =>
     Number.isFinite(value) ? value.toFixed(6) : '—';

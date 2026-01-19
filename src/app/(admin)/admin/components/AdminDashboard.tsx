@@ -103,7 +103,6 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
   const [placeSearchError, setPlaceSearchError] = useState<string | null>(null);
   const addressInputRef = useRef<HTMLInputElement | null>(null);
   const venueInputRef = useRef<HTMLInputElement | null>(null);
-  const placeNameInputRef = useRef<HTMLInputElement | null>(null);
   const postcodeContainerRef = useRef<HTMLDivElement | null>(null);
   const placeSearchMapRef = useRef<HTMLDivElement | null>(null);
   const placeSearchMapInstanceRef = useRef<KakaoMapInstance | null>(null);
@@ -171,10 +170,6 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
         }
         if (venueInputRef.current) {
           venueInputRef.current.value = data.buildingName || selectedAddress;
-        }
-        if (placeNameInputRef.current) {
-          placeNameInputRef.current.value =
-            data.buildingName || venueInputRef.current?.value || selectedAddress;
         }
         setIsPostcodeOpen(false);
       },
@@ -285,9 +280,6 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
     if (addressInputRef.current) {
       addressInputRef.current.value = selectedAddress;
     }
-    if (placeNameInputRef.current) {
-      placeNameInputRef.current.value = place.place_name;
-    }
     if (Number.isFinite(lat) && Number.isFinite(lng)) {
       setLocationCoords({ lat, lng });
     }
@@ -369,7 +361,6 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
             onOpenPostcodeModal={openPostcodeModal}
             addressInputRef={addressInputRef}
             venueInputRef={venueInputRef}
-            placeNameInputRef={placeNameInputRef}
           />
         );
       case 'couple':

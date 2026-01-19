@@ -213,6 +213,7 @@ export const loadAdminData = async () => {
     ],
     closing: {
       id: 'mock-closing',
+      title: content.closing.title,
       message: content.closing.message,
       copyright: content.closing.copyright || '',
     },

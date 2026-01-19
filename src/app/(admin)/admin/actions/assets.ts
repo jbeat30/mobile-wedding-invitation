@@ -52,13 +52,17 @@ export const updateShareImagesAction = async (formData: FormData) => {
   await requireAdminSession();
   const supabase = createSupabaseAdmin();
   const { id } = await getOrCreateInvitation();
+  const ogImage = String(formData.get('share_og_image') || '');
 
   await supabase
     .from('invitation_assets')
     .update({
-      share_og_image: String(formData.get('share_og_image') || ''),
-      share_kakao_image: String(formData.get('share_kakao_image') || ''),
+      share_og_image: ogImage,
     })
+    .eq('invitation_id', id);
+  await supabase
+    .from('invitation_share')
+    .update({ image_url: ogImage })
     .eq('invitation_id', id);
 
   revalidateAdmin();

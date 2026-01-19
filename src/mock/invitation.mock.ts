@@ -241,6 +241,7 @@ export type InvitationLocation = {
 };
 
 export type InvitationClosing = {
+  title: string;
   message: string;
   copyright?: string;
 };
@@ -580,6 +581,7 @@ export const invitationMock: InvitationMock = {
       loop: true,
     },
     closing: {
+      title: 'THANK YOU',
       message: '소중한 분들과 함께하는 이 자리, 오래 기억하겠습니다.',
       copyright: '© 2026. All rights reserved.',
     },

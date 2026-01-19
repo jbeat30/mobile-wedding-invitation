@@ -22,6 +22,15 @@ export const AdminSectionClosing = ({ closing }: AdminSectionClosingProps) => {
       <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">마무리 인삿말</h2>
       <form action={updateClosingAction} className="mt-4 flex flex-col gap-4">
         <div className="flex flex-col gap-2">
+          <FieldLabel htmlFor="closing_title">섹션 타이틀</FieldLabel>
+          <TextInput
+            id="closing_title"
+            name="closing_title"
+            defaultValue={closing.title}
+            placeholder="예: THANK YOU"
+          />
+        </div>
+        <div className="flex flex-col gap-2">
           <FieldLabel htmlFor="closing_message">메시지</FieldLabel>
           <TextArea id="closing_message" name="closing_message" defaultValue={closing.message} />
         </div>

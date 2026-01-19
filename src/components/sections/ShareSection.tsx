@@ -51,12 +51,17 @@ export const ShareSection = ({ share, title }: ShareSectionProps) => {
       return;
     }
 
-    const template = share.kakaoTemplate || {
-      title: share.title,
-      description: share.description,
-      imageUrl: share.imageUrl,
-      buttonLabel: '청첩장 보기',
-    };
+    const template = share.kakaoTemplate
+      ? {
+          ...share.kakaoTemplate,
+          imageUrl: share.kakaoTemplate.imageUrl || share.imageUrl,
+        }
+      : {
+          title: share.title,
+          description: share.description,
+          imageUrl: share.imageUrl,
+          buttonLabel: '청첩장 보기',
+        };
 
     try {
       window.Kakao.Share.sendDefault({

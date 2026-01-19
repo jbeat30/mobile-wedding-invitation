@@ -16,7 +16,7 @@ export const ClosingSection = ({ closing, couple }: ClosingSectionProps) => {
         {/* 섹션 헤더 */}
         <div className="text-center" data-animate="fade-up">
           <SectionHeader
-            kicker="THANK YOU"
+            kicker={closing.title || 'THANK YOU'}
             kickerClassName="font-label text-[12px] text-[var(--accent-rose)]"
           />
         </div>

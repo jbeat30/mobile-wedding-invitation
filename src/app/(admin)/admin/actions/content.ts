@@ -89,7 +89,7 @@ export const updateLocationAction = async (formData: FormData) => {
   const eventAddress = String(formData.get('event_address') || '');
 
   const payload = {
-    place_name: String(formData.get('location_place_name') || ''),
+    place_name: eventVenue,
     address: eventAddress,
     latitude: toNumber(formData.get('location_latitude')),
     longitude: toNumber(formData.get('location_longitude')),
@@ -190,6 +190,7 @@ export const updateClosingAction = async (formData: FormData) => {
   const { id } = await getOrCreateInvitation();
 
   const payload = {
+    title: String(formData.get('closing_title') || ''),
     message: String(formData.get('closing_message') || ''),
     copyright: String(formData.get('closing_copyright') || ''),
   };
