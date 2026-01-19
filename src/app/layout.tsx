@@ -34,6 +34,15 @@ const crimsonPro = Crimson_Pro({
 export const metadata: Metadata = {
   title: '강신랑 · 장신부 결혼식에 초대합니다',
   description: '2026년 05월 16일 오후 2시 30분, 채림 웨딩홀',
+  robots: {
+    index: false,
+    follow: false,
+    googleBot: {
+      index: false,
+      follow: false,
+      noimageindex: true,
+    },
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
