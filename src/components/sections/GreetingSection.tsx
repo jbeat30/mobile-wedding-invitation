@@ -29,7 +29,7 @@ export const GreetingSection = ({ greeting, couple, title }: GreetingSectionProp
           <SectionHeader
             kicker="INVITATION"
             title={title}
-            kickerClassName="font-label text-[13px] text-[var(--accent-rose)]"
+            kickerClassName="font-label text-[14px] text-[var(--accent-rose)]"
             titleClassName="mt-2 text-[24px] font-medium text-[var(--text-primary)]"
           />
         </div>
@@ -67,10 +67,10 @@ export const GreetingSection = ({ greeting, couple, title }: GreetingSectionProp
         </div>
 
         {/* 부모님 성함 */}
-        <div className="flex gap-12 justify-center text-center" data-animate="fade-up">
+        <div className="flex gap-16 justify-center text-center" data-animate="fade-up">
           {groomParentsLines.length ? (
             <div className="flex flex-col justify-between gap-1.5">
-              <div className="flex flex-col gap-1 text-[13px] text-[var(--text-muted)]">
+              <div className="flex flex-col gap-1 text-[14px] text-[var(--text-muted)]">
                 {groomParentsLines.map((line) => (
                   <p key={line}>{line}</p>
                 ))}
@@ -86,7 +86,7 @@ export const GreetingSection = ({ greeting, couple, title }: GreetingSectionProp
 
           {brideParentsLines.length ? (
             <div className="flex flex-col justify-between gap-1.5">
-              <div className="flex flex-col gap-1 text-[13px] text-[var(--text-muted)]">
+              <div className="flex flex-col gap-1 text-[14px] text-[var(--text-muted)]">
                 {brideParentsLines.map((line) => (
                   <p key={line}>{line}</p>
                 ))}

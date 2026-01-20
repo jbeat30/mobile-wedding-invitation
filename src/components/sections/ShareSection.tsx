@@ -138,7 +138,7 @@ export const ShareSection = ({ share, title }: ShareSectionProps) => {
               kicker="SHARE"
               title={title}
               description="소중한 분들과 함께 나눠주세요"
-              kickerClassName="font-label text-[12px] text-[var(--accent-rose)]"
+              kickerClassName="font-label text-[14px] text-[var(--accent-rose)]"
               titleClassName="mt-2 text-[24px] font-medium text-[var(--text-primary)]"
               descriptionClassName="mt-2 text-[14px] text-[var(--text-tertiary)]"
             />

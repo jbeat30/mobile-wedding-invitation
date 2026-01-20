@@ -70,8 +70,8 @@ export const DDayCountdown = ({ weddingDateTime, couple }: DDayCountdownProps) =
         <span className="font-serif-en text-[42px] font-light tracking-wide text-[#f87171]">
           {dDayText}
         </span>
-        <p className="text-[14px] text-[var(--text-tertiary)]">
-          {parts?.isPast ? '오늘, 우리 결혼합니다' : '결혼식까지'}
+        <p className="text-[16px] text-[var(--text-tertiary)]">
+          {parts?.isPast ? '오늘, 우리 결혼해요' : '결혼식까지'}
         </p>
       </div>
 
@@ -79,27 +79,27 @@ export const DDayCountdown = ({ weddingDateTime, couple }: DDayCountdownProps) =
       {!parts?.isPast && parts && (
         <div className="mt-2 flex items-center gap-3">
           <div className="flex gap-2 items-center">
-            <span className="font-serif-en text-[20px] text-[var(--text-primary)]">
+            <span className="font-serif-en text-[21px] text-[var(--text-primary)]">
               {pad2(parts.hours)}
             </span>
-            <span className="font-label text-[12px] text-[var(--text-muted)]">시간</span>
+            <span className="font-label text-[13px] text-[var(--text-muted)]">시간</span>
           </div>
           <div className="flex gap-2 items-center">
-            <span className="font-serif-en text-[20px] text-[var(--text-primary)]">
+            <span className="font-serif-en text-[21px] text-[var(--text-primary)]">
               {pad2(parts.minutes)}
             </span>
-            <span className="font-label text-[12px] text-[var(--text-muted)]">분</span>
+            <span className="font-label text-[13px] text-[var(--text-muted)]">분</span>
           </div>
           <div className="flex gap-2 items-center">
-            <span className="font-serif-en text-[20px] text-[var(--text-primary)]">
+            <span className="font-serif-en text-[21px] text-[var(--text-primary)]">
               {pad2(parts.seconds)}
             </span>
-            <span className="font-label text-[12px] text-[var(--text-muted)]">초</span>
+            <span className="font-label text-[13px] text-[var(--text-muted)]">초</span>
           </div>
         </div>
       )}
 
-      <div className="flex items-center justify-center text-[0.875em] leading-snug">
+      <div className="flex items-center justify-center text-[1em] leading-snug">
         <span>{`${couple.groom.firstName}`}</span>
         <span className="mx-1">
           <svg

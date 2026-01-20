@@ -127,7 +127,7 @@ export const LoadingSection = ({
         </div>
 
         <div
-          className="pointer-events-none absolute left-1/2 top-[22%] z-[6] flex h-[22%] w-[90%] -translate-x-1/2 -translate-y-1/2 items-center justify-center"
+          className="pointer-events-none absolute left-1/2 top-[26%] z-[6] flex h-[22%] w-[90%] -translate-x-1/2 -translate-y-1/2 items-center justify-center"
           aria-hidden="true"
         >
           <svg viewBox="0 0 600 180" width="100%" height="100%" className="block h-full w-full">
@@ -142,7 +142,7 @@ export const LoadingSection = ({
           </svg>
         </div>
         {/* 로딩 텍스트 */}
-        <div className="relative z-[5] max-w-[min(360px,72vw)] px-6 text-center text-white animate-[loading-fade_1s_ease-out_both]">
+        <div className="relative z-[5] max-w-[min(360px,80vw)] px-6 text-center text-white animate-[loading-fade_1s_ease-out_both]">
           <p className="text-[11px] font-bold uppercase tracking-[0.6em] opacity-90 text-[var(--accent-soft)]">
             WEDDING INVITATION
           </p>
