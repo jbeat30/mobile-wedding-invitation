@@ -1,9 +1,8 @@
 import { ReactNode } from 'react';
 import Link from 'next/link';
 import { Noto_Sans_KR } from 'next/font/google';
-import { logoutAction } from '@/app/(admin)/admin/actions/auth';
-import { Button } from '@/components/ui/Button';
 import { QueryProvider } from '@/app/(admin)/admin/components/QueryProvider';
+import { AdminLogoutButton } from '@/app/(admin)/admin/components/AdminLogoutButton';
 
 const notoSans = Noto_Sans_KR({
   subsets: ['latin'],
@@ -18,7 +17,7 @@ const notoSans = Noto_Sans_KR({
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
     <div
-      className={`admin-scope min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] ${notoSans.className}`}
+      className={`admin-scope min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] font-sans ${notoSans.className}`}
     >
       <header className="border-b border-[var(--border-light)] bg-white/90 px-6 py-4 backdrop-blur">
         <div className="mx-auto flex max-w-[1200px] items-center justify-between">
@@ -27,11 +26,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               Wedding Admin
             </Link>
           </div>
-          <form action={logoutAction}>
-            <Button type="submit" variant="ghost" size="sm" className="bg-white">
-              로그아웃
-            </Button>
-          </form>
+          <AdminLogoutButton />
         </div>
       </header>
 

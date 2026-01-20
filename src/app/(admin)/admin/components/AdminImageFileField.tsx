@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
-import { FieldLabel } from '@/components/ui/FieldLabel';
+import { Label } from '@/components/ui/label';
 
 type AdminImageFileFieldProps = {
   id: string;
@@ -74,7 +74,7 @@ export const AdminImageFileField = ({
 
   return (
     <div className="flex flex-col gap-2">
-      <FieldLabel htmlFor={id}>{label}</FieldLabel>
+      <Label htmlFor={id}>{label}</Label>
       <input
         id={id}
         ref={fileInputRef}

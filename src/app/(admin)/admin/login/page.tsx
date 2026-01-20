@@ -3,9 +3,9 @@
 import { useActionState } from 'react';
 import { loginAction } from '@/app/(admin)/admin/actions/auth';
 import { Button } from '@/components/ui/Button';
-import { FieldLabel } from '@/components/ui/FieldLabel';
-import { TextInput } from '@/components/ui/TextInput';
-import { SurfaceCard } from '@/components/ui/SurfaceCard';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 /**
  * 관리자 로그인 페이지
@@ -16,7 +16,7 @@ export default function AdminLoginPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center px-6">
-      <SurfaceCard className="w-full max-w-[420px] p-6">
+      <Card className="w-full max-w-[420px] p-6">
         <div className="text-center">
           <p className="font-label text-[12px] text-[var(--accent-rose)]">ADMIN</p>
           <h1 className="mt-2 text-[24px] font-semibold text-[var(--text-primary)]">
@@ -29,12 +29,12 @@ export default function AdminLoginPage() {
 
         <form action={formAction} className="mt-6 flex flex-col gap-4">
           <div className="flex flex-col gap-2">
-            <FieldLabel htmlFor="username">아이디</FieldLabel>
-            <TextInput id="username" name="username" autoComplete="username" />
+            <Label htmlFor="username">아이디</Label>
+            <Input id="username" name="username" autoComplete="username" />
           </div>
           <div className="flex flex-col gap-2">
-            <FieldLabel htmlFor="password">비밀번호</FieldLabel>
-            <TextInput
+            <Label htmlFor="password">비밀번호</Label>
+            <Input
               id="password"
               name="password"
               type="password"
@@ -48,11 +48,11 @@ export default function AdminLoginPage() {
             </p>
           )}
 
-          <Button type="submit" size="full">
+          <Button type="submit" className="w-full">
             로그인
           </Button>
         </form>
-      </SurfaceCard>
+      </Card>
     </div>
   );
 }

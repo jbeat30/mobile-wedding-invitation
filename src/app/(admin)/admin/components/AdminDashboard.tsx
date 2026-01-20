@@ -17,7 +17,7 @@ import { AdminSectionShare } from '@/app/(admin)/admin/components/sections/Admin
 import { AdminSectionBgm } from '@/app/(admin)/admin/components/sections/AdminSectionBgm';
 import { AdminSectionClosing } from '@/app/(admin)/admin/components/sections/AdminSectionClosing';
 import { Button } from '@/components/ui/Button';
-import { TextInput } from '@/components/ui/TextInput';
+import { Input } from '@/components/ui/input';
 import { loadKakaoMap } from '@/components/ui/KakaoMap';
 
 type AdminDashboardProps = {
@@ -346,7 +346,7 @@ export const AdminDashboard = ({ initialData }: AdminDashboardProps) => {
   const renderTabContent = () => {
     switch (activeTab) {
       case 'overview':
-        return <AdminSectionOverview />;
+        return <AdminSectionOverview overview={data.overview} />;
       case 'loading':
         return <AdminSectionLoading loading={data.loading} assets={data.assets} fileUrlToNameMap={data.fileUrlToNameMap} />;
       case 'intro':
@@ -391,7 +391,6 @@ export const AdminDashboard = ({ initialData }: AdminDashboardProps) => {
             setDragOverImageId={setDragOverImageId}
             orderSaved={orderSaved}
             setOrderSaved={setOrderSaved}
-            fileUrlToNameMap={data.fileUrlToNameMap}
           />
         );
       case 'accounts':
@@ -451,18 +450,20 @@ export const AdminDashboard = ({ initialData }: AdminDashboardProps) => {
           {tabs.map((tab) => {
             const isActive = tab.id === activeTab;
             return (
-              <button
+              <Button
                 key={tab.id}
                 type="button"
+                size="sm"
+                variant="ghost"
                 onClick={() => setActiveTab(tab.id)}
-                className={`cursor-pointer rounded-[10px] px-3 py-2 text-[13px] whitespace-nowrap transition ${
+                className={`h-auto whitespace-nowrap rounded-[10px] px-3 py-2 text-[13px] ${
                   isActive
                     ? 'bg-[var(--accent-rose-light)] text-[var(--text-primary)]'
                     : 'text-[var(--text-tertiary)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)]'
                 }`}
               >
                 {tab.label}
-              </button>
+              </Button>
             );
           })}
         </div>
@@ -472,10 +473,12 @@ export const AdminDashboard = ({ initialData }: AdminDashboardProps) => {
 
       {isPlaceSearchOpen ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={closePlaceSearchModal}
-            className="absolute inset-0 cursor-pointer bg-black/40"
+            className="absolute inset-0 h-full w-full rounded-none bg-black/40 p-0 hover:bg-black/40"
             aria-label="장소 검색 닫기"
           />
           <div className="relative z-10 w-full max-w-[960px] overflow-hidden rounded-[16px] border border-[var(--border-light)] bg-white shadow-[var(--shadow-card)]">
@@ -489,7 +492,7 @@ export const AdminDashboard = ({ initialData }: AdminDashboardProps) => {
                 </Button>
               </div>
               <div className="flex flex-1 gap-2">
-                <TextInput
+                <Input
                   id={'place-search-input'}
                   value={placeSearchQuery}
                   onChange={(event) => setPlaceSearchQuery(event.target.value)}
@@ -517,11 +520,13 @@ export const AdminDashboard = ({ initialData }: AdminDashboardProps) => {
                 {placeSearchResults.length > 0 ? (
                   <div className="divide-y divide-[var(--border-light)]">
                     {placeSearchResults.map((place) => (
-                      <button
+                      <Button
                         key={place.id}
                         type="button"
+                        variant="ghost"
+                        size="sm"
                         onClick={() => handlePlaceSelect(place)}
-                        className="w-full px-4 py-3 text-left transition hover:bg-[var(--bg-secondary)]"
+                        className="h-auto w-full items-start justify-start rounded-none px-4 py-3 text-left hover:bg-[var(--bg-secondary)]"
                       >
                         <p className="text-[14px] font-medium text-[var(--text-primary)]">
                           {place.place_name}
@@ -534,7 +539,7 @@ export const AdminDashboard = ({ initialData }: AdminDashboardProps) => {
                             {place.category_name}
                           </p>
                         ) : null}
-                      </button>
+                      </Button>
                     ))}
                   </div>
                 ) : (
@@ -555,10 +560,12 @@ export const AdminDashboard = ({ initialData }: AdminDashboardProps) => {
 
       {isPostcodeOpen ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={closePostcodeModal}
-            className="absolute inset-0 cursor-pointer bg-black/40"
+            className="absolute inset-0 h-full w-full rounded-none bg-black/40 p-0 hover:bg-black/40"
             aria-label="주소 검색 닫기"
           />
           <div className="relative z-10 w-full max-w-[560px] overflow-hidden rounded-[16px] border border-[var(--border-light)] bg-white shadow-[var(--shadow-card)]">

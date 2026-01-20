@@ -26,7 +26,9 @@ export const SectionHeader = ({
     <>
       <span className={kickerClassName}>{kicker}</span>
       {title ? <h2 className={titleClassName}>{title}</h2> : null}
-      {description ? <p className={descriptionClassName}>{description}</p> : null}
+      {description ? (
+        <p className={`whitespace-pre-line ${descriptionClassName}`.trim()}>{description}</p>
+      ) : null}
     </>
   );
 };
