@@ -105,11 +105,6 @@ export const AdminSectionBgm = ({ bgm }: AdminSectionBgmProps) => {
               </div>
             )}
           </div>
-          <div className="md:col-span-2 flex justify-end">
-            <AdminSubmitButton size="sm" pendingText="저장 중...">
-              저장하기
-            </AdminSubmitButton>
-          </div>
         </AdminForm>
         <div className="mt-6 grid gap-3">
           <div className="flex flex-col gap-2">
@@ -138,6 +133,11 @@ export const AdminSectionBgm = ({ bgm }: AdminSectionBgmProps) => {
               <p className="text-[11px] text-[var(--accent-burgundy)]">{uploadError}</p>
             ) : null}
           </div>
+        </div>
+        <div className="md:col-span-2 flex justify-end">
+          <AdminSubmitButton size="sm" pendingText="저장 중...">
+            저장하기
+          </AdminSubmitButton>
         </div>
       </CardContent>
     </Card>

@@ -1,62 +1,27 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import dynamic from 'next/dynamic';
+import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import type { InvitationMock } from '@/mock/invitation.mock';
 import { LoadingSection } from '@/components/sections/LoadingSection';
 import { CherryBlossomCanvas } from '@/components/sections/CherryBlossomCanvas';
 import { BgmPlayer } from '@/components/sections/BgmPlayer';
+import { IntroSection } from '@/components/sections/IntroSection';
+import { GreetingSection } from '@/components/sections/GreetingSection';
+import { CoupleSection } from '@/components/sections/CoupleSection';
+import { WeddingInfoSection } from '@/components/sections/WeddingInfoSection';
+import { LocationSection } from '@/components/sections/LocationSection';
+import { GallerySection } from '@/components/sections/GallerySection';
+import { AccountsSection } from '@/components/sections/AccountsSection';
+import { GuestbookSection } from '@/components/sections/GuestbookSection';
+import { RSVPSection } from '@/components/sections/RSVPSection';
+import { ShareSection } from '@/components/sections/ShareSection';
+import { ClosingSection } from '@/components/sections/ClosingSection';
 import { useLoadingState } from '@/hooks/useLoadingState';
 import { useBgmPreference } from '@/hooks/useBgmPreference';
 
 gsap.registerPlugin(ScrollTrigger);
-
-const IntroSection = dynamic(
-  () => import('@/components/sections/IntroSection').then((mod) => mod.IntroSection),
-  { ssr: false }
-);
-const GreetingSection = dynamic(
-  () => import('@/components/sections/GreetingSection').then((mod) => mod.GreetingSection),
-  { ssr: false }
-);
-const CoupleSection = dynamic(
-  () => import('@/components/sections/CoupleSection').then((mod) => mod.CoupleSection),
-  { ssr: false }
-);
-const WeddingInfoSection = dynamic(
-  () => import('@/components/sections/WeddingInfoSection').then((mod) => mod.WeddingInfoSection),
-  { ssr: false }
-);
-const LocationSection = dynamic(
-  () => import('@/components/sections/LocationSection').then((mod) => mod.LocationSection),
-  { ssr: false }
-);
-const GallerySection = dynamic(
-  () => import('@/components/sections/GallerySection').then((mod) => mod.GallerySection),
-  { ssr: false }
-);
-const AccountsSection = dynamic(
-  () => import('@/components/sections/AccountsSection').then((mod) => mod.AccountsSection),
-  { ssr: false }
-);
-const GuestbookSection = dynamic(
-  () => import('@/components/sections/GuestbookSection').then((mod) => mod.GuestbookSection),
-  { ssr: false }
-);
-const RSVPSection = dynamic(
-  () => import('@/components/sections/RSVPSection').then((mod) => mod.RSVPSection),
-  { ssr: false }
-);
-const ShareSection = dynamic(
-  () => import('@/components/sections/ShareSection').then((mod) => mod.ShareSection),
-  { ssr: false }
-);
-const ClosingSection = dynamic(
-  () => import('@/components/sections/ClosingSection').then((mod) => mod.ClosingSection),
-  { ssr: false }
-);
 
 type PublicPageClientProps = {
   invitation: InvitationMock;
@@ -81,6 +46,7 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
   const { enabled: bgmEnabled, setEnabled: setBgmEnabled } = useBgmPreference(
     content.bgm.autoPlay
   );
+  const [isBgmPlaying, setIsBgmPlaying] = useState(false);
   const isBgmActive = bgmAvailable && bgmEnabled;
 
   useEffect(() => {
@@ -129,29 +95,10 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
   }, []);
 
   useEffect(() => {
-    if (!loading.enabled || !isLoading) {
-      return;
+    if (!bgmEnabled) {
+      setIsBgmPlaying(false);
     }
-
-    // 벚꽃과 함께 보이는 첫 두 섹션은 우선 로드
-    void Promise.all([
-      import('@/components/sections/IntroSection'),
-      import('@/components/sections/GreetingSection'),
-    ]).then(() => {
-      // 나머지 섹션은 백그라운드에서 로드
-      void Promise.all([
-        import('@/components/sections/CoupleSection'),
-        import('@/components/sections/WeddingInfoSection'),
-        import('@/components/sections/LocationSection'),
-        import('@/components/sections/GallerySection'),
-        import('@/components/sections/AccountsSection'),
-        import('@/components/sections/GuestbookSection'),
-        import('@/components/sections/RSVPSection'),
-        import('@/components/sections/ShareSection'),
-        import('@/components/sections/ClosingSection'),
-      ]);
-    });
-  }, [loading.enabled, isLoading]);
+  }, [bgmEnabled]);
 
   useEffect(() => {
     if (!showContent) return;
@@ -274,14 +221,24 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
               imageSrc={assets.loadingImage}
               isVisible={isLoading}
               isHintVisible={isHintVisible}
-              bgmEnabled={isBgmActive}
+              bgmEnabled={isBgmPlaying}
               bgmDisabled={!bgmAvailable}
               onBgmToggle={() => {
-                setBgmEnabled(!bgmEnabled);
+                if (isBgmPlaying) {
+                  setBgmEnabled(false);
+                  return;
+                }
+                setBgmEnabled(true);
               }}
             />
           )}
-          <div style={{ visibility: showContent ? 'visible' : 'hidden', height: showContent ? 'auto' : 0, overflow: 'hidden' }}>
+          <div
+            aria-hidden={!showContent}
+            style={{
+              visibility: showContent ? 'visible' : 'hidden',
+              pointerEvents: showContent ? 'auto' : 'none',
+            }}
+          >
             <GreetingSection
               greeting={content.greeting}
               couple={content.couple}
@@ -294,40 +251,45 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
             />
           </div>
         </div>
-        {showContent && (
-          <>
-            <CoupleSection couple={content.couple} title={sectionTitles.couple} />
-            <WeddingInfoSection
-              event={content.event}
-              couple={content.couple}
-              title={sectionTitles.wedding}
-            />
-            <LocationSection
-              location={content.location}
-              event={content.event}
-              title={sectionTitles.location}
-            />
-            <GallerySection gallery={content.gallery} />
-            <AccountsSection accounts={content.accounts} />
-            <GuestbookSection
-              guestbook={content.guestbook}
-              storageKey={storage.guestbook.key}
-              title={sectionTitles.guestbook}
-            />
-            <RSVPSection
-              rsvp={content.rsvp}
-              storageKey={storage.rsvp.key}
-              title={sectionTitles.rsvp}
-            />
-            <ShareSection share={content.share} title={sectionTitles.share} />
-            <ClosingSection closing={content.closing} couple={content.couple} />
-          </>
-        )}
+        <div
+          aria-hidden={!showContent}
+          style={{
+            visibility: showContent ? 'visible' : 'hidden',
+            pointerEvents: showContent ? 'auto' : 'none',
+          }}
+        >
+          <CoupleSection couple={content.couple} title={sectionTitles.couple} />
+          <WeddingInfoSection
+            event={content.event}
+            couple={content.couple}
+            title={sectionTitles.wedding}
+          />
+          <LocationSection
+            location={content.location}
+            event={content.event}
+            title={sectionTitles.location}
+          />
+          <GallerySection gallery={content.gallery} />
+          <AccountsSection accounts={content.accounts} />
+          <GuestbookSection
+            guestbook={content.guestbook}
+            storageKey={storage.guestbook.key}
+            title={sectionTitles.guestbook}
+          />
+          <RSVPSection
+            rsvp={content.rsvp}
+            storageKey={storage.rsvp.key}
+            title={sectionTitles.rsvp}
+          />
+          <ShareSection share={content.share} title={sectionTitles.share} />
+          <ClosingSection closing={content.closing} couple={content.couple} />
+        </div>
       </main>
       <BgmPlayer
         audioUrl={content.bgm.audioUrl || ''}
         enabled={isBgmActive}
         loop={content.bgm.loop}
+        onPlaybackChange={setIsBgmPlaying}
       />
     </div>
   );

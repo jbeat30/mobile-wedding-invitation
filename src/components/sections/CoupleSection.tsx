@@ -36,7 +36,7 @@ export const CoupleSection = ({ couple, title }: CoupleSectionProps) => {
                   src={couple.groom.profileImage}
                   alt={`${couple.groom.lastName}${couple.groom.firstName} 프로필`}
                   fill
-                  className="object-contain"
+                  className="object-cover scale-120"
                   unoptimized
                 />
               )}
@@ -62,7 +62,7 @@ export const CoupleSection = ({ couple, title }: CoupleSectionProps) => {
                   src={couple.bride.profileImage}
                   alt={`${couple.bride.lastName}${couple.bride.firstName} 프로필`}
                   fill
-                  className="object-contain"
+                  className="object-cover scale-120"
                   unoptimized
                 />
               )}

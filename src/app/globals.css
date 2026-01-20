@@ -84,6 +84,7 @@ body::before {
         height: 100%;
         overflow-x: hidden;
         overflow-y: auto;
+        scroll-behavior: smooth;
     }
 
     body {
@@ -157,6 +158,12 @@ body::before {
 
     svg {
         @apply max-w-full h-auto;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
     }
 }
 

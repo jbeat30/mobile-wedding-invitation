@@ -34,14 +34,6 @@ export const LocationSection = ({ event, location, title }: LocationSectionProps
     }
   }, [event.address, showToast]);
 
-  const encodeBase64 = useCallback((value: string) => {
-    try {
-      return window.btoa(unescape(encodeURIComponent(value)));
-    } catch {
-      return '';
-    }
-  }, []);
-
   const openNavigation = useCallback(
     (app: 'naver' | 'kakao' | 'tmap') => {
       const { lat, lng } = location.coordinates;
@@ -49,16 +41,43 @@ export const LocationSection = ({ event, location, title }: LocationSectionProps
       const address = encodeURIComponent(event.address);
 
       if (app === 'tmap') {
+        const userAgent = navigator.userAgent || '';
+        const isAndroid = /Android/i.test(userAgent);
+        const isIOS = /iPhone|iPad|iPod/i.test(userAgent);
+        const isMobile = isAndroid || isIOS;
+
+        if (!isMobile) {
+          showToast('티맵은 모바일 앱에서만 열 수 있습니다');
+          return;
+        }
+
         const appUrl = `tmap://route?goalname=${name}&goalx=${lng}&goaly=${lat}&reqCoordType=WGS84GEO&resCoordType=WGS84GEO`;
-        const tmapPayload = `type=2&poiName=${location.placeName}&centerX=${lng}&centerY=${lat}&addr=${event.address}`;
-        const tmapContents = encodeBase64(tmapPayload);
-        const webUrl = tmapContents
-          ? `https://poi.tmobiweb.com/app/share/position?contents=${tmapContents}`
-          : `https://map.tmap.co.kr/search?searchKeyword=${address}`;
+        const storeUrl = isAndroid
+          ? 'market://details?id=com.skt.tmap'
+          : 'https://apps.apple.com/kr/app/tmap/id431589174';
+        const webStoreUrl = isAndroid
+          ? 'https://play.google.com/store/apps/details?id=com.skt.tmap'
+          : storeUrl;
+
         window.location.href = appUrl;
-        window.setTimeout(() => {
-          window.location.href = webUrl;
+
+        const fallbackTimer = window.setTimeout(() => {
+          window.location.href = storeUrl;
+          window.setTimeout(() => {
+            window.location.href = webStoreUrl;
+          }, 500);
         }, 1200);
+
+        const handleVisibility = () => {
+          if (document.visibilityState === 'hidden') {
+            clearTimeout(fallbackTimer);
+            document.removeEventListener('visibilitychange', handleVisibility);
+            window.removeEventListener('pagehide', handleVisibility);
+          }
+        };
+
+        document.addEventListener('visibilitychange', handleVisibility);
+        window.addEventListener('pagehide', handleVisibility);
         return;
       }
 
@@ -69,7 +88,7 @@ export const LocationSection = ({ event, location, title }: LocationSectionProps
 
       window.location.href = urls[app];
     },
-    [location.coordinates, location.placeName, event.address, encodeBase64]
+    [location.coordinates, location.placeName, event.address, showToast]
   );
 
   return (

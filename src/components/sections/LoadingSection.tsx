@@ -52,6 +52,25 @@ export const LoadingSection = ({
     const html = document.documentElement;
     const body = document.body;
 
+    const preventScroll = (event: Event) => {
+      event.preventDefault();
+    };
+
+    const preventKeyScroll = (event: KeyboardEvent) => {
+      const blockedKeys = [
+        'ArrowUp',
+        'ArrowDown',
+        'PageUp',
+        'PageDown',
+        'Home',
+        'End',
+        ' ',
+      ];
+      if (blockedKeys.includes(event.key)) {
+        event.preventDefault();
+      }
+    };
+
     if (isVisible) {
       // 로딩 중에는 스크롤 막기
       if (!scrollLockStyles.current) {
@@ -72,6 +91,10 @@ export const LoadingSection = ({
       body.style.height = '100%';
       html.style.height = '100%';
       window.scrollTo(0, 0);
+
+      window.addEventListener('wheel', preventScroll, { passive: false });
+      window.addEventListener('touchmove', preventScroll, { passive: false });
+      window.addEventListener('keydown', preventKeyScroll);
     } else {
       // 로딩 완료 후 스크롤 허용
       body.style.overflow = '';
@@ -83,6 +106,10 @@ export const LoadingSection = ({
 
       // 저장된 값 초기화
       scrollLockStyles.current = null;
+
+      window.removeEventListener('wheel', preventScroll);
+      window.removeEventListener('touchmove', preventScroll);
+      window.removeEventListener('keydown', preventKeyScroll);
     }
 
     return () => {
@@ -95,6 +122,10 @@ export const LoadingSection = ({
       html.style.height = '';
 
       scrollLockStyles.current = null;
+
+      window.removeEventListener('wheel', preventScroll);
+      window.removeEventListener('touchmove', preventScroll);
+      window.removeEventListener('keydown', preventKeyScroll);
     };
   }, [isVisible]);
 
@@ -118,6 +149,7 @@ export const LoadingSection = ({
             fill
             className="absolute inset-0 h-full w-full object-cover object-bottom opacity-85 saturate-[0.95] will-change-[transform,opacity] animate-[loading-reveal_1.1s_ease-out_both] pointer-events-none select-none [-webkit-user-drag:none] z-[1]"
             sizes="100vw"
+            priority
             // 모바일/웹뷰 이미지 드래그 방지용임
             draggable={false}
           />
