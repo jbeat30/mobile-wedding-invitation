@@ -37,19 +37,37 @@ export const BgmPlayer = ({ audioUrl, enabled, loop }: BgmPlayerProps) => {
         tryPlay();
       };
 
+      const interactionOptions: AddEventListenerOptions = {
+        once: true,
+        passive: true,
+        capture: true,
+      };
+
       tryPlay();
-      window.addEventListener('pointerdown', handleInteraction, { once: true });
-      window.addEventListener('keydown', handleInteraction, { once: true });
-      window.addEventListener('touchstart', handleInteraction, { once: true });
-      window.addEventListener('wheel', handleInteraction, { once: true });
-      window.addEventListener('scroll', handleInteraction, { once: true });
+      window.addEventListener('pointerdown', handleInteraction, interactionOptions);
+      window.addEventListener('pointerup', handleInteraction, interactionOptions);
+      window.addEventListener('mousedown', handleInteraction, interactionOptions);
+      window.addEventListener('mouseup', handleInteraction, interactionOptions);
+      window.addEventListener('click', handleInteraction, interactionOptions);
+      window.addEventListener('touchstart', handleInteraction, interactionOptions);
+      window.addEventListener('touchend', handleInteraction, interactionOptions);
+      window.addEventListener('keydown', handleInteraction, interactionOptions);
+      window.addEventListener('wheel', handleInteraction, interactionOptions);
+      window.addEventListener('scroll', handleInteraction, interactionOptions);
+      window.addEventListener('pageshow', handleInteraction, interactionOptions);
 
       return () => {
         window.removeEventListener('pointerdown', handleInteraction);
+        window.removeEventListener('pointerup', handleInteraction);
+        window.removeEventListener('mousedown', handleInteraction);
+        window.removeEventListener('mouseup', handleInteraction);
+        window.removeEventListener('click', handleInteraction);
         window.removeEventListener('keydown', handleInteraction);
         window.removeEventListener('touchstart', handleInteraction);
+        window.removeEventListener('touchend', handleInteraction);
         window.removeEventListener('wheel', handleInteraction);
         window.removeEventListener('scroll', handleInteraction);
+        window.removeEventListener('pageshow', handleInteraction);
       };
     }
     audio.pause();
@@ -57,5 +75,5 @@ export const BgmPlayer = ({ audioUrl, enabled, loop }: BgmPlayerProps) => {
 
   if (!audioUrl) return null;
 
-  return <audio ref={audioRef} src={audioUrl} preload="none" />;
+  return <audio ref={audioRef} src={audioUrl} preload="auto" />;
 };
