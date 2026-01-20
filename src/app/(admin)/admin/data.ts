@@ -186,7 +186,7 @@ type InvitationRsvpResponseRow = {
 };
 
 /**
- * 초대장 기본 레코드 확보
+ * 청첩장 기본 레코드 확보
  * @returns Promise<{ id: string }>
  */
 export const getOrCreateInvitation = async () => {

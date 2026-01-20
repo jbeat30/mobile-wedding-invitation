@@ -6,9 +6,13 @@ import type {
 } from '@/mock/invitation.mock';
 import { invitationMock } from '@/mock/invitation.mock';
 
+/** 기본 로케일 설정 */
 const DEFAULT_LOCALE = 'ko-KR';
+
+/** 기본 타임존 설정 */
 const DEFAULT_TIMEZONE = 'Asia/Seoul';
 
+/** 기본 RSVP 필드 설정 */
 const DEFAULT_RSVP_FIELDS: InvitationRsvpField[] = [
   {
     key: 'attendance',
@@ -30,12 +34,14 @@ const DEFAULT_RSVP_FIELDS: InvitationRsvpField[] = [
   },
 ];
 
+/** 청첩장 기본 정보 DB 로우 타입 */
 type InvitationRow = {
   id: string;
   locale: string;
   time_zone: string;
 };
 
+/** 테마 설정 DB 로우 타입 */
 type InvitationThemeRow = {
   fonts_serif: string | null;
   fonts_serif_en: string | null;
@@ -66,6 +72,7 @@ type InvitationThemeRow = {
   radius_sm: string | null;
 };
 
+/** 로딩 설정 DB 로우 타입 */
 type InvitationLoadingRow = {
   enabled: boolean;
   message: string;
@@ -73,6 +80,7 @@ type InvitationLoadingRow = {
   additional_duration: number;
 };
 
+/** 신랑/신부 프로필 DB 로우 타입 */
 type InvitationProfileRow = {
   groom_first_name: string;
   groom_last_name: string;
@@ -84,6 +92,7 @@ type InvitationProfileRow = {
   bride_profile_image: string | null;
 };
 
+/** 부모님 정보 DB 로우 타입 */
 type InvitationParentsRow = {
   groom_father: string | null;
   groom_mother: string | null;
@@ -91,12 +100,14 @@ type InvitationParentsRow = {
   bride_mother: string | null;
 };
 
+/** 예식 정보 DB 로우 타입 */
 type InvitationEventRow = {
   date_time: string;
   venue: string;
   address: string;
 };
 
+/** 장소 정보 DB 로우 타입 */
 type InvitationLocationRow = {
   id: string;
   place_name: string;
@@ -106,6 +117,7 @@ type InvitationLocationRow = {
   notices: string[] | null;
 };
 
+/** 교통편 안내 DB 로우 타입 */
 type InvitationTransportationRow = {
   subway: string[] | null;
   bus: string[] | null;
@@ -113,11 +125,13 @@ type InvitationTransportationRow = {
   parking: string | null;
 };
 
+/** 인사말 DB 로우 타입 */
 type InvitationGreetingRow = {
   poetic_note: string | null;
   message_lines: string[];
 };
 
+/** 갤러리 설정 DB 로우 타입 */
 type InvitationGalleryRow = {
   id: string;
   title: string;
@@ -126,6 +140,7 @@ type InvitationGalleryRow = {
   autoplay_delay: number | null;
 };
 
+/** 갤러리 이미지 DB 로우 타입 */
 type InvitationGalleryImageRow = {
   id: string;
   src: string;
@@ -135,12 +150,14 @@ type InvitationGalleryImageRow = {
   height: number | null;
 };
 
+/** 계좌 정보 섹션 DB 로우 타입 */
 type InvitationAccountsRow = {
   id: string;
   title: string;
   description: string | null;
 };
 
+/** 계좌 항목 DB 로우 타입 */
 type InvitationAccountEntryRow = {
   id: string;
   group_type: 'groom' | 'bride';
@@ -150,6 +167,7 @@ type InvitationAccountEntryRow = {
   label: string | null;
 };
 
+/** 방명록 설정 DB 로우 타입 */
 type InvitationGuestbookRow = {
   id: string;
   privacy_notice: string;
@@ -162,6 +180,7 @@ type InvitationGuestbookRow = {
   enable_delete: boolean;
 };
 
+/** 방명록 항목 DB 로우 타입 */
 type InvitationGuestbookEntryRow = {
   id: string;
   name: string;
@@ -170,6 +189,7 @@ type InvitationGuestbookEntryRow = {
   password_hash: string | null;
 };
 
+/** RSVP 설정 DB 로우 타입 */
 type InvitationRsvpRow = {
   enabled: boolean;
   deadline: string | null;
@@ -179,6 +199,7 @@ type InvitationRsvpRow = {
   consent_notice: string | null;
 };
 
+/** 공유 설정 DB 로우 타입 */
 type InvitationShareRow = {
   title: string;
   description: string;
@@ -189,6 +210,7 @@ type InvitationShareRow = {
   kakao_button_label: string | null;
 };
 
+/** 에셋(이미지) DB 로우 타입 */
 type InvitationAssetsRow = {
   hero_image: string | null;
   loading_image: string | null;
@@ -196,6 +218,7 @@ type InvitationAssetsRow = {
   share_kakao_image: string | null;
 };
 
+/** BGM 설정 DB 로우 타입 */
 type InvitationBgmRow = {
   enabled: boolean;
   audio_url: string | null;
@@ -203,12 +226,14 @@ type InvitationBgmRow = {
   loop: boolean;
 };
 
+/** 클로징 문구 DB 로우 타입 */
 type InvitationClosingRow = {
   title: string;
   message: string;
   copyright: string | null;
 };
 
+/** 섹션 타이틀 DB 로우 타입 */
 type InvitationSectionTitlesRow = {
   greeting: string;
   couple: string;
@@ -219,6 +244,14 @@ type InvitationSectionTitlesRow = {
   share: string;
 };
 
+/**
+ * 단일 로우 보장 (없으면 생성)
+ * @param supabase Supabase 클라이언트
+ * @param table 테이블명
+ * @param match 조회 조건
+ * @param insertPayload 생성 시 삽입할 데이터
+ * @returns 조회 또는 생성된 로우
+ */
 const ensureSingleRow = async (
   supabase: ReturnType<typeof createSupabaseAdmin>,
   table: string,
@@ -248,6 +281,10 @@ const ensureSingleRow = async (
   return created as Record<string, unknown>;
 };
 
+/**
+ * 청첩장 기본 레코드 조회 또는 생성
+ * @returns 청첩장 기본 정보 (id, locale, time_zone)
+ */
 const getOrCreateInvitation = async () => {
   const supabase = createSupabaseAdmin();
   const { data: existing, error } = await supabase
@@ -283,12 +320,22 @@ const getOrCreateInvitation = async () => {
   return created as InvitationRow;
 };
 
+/**
+ * 숫자 파싱 (null/undefined/invalid는 NaN 반환)
+ * @param value 파싱할 값
+ * @returns 파싱된 숫자 또는 NaN
+ */
 const parseNumber = (value: number | string | null) => {
   if (value === null || value === undefined) return Number.NaN;
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : Number.NaN;
 };
 
+/**
+ * DB 테마 로우를 InvitationTheme 타입으로 매핑
+ * @param row DB에서 조회한 테마 로우 (null이면 기본값 사용)
+ * @returns InvitationTheme 객체
+ */
 const mapTheme = (row: InvitationThemeRow | null): InvitationTheme => {
   const fallback = invitationMock.theme;
   if (!row) return fallback;
@@ -344,6 +391,10 @@ const mapTheme = (row: InvitationThemeRow | null): InvitationTheme => {
   };
 };
 
+/**
+ * 테마 설정 로드
+ * @returns 테마 설정 (조회 실패 시 기본값 반환)
+ */
 export const loadInvitationTheme = async (): Promise<InvitationTheme> => {
   const supabase = createSupabaseAdmin();
   const invitation = await getOrCreateInvitation();
@@ -363,6 +414,11 @@ export const loadInvitationTheme = async (): Promise<InvitationTheme> => {
   }
 };
 
+/**
+ * 퍼블릭 페이지용 청첩장 전체 데이터 로드
+ * 서버 컴포넌트에서 호출하여 SSR로 데이터를 미리 로드함
+ * @returns 청첩장 전체 데이터 (InvitationMock 타입)
+ */
 export const loadInvitationView = async (): Promise<InvitationMock> => {
   const supabase = createSupabaseAdmin();
   const invitation = await getOrCreateInvitation();
@@ -626,7 +682,8 @@ export const loadInvitationView = async (): Promise<InvitationMock> => {
 
 /**
  * 로딩 이미지 URL 로드 (preload용)
- * @returns Promise<string | null>
+ * layout.tsx에서 호출하여 이미지 선로딩에 사용
+ * @returns 로딩 이미지 URL (없으면 null)
  */
 export const loadLoadingImageUrl = async (): Promise<string | null> => {
   const supabase = createSupabaseAdmin();
