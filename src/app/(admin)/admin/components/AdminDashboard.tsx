@@ -486,6 +486,7 @@ export const AdminDashboard = ({ initialData }: AdminDashboardProps) => {
               </div>
               <div className="flex flex-1 gap-2">
                 <TextInput
+                  id={'place-search-input'}
                   value={placeSearchQuery}
                   onChange={(event) => setPlaceSearchQuery(event.target.value)}
                   placeholder="예: 채림 웨딩홀"
@@ -497,14 +498,11 @@ export const AdminDashboard = ({ initialData }: AdminDashboardProps) => {
                   }}
                   className="flex-1"
                 />
-                <Button
-                  type="button"
-                  size="sm"
-                  onClick={handlePlaceSearch}
-                  className="shrink-0 whitespace-nowrap"
-                >
-                  검색
-                </Button>
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                  <Button type="button" size="sm" variant="ghost" onClick={handlePlaceSearch}>
+                    검색
+                  </Button>
+                </div>
               </div>
             </div>
             <div className="grid gap-4 p-4 md:grid-cols-[1.2fr_1fr]">
