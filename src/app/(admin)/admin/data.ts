@@ -388,6 +388,10 @@ export const loadAdminData = async () => {
 
   return {
     invitationId: invitation.id,
+    overview: {
+      galleryCount: galleryImages.length,
+      guestbookCount: guestbookEntries.length,
+    },
     loading: {
       id: loading.id,
       enabled: loading.enabled,
