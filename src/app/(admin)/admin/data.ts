@@ -497,7 +497,7 @@ export const loadAdminData = async () => {
       id: guestbook.id,
       privacy_notice: guestbook.privacy_notice,
       retention_text: guestbook.retention_text,
-      display_mode: guestbook.display_mode,
+      display_mode: String(guestbook.display_mode || 'recent').trim(),
       page_size: guestbook.page_size,
       recent_notice: guestbook.recent_notice,
       enable_password: guestbook.enable_password,

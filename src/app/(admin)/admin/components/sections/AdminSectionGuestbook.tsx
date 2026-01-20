@@ -105,12 +105,16 @@ export const AdminSectionGuestbook = ({
             <AdminSelectField
               id="guestbook_display_mode"
               name="guestbook_display_mode"
-              defaultValue={guestbook.display_mode}
+              defaultValue={guestbook.display_mode === 'paginated' ? 'paginated' : 'recent'}
+              disabled
               options={[
                 { value: 'recent', label: '최근' },
                 { value: 'paginated', label: '페이지네이션' },
               ]}
             />
+            <p className="text-[11px] text-[var(--text-muted)]">
+              현재 퍼블릭 페이지에서 사용 중인 방식입니다.
+            </p>
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="guestbook_page_size">노출 개수</Label>
