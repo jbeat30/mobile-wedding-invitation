@@ -623,3 +623,24 @@ export const loadInvitationView = async (): Promise<InvitationMock> => {
     },
   };
 };
+
+/**
+ * 로딩 이미지 URL 로드 (preload용)
+ * @returns Promise<string | null>
+ */
+export const loadLoadingImageUrl = async (): Promise<string | null> => {
+  const supabase = createSupabaseAdmin();
+
+  try {
+    const invitation = await getOrCreateInvitation();
+    const { data: assets } = await supabase
+      .from('invitation_assets')
+      .select('loading_image')
+      .eq('invitation_id', invitation.id)
+      .maybeSingle();
+
+    return assets?.loading_image || null;
+  } catch {
+    return null;
+  }
+};
