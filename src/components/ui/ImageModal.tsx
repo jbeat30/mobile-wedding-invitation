@@ -18,18 +18,33 @@ type ImageModalProps = {
  */
 export const ImageModal = ({ isOpen, onClose, imageSrc, imageAlt }: ImageModalProps) => {
   const scrollPosRef = useRef(0);
+  const scrollBehaviorRef = useRef<string | null>(null);
+  const hasOpenedRef = useRef(false);
 
   useEffect(() => {
+    const html = document.documentElement;
+
     if (isOpen) {
       // 현재 스크롤 위치 저장
       scrollPosRef.current = window.scrollY;
+      hasOpenedRef.current = true;
+
+      if (scrollBehaviorRef.current === null) {
+        scrollBehaviorRef.current = html.style.scrollBehavior;
+      }
+      html.style.scrollBehavior = 'auto';
 
       // body 스크롤 차단 (위치 유지)
       document.body.style.overflow = 'hidden';
       document.body.style.position = 'fixed';
       document.body.style.top = `-${scrollPosRef.current}px`;
       document.body.style.width = '100%';
-    } else {
+    } else if (hasOpenedRef.current) {
+      if (scrollBehaviorRef.current === null) {
+        scrollBehaviorRef.current = html.style.scrollBehavior;
+      }
+      html.style.scrollBehavior = 'auto';
+
       // 스크롤 복원
       document.body.style.overflow = '';
       document.body.style.position = '';
@@ -38,6 +53,8 @@ export const ImageModal = ({ isOpen, onClose, imageSrc, imageAlt }: ImageModalPr
 
       // 이전 스크롤 위치로 복원
       window.scrollTo(0, scrollPosRef.current);
+      html.style.scrollBehavior = scrollBehaviorRef.current || '';
+      scrollBehaviorRef.current = null;
     }
 
     return () => {
@@ -45,6 +62,11 @@ export const ImageModal = ({ isOpen, onClose, imageSrc, imageAlt }: ImageModalPr
       document.body.style.position = '';
       document.body.style.top = '';
       document.body.style.width = '';
+
+      if (scrollBehaviorRef.current !== null) {
+        html.style.scrollBehavior = scrollBehaviorRef.current;
+        scrollBehaviorRef.current = null;
+      }
     };
   }, [isOpen]);
 

@@ -51,18 +51,20 @@ export const PasswordModal = ({
           {title}
         </h3>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} autoComplete="off">
           <div className="mb-4">
             <input
               ref={inputRef}
               type="password"
+              name="guestbook-password-confirm"
               inputMode="numeric"
               pattern="[0-9]*"
               maxLength={4}
               value={password}
               onChange={(e) => setPassword(e.target.value.replace(/\D/g, ''))}
               placeholder="● ● ● ●"
-              className="w-full rounded-[12px] border border-[var(--border-light)] bg-[var(--bg-secondary)] px-4 py-3 text-center text-[18px] tracking-[0.5em] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
+              autoComplete="new-password"
+              className="w-full rounded-[12px] border border-[var(--border-light)] bg-[var(--bg-secondary)] px-4 py-3 text-center text-[14px] tracking-[0.5em] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
             />
             <p className="mt-2 text-center text-[12px] text-[var(--text-muted)]">
               4자리 숫자를 입력해주세요
