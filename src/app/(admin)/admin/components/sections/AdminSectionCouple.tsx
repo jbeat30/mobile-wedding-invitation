@@ -61,7 +61,7 @@ export const AdminSectionCouple = ({
             defaultValue={profile.groom_profile_image || ''}
             defaultFileName={profile.groom_profile_image ? fileUrlToNameMap[profile.groom_profile_image] : null}
             previewClassName="h-[300px]"
-            hint="2MB 이하 이미지 파일"
+            hint="2MB 초과 시 자동 압축"
           />
           <AdminImageFileField
             id="bride_profile_image"
@@ -71,7 +71,7 @@ export const AdminSectionCouple = ({
             defaultValue={profile.bride_profile_image || ''}
             defaultFileName={profile.bride_profile_image ? fileUrlToNameMap[profile.bride_profile_image] : null}
             previewClassName="h-[300px]"
-            hint="2MB 이하 이미지 파일"
+            hint="2MB 초과 시 자동 압축"
           />
           <div className="md:col-span-2 flex justify-end">
             <AdminSubmitButton size="sm" pendingText="저장 중...">

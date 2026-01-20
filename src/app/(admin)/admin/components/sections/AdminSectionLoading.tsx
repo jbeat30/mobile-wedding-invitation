@@ -90,7 +90,7 @@ export const AdminSectionLoading = ({ loading, assets, fileUrlToNameMap }: Admin
               sectionId="loading/image"
               defaultValue={assets.loading_image}
               defaultFileName={assets.loading_image ? fileUrlToNameMap[assets.loading_image] : null}
-              hint="2MB 이하 이미지 파일"
+              hint="2MB 초과 시 자동 압축"
             />
             <div className="md:col-span-2 flex justify-end">
               <AdminSubmitButton size="sm" pendingText="저장 중...">

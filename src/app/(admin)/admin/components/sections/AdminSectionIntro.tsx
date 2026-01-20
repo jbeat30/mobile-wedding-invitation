@@ -48,7 +48,7 @@ export const AdminSectionIntro = ({
               sectionId="intro/hero"
               defaultValue={assets.hero_image}
               defaultFileName={assets.hero_image ? fileUrlToNameMap[assets.hero_image] : null}
-              hint="2MB 이하 이미지 파일"
+              hint="2MB 초과 시 자동 압축"
             />
             <div className="md:col-span-2 flex justify-end">
               <AdminSubmitButton size="sm" pendingText="저장 중...">

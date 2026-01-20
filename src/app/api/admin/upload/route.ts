@@ -3,6 +3,7 @@ import { createSupabaseAdmin } from '@/lib/supabaseAdmin';
 import { requireAdminAuth } from '@/lib/adminAuth';
 import { uploadToR2 } from '@/lib/r2';
 import { getOrCreateInvitation } from '@/app/(admin)/admin/data';
+import { compressImageFile } from '@/lib/imageCompression';
 
 /**
  * 업로드 가능한 파일 타입 체크
@@ -11,6 +12,8 @@ import { getOrCreateInvitation } from '@/app/(admin)/admin/data';
  */
 const isAllowedFile = (file: File) =>
   file.type.startsWith('image/') || file.type.startsWith('audio/');
+
+const MAX_IMAGE_BYTES = 2 * 1024 * 1024;
 
 /**
  * 관리자 업로드 API (R2)
@@ -40,17 +43,24 @@ export const POST = async (req: Request) => {
   }
 
   try {
-    const result = await uploadToR2({ sectionId, file });
+    const originalName = file.name || 'upload';
+    let fileToUpload = file;
+    if (file.type.startsWith('image/') && file.size > MAX_IMAGE_BYTES) {
+      const compressed = await compressImageFile({ file, maxBytes: MAX_IMAGE_BYTES });
+      fileToUpload = compressed.file;
+    }
+
+    const result = await uploadToR2({ sectionId, file: fileToUpload });
     const { id: invitationId } = await getOrCreateInvitation();
     const { error: insertError } = await supabase.from('uploaded_files').insert({
       invitation_id: invitationId,
       section_id: sectionId,
-      original_name: result.originalName,
+      original_name: originalName,
       file_uuid: result.uuid,
       file_key: result.key,
       file_url: result.url,
-      file_type: file.type || null,
-      file_size: Number.isFinite(file.size) ? Math.round(file.size) : null,
+      file_type: fileToUpload.type || null,
+      file_size: Number.isFinite(fileToUpload.size) ? Math.round(fileToUpload.size) : null,
     });
 
     if (insertError) {
