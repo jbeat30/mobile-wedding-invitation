@@ -27,10 +27,30 @@ export const BgmPlayer = ({ audioUrl, enabled, loop }: BgmPlayerProps) => {
     if (!audio || !audioUrl) return;
 
     if (enabled) {
-      void audio.play().catch(() => {
-        // 자동 재생 제한 시 사용자 토글로 재시도하게 둔다.
-      });
-      return;
+      const tryPlay = () => {
+        void audio.play().catch(() => {
+          // 자동 재생 제한 시 첫 상호작용에서 다시 시도한다.
+        });
+      };
+
+      const handleInteraction = () => {
+        tryPlay();
+      };
+
+      tryPlay();
+      window.addEventListener('pointerdown', handleInteraction, { once: true });
+      window.addEventListener('keydown', handleInteraction, { once: true });
+      window.addEventListener('touchstart', handleInteraction, { once: true });
+      window.addEventListener('wheel', handleInteraction, { once: true });
+      window.addEventListener('scroll', handleInteraction, { once: true });
+
+      return () => {
+        window.removeEventListener('pointerdown', handleInteraction);
+        window.removeEventListener('keydown', handleInteraction);
+        window.removeEventListener('touchstart', handleInteraction);
+        window.removeEventListener('wheel', handleInteraction);
+        window.removeEventListener('scroll', handleInteraction);
+      };
     }
     audio.pause();
   }, [enabled, audioUrl]);
