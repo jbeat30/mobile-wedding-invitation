@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import type { AdminDashboardData } from '@/app/(admin)/admin/data';
 import { AdminSectionOverview } from '@/app/(admin)/admin/components/sections/AdminSectionOverview';
 import { AdminSectionLoading } from '@/app/(admin)/admin/components/sections/AdminSectionLoading';
@@ -20,7 +21,20 @@ import { TextInput } from '@/components/ui/TextInput';
 import { loadKakaoMap } from '@/components/ui/KakaoMap';
 
 type AdminDashboardProps = {
-  data: AdminDashboardData;
+  /** 서버에서 로드한 초기 데이터 (hydration용) */
+  initialData: AdminDashboardData;
+};
+
+/**
+ * 관리자 데이터 API 호출
+ * @returns Promise<AdminDashboardData>
+ */
+const fetchAdminData = async (): Promise<AdminDashboardData> => {
+  const response = await fetch('/api/admin/data', { credentials: 'include' });
+  if (!response.ok) {
+    throw new Error('Failed to fetch admin data');
+  }
+  return response.json();
 };
 
 type KakaoPlace = {
@@ -34,10 +48,17 @@ type KakaoPlace = {
 };
 /**
  * 관리자 대시보드 본문
+ * TanStack Query로 실시간 데이터 동기화 지원
  * @param props AdminDashboardProps
  * @returns JSX.Element
  */
-export const AdminDashboard = ({ data }: AdminDashboardProps) => {
+export const AdminDashboard = ({ initialData }: AdminDashboardProps) => {
+  const { data } = useQuery<AdminDashboardData>({
+    queryKey: ['adminData'],
+    queryFn: fetchAdminData,
+    initialData,
+  });
+
   let daumPostcodeLoader: Promise<void> | null = null;
 
   /**

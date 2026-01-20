@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Geist, Nanum_Myeongjo, Gowun_Batang, Crimson_Pro } from 'next/font/google';
 import './globals.css';
-import { loadInvitationTheme, loadLoadingImageUrl } from '@/app/invitationData';
+import { loadInvitationTheme, loadLoadingImageUrl, loadOgMetadata } from '@/app/invitationData';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -31,22 +31,53 @@ const crimsonPro = Crimson_Pro({
   display: 'swap',
 });
 
-export const metadata: Metadata = {
-  title: '강신랑 · 장신부 결혼식에 초대합니다',
-  description: '2026년 05월 16일 오후 2시 30분, 채림 웨딩홀',
-  robots: {
-    index: false,
-    follow: false,
-    googleBot: {
+/**
+ * 동적 메타데이터 생성 (OG 태그 포함)
+ * 검색엔진은 차단하되 카카오톡 등 소셜 공유용 OG 태그는 유지
+ * @returns Metadata 객체
+ */
+export const generateMetadata = async (): Promise<Metadata> => {
+  const ogMeta = await loadOgMetadata();
+
+  return {
+    title: ogMeta.title,
+    description: ogMeta.description,
+    robots: {
       index: false,
       follow: false,
-      noimageindex: true,
+      googleBot: {
+        index: false,
+        follow: false,
+        noimageindex: true,
+      },
     },
-  },
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: 'default',
-  },
+    openGraph: {
+      title: ogMeta.title,
+      description: ogMeta.description,
+      type: 'website',
+      locale: 'ko_KR',
+      ...(ogMeta.imageUrl && {
+        images: [
+          {
+            url: ogMeta.imageUrl,
+            width: 1200,
+            height: 630,
+            alt: ogMeta.title,
+          },
+        ],
+      }),
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: ogMeta.title,
+      description: ogMeta.description,
+      ...(ogMeta.imageUrl && { images: [ogMeta.imageUrl] }),
+    },
+    appleWebApp: {
+      capable: true,
+      statusBarStyle: 'default',
+    },
+  };
 };
 
 export const viewport: Viewport = {

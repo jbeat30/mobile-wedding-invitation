@@ -701,3 +701,53 @@ export const loadLoadingImageUrl = async (): Promise<string | null> => {
     return null;
   }
 };
+
+/** OG 메타데이터 타입 */
+export type OgMetadata = {
+  title: string;
+  description: string;
+  imageUrl: string | null;
+};
+
+/**
+ * OG 메타데이터 로드 (카카오톡 공유용)
+ * layout.tsx의 generateMetadata에서 호출
+ * @returns OG 메타데이터 (title, description, imageUrl)
+ */
+export const loadOgMetadata = async (): Promise<OgMetadata> => {
+  const supabase = createSupabaseAdmin();
+
+  const defaultMeta: OgMetadata = {
+    title: '결혼식에 초대합니다',
+    description: '소중한 분들을 초대합니다',
+    imageUrl: null,
+  };
+
+  try {
+    const invitation = await getOrCreateInvitation();
+
+    const [shareResult, assetsResult] = await Promise.all([
+      supabase
+        .from('invitation_share')
+        .select('title, description, image_url')
+        .eq('invitation_id', invitation.id)
+        .maybeSingle(),
+      supabase
+        .from('invitation_assets')
+        .select('share_og_image')
+        .eq('invitation_id', invitation.id)
+        .maybeSingle(),
+    ]);
+
+    const share = shareResult.data as InvitationShareRow | null;
+    const assets = assetsResult.data as Pick<InvitationAssetsRow, 'share_og_image'> | null;
+
+    return {
+      title: share?.title || defaultMeta.title,
+      description: share?.description || defaultMeta.description,
+      imageUrl: share?.image_url || assets?.share_og_image || null,
+    };
+  } catch {
+    return defaultMeta;
+  }
+};

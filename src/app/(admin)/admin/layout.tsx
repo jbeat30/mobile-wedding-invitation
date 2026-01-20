@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Noto_Sans_KR } from 'next/font/google';
 import { logoutAction } from '@/app/(admin)/admin/actions/auth';
 import { Button } from '@/components/ui/Button';
+import { QueryProvider } from '@/app/(admin)/admin/components/QueryProvider';
 
 const notoSans = Noto_Sans_KR({
   subsets: ['latin'],
@@ -34,7 +35,9 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-[1200px] px-6 py-8">{children}</main>
+      <main className="mx-auto w-full max-w-[1200px] px-6 py-8">
+        <QueryProvider>{children}</QueryProvider>
+      </main>
     </div>
   );
 }

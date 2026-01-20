@@ -18,7 +18,7 @@ export default async function AdminPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <AdminDashboard data={data} />
+      <AdminDashboard initialData={data} />
     </div>
   );
 }
