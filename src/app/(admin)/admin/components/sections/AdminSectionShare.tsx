@@ -114,7 +114,7 @@ export const AdminSectionShare = ({ share, assets, sectionTitles, fileUrlToNameM
               sectionId="share/kakao"
               defaultValue={share.kakao_image_url || ''}
               defaultFileName={share.kakao_image_url ? fileUrlToNameMap[share.kakao_image_url] : null}
-              hint="비어있으면 OG 이미지가 대신 사용됩니다 (2MB 이하)"
+              hint="비어있으면 OG 이미지가 대신 사용됩니다 (2MB 초과 시 자동 압축)"
             />
             <div className="flex flex-col gap-2 md:col-span-2">
               <Label htmlFor="kakao_button_label">카카오 버튼 라벨</Label>
@@ -154,7 +154,7 @@ export const AdminSectionShare = ({ share, assets, sectionTitles, fileUrlToNameM
               sectionId="share/og"
               defaultValue={assets.share_og_image}
               defaultFileName={assets.share_og_image ? fileUrlToNameMap[assets.share_og_image] : null}
-              hint="메신저/브라우저 미리보기용 (2MB 이하)"
+              hint="메신저/브라우저 미리보기용 (2MB 초과 시 자동 압축)"
             />
             <div className="md:col-span-2 flex justify-end">
               <AdminSubmitButton size="sm" pendingText="저장 중...">

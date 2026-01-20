@@ -42,7 +42,6 @@ export const AdminImageFileField = ({
   const [selectedFileName, setSelectedFileName] = useState<string>(defaultFileName || '');
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const showPreview = previewUrl.trim().length > 0 && !errorMessage;
-  const maxSize = 2 * 1024 * 1024;
 
   const toggleFormSubmit = (disabled: boolean) => {
     const form = fileInputRef.current?.form;
@@ -86,10 +85,6 @@ export const AdminImageFileField = ({
           if (!file) return;
           if (!file.type.startsWith('image/')) {
             setErrorMessage('이미지 파일만 업로드할 수 있습니다');
-            return;
-          }
-          if (file.size > maxSize) {
-            setErrorMessage('이미지 파일은 2MB 이하만 가능합니다');
             return;
           }
           setUploading(true);

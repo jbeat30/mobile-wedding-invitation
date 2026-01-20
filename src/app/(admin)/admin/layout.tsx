@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, CSSProperties } from 'react';
 import Link from 'next/link';
 import { Noto_Sans_KR } from 'next/font/google';
 import { QueryProvider } from '@/app/(admin)/admin/components/QueryProvider';
@@ -7,6 +7,7 @@ import { AdminLogoutButton } from '@/app/(admin)/admin/components/AdminLogoutBut
 const notoSans = Noto_Sans_KR({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
+  variable: '--font-admin-sans',
 });
 
 /**
@@ -17,7 +18,8 @@ const notoSans = Noto_Sans_KR({
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
     <div
-      className={`admin-scope min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] font-sans ${notoSans.className}`}
+      className={`admin-scope min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] font-sans ${notoSans.variable}`}
+      style={{ '--font-sans': 'var(--font-admin-sans)' } as CSSProperties}
     >
       <header className="border-b border-[var(--border-light)] bg-white/90 px-6 py-4 backdrop-blur">
         <div className="mx-auto flex max-w-[1200px] items-center justify-between">

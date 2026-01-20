@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Geist, Nanum_Myeongjo, Gowun_Batang, Crimson_Pro } from 'next/font/google';
+import { Geist, Nanum_Myeongjo, Gowun_Batang, Crimson_Pro, Noto_Sans_KR } from 'next/font/google';
 import './globals.css';
 import { loadInvitationTheme, loadLoadingImageUrl, loadOgMetadata } from '@/app/invitationData';
 
@@ -28,6 +28,13 @@ const crimsonPro = Crimson_Pro({
   weight: ['400', '600', '700'],
   subsets: ['latin', 'latin-ext'],
   variable: '--font-crimson',
+  display: 'swap',
+});
+
+const notoSansKr = Noto_Sans_KR({
+  weight: ['400', '500', '600', '700'],
+  subsets: ['latin'],
+  variable: '--font-admin-sans',
   display: 'swap',
 });
 
@@ -137,7 +144,7 @@ export default async function RootLayout({
   return (
     <html
       lang="ko"
-      className={`${geistSans.variable} ${nanumMyeongjo.variable} ${gowunBatang.variable} ${crimsonPro.variable}`}
+      className={`${geistSans.variable} ${nanumMyeongjo.variable} ${gowunBatang.variable} ${crimsonPro.variable} ${notoSansKr.variable}`}
       style={themeStyle}
     >
       <head>
