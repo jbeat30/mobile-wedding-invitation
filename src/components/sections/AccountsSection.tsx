@@ -24,8 +24,8 @@ export const AccountsSection = ({ accounts }: AccountsSectionProps) => {
 
   const sections = useMemo(
     () => [
-      { title: '신랑', entries: accounts.groom },
-      { title: '신부', entries: accounts.bride },
+      { title: '신랑측', entries: accounts.groom },
+      { title: '신부측', entries: accounts.bride },
     ],
     [accounts]
   );
@@ -73,7 +73,7 @@ export const AccountsSection = ({ accounts }: AccountsSectionProps) => {
               className="p-5"
               data-animate-item
             >
-              <p className="text-[14px] font-medium text-[var(--text-primary)]">{section.title}</p>
+              <p className="text-[16px] font-medium text-[var(--text-primary)]">{section.title}</p>
               <div className="mt-4 flex flex-col gap-3">
                 {section.entries.map((entry) => (
                   <div
@@ -82,15 +82,15 @@ export const AccountsSection = ({ accounts }: AccountsSectionProps) => {
                   >
                     <div className="flex flex-col gap-0.5">
                       {entry.label && (
-                        <span className="text-[12px] font-medium text-[var(--text-primary)]">
+                        <span className="text-[15px] font-medium text-[var(--text-primary)]">
                           {entry.label}
                         </span>
                       )}
-                      <span className="text-[12px] text-[var(--text-muted)]">{entry.bankName}</span>
-                      <span className="text-[14px] text-[var(--text-primary)]">
+                      <span className="text-[15px] text-[var(--text-muted)]">{entry.bankName}</span>
+                      <span className="text-[15px] text-[var(--text-primary)]">
                         {entry.accountNumber}
                       </span>
-                      <span className="text-[12px] text-[var(--text-muted)]">{entry.holder}</span>
+                      <span className="text-[15px] text-[var(--text-muted)]">{entry.holder}</span>
                     </div>
                     <Button
                       type="button"

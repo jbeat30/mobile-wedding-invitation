@@ -166,7 +166,7 @@ export const ShareSection = ({ share, title }: ShareSectionProps) => {
               </svg>
               카카오톡으로 공유하기
               {!hasAppKey && (
-                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] text-[#3C1E1E]/50">
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[11px] text-[#3C1E1E]/50">
                   (API 키 필요)
                 </span>
               )}
