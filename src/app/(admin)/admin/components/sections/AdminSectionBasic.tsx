@@ -10,6 +10,7 @@ import { FieldLabel } from '@/components/ui/FieldLabel';
 import { SurfaceCard } from '@/components/ui/SurfaceCard';
 import { TextInput } from '@/components/ui/TextInput';
 import { KakaoMap } from '@/components/ui/KakaoMap';
+import { DateTimePicker } from '@/components/ui/DateTimePicker';
 
 type AdminSectionBasicProps = {
   data: AdminDashboardData;
@@ -135,9 +136,14 @@ export const AdminSectionBasic = ({
           successMessage="예식장 정보가 저장되었습니다"
           className="mt-4 grid gap-4 md:grid-cols-2"
         >
-          <div className="flex flex-col gap-2 md:col-span-2">
-            <FieldLabel htmlFor="event_date_time">예식 일시</FieldLabel>
-            <TextInput id="event_date_time" name="event_date_time" defaultValue={data.event.date_time} />
+          <div className="md:col-span-2">
+            <DateTimePicker
+              id="event_date_time"
+              name="event_date_time"
+              label="예식 일시"
+              defaultValue={data.event.date_time}
+              required
+            />
           </div>
           <div className="flex flex-col gap-2 md:col-span-2">
             <FieldLabel htmlFor="event_venue">예식장</FieldLabel>

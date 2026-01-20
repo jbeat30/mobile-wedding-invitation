@@ -14,6 +14,7 @@ type AdminSectionShareProps = {
   share: AdminDashboardData['share'];
   assets: AdminDashboardData['assets'];
   sectionTitles: AdminDashboardData['sectionTitles'];
+  fileUrlToNameMap: AdminDashboardData['fileUrlToNameMap'];
 };
 
 /**
@@ -21,7 +22,7 @@ type AdminSectionShareProps = {
  * @param props AdminSectionShareProps
  * @returns JSX.Element
  */
-export const AdminSectionShare = ({ share, assets, sectionTitles }: AdminSectionShareProps) => {
+export const AdminSectionShare = ({ share, assets, sectionTitles, fileUrlToNameMap }: AdminSectionShareProps) => {
   return (
     <div className="flex flex-col gap-6">
       <SurfaceCard className="p-6">
@@ -105,6 +106,7 @@ export const AdminSectionShare = ({ share, assets, sectionTitles }: AdminSection
             label="카카오 카드 이미지"
             sectionId="share/kakao"
             defaultValue={share.kakao_image_url || ''}
+            defaultFileName={share.kakao_image_url ? fileUrlToNameMap[share.kakao_image_url] : null}
             hint="비어있으면 OG 이미지가 대신 사용됩니다 (2MB 이하)"
           />
           <div className="flex flex-col gap-2 md:col-span-2">
@@ -140,6 +142,7 @@ export const AdminSectionShare = ({ share, assets, sectionTitles }: AdminSection
             label="OG 이미지"
             sectionId="share/og"
             defaultValue={assets.share_og_image}
+            defaultFileName={assets.share_og_image ? fileUrlToNameMap[assets.share_og_image] : null}
             hint="메신저/브라우저 미리보기용 (2MB 이하)"
           />
           <div className="md:col-span-2 flex justify-end">

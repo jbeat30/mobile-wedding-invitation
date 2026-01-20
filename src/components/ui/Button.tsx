@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 type ButtonVariant = 'primary' | 'outline' | 'ghost' | 'accent' | 'danger';
 
@@ -46,7 +47,7 @@ export const Button = ({
 }: ButtonProps) => {
   const variantClassName = variantClassMap[variant];
   const sizeClassName = sizeClassMap[size];
-  const mergedClassName = `${baseClassName} ${variantClassName} ${sizeClassName} ${className}`.trim();
+  const mergedClassName = twMerge(baseClassName, variantClassName, sizeClassName, className);
 
   return <button type={type} className={mergedClassName} {...props} />;
 };

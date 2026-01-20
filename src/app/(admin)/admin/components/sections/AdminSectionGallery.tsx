@@ -29,6 +29,7 @@ type AdminSectionGalleryProps = {
   setDragOverImageId: Dispatch<SetStateAction<string | null>>;
   orderSaved: boolean;
   setOrderSaved: Dispatch<SetStateAction<boolean>>;
+  fileUrlToNameMap: AdminDashboardData['fileUrlToNameMap'];
 };
 
 /**
@@ -46,6 +47,7 @@ export const AdminSectionGallery = ({
   setDragOverImageId,
   orderSaved,
   setOrderSaved,
+  fileUrlToNameMap: _fileUrlToNameMap,
 }: AdminSectionGalleryProps) => {
   const [orderSaving, setOrderSaving] = useState(false);
   const [orderError, setOrderError] = useState<string | null>(null);

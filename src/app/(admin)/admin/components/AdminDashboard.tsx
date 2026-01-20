@@ -348,13 +348,14 @@ export const AdminDashboard = ({ initialData }: AdminDashboardProps) => {
       case 'overview':
         return <AdminSectionOverview />;
       case 'loading':
-        return <AdminSectionLoading loading={data.loading} assets={data.assets} />;
+        return <AdminSectionLoading loading={data.loading} assets={data.assets} fileUrlToNameMap={data.fileUrlToNameMap} />;
       case 'intro':
         return (
           <AdminSectionIntro
             assets={data.assets}
             greeting={data.greeting}
             sectionTitles={data.sectionTitles}
+            fileUrlToNameMap={data.fileUrlToNameMap}
           />
         );
       case 'basic':
@@ -373,6 +374,7 @@ export const AdminDashboard = ({ initialData }: AdminDashboardProps) => {
           <AdminSectionCouple
             profile={data.profile}
             sectionTitles={data.sectionTitles}
+            fileUrlToNameMap={data.fileUrlToNameMap}
           />
         );
       case 'location':
@@ -389,6 +391,7 @@ export const AdminDashboard = ({ initialData }: AdminDashboardProps) => {
             setDragOverImageId={setDragOverImageId}
             orderSaved={orderSaved}
             setOrderSaved={setOrderSaved}
+            fileUrlToNameMap={data.fileUrlToNameMap}
           />
         );
       case 'accounts':
@@ -427,6 +430,7 @@ export const AdminDashboard = ({ initialData }: AdminDashboardProps) => {
             share={data.share}
             assets={data.assets}
             sectionTitles={data.sectionTitles}
+            fileUrlToNameMap={data.fileUrlToNameMap}
           />
         );
       case 'bgm':

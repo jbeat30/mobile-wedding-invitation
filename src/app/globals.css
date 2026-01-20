@@ -112,6 +112,22 @@ body::before {
         user-select: none;
     }
 
+    /* 클릭 가능한 요소 기본 커서 */
+    button,
+    a,
+    input[type="button"],
+    input[type="submit"],
+    input[type="reset"],
+    select {
+        cursor: pointer;
+    }
+
+    button:disabled,
+    input:disabled,
+    select:disabled {
+        cursor: not-allowed;
+    }
+
     .font-label {
         font-family: var(--font-serif-en);
         font-weight: 400;

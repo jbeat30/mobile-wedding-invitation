@@ -12,6 +12,7 @@ import { AdminImageFileField } from '@/app/(admin)/admin/components/AdminImageFi
 type AdminSectionCoupleProps = {
   profile: AdminDashboardData['profile'];
   sectionTitles: AdminDashboardData['sectionTitles'];
+  fileUrlToNameMap: AdminDashboardData['fileUrlToNameMap'];
 };
 
 /**
@@ -22,6 +23,7 @@ type AdminSectionCoupleProps = {
 export const AdminSectionCouple = ({
   profile,
   sectionTitles,
+  fileUrlToNameMap,
 }: AdminSectionCoupleProps) => {
   return (
     <SurfaceCard className="p-6">
@@ -53,6 +55,7 @@ export const AdminSectionCouple = ({
           label="신랑 프로필 이미지"
           sectionId="couple/groom"
           defaultValue={profile.groom_profile_image || ''}
+          defaultFileName={profile.groom_profile_image ? fileUrlToNameMap[profile.groom_profile_image] : null}
           previewClassName="h-[300px]"
           hint="2MB 이하 이미지 파일"
         />
@@ -62,6 +65,7 @@ export const AdminSectionCouple = ({
           label="신부 프로필 이미지"
           sectionId="couple/bride"
           defaultValue={profile.bride_profile_image || ''}
+          defaultFileName={profile.bride_profile_image ? fileUrlToNameMap[profile.bride_profile_image] : null}
           previewClassName="h-[300px]"
           hint="2MB 이하 이미지 파일"
         />

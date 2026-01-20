@@ -13,6 +13,7 @@ import { AdminImageFileField } from '@/app/(admin)/admin/components/AdminImageFi
 type AdminSectionLoadingProps = {
   loading: AdminDashboardData['loading'];
   assets: AdminDashboardData['assets'];
+  fileUrlToNameMap: AdminDashboardData['fileUrlToNameMap'];
 };
 
 /**
@@ -20,7 +21,7 @@ type AdminSectionLoadingProps = {
  * @param props AdminSectionLoadingProps
  * @returns JSX.Element
  */
-export const AdminSectionLoading = ({ loading, assets }: AdminSectionLoadingProps) => {
+export const AdminSectionLoading = ({ loading, assets, fileUrlToNameMap }: AdminSectionLoadingProps) => {
   return (
     <div className="flex flex-col gap-6">
       <SurfaceCard className="p-6">
@@ -83,6 +84,7 @@ export const AdminSectionLoading = ({ loading, assets }: AdminSectionLoadingProp
             label="로딩 이미지"
             sectionId="loading/image"
             defaultValue={assets.loading_image}
+            defaultFileName={assets.loading_image ? fileUrlToNameMap[assets.loading_image] : null}
             hint="2MB 이하 이미지 파일"
           />
           <div className="md:col-span-2 flex justify-end">

@@ -14,6 +14,7 @@ type AdminSectionIntroProps = {
   assets: AdminDashboardData['assets'];
   greeting: AdminDashboardData['greeting'];
   sectionTitles: AdminDashboardData['sectionTitles'];
+  fileUrlToNameMap: AdminDashboardData['fileUrlToNameMap'];
 };
 
 /**
@@ -25,6 +26,7 @@ export const AdminSectionIntro = ({
   assets,
   greeting,
   sectionTitles,
+  fileUrlToNameMap,
 }: AdminSectionIntroProps) => {
   return (
     <div className="flex flex-col gap-6">
@@ -41,6 +43,7 @@ export const AdminSectionIntro = ({
             label="메인 이미지"
             sectionId="intro/hero"
             defaultValue={assets.hero_image}
+            defaultFileName={assets.hero_image ? fileUrlToNameMap[assets.hero_image] : null}
             hint="2MB 이하 이미지 파일"
           />
           <div className="md:col-span-2 flex justify-end">
