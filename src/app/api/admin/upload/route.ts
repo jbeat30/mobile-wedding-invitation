@@ -5,6 +5,8 @@ import { uploadToR2 } from '@/lib/r2';
 import { getOrCreateInvitation } from '@/app/(admin)/admin/data';
 import { compressImageFile } from '@/lib/imageCompression';
 
+export const maxDuration = 60;
+
 /**
  * 업로드 가능한 파일 타입 체크
  * @param file File

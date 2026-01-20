@@ -680,27 +680,6 @@ export const loadInvitationView = async (): Promise<InvitationMock> => {
   };
 };
 
-/**
- * 로딩 이미지 URL 로드 (preload용)
- * layout.tsx에서 호출하여 이미지 선로딩에 사용
- * @returns 로딩 이미지 URL (없으면 null)
- */
-export const loadLoadingImageUrl = async (): Promise<string | null> => {
-  const supabase = createSupabaseAdmin();
-
-  try {
-    const invitation = await getOrCreateInvitation();
-    const { data: assets } = await supabase
-      .from('invitation_assets')
-      .select('loading_image')
-      .eq('invitation_id', invitation.id)
-      .maybeSingle();
-
-    return assets?.loading_image || null;
-  } catch {
-    return null;
-  }
-};
 
 /** OG 메타데이터 타입 */
 export type OgMetadata = {
