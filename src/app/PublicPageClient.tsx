@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import type { InvitationMock } from '@/mock/invitation.mock';
@@ -46,6 +46,7 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
   const { enabled: bgmEnabled, setEnabled: setBgmEnabled } = useBgmPreference(
     content.bgm.autoPlay
   );
+  const [isBgmPlaying, setIsBgmPlaying] = useState(false);
   const isBgmActive = bgmAvailable && bgmEnabled;
 
   useEffect(() => {
@@ -92,6 +93,12 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
       clearTimeout(resizeTimer);
     };
   }, []);
+
+  useEffect(() => {
+    if (!bgmEnabled) {
+      setIsBgmPlaying(false);
+    }
+  }, [bgmEnabled]);
 
   useEffect(() => {
     if (!showContent) return;
@@ -214,10 +221,14 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
               imageSrc={assets.loadingImage}
               isVisible={isLoading}
               isHintVisible={isHintVisible}
-              bgmEnabled={isBgmActive}
+              bgmEnabled={isBgmPlaying}
               bgmDisabled={!bgmAvailable}
               onBgmToggle={() => {
-                setBgmEnabled(!bgmEnabled);
+                if (isBgmPlaying) {
+                  setBgmEnabled(false);
+                  return;
+                }
+                setBgmEnabled(true);
               }}
             />
           )}
@@ -278,6 +289,7 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
         audioUrl={content.bgm.audioUrl || ''}
         enabled={isBgmActive}
         loop={content.bgm.loop}
+        onPlaybackChange={setIsBgmPlaying}
       />
     </div>
   );
