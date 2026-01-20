@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Geist, Nanum_Myeongjo, Gowun_Batang, Crimson_Pro, Noto_Sans_KR } from 'next/font/google';
 import './globals.css';
-import { loadInvitationTheme, loadLoadingImageUrl, loadOgMetadata } from '@/app/invitationData';
+import { loadInvitationTheme, loadOgMetadata } from '@/app/invitationData';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -95,10 +95,11 @@ export const viewport: Viewport = {
   viewportFit: 'cover',
 };
 
-export const dynamic = 'force-dynamic';
+// 60초 동안 캐싱하여 초기 로딩 속도 개선
+export const revalidate = 60;
 
 /**
- * 루트 레이아웃 (로딩 이미지 preload 포함)
+ * 루트 레이아웃
  * @param props { children: React.ReactNode }
  * @returns JSX.Element
  */
@@ -107,10 +108,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [theme, loadingImageUrl] = await Promise.all([
-    loadInvitationTheme(),
-    loadLoadingImageUrl(),
-  ]);
+  const theme = await loadInvitationTheme();
   const themeStyle = {
     '--font-serif': theme.fonts.serif,
     '--font-serif-en': theme.fonts.serifEn,
@@ -147,11 +145,7 @@ export default async function RootLayout({
       className={`${geistSans.variable} ${nanumMyeongjo.variable} ${gowunBatang.variable} ${crimsonPro.variable} ${notoSansKr.variable}`}
       style={themeStyle}
     >
-      <head>
-        {loadingImageUrl && (
-          <link rel="preload" as="image" href={loadingImageUrl} fetchPriority="high" />
-        )}
-      </head>
+      <head />
       <body className="antialiased [text-rendering:optimizeLegibility] isolate min-[481px]:[background:radial-gradient(circle_at_top,_#FAF9F7_0%,_#F0EDE8_100%)]">
         {children}
       </body>

@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { Label } from '@/components/ui/label';
+import { compressImageInBrowser } from '@/lib/clientImageCompression';
 
 type AdminImageFileFieldProps = {
   id: string;
@@ -90,22 +91,39 @@ export const AdminImageFileField = ({
           setUploading(true);
           setErrorMessage('');
           setSelectedFileName(file.name);
-          const reader = new FileReader();
-          reader.onload = () => {
-            setPreviewUrl(String(reader.result || ''));
-          };
-          reader.readAsDataURL(file);
-          const formData = new FormData();
-          formData.append('file', file);
-          formData.append('sectionId', sectionId);
+
           try {
+            // 1. 미리보기용 원본 이미지 표시
+            const reader = new FileReader();
+            reader.onload = () => {
+              setPreviewUrl(String(reader.result || ''));
+            };
+            reader.readAsDataURL(file);
+
+            // 2. 클라이언트에서 압축 (2MB 초과 시)
+            const MAX_SIZE = 2 * 1024 * 1024; // 2MB
+            let fileToUpload = file;
+
+            if (file.size > MAX_SIZE) {
+              const compressed = await compressImageInBrowser(file, MAX_SIZE);
+              fileToUpload = compressed.file;
+              console.log(`압축 완료: ${(file.size / 1024 / 1024).toFixed(2)}MB → ${(fileToUpload.size / 1024 / 1024).toFixed(2)}MB`);
+            }
+
+            // 3. 서버로 업로드
+            const formData = new FormData();
+            formData.append('file', fileToUpload);
+            formData.append('sectionId', sectionId);
+
             const response = await fetch('/api/admin/upload', {
               method: 'POST',
               body: formData,
             });
+
             if (!response.ok) {
               throw new Error('upload failed');
             }
+
             const result = (await response.json()) as {
               url: string;
               uuid: string;

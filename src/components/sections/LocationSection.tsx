@@ -80,7 +80,7 @@ export const LocationSection = ({ event, location, title }: LocationSectionProps
           <SectionHeader
             kicker="LOCATION"
             title={title}
-            kickerClassName="font-label text-[12px] text-[var(--accent-rose)]"
+            kickerClassName="font-label text-[14px] text-[var(--accent-rose)]"
             titleClassName="mt-2 text-[24px] font-medium text-[var(--text-primary)]"
           />
         </div>

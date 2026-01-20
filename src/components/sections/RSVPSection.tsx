@@ -128,7 +128,7 @@ export const RSVPSection = ({ rsvp, storageKey, title }: RSVPSectionProps) => {
               kicker="RSVP"
               title={title}
               description={deadlineText}
-              kickerClassName="font-label text-[12px] text-[var(--accent-rose)]"
+              kickerClassName="font-label text-[14px] text-[var(--accent-rose)]"
               titleClassName="mt-2 text-[24px] font-medium text-[var(--text-primary)]"
               descriptionClassName="mt-2 text-[14px] text-[var(--text-tertiary)]"
             />

@@ -21,7 +21,7 @@ export const CoupleSection = ({ couple, title }: CoupleSectionProps) => {
           <SectionHeader
             kicker="COUPLE"
             title={title}
-            kickerClassName="font-label text-[13px] text-[var(--accent-rose)]"
+            kickerClassName="font-label text-[14px] text-[var(--accent-rose)]"
             titleClassName="mt-2 text-[24px] font-medium text-[var(--text-primary)]"
           />
         </div>

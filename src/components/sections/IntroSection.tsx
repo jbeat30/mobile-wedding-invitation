@@ -51,7 +51,7 @@ export const IntroSection = ({ couple, event, heroImage }: IntroSectionProps) =>
               <span className="mx-3 text-[18px] text-[var(--accent-rose-light)]">♥</span>
               {`${couple.bride.lastName}${couple.bride.firstName}`}
             </h1>
-            <p className="mt-3 text-[14px] font-bold tracking-wider text-white/90 drop-shadow-sm">
+            <p className="mt-3 text-[15px] font-bold tracking-wider text-white/90 drop-shadow-sm">
               {formattedDateTime}
             </p>
           </div>
