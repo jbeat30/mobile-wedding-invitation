@@ -95,7 +95,8 @@ export const viewport: Viewport = {
   viewportFit: 'cover',
 };
 
-export const dynamic = 'force-dynamic';
+// 60초 동안 캐싱하여 초기 로딩 속도 개선
+export const revalidate = 60;
 
 /**
  * 루트 레이아웃 (로딩 이미지 preload 포함)

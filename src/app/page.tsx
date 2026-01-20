@@ -1,7 +1,8 @@
 import { PublicPageClient } from '@/app/PublicPageClient';
 import { loadInvitationView } from '@/app/invitationData';
 
-export const dynamic = 'force-dynamic';
+// 60초 동안 캐싱하여 불필요한 DB 조회 방지
+export const revalidate = 60;
 
 /**
  * 퍼블릭 페이지 (DB 연동)

@@ -133,19 +133,24 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
       return;
     }
 
+    // 벚꽃과 함께 보이는 첫 두 섹션은 우선 로드
     void Promise.all([
       import('@/components/sections/IntroSection'),
       import('@/components/sections/GreetingSection'),
-      import('@/components/sections/CoupleSection'),
-      import('@/components/sections/WeddingInfoSection'),
-      import('@/components/sections/LocationSection'),
-      import('@/components/sections/GallerySection'),
-      import('@/components/sections/AccountsSection'),
-      import('@/components/sections/GuestbookSection'),
-      import('@/components/sections/RSVPSection'),
-      import('@/components/sections/ShareSection'),
-      import('@/components/sections/ClosingSection'),
-    ]);
+    ]).then(() => {
+      // 나머지 섹션은 백그라운드에서 로드
+      void Promise.all([
+        import('@/components/sections/CoupleSection'),
+        import('@/components/sections/WeddingInfoSection'),
+        import('@/components/sections/LocationSection'),
+        import('@/components/sections/GallerySection'),
+        import('@/components/sections/AccountsSection'),
+        import('@/components/sections/GuestbookSection'),
+        import('@/components/sections/RSVPSection'),
+        import('@/components/sections/ShareSection'),
+        import('@/components/sections/ClosingSection'),
+      ]);
+    });
   }, [loading.enabled, isLoading]);
 
   useEffect(() => {
@@ -276,20 +281,18 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
               }}
             />
           )}
-          {showContent && (
-            <>
-              <GreetingSection
-                greeting={content.greeting}
-                couple={content.couple}
-                title={sectionTitles.greeting}
-              />
-              <IntroSection
-                couple={content.couple}
-                event={content.event}
-                heroImage={assets.heroImage}
-              />
-            </>
-          )}
+          <div style={{ visibility: showContent ? 'visible' : 'hidden', height: showContent ? 'auto' : 0, overflow: 'hidden' }}>
+            <GreetingSection
+              greeting={content.greeting}
+              couple={content.couple}
+              title={sectionTitles.greeting}
+            />
+            <IntroSection
+              couple={content.couple}
+              event={content.event}
+              heroImage={assets.heroImage}
+            />
+          </div>
         </div>
         {showContent && (
           <>
