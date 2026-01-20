@@ -16,7 +16,7 @@ export const BgmToggle = ({ enabled, onToggle, disabled = false }: BgmToggleProp
   return (
     <button
       type="button"
-      className={`flex items-center gap-2 rounded-full border border-white/70 bg-white/70 px-3 py-1.5 text-[10px] tracking-[0.2em] text-[var(--text-secondary)] shadow-[0_10px_24px_rgba(41,32,26,0.12)] backdrop-blur-sm transition-all ${
+      className={`flex items-center gap-2 rounded-full border border-white/70 bg-white/70 px-3 py-1.5 text-[11px] tracking-[0.2em] text-[var(--text-secondary)] shadow-[0_10px_24px_rgba(41,32,26,0.12)] backdrop-blur-sm transition-all ${
         disabled ? 'cursor-not-allowed opacity-50' : 'hover:bg-white'
       }`}
       aria-pressed={enabled}

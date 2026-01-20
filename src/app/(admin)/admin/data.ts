@@ -185,8 +185,21 @@ type InvitationRsvpResponseRow = {
   submitted_at: string;
 };
 
+type UploadedFileRow = {
+  id: string;
+  invitation_id: string;
+  section_id: string;
+  original_name: string;
+  file_uuid: string;
+  file_key: string;
+  file_url: string;
+  file_type: string | null;
+  file_size: number | null;
+  created_at: string;
+};
+
 /**
- * 초대장 기본 레코드 확보
+ * 청첩장 기본 레코드 확보
  * @returns Promise<{ id: string }>
  */
 export const getOrCreateInvitation = async () => {
@@ -348,13 +361,37 @@ export const loadAdminData = async () => {
     throw rsvpResponsesError;
   }
 
+  const { data: uploadedFilesRaw, error: uploadedFilesError } = await supabase
+    .from('uploaded_files')
+    .select('*')
+    .eq('invitation_id', invitation.id);
+
+  if (uploadedFilesError) {
+    throw uploadedFilesError;
+  }
+
   const galleryImages = (galleryImagesRaw || []) as InvitationGalleryImageRow[];
   const accountEntries = (accountEntriesRaw || []) as InvitationAccountEntryRow[];
   const guestbookEntries = (guestbookEntriesRaw || []) as InvitationGuestbookEntryRow[];
   const rsvpResponses = (rsvpResponsesRaw || []) as InvitationRsvpResponseRow[];
+  const uploadedFiles = (uploadedFilesRaw || []) as UploadedFileRow[];
+
+  /**
+   * 파일 URL -> 원본 파일명 매핑
+   */
+  const fileUrlToNameMap: Record<string, string> = {};
+  uploadedFiles.forEach((file) => {
+    if (file.file_url) {
+      fileUrlToNameMap[file.file_url] = file.original_name;
+    }
+  });
 
   return {
     invitationId: invitation.id,
+    overview: {
+      galleryCount: galleryImages.length,
+      guestbookCount: guestbookEntries.length,
+    },
     loading: {
       id: loading.id,
       enabled: loading.enabled,
@@ -460,7 +497,7 @@ export const loadAdminData = async () => {
       id: guestbook.id,
       privacy_notice: guestbook.privacy_notice,
       retention_text: guestbook.retention_text,
-      display_mode: guestbook.display_mode,
+      display_mode: String(guestbook.display_mode || 'recent').trim(),
       page_size: guestbook.page_size,
       recent_notice: guestbook.recent_notice,
       enable_password: guestbook.enable_password,
@@ -521,6 +558,7 @@ export const loadAdminData = async () => {
       rsvp: sectionTitles.rsvp,
       share: sectionTitles.share,
     },
+    fileUrlToNameMap,
   };
 };
 

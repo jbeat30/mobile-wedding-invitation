@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
-import { FieldLabel } from '@/components/ui/FieldLabel';
+import { Label } from '@/components/ui/label';
 
 type AdminImageFileFieldProps = {
   id: string;
@@ -10,6 +10,7 @@ type AdminImageFileFieldProps = {
   label: string;
   sectionId: string;
   defaultValue?: string | null;
+  defaultFileName?: string | null;
   hint?: string;
   previewClassName?: string;
   required?: boolean;
@@ -26,6 +27,7 @@ export const AdminImageFileField = ({
   label,
   sectionId,
   defaultValue = '',
+  defaultFileName = '',
   hint,
   previewClassName = 'h-[360px]',
   required = false,
@@ -37,6 +39,7 @@ export const AdminImageFileField = ({
   const [uploadedMeta, setUploadedMeta] = useState<{ uuid: string; filename: string } | null>(
     null
   );
+  const [selectedFileName, setSelectedFileName] = useState<string>(defaultFileName || '');
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const showPreview = previewUrl.trim().length > 0 && !errorMessage;
   const maxSize = 2 * 1024 * 1024;
@@ -71,7 +74,7 @@ export const AdminImageFileField = ({
 
   return (
     <div className="flex flex-col gap-2">
-      <FieldLabel htmlFor={id}>{label}</FieldLabel>
+      <Label htmlFor={id}>{label}</Label>
       <input
         id={id}
         ref={fileInputRef}
@@ -91,6 +94,7 @@ export const AdminImageFileField = ({
           }
           setUploading(true);
           setErrorMessage('');
+          setSelectedFileName(file.name);
           const reader = new FileReader();
           reader.onload = () => {
             setPreviewUrl(String(reader.result || ''));
@@ -126,6 +130,11 @@ export const AdminImageFileField = ({
       <input type="hidden" name={name} value={value} />
       <input type="hidden" name={`${name}_uuid`} value={uploadedMeta?.uuid || ''} />
       <input type="hidden" name={`${name}_filename`} value={uploadedMeta?.filename || ''} />
+      {selectedFileName ? (
+        <p className="text-[11px] text-[var(--text-secondary)]">
+          선택된 파일: <span className="font-medium">{selectedFileName}</span>
+        </p>
+      ) : null}
       {hint ? <p className="text-[11px] text-[var(--text-muted)]">{hint}</p> : null}
       {previewUrl.trim().length > 0 ? (
         <div className="relative overflow-hidden rounded-[12px] border border-[var(--border-light)] bg-white/60">

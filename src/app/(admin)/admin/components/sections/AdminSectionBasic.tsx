@@ -3,13 +3,14 @@
 import type { RefObject } from 'react';
 import type { AdminDashboardData } from '@/app/(admin)/admin/data';
 import { updateBasicInfoAction, updateLocationAction } from '@/app/(admin)/admin/actions/content';
-import { Button } from '@/components/ui/Button';
 import { AdminForm } from '@/app/(admin)/admin/components/AdminForm';
 import { AdminSubmitButton } from '@/app/(admin)/admin/components/AdminSubmitButton';
-import { FieldLabel } from '@/components/ui/FieldLabel';
-import { SurfaceCard } from '@/components/ui/SurfaceCard';
-import { TextInput } from '@/components/ui/TextInput';
+import { Button } from '@/components/ui/Button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { KakaoMap } from '@/components/ui/KakaoMap';
+import { DateTimePicker } from '@/components/ui/DateTimePicker';
 
 type AdminSectionBasicProps = {
   data: AdminDashboardData;
@@ -38,25 +39,28 @@ export const AdminSectionBasic = ({
 
   return (
     <div className="flex flex-col gap-6">
-      <SurfaceCard className="p-6">
-        <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">기본 정보</h2>
-        <AdminForm
-          action={updateBasicInfoAction}
-          successMessage="기본 정보가 저장되었습니다"
-          className="mt-4 grid gap-4 md:grid-cols-2"
-        >
+      <Card>
+        <CardHeader>
+          <CardTitle>기본 정보</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <AdminForm
+            action={updateBasicInfoAction}
+            successMessage="기본 정보가 저장되었습니다"
+            className="grid gap-4 md:grid-cols-2"
+          >
           <div className="grid gap-2 sm:grid-cols-2">
             <div className="flex flex-col gap-2">
-              <FieldLabel htmlFor="groom_last_name">신랑 성</FieldLabel>
-              <TextInput
+              <Label htmlFor="groom_last_name">신랑 성</Label>
+              <Input
                 id="groom_last_name"
                 name="groom_last_name"
                 defaultValue={data.profile.groom_last_name}
               />
             </div>
             <div className="flex flex-col gap-2">
-              <FieldLabel htmlFor="groom_first_name">신랑 이름</FieldLabel>
-              <TextInput
+              <Label htmlFor="groom_first_name">신랑 이름</Label>
+              <Input
                 id="groom_first_name"
                 name="groom_first_name"
                 defaultValue={data.profile.groom_first_name}
@@ -65,16 +69,16 @@ export const AdminSectionBasic = ({
           </div>
           <div className="grid gap-2 sm:grid-cols-2">
             <div className="flex flex-col gap-2">
-              <FieldLabel htmlFor="bride_last_name">신부 성</FieldLabel>
-              <TextInput
+              <Label htmlFor="bride_last_name">신부 성</Label>
+              <Input
                 id="bride_last_name"
                 name="bride_last_name"
                 defaultValue={data.profile.bride_last_name}
               />
             </div>
             <div className="flex flex-col gap-2">
-              <FieldLabel htmlFor="bride_first_name">신부 이름</FieldLabel>
-              <TextInput
+              <Label htmlFor="bride_first_name">신부 이름</Label>
+              <Input
                 id="bride_first_name"
                 name="bride_first_name"
                 defaultValue={data.profile.bride_first_name}
@@ -86,16 +90,16 @@ export const AdminSectionBasic = ({
           </div>
           <div className="flex flex-col gap-2">
             <div className="flex flex-col gap-2">
-              <FieldLabel htmlFor="groom_father_name">신랑 아버지</FieldLabel>
-              <TextInput
+              <Label htmlFor="groom_father_name">신랑 아버지</Label>
+              <Input
                 id="groom_father_name"
                 name="groom_father_name"
                 defaultValue={data.parents.groom.father || ''}
               />
             </div>
             <div className="flex flex-col gap-2">
-              <FieldLabel htmlFor="groom_mother_name">신랑 어머니</FieldLabel>
-              <TextInput
+              <Label htmlFor="groom_mother_name">신랑 어머니</Label>
+              <Input
                 id="groom_mother_name"
                 name="groom_mother_name"
                 defaultValue={data.parents.groom.mother || ''}
@@ -104,16 +108,16 @@ export const AdminSectionBasic = ({
           </div>
           <div className="flex flex-col gap-2">
             <div className="flex flex-col gap-2">
-              <FieldLabel htmlFor="bride_father_name">신부 아버지</FieldLabel>
-              <TextInput
+              <Label htmlFor="bride_father_name">신부 아버지</Label>
+              <Input
                 id="bride_father_name"
                 name="bride_father_name"
                 defaultValue={data.parents.bride.father || ''}
               />
             </div>
             <div className="flex flex-col gap-2">
-              <FieldLabel htmlFor="bride_mother_name">신부 어머니</FieldLabel>
-              <TextInput
+              <Label htmlFor="bride_mother_name">신부 어머니</Label>
+              <Input
                 id="bride_mother_name"
                 name="bride_mother_name"
                 defaultValue={data.parents.bride.mother || ''}
@@ -125,28 +129,37 @@ export const AdminSectionBasic = ({
               저장하기
             </AdminSubmitButton>
           </div>
-        </AdminForm>
-      </SurfaceCard>
+          </AdminForm>
+        </CardContent>
+      </Card>
 
-      <SurfaceCard className="p-6">
-        <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">예식장 정보</h2>
-        <AdminForm
-          action={updateLocationAction}
-          successMessage="예식장 정보가 저장되었습니다"
-          className="mt-4 grid gap-4 md:grid-cols-2"
-        >
-          <div className="flex flex-col gap-2 md:col-span-2">
-            <FieldLabel htmlFor="event_date_time">예식 일시</FieldLabel>
-            <TextInput id="event_date_time" name="event_date_time" defaultValue={data.event.date_time} />
+      <Card>
+        <CardHeader>
+          <CardTitle>예식장 정보</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <AdminForm
+            action={updateLocationAction}
+            successMessage="예식장 정보가 저장되었습니다"
+            className="grid gap-4 md:grid-cols-2"
+          >
+          <div className="md:col-span-2">
+            <DateTimePicker
+              id="event_date_time"
+              name="event_date_time"
+              label="예식 일시"
+              defaultValue={data.event.date_time}
+              required
+            />
           </div>
           <div className="flex flex-col gap-2 md:col-span-2">
-            <FieldLabel htmlFor="event_venue">예식장</FieldLabel>
-            <TextInput id="event_venue" name="event_venue" ref={venueInputRef} defaultValue={data.event.venue} />
+            <Label htmlFor="event_venue">예식장</Label>
+            <Input id="event_venue" name="event_venue" ref={venueInputRef} defaultValue={data.event.venue} />
           </div>
           <div className="flex flex-col gap-2 md:col-span-2">
-            <FieldLabel htmlFor="event_address">주소</FieldLabel>
+            <Label htmlFor="event_address">주소</Label>
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-              <TextInput
+              <Input
                 id="event_address"
                 name="event_address"
                 ref={addressInputRef}
@@ -194,8 +207,9 @@ export const AdminSectionBasic = ({
               저장하기
             </AdminSubmitButton>
           </div>
-        </AdminForm>
-      </SurfaceCard>
+          </AdminForm>
+        </CardContent>
+      </Card>
     </div>
   );
 };

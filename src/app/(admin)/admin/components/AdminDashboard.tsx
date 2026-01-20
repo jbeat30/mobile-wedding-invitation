@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import type { AdminDashboardData } from '@/app/(admin)/admin/data';
 import { AdminSectionOverview } from '@/app/(admin)/admin/components/sections/AdminSectionOverview';
 import { AdminSectionLoading } from '@/app/(admin)/admin/components/sections/AdminSectionLoading';
@@ -16,11 +17,24 @@ import { AdminSectionShare } from '@/app/(admin)/admin/components/sections/Admin
 import { AdminSectionBgm } from '@/app/(admin)/admin/components/sections/AdminSectionBgm';
 import { AdminSectionClosing } from '@/app/(admin)/admin/components/sections/AdminSectionClosing';
 import { Button } from '@/components/ui/Button';
-import { TextInput } from '@/components/ui/TextInput';
+import { Input } from '@/components/ui/input';
 import { loadKakaoMap } from '@/components/ui/KakaoMap';
 
 type AdminDashboardProps = {
-  data: AdminDashboardData;
+  /** 서버에서 로드한 초기 데이터 (hydration용) */
+  initialData: AdminDashboardData;
+};
+
+/**
+ * 관리자 데이터 API 호출
+ * @returns Promise<AdminDashboardData>
+ */
+const fetchAdminData = async (): Promise<AdminDashboardData> => {
+  const response = await fetch('/api/admin/data', { credentials: 'include' });
+  if (!response.ok) {
+    throw new Error('Failed to fetch admin data');
+  }
+  return response.json();
 };
 
 type KakaoPlace = {
@@ -34,10 +48,17 @@ type KakaoPlace = {
 };
 /**
  * 관리자 대시보드 본문
+ * TanStack Query로 실시간 데이터 동기화 지원
  * @param props AdminDashboardProps
  * @returns JSX.Element
  */
-export const AdminDashboard = ({ data }: AdminDashboardProps) => {
+export const AdminDashboard = ({ initialData }: AdminDashboardProps) => {
+  const { data } = useQuery<AdminDashboardData>({
+    queryKey: ['adminData'],
+    queryFn: fetchAdminData,
+    initialData,
+  });
+
   let daumPostcodeLoader: Promise<void> | null = null;
 
   /**
@@ -325,15 +346,16 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
   const renderTabContent = () => {
     switch (activeTab) {
       case 'overview':
-        return <AdminSectionOverview />;
+        return <AdminSectionOverview overview={data.overview} />;
       case 'loading':
-        return <AdminSectionLoading loading={data.loading} assets={data.assets} />;
+        return <AdminSectionLoading loading={data.loading} assets={data.assets} fileUrlToNameMap={data.fileUrlToNameMap} />;
       case 'intro':
         return (
           <AdminSectionIntro
             assets={data.assets}
             greeting={data.greeting}
             sectionTitles={data.sectionTitles}
+            fileUrlToNameMap={data.fileUrlToNameMap}
           />
         );
       case 'basic':
@@ -352,6 +374,7 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
           <AdminSectionCouple
             profile={data.profile}
             sectionTitles={data.sectionTitles}
+            fileUrlToNameMap={data.fileUrlToNameMap}
           />
         );
       case 'location':
@@ -406,6 +429,7 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
             share={data.share}
             assets={data.assets}
             sectionTitles={data.sectionTitles}
+            fileUrlToNameMap={data.fileUrlToNameMap}
           />
         );
       case 'bgm':
@@ -426,18 +450,20 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
           {tabs.map((tab) => {
             const isActive = tab.id === activeTab;
             return (
-              <button
+              <Button
                 key={tab.id}
                 type="button"
+                size="sm"
+                variant="ghost"
                 onClick={() => setActiveTab(tab.id)}
-                className={`cursor-pointer rounded-[10px] px-3 py-2 text-[13px] whitespace-nowrap transition ${
+                className={`h-auto whitespace-nowrap rounded-[10px] px-3 py-2 text-[13px] ${
                   isActive
                     ? 'bg-[var(--accent-rose-light)] text-[var(--text-primary)]'
                     : 'text-[var(--text-tertiary)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)]'
                 }`}
               >
                 {tab.label}
-              </button>
+              </Button>
             );
           })}
         </div>
@@ -447,10 +473,12 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
 
       {isPlaceSearchOpen ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={closePlaceSearchModal}
-            className="absolute inset-0 cursor-pointer bg-black/40"
+            className="absolute inset-0 h-full w-full rounded-none bg-black/40 p-0 hover:bg-black/40"
             aria-label="장소 검색 닫기"
           />
           <div className="relative z-10 w-full max-w-[960px] overflow-hidden rounded-[16px] border border-[var(--border-light)] bg-white shadow-[var(--shadow-card)]">
@@ -464,7 +492,8 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
                 </Button>
               </div>
               <div className="flex flex-1 gap-2">
-                <TextInput
+                <Input
+                  id={'place-search-input'}
                   value={placeSearchQuery}
                   onChange={(event) => setPlaceSearchQuery(event.target.value)}
                   placeholder="예: 채림 웨딩홀"
@@ -476,14 +505,11 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
                   }}
                   className="flex-1"
                 />
-                <Button
-                  type="button"
-                  size="sm"
-                  onClick={handlePlaceSearch}
-                  className="shrink-0 whitespace-nowrap"
-                >
-                  검색
-                </Button>
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                  <Button type="button" size="sm" variant="ghost" onClick={handlePlaceSearch}>
+                    검색
+                  </Button>
+                </div>
               </div>
             </div>
             <div className="grid gap-4 p-4 md:grid-cols-[1.2fr_1fr]">
@@ -494,11 +520,13 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
                 {placeSearchResults.length > 0 ? (
                   <div className="divide-y divide-[var(--border-light)]">
                     {placeSearchResults.map((place) => (
-                      <button
+                      <Button
                         key={place.id}
                         type="button"
+                        variant="ghost"
+                        size="sm"
                         onClick={() => handlePlaceSelect(place)}
-                        className="w-full px-4 py-3 text-left transition hover:bg-[var(--bg-secondary)]"
+                        className="h-auto w-full items-start justify-start rounded-none px-4 py-3 text-left hover:bg-[var(--bg-secondary)]"
                       >
                         <p className="text-[14px] font-medium text-[var(--text-primary)]">
                           {place.place_name}
@@ -511,7 +539,7 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
                             {place.category_name}
                           </p>
                         ) : null}
-                      </button>
+                      </Button>
                     ))}
                   </div>
                 ) : (
@@ -532,10 +560,12 @@ export const AdminDashboard = ({ data }: AdminDashboardProps) => {
 
       {isPostcodeOpen ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={closePostcodeModal}
-            className="absolute inset-0 cursor-pointer bg-black/40"
+            className="absolute inset-0 h-full w-full rounded-none bg-black/40 p-0 hover:bg-black/40"
             aria-label="주소 검색 닫기"
           />
           <div className="relative z-10 w-full max-w-[560px] overflow-hidden rounded-[16px] border border-[var(--border-light)] bg-white shadow-[var(--shadow-card)]">

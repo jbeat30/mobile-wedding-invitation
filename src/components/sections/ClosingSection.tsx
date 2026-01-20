@@ -23,7 +23,7 @@ export const ClosingSection = ({ closing, couple }: ClosingSectionProps) => {
 
         {/* 마무리 인사 */}
         <div className="text-center" data-animate="fade-up">
-          <p className="font-serif text-[14px] leading-[1.9] text-[var(--text-secondary)]">
+          <p className="whitespace-pre-line font-serif text-[14px] leading-[1.9] text-[var(--text-secondary)]">
             {closing.message}
           </p>
           <p className="flex justify-center items-center gap-3 mt-6 font-serif text-[18px] font-medium text-[var(--text-primary)]">

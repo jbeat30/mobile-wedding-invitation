@@ -6,7 +6,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 const ACCESS_COOKIE = 'admin_access_token';
 const REFRESH_COOKIE = 'admin_refresh_token';
 const ACCESS_TTL_SEC = 60 * 15; // 15분
-const REFRESH_TTL_SEC = 60 * 60 * 24 * 1; // 7일
+const REFRESH_TTL_SEC = 60 * 60 * 12; // 12시간 (12시간 내 재접속 시 자동 갱신)
 const REFRESH_THRESHOLD_SEC = 60 * 2; // AT 만료 2분 전에 갱신
 
 export type AdminJwtPayload = {

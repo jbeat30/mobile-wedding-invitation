@@ -37,7 +37,7 @@ export const GreetingSection = ({ greeting, couple, title }: GreetingSectionProp
         {/* 인사말 */}
         <div className="flex flex-col gap-6 text-center" data-animate="fade-up">
           {/* 인사말 본문 */}
-          <div className="flex flex-col gap-2 text-[15px] leading-[2] text-[var(--text-secondary)]">
+          <div className="flex flex-col gap-2 text-[16px] leading-[2] text-[var(--text-secondary)]">
             {greeting.message.map((line, index) =>
               line === '' ? (
                 <div key={index} className="h-4" />

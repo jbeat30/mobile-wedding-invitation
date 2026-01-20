@@ -5,9 +5,10 @@ import type { AdminDashboardData } from '@/app/(admin)/admin/data';
 import { updateBgmAction } from '@/app/(admin)/admin/actions/bgm';
 import { AdminForm } from '@/app/(admin)/admin/components/AdminForm';
 import { AdminSubmitButton } from '@/app/(admin)/admin/components/AdminSubmitButton';
-import { FieldLabel } from '@/components/ui/FieldLabel';
-import { SurfaceCard } from '@/components/ui/SurfaceCard';
-import { TextInput } from '@/components/ui/TextInput';
+import { AdminSwitchField } from '@/app/(admin)/admin/components/AdminSwitchField';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 type AdminSectionBgmProps = {
   bgm: AdminDashboardData['bgm'];
@@ -54,78 +55,91 @@ export const AdminSectionBgm = ({ bgm }: AdminSectionBgmProps) => {
   };
 
   return (
-    <SurfaceCard className="p-6">
-      <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">BGM 설정</h2>
-      <AdminForm
-        action={updateBgmAction}
-        successMessage="BGM 설정이 저장되었습니다"
-        className="mt-4 grid gap-4 md:grid-cols-2"
-      >
-        <label className="flex items-center gap-2 text-[14px]">
-          <input type="checkbox" name="bgm_enabled" defaultChecked={Boolean(bgm.enabled)} />
-          사용
-        </label>
-        <label className="flex items-center gap-2 text-[14px]">
-          <input type="checkbox" name="bgm_auto_play" defaultChecked={Boolean(bgm.auto_play)} />
-          자동 재생
-        </label>
-        <label className="flex items-center gap-2 text-[14px]">
-          <input type="checkbox" name="bgm_loop" defaultChecked={Boolean(bgm.loop)} />
-          반복 재생
-        </label>
-        <div className="flex flex-col gap-2 md:col-span-2">
-          <FieldLabel htmlFor="bgm_audio_url">BGM URL</FieldLabel>
-          <TextInput
-            id="bgm_audio_url"
-            name="bgm_audio_url"
-            value={audioUrl}
-            onChange={(event) => setAudioUrl(event.target.value)}
+    <Card>
+      <CardHeader>
+        <CardTitle>BGM 설정</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <AdminForm
+          action={updateBgmAction}
+          successMessage="BGM 설정이 저장되었습니다"
+          className="grid gap-4 md:grid-cols-2"
+        >
+          <AdminSwitchField
+            id="bgm_enabled"
+            name="bgm_enabled"
+            label="사용"
+            defaultChecked={Boolean(bgm.enabled)}
           />
-          <p className="text-[11px] text-[var(--text-muted)]">
-            업로드한 파일 URL 또는 외부 mp3 파일 URL을 입력하세요.
-          </p>
-        </div>
-        <div className="md:col-span-2">
-          <p className="text-[12px] font-medium text-[var(--text-secondary)]">미리 듣기</p>
-          {audioUrl ? (
-            <audio controls preload="none" src={audioUrl} className="mt-2 w-full" />
-          ) : (
-            <div className="mt-2 rounded-[10px] border border-dashed border-[var(--border-light)] bg-white/70 px-3 py-2 text-[12px] text-[var(--text-muted)]">
-              업로드된 BGM이 없습니다.
-            </div>
-          )}
-        </div>
-        <div className="md:col-span-2 flex justify-end">
-          <AdminSubmitButton size="sm" pendingText="저장 중...">
-            저장하기
-          </AdminSubmitButton>
-        </div>
-      </AdminForm>
-      <div className="mt-6 grid gap-3">
-        <div className="flex flex-col gap-2">
-          <FieldLabel htmlFor="bgm_audio_file">BGM 파일 업로드</FieldLabel>
-          <input
-            id="bgm_audio_file"
-            type="file"
-            accept="audio/*"
-            onChange={(event) => {
-              const file = event.target.files?.[0];
-              if (!file) return;
-              void handleAudioUpload(file);
-            }}
-            className="w-full rounded-[10px] border border-[var(--border-light)] bg-white/70 px-3 py-2 text-[13px] text-[var(--text-primary)] file:mr-3 file:rounded-[8px] file:border-0 file:bg-[var(--bg-secondary)] file:px-3 file:py-1.5 file:text-[12px] file:text-[var(--text-secondary)]"
+          <AdminSwitchField
+            id="bgm_auto_play"
+            name="bgm_auto_play"
+            label="자동 재생"
+            defaultChecked={Boolean(bgm.auto_play)}
           />
-          <p className="text-[11px] text-[var(--text-muted)]">
-            mp3 등 오디오 파일을 업로드하면 URL이 자동으로 저장됩니다.
-          </p>
-          {uploading ? (
-            <p className="text-[11px] text-[var(--text-secondary)]">업로드 중...</p>
-          ) : null}
-          {uploadError ? (
-            <p className="text-[11px] text-[var(--accent-burgundy)]">{uploadError}</p>
-          ) : null}
+          <AdminSwitchField
+            id="bgm_loop"
+            name="bgm_loop"
+            label="반복 재생"
+            defaultChecked={Boolean(bgm.loop)}
+          />
+          <div className="flex flex-col gap-2 md:col-span-2">
+            <Label htmlFor="bgm_audio_url">BGM URL</Label>
+            <Input
+              id="bgm_audio_url"
+              name="bgm_audio_url"
+              value={audioUrl}
+              onChange={(event) => setAudioUrl(event.target.value)}
+            />
+            <p className="text-[11px] text-[var(--text-muted)]">
+              업로드한 파일 URL 또는 외부 mp3 파일 URL을 입력하세요.
+            </p>
+          </div>
+          <div className="md:col-span-2">
+            <p className="text-[12px] font-medium text-[var(--text-secondary)]">미리 듣기</p>
+            {audioUrl ? (
+              <audio controls preload="none" src={audioUrl} className="mt-2 w-full" />
+            ) : (
+              <div className="mt-2 rounded-[10px] border border-dashed border-[var(--border-light)] bg-white/70 px-3 py-2 text-[12px] text-[var(--text-muted)]">
+                업로드된 BGM이 없습니다.
+              </div>
+            )}
+          </div>
+          <div className="md:col-span-2 flex justify-end">
+            <AdminSubmitButton size="sm" pendingText="저장 중...">
+              저장하기
+            </AdminSubmitButton>
+          </div>
+        </AdminForm>
+        <div className="mt-6 grid gap-3">
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="bgm_audio_file">BGM 파일 업로드</Label>
+            <input
+              id="bgm_audio_file"
+              type="file"
+              accept="audio/*"
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+                if (!file) return;
+                void handleAudioUpload(file);
+              }}
+              className="w-full rounded-[10px] border border-[var(--border-light)] bg-white/70 px-3 py-2 text-[13px] text-[var(--text-primary)] file:mr-3 file:rounded-[8px] file:border-0 file:bg-[var(--bg-secondary)] file:px-3 file:py-1.5 file:text-[12px] file:text-[var(--text-secondary)]"
+            />
+            <p className="text-[11px] text-[var(--text-muted)]">
+              mp3 등 오디오 파일을 업로드하면 URL이 자동으로 저장됩니다.
+            </p>
+            {uploading ? (
+              <p className="inline-flex items-center gap-2 text-[11px] text-[var(--text-secondary)]">
+                <span className="h-3 w-3 animate-spin rounded-full border border-[var(--text-secondary)] border-t-transparent" />
+                업로드 중...
+              </p>
+            ) : null}
+            {uploadError ? (
+              <p className="text-[11px] text-[var(--accent-burgundy)]">{uploadError}</p>
+            ) : null}
+          </div>
         </div>
-      </div>
-    </SurfaceCard>
+      </CardContent>
+    </Card>
   );
 };
