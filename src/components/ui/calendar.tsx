@@ -20,7 +20,7 @@ export const Calendar = ({ className, classNames, ...props }: CalendarProps) => 
         months: 'flex flex-col gap-3',
         month: 'space-y-2',
         month_caption: 'relative flex items-center justify-center',
-        caption_label: 'text-[13px] font-semibold text-[var(--text-primary)]',
+        caption_label: 'text-[14px] font-semibold text-[var(--text-primary)]',
         nav: 'absolute right-0 top-0 flex items-center gap-1 z-[9999]',
         button_previous:
           'flex items-center justify-center h-7 w-7 rounded-md border border-[var(--border-light)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)]',
@@ -29,10 +29,10 @@ export const Calendar = ({ className, classNames, ...props }: CalendarProps) => 
         chevron: 'h-4 w-4',
         month_grid: 'w-full border-collapse',
         weekdays: 'flex',
-        weekday: 'w-9 text-center text-[11px] text-[var(--text-muted)]',
+        weekday: 'w-9 text-center text-[14px] text-[var(--text-muted)]',
         weeks: 'mt-1 flex flex-col gap-1',
         week: 'flex w-full',
-        day: 'relative h-9 w-9 text-center text-[12px]',
+        day: 'relative h-9 w-9 text-center text-[14px]',
         day_button:
           'h-9 w-9 rounded-md font-medium text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-rose)] focus-visible:ring-offset-2',
         selected:

@@ -1,5 +1,6 @@
 import { ReactNode, CSSProperties } from 'react';
 import { Noto_Sans_KR } from 'next/font/google';
+import { AdminBodyFontScope } from '@/app/(admin)/admin/components/AdminBodyFontScope';
 
 const notoSans = Noto_Sans_KR({
   subsets: ['latin'],
@@ -19,6 +20,7 @@ export default function AdminLoginLayout({ children }: { children: ReactNode }) 
       className={`admin-scope min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] font-sans ${notoSans.variable}`}
       style={{ '--font-sans': 'var(--font-admin-sans)' } as CSSProperties}
     >
+      <AdminBodyFontScope fontClassName={notoSans.variable} />
       {children}
     </div>
   );

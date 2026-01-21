@@ -24,6 +24,11 @@ export const AdminSectionBgm = ({ bgm }: AdminSectionBgmProps) => {
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState('');
 
+  /**
+   * BGM 파일 업로드 처리
+   * @param file File
+   * @returns Promise<void>
+   */
   const handleAudioUpload = async (file: File) => {
     if (!file.type.startsWith('audio/')) {
       setUploadError('오디오 파일만 업로드할 수 있습니다');
@@ -91,54 +96,54 @@ export const AdminSectionBgm = ({ bgm }: AdminSectionBgmProps) => {
               value={audioUrl}
               onChange={(event) => setAudioUrl(event.target.value)}
             />
-            <p className="text-[11px] text-[var(--text-muted)]">
+            <p className="text-[14px] text-[var(--text-muted)]">
               업로드한 파일 URL 또는 외부 mp3 파일 URL을 입력하세요.
             </p>
           </div>
           <div className="md:col-span-2">
-            <p className="text-[12px] font-medium text-[var(--text-secondary)]">미리 듣기</p>
+            <p className="text-[14px] font-medium text-[var(--text-secondary)]">미리 듣기</p>
             {audioUrl ? (
               <audio controls preload="none" src={audioUrl} className="mt-2 w-full" />
             ) : (
-              <div className="mt-2 rounded-[10px] border border-dashed border-[var(--border-light)] bg-white/70 px-3 py-2 text-[12px] text-[var(--text-muted)]">
+              <div className="mt-2 rounded-[10px] border border-dashed border-[var(--border-light)] bg-white/70 px-3 py-2 text-[14px] text-[var(--text-muted)]">
                 업로드된 BGM이 없습니다.
               </div>
             )}
           </div>
-        </AdminForm>
-        <div className="mt-6 grid gap-3">
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="bgm_audio_file">BGM 파일 업로드</Label>
-            <input
-              id="bgm_audio_file"
-              type="file"
-              accept="audio/*"
-              onChange={(event) => {
-                const file = event.target.files?.[0];
-                if (!file) return;
-                void handleAudioUpload(file);
-              }}
-              className="w-full rounded-[10px] border border-[var(--border-light)] bg-white/70 px-3 py-2 text-[13px] text-[var(--text-primary)] file:mr-3 file:rounded-[8px] file:border-0 file:bg-[var(--bg-secondary)] file:px-3 file:py-1.5 file:text-[12px] file:text-[var(--text-secondary)]"
-            />
-            <p className="text-[11px] text-[var(--text-muted)]">
-              mp3 등 오디오 파일을 업로드하면 URL이 자동으로 저장됩니다.
-            </p>
-            {uploading ? (
-              <p className="inline-flex items-center gap-2 text-[11px] text-[var(--text-secondary)]">
-                <span className="h-3 w-3 animate-spin rounded-full border border-[var(--text-secondary)] border-t-transparent" />
-                업로드 중...
+          <div className="md:col-span-2 mt-2 grid gap-3">
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="bgm_audio_file">BGM 파일 업로드</Label>
+              <input
+                id="bgm_audio_file"
+                type="file"
+                accept="audio/*"
+                onChange={(event) => {
+                  const file = event.target.files?.[0];
+                  if (!file) return;
+                  void handleAudioUpload(file);
+                }}
+                className="w-full rounded-[10px] border border-[var(--border-light)] bg-white/70 px-3 py-2 text-[14px] text-[var(--text-primary)] file:mr-3 file:rounded-[8px] file:border-0 file:bg-[var(--bg-secondary)] file:px-3 file:py-1.5 file:text-[14px] file:text-[var(--text-secondary)]"
+              />
+              <p className="text-[14px] text-[var(--text-muted)]">
+                mp3 등 오디오 파일을 업로드하면 URL이 자동으로 저장됩니다.
               </p>
-            ) : null}
-            {uploadError ? (
-              <p className="text-[11px] text-[var(--accent-burgundy)]">{uploadError}</p>
-            ) : null}
+              {uploading ? (
+                <p className="inline-flex items-center gap-2 text-[14px] text-[var(--text-secondary)]">
+                  <span className="h-3 w-3 animate-spin rounded-full border border-[var(--text-secondary)] border-t-transparent" />
+                  업로드 중...
+                </p>
+              ) : null}
+              {uploadError ? (
+                <p className="text-[14px] text-[var(--accent-burgundy)]">{uploadError}</p>
+              ) : null}
+            </div>
           </div>
-        </div>
-        <div className="md:col-span-2 flex justify-end">
-          <AdminSubmitButton size="sm" pendingText="저장 중...">
-            저장하기
-          </AdminSubmitButton>
-        </div>
+          <div className="md:col-span-2 flex justify-end">
+            <AdminSubmitButton size="sm" pendingText="저장 중...">
+              저장하기
+            </AdminSubmitButton>
+          </div>
+        </AdminForm>
       </CardContent>
     </Card>
   );

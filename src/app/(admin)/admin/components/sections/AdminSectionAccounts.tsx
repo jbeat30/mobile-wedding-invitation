@@ -197,7 +197,7 @@ export const AdminSectionAccounts = ({
                         ))}
                       </div>
                     ) : (
-                      <div className="px-4 py-6 text-center text-[12px] text-[var(--text-muted)]">
+                      <div className="px-4 py-6 text-center text-[14px] text-[var(--text-muted)]">
                         등록된 계좌가 없습니다
                       </div>
                     )}

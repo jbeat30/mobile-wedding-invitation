@@ -80,14 +80,14 @@ export const DataTable = <TData, TValue>({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="py-6 text-center text-[12px] text-[var(--text-muted)]">
+              <TableCell colSpan={columns.length} className="py-6 text-center text-[14px] text-[var(--text-muted)]">
                 {emptyMessage}
               </TableCell>
             </TableRow>
           )}
         </TableBody>
       </Table>
-      <div className="flex items-center justify-between border-t border-[var(--border-light)] px-4 py-2 text-[12px] text-[var(--text-muted)]">
+      <div className="flex items-center justify-between border-t border-[var(--border-light)] px-4 py-2 text-[14px] text-[var(--text-muted)]">
         <span>총 {data.length}건</span>
         <div className="flex items-center gap-2">
           <Button

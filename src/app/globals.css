@@ -164,6 +164,11 @@ body::before {
         font-family: inherit;
     }
 
+    .admin-font-scope {
+        --font-sans: var(--font-admin-sans);
+        font-family: var(--font-admin-sans);
+    }
+
     svg {
         @apply max-w-full h-auto;
     }

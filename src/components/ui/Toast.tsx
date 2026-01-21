@@ -25,7 +25,7 @@ export const Toast = ({
       className={`fixed inset-x-0 bottom-[calc(var(--safe-bottom)+16px)] z-50 flex justify-center px-6 ${containerClassName}`}
     >
       <div
-        className={`rounded-full bg-[#2f2f2f] px-5 py-2.5 text-[13px] text-white shadow-[0_12px_30px_rgba(0,0,0,0.3)] ${toastClassName}`}
+        className={`rounded-full bg-[#2f2f2f] px-5 py-2.5 text-[14px] text-white shadow-[0_12px_30px_rgba(0,0,0,0.3)] ${toastClassName}`}
       >
         {message}
       </div>

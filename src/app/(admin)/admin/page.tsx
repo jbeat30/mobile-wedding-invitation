@@ -7,6 +7,8 @@ import { requireAccessToken } from '@/lib/adminAuth';
  * 관리자 대시보드
  * @returns JSX.Element
  */
+export const dynamic = 'force-dynamic';
+
 export default async function AdminPage() {
   try {
     await requireAccessToken();

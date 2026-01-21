@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
 import type { AdminDashboardData } from '@/app/(admin)/admin/data';
 import {
@@ -18,6 +18,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Toast } from '@/components/ui/Toast';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,6 +34,7 @@ type GalleryImage = AdminDashboardData['galleryImages'][number];
 
 type AdminSectionGalleryProps = {
   gallery: AdminDashboardData['gallery'];
+  initialGalleryItems: GalleryImage[];
   galleryItems: GalleryImage[];
   setGalleryItems: Dispatch<SetStateAction<GalleryImage[]>>;
   draggedImageId: string | null;
@@ -50,6 +52,7 @@ type AdminSectionGalleryProps = {
  */
 export const AdminSectionGallery = ({
   gallery,
+  initialGalleryItems,
   galleryItems,
   setGalleryItems,
   draggedImageId,
@@ -62,6 +65,21 @@ export const AdminSectionGallery = ({
   const [orderSaving, setOrderSaving] = useState(false);
   const [orderError, setOrderError] = useState<string | null>(null);
   const [orderConfirmOpen, setOrderConfirmOpen] = useState(false);
+  const [toastOpen, setToastOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [savedOrderIds, setSavedOrderIds] = useState(() =>
+    initialGalleryItems.map((item) => item.id)
+  );
+
+  useEffect(() => {
+    setSavedOrderIds(initialGalleryItems.map((item) => item.id));
+  }, [initialGalleryItems]);
+
+  const isOrderDirty = useMemo(() => {
+    const currentIds = galleryItems.map((item) => item.id);
+    if (currentIds.length !== savedOrderIds.length) return true;
+    return currentIds.some((id, index) => id !== savedOrderIds[index]);
+  }, [galleryItems, savedOrderIds]);
   /**
    * 이미지 라벨 정리
    * @param src string
@@ -75,6 +93,16 @@ export const AdminSectionGallery = ({
       return `${src.slice(0, 60)}...`;
     }
     return src;
+  };
+
+  /**
+   * 토스트 메시지 표시
+   * @param message string
+   */
+  const openToast = (message: string) => {
+    setToastMessage(message);
+    setToastOpen(true);
+    window.setTimeout(() => setToastOpen(false), 2000);
   };
 
   return (
@@ -156,16 +184,16 @@ export const AdminSectionGallery = ({
             <div className="rounded-[12px] border border-[var(--border-light)] bg-white/70 p-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-[14px] font-semibold text-[var(--text-primary)]">이미지 목록</h3>
-                <span className="text-[12px] text-[var(--text-muted)]">총 {galleryItems.length}개</span>
+                <span className="text-[14px] text-[var(--text-muted)]">총 {galleryItems.length}개</span>
               </div>
-              <div className="mt-2 flex items-center justify-between text-[12px] text-[var(--text-muted)]">
+              <div className="mt-2 flex items-center justify-between text-[14px] text-[var(--text-muted)]">
                 <span>드래그로 순서를 변경하세요</span>
                 <div className="flex items-center gap-2">
                   {orderSaved ? <span className="text-[var(--accent-rose-dark)]">저장됨</span> : null}
                   <Button
                     type="button"
                     size="sm"
-                    disabled={orderSaving}
+                    disabled={orderSaving || !isOrderDirty}
                     onClick={() => setOrderConfirmOpen(true)}
                   >
                     {orderSaving ? (
@@ -180,7 +208,7 @@ export const AdminSectionGallery = ({
                 </div>
               </div>
               {orderError ? (
-                <p className="mt-2 text-[12px] text-[var(--accent-burgundy)]">{orderError}</p>
+                <p className="mt-2 text-[14px] text-[var(--accent-burgundy)]">{orderError}</p>
               ) : null}
               <div className="mt-3 divide-y divide-[var(--border-light)]">
                 {galleryItems.length ? (
@@ -236,10 +264,10 @@ export const AdminSectionGallery = ({
                           unoptimized
                         />
                         <div>
-                          <p className="text-[13px] font-medium text-[var(--text-primary)]">
+                          <p className="text-[14px] font-medium text-[var(--text-primary)]">
                             {image.alt || '이미지'}
                           </p>
-                          <p className="text-[12px] text-[var(--text-muted)]">{getImageLabel(image.src)}</p>
+                          <p className="text-[14px] text-[var(--text-muted)]">{getImageLabel(image.src)}</p>
                         </div>
                       </div>
                       <AdminForm
@@ -257,7 +285,7 @@ export const AdminSectionGallery = ({
                     </div>
                   ))
                 ) : (
-                  <div className="py-6 text-center text-[12px] text-[var(--text-muted)]">
+                  <div className="py-6 text-center text-[14px] text-[var(--text-muted)]">
                     등록된 이미지가 없습니다
                   </div>
                 )}
@@ -266,6 +294,7 @@ export const AdminSectionGallery = ({
           </div>
         </div>
       </CardContent>
+      <Toast isOpen={toastOpen} message={toastMessage} containerClassName="justify-end pr-6" />
       <AlertDialog open={orderConfirmOpen} onOpenChange={setOrderConfirmOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -292,10 +321,13 @@ export const AdminSectionGallery = ({
                       throw new Error('save failed');
                     }
                     setOrderSaved(true);
+                    setSavedOrderIds(galleryItems.map((image) => image.id));
+                    openToast('이미지 순서가 저장되었습니다');
                     window.setTimeout(() => setOrderSaved(false), 1500);
                   })
                   .catch(() => {
                     setOrderError('순서 저장에 실패했습니다. 다시 시도해 주세요.');
+                    openToast('이미지 순서 저장에 실패했습니다');
                   })
                   .finally(() => {
                     setOrderSaving(false);

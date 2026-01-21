@@ -66,11 +66,11 @@ export const PasswordModal = ({
               autoComplete="new-password"
               className="w-full rounded-[12px] border border-[var(--border-light)] bg-[var(--bg-secondary)] px-4 py-3 text-center text-[14px] tracking-[0.5em] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
             />
-            <p className="mt-2 text-center text-[12px] text-[var(--text-muted)]">
+            <p className="mt-2 text-center text-[14px] text-[var(--text-muted)]">
               4자리 숫자를 입력해주세요
             </p>
             {error && (
-              <p className="mt-2 text-center text-[12px] text-[var(--accent-burgundy)]">
+              <p className="mt-2 text-center text-[14px] text-[var(--accent-burgundy)]">
                 {error}
               </p>
             )}

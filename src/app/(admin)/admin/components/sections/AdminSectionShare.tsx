@@ -30,7 +30,7 @@ export const AdminSectionShare = ({ share, assets, sectionTitles, fileUrlToNameM
           <CardTitle>공유 섹션</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-[12px] text-[var(--text-muted)]">
+          <p className="text-[14px] text-[var(--text-muted)]">
             청첩장 화면에 표시되는 공유 섹션의 제목/문구를 설정합니다.
           </p>
           <AdminForm
@@ -80,7 +80,7 @@ export const AdminSectionShare = ({ share, assets, sectionTitles, fileUrlToNameM
           <CardTitle>카카오 공유 카드</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-[12px] text-[var(--text-muted)]">
+          <p className="text-[14px] text-[var(--text-muted)]">
             카카오톡 공유 카드에 표시되는 문구/이미지를 설정합니다.
           </p>
           <AdminForm
@@ -139,7 +139,7 @@ export const AdminSectionShare = ({ share, assets, sectionTitles, fileUrlToNameM
           <CardTitle>미리보기(OG) 이미지</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-[12px] text-[var(--text-muted)]">
+          <p className="text-[14px] text-[var(--text-muted)]">
             카카오 외 외부 메신저/브라우저 미리보기에서 사용하는 이미지입니다.
           </p>
           <AdminForm

@@ -42,7 +42,7 @@ export const CoupleSection = ({ couple, title }: CoupleSectionProps) => {
               )}
             </div>
             <div className="flex flex-col gap-2">
-              <p className="font-label text-[12px] text-[var(--text-muted)]">신랑</p>
+              <p className="font-label text-[14px] text-[var(--text-muted)]">신랑</p>
               <h3 className="text-[22px] font-medium text-[var(--text-primary)]">
                 {`${couple.groom.lastName}${couple.groom.firstName}`}
               </h3>
@@ -68,7 +68,7 @@ export const CoupleSection = ({ couple, title }: CoupleSectionProps) => {
               )}
             </div>
             <div className="flex flex-col gap-2">
-              <p className="font-label text-[12px] text-[var(--text-muted)]">신부</p>
+              <p className="font-label text-[14px] text-[var(--text-muted)]">신부</p>
               <h3 className="text-[22px] font-medium text-[var(--text-primary)]">
                 {`${couple.bride.lastName}${couple.bride.firstName}`}
               </h3>

@@ -3,6 +3,7 @@
 import { type ComponentProps } from 'react';
 import { useFormStatus } from 'react-dom';
 import { Button } from '@/components/ui/Button';
+import { useAdminFormState } from '@/app/(admin)/admin/components/AdminForm';
 
 type AdminSubmitButtonProps = ComponentProps<typeof Button> & {
   pendingText?: string;
@@ -20,7 +21,8 @@ export const AdminSubmitButton = ({
   ...props
 }: AdminSubmitButtonProps) => {
   const { pending } = useFormStatus();
-  const isDisabled = Boolean(disabled) || pending;
+  const { isDirty, isEmpty } = useAdminFormState();
+  const isDisabled = Boolean(disabled) || pending || !isDirty || isEmpty;
 
   return (
     <Button {...props} type="submit" disabled={isDisabled}>

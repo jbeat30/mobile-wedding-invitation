@@ -104,7 +104,7 @@ export const AdminSectionGuestbook = ({
                 { value: 'paginated', label: '페이지네이션' },
               ]}
             />
-            <p className="text-[11px] text-[var(--text-muted)]">
+            <p className="text-[14px] text-[var(--text-muted)]">
               현재 퍼블릭 페이지에서 사용 중인 방식입니다.
             </p>
           </div>
