@@ -126,6 +126,16 @@ export const addGalleryImageAction = async (formData: FormData) => {
   const supabase = createSupabaseAdmin();
 
   const galleryId = String(formData.get('gallery_id') || '');
+  const imageSources = formData
+    .getAll('image_src')
+    .map((value) => String(value))
+    .map((value) => value.trim())
+    .filter((value) => value.length > 0);
+
+  if (imageSources.length === 0) {
+    return;
+  }
+
   const { data: latestSort } = await supabase
     .from('invitation_gallery_images')
     .select('sort_order')
@@ -134,15 +144,15 @@ export const addGalleryImageAction = async (formData: FormData) => {
     .limit(1)
     .maybeSingle();
   const nextSortOrder = (latestSort?.sort_order ?? 0) + 1;
-  const payload = {
+  const payload = imageSources.map((src, index) => ({
     gallery_id: galleryId,
-    src: String(formData.get('image_src') || ''),
+    src,
     alt: '',
     thumbnail: null,
     width: null,
     height: null,
-    sort_order: nextSortOrder,
-  };
+    sort_order: nextSortOrder + index,
+  }));
 
   assertNoError(await supabase.from('invitation_gallery_images').insert(payload));
   revalidateAdmin();
