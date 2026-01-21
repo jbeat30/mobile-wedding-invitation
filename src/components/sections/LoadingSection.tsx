@@ -38,10 +38,10 @@ const animateLoadingText = (
   const tween = gsap.to(items, {
     opacity: 1,
     y: 0,
-    duration: 1.3,
+    duration: 1.4,
     ease: 'power2.out',
-    stagger: 0.22,
-    delay: 0.2,
+    stagger: 0.42,
+    delay: 0.4,
   });
 
   return () => {
@@ -212,11 +212,11 @@ export const LoadingSection = ({
         {/* 로딩 텍스트 */}
         <div
           ref={loadingTextRef}
-          className="relative z-[5] max-w-[min(360px,80vw)] px-6 text-center text-white"
+          className="relative z-[5] max-w-[min(360px,85vw)] px-6 text-center text-white"
         >
           <p
             data-loading-text
-            className="translate-y-3 text-[11px] font-bold tracking-[0.6em] text-[var(--accent-soft)] uppercase opacity-0 will-change-[transform,opacity]"
+            className="translate-y-3 text-[12px] font-bold tracking-[0.6em] text-[var(--accent-soft)] uppercase opacity-0 will-change-[transform,opacity]"
           >
             WEDDING INVITATION
           </p>
