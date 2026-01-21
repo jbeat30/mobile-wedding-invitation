@@ -52,6 +52,83 @@ const getStaggerOptions = (element: HTMLElement) => ({
 });
 
 /**
+ * 입력 가능한 요소인지 여부 확인
+ * @param target 이벤트 타겟
+ * @returns 입력 가능 여부
+ */
+const isEditableElement = (target: EventTarget | null) => {
+  if (!(target instanceof HTMLElement)) return false;
+  if (target.isContentEditable) return true;
+  const tagName = target.tagName.toLowerCase();
+  return tagName === 'input' || tagName === 'textarea' || tagName === 'select';
+};
+
+/**
+ * 보안 관련 기본 차단 핸들러 생성
+ * @returns attach/detach 함수
+ */
+const createSecurityGuards = () => {
+  const preventDefault = (event: Event) => {
+    event.preventDefault();
+  };
+
+  const preventImageDrag = (event: DragEvent) => {
+    const target = event.target as HTMLElement | null;
+    if (target?.tagName === 'IMG') {
+      event.preventDefault();
+    }
+  };
+
+  const preventSelection = (event: Event) => {
+    if (isEditableElement(event.target)) return;
+    event.preventDefault();
+  };
+
+  const preventClipboard = (event: ClipboardEvent) => {
+    if (isEditableElement(event.target)) return;
+    event.preventDefault();
+  };
+
+  const preventKeyShortcuts = (event: KeyboardEvent) => {
+    if (isEditableElement(event.target)) return;
+
+    const key = event.key.toLowerCase();
+    const isCommand = event.metaKey || event.ctrlKey;
+    const isDeveloperShortcut =
+      event.key === 'F12' ||
+      (isCommand && ['s', 'u', 'c', 'x', 'v', 'p', 'a', 'i', 'j'].includes(key)) ||
+      (event.metaKey && event.altKey && ['i', 'j', 'c'].includes(key)) ||
+      (event.ctrlKey && event.shiftKey && ['i', 'j', 'c'].includes(key));
+
+    if (isDeveloperShortcut) {
+      event.preventDefault();
+    }
+  };
+
+  const attach = () => {
+    document.addEventListener('contextmenu', preventDefault);
+    document.addEventListener('dragstart', preventImageDrag);
+    document.addEventListener('selectstart', preventSelection);
+    document.addEventListener('copy', preventClipboard);
+    document.addEventListener('cut', preventClipboard);
+    document.addEventListener('paste', preventClipboard);
+    document.addEventListener('keydown', preventKeyShortcuts);
+  };
+
+  const detach = () => {
+    document.removeEventListener('contextmenu', preventDefault);
+    document.removeEventListener('dragstart', preventImageDrag);
+    document.removeEventListener('selectstart', preventSelection);
+    document.removeEventListener('copy', preventClipboard);
+    document.removeEventListener('cut', preventClipboard);
+    document.removeEventListener('paste', preventClipboard);
+    document.removeEventListener('keydown', preventKeyShortcuts);
+  };
+
+  return { attach, detach };
+};
+
+/**
  * 퍼블릭 싱글 페이지
  * @param props PublicPageClientProps
  * @returns JSX.Element
@@ -77,23 +154,11 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
       window.location.hostname === 'localhost' && window.location.port === '3000';
     if (isLocalhost) return;
 
-    const preventContextMenu = (event: Event) => {
-      event.preventDefault();
-    };
-
-    const preventImageDrag = (event: DragEvent) => {
-      const target = event.target as HTMLElement | null;
-      if (target?.tagName === 'IMG') {
-        event.preventDefault();
-      }
-    };
-
-    document.addEventListener('contextmenu', preventContextMenu);
-    document.addEventListener('dragstart', preventImageDrag);
+    const guards = createSecurityGuards();
+    guards.attach();
 
     return () => {
-      document.removeEventListener('contextmenu', preventContextMenu);
-      document.removeEventListener('dragstart', preventImageDrag);
+      guards.detach();
     };
   }, []);
 
