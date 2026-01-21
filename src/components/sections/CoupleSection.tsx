@@ -14,8 +14,8 @@ type CoupleSectionProps = {
  */
 export const CoupleSection = ({ couple, title }: CoupleSectionProps) => {
   return (
-    <section id="couple" className="bg-[var(--bg-primary)] py-16">
-      <div className="mx-auto flex w-full max-w-[520px] flex-col gap-12 px-6">
+    <section id="couple" className="bg-[var(--bg-primary)] py-20">
+      <div className="mx-auto flex w-full max-w-[640px] flex-col gap-14 px-6">
         {/* 섹션 헤더 */}
         <div className="text-center" data-animate="fade-up">
           <SectionHeader
@@ -27,10 +27,10 @@ export const CoupleSection = ({ couple, title }: CoupleSectionProps) => {
         </div>
 
         {/* 프로필 */}
-        <div className="grid gap-10 sm:grid-cols-2" data-animate="stagger">
+        <div className="grid gap-16 sm:grid-cols-1" data-animate="stagger">
           {/* 신랑 */}
-          <div className="flex flex-col items-center gap-5 text-center" data-animate-item>
-            <div className="relative h-[160px] w-[160px] overflow-hidden rounded-full border-4 border-white bg-white shadow-[var(--shadow-card)]">
+          <div className="flex items-start gap-8 text-left" data-animate-item>
+            <div className="relative h-[200px] w-[200px] shrink-0 overflow-hidden bg-white shadow-[var(--shadow-card)]">
               {couple.groom.profileImage && (
                 <Image
                   src={couple.groom.profileImage}
@@ -42,12 +42,12 @@ export const CoupleSection = ({ couple, title }: CoupleSectionProps) => {
               )}
             </div>
             <div className="flex flex-col gap-2">
-              <p className="font-label text-[14px] text-[var(--text-muted)]">신랑</p>
-              <h3 className="text-[22px] font-medium text-[var(--text-primary)]">
+              <p className="font-label text-[16px] text-[var(--text-muted)]">신랑</p>
+              <h3 className="text-[26px] font-medium text-[var(--text-primary)]">
                 {`${couple.groom.lastName}${couple.groom.firstName}`}
               </h3>
               {couple.groom.bio && (
-                <p className="mt-1 text-[14px] leading-relaxed text-[var(--text-tertiary)]">
+                <p className="mt-1 text-[15px] leading-relaxed text-[var(--text-tertiary)]">
                   {couple.groom.bio}
                 </p>
               )}
@@ -55,8 +55,8 @@ export const CoupleSection = ({ couple, title }: CoupleSectionProps) => {
           </div>
 
           {/* 신부 */}
-          <div className="flex flex-col items-center gap-5 text-center" data-animate-item>
-            <div className="relative h-[160px] w-[160px] overflow-hidden rounded-full border-4 border-white bg-white shadow-[var(--shadow-card)]">
+          <div className="flex flex-row-reverse items-start gap-8 text-right justify-self-end" data-animate-item>
+            <div className="relative h-[200px] w-[200px] shrink-0 overflow-hidden bg-white shadow-[var(--shadow-card)]">
               {couple.bride.profileImage && (
                 <Image
                   src={couple.bride.profileImage}
@@ -68,12 +68,12 @@ export const CoupleSection = ({ couple, title }: CoupleSectionProps) => {
               )}
             </div>
             <div className="flex flex-col gap-2">
-              <p className="font-label text-[14px] text-[var(--text-muted)]">신부</p>
-              <h3 className="text-[22px] font-medium text-[var(--text-primary)]">
+              <p className="font-label text-[16px] text-[var(--text-muted)]">신부</p>
+              <h3 className="text-[26px] font-medium text-[var(--text-primary)]">
                 {`${couple.bride.lastName}${couple.bride.firstName}`}
               </h3>
               {couple.bride.bio && (
-                <p className="mt-1 text-[14px] leading-relaxed text-[var(--text-tertiary)]">
+                <p className="mt-1 text-[15px] leading-relaxed text-[var(--text-tertiary)]">
                   {couple.bride.bio}
                 </p>
               )}
