@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
 import type { AdminDashboardData } from '@/app/(admin)/admin/data';
 import {
@@ -12,7 +12,7 @@ import {
 import { AdminForm } from '@/app/(admin)/admin/components/AdminForm';
 import { AdminSwitchField } from '@/app/(admin)/admin/components/AdminSwitchField';
 import { AdminSubmitButton } from '@/app/(admin)/admin/components/AdminSubmitButton';
-import { AdminImageFileField } from '@/app/(admin)/admin/components/AdminImageFileField';
+import { AdminGalleryUploadField } from '@/app/(admin)/admin/components/AdminGalleryUploadField';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -31,6 +31,12 @@ import {
 } from '@/components/ui/alert-dialog';
 
 type GalleryImage = AdminDashboardData['galleryImages'][number];
+
+type GalleryUploadState = {
+  isUploading: boolean;
+  successCount: number;
+  failedItems: Array<{ id: string }>;
+};
 
 type AdminSectionGalleryProps = {
   gallery: AdminDashboardData['gallery'];
@@ -67,6 +73,11 @@ export const AdminSectionGallery = ({
   const [orderConfirmOpen, setOrderConfirmOpen] = useState(false);
   const [toastOpen, setToastOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+  const [uploadState, setUploadState] = useState<GalleryUploadState>({
+    isUploading: false,
+    successCount: 0,
+    failedItems: [],
+  });
   const [savedOrderIds, setSavedOrderIds] = useState(() =>
     initialGalleryItems.map((item) => item.id)
   );
@@ -104,6 +115,14 @@ export const AdminSectionGallery = ({
     setToastOpen(true);
     window.setTimeout(() => setToastOpen(false), 2000);
   };
+
+  /**
+   * 업로드 상태 변경 처리
+   * @param state GalleryUploadState
+   */
+  const handleUploadStateChange = useCallback((state: GalleryUploadState) => {
+    setUploadState(state);
+  }, []);
 
   return (
     <Card>
@@ -165,16 +184,21 @@ export const AdminSectionGallery = ({
                 className="mt-4 grid gap-4 md:grid-cols-2"
               >
                 <input type="hidden" name="gallery_id" value={gallery.id} />
-                <AdminImageFileField
+                <AdminGalleryUploadField
                   id="image_src"
                   name="image_src"
                   label="이미지 파일"
                   sectionId="gallery/images"
                   hint="2MB 초과 시 자동 압축"
                   required
+                  onUploadStateChange={handleUploadStateChange}
                 />
                 <div className="md:col-span-2 flex justify-end">
-                  <AdminSubmitButton size="sm" pendingText="추가 중...">
+                  <AdminSubmitButton
+                    size="sm"
+                    pendingText="추가 중..."
+                    disabled={uploadState.isUploading || uploadState.successCount === 0}
+                  >
                     이미지 추가
                   </AdminSubmitButton>
                 </div>

@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import type { ChangeEvent, DragEvent } from 'react';
 import { Label } from '@/components/ui/label';
 import { compressImageInBrowser } from '@/lib/clientImageCompression';
 
@@ -41,6 +42,7 @@ export const AdminImageFileField = ({
     null
   );
   const [selectedFileName, setSelectedFileName] = useState<string>(defaultFileName || '');
+  const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const hiddenInputRef = useRef<HTMLInputElement | null>(null);
   const hasMountedRef = useRef(false);
@@ -92,74 +94,164 @@ export const AdminImageFileField = ({
     notifyChange();
   }, [value, uploadedMeta, notifyChange]);
 
+  /**
+   * 단일 파일 업로드 처리
+   * @param file File
+   * @returns Promise<void>
+   */
+  const handleFileUpload = useCallback(
+    async (file: File) => {
+      if (!file.type.startsWith('image/')) {
+        setErrorMessage('이미지 파일만 업로드할 수 있습니다');
+        return;
+      }
+      setUploading(true);
+      setErrorMessage('');
+      setSelectedFileName(file.name);
+
+      try {
+        const reader = new FileReader();
+        reader.onload = () => {
+          setPreviewUrl(String(reader.result || ''));
+        };
+        reader.readAsDataURL(file);
+
+        const MAX_SIZE = 2 * 1024 * 1024;
+        let fileToUpload = file;
+
+        if (file.size > MAX_SIZE) {
+          const compressed = await compressImageInBrowser(file, MAX_SIZE);
+          fileToUpload = compressed.file;
+          console.log(
+            `압축 완료: ${(file.size / 1024 / 1024).toFixed(2)}MB → ${(fileToUpload.size / 1024 / 1024).toFixed(2)}MB`
+          );
+        }
+
+        const formData = new FormData();
+        formData.append('file', fileToUpload);
+        formData.append('sectionId', sectionId);
+
+        const response = await fetch('/api/admin/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error('upload failed');
+        }
+
+        const result = (await response.json()) as {
+          url: string;
+          uuid: string;
+          originalName: string;
+        };
+        setValue(result.url);
+        setUploadedMeta({ uuid: result.uuid, filename: result.originalName });
+      } catch (error) {
+        console.error('Image upload failed:', error);
+        setErrorMessage('업로드에 실패했습니다. 다시 시도해 주세요.');
+      } finally {
+        setUploading(false);
+      }
+    },
+    [sectionId]
+  );
+
+  /**
+   * 파일 선택 처리
+   * @param event ChangeEvent<HTMLInputElement>
+   * @returns void
+   */
+  const handleInputChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      handleFileUpload(file);
+    },
+    [handleFileUpload]
+  );
+
+  /**
+   * 드래그 오버 처리
+   * @param event DragEvent<HTMLDivElement>
+   * @returns void
+   */
+  const handleDragOver = useCallback((event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+  }, []);
+
+  /**
+   * 드래그 진입 처리
+   * @param event DragEvent<HTMLDivElement>
+   * @returns void
+   */
+  const handleDragEnter = useCallback((event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsDragging(true);
+  }, []);
+
+  /**
+   * 드래그 이탈 처리
+   * @param event DragEvent<HTMLDivElement>
+   * @returns void
+   */
+  const handleDragLeave = useCallback((event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsDragging(false);
+  }, []);
+
+  /**
+   * 드롭 처리
+   * @param event DragEvent<HTMLDivElement>
+   * @returns void
+   */
+  const handleDrop = useCallback(
+    (event: DragEvent<HTMLDivElement>) => {
+      event.preventDefault();
+      setIsDragging(false);
+      const file = event.dataTransfer.files?.[0];
+      if (!file) return;
+      handleFileUpload(file);
+    },
+    [handleFileUpload]
+  );
+
   return (
     <div className="flex flex-col gap-2">
       <Label htmlFor={id}>{label}</Label>
-      <input
-        id={id}
-        ref={fileInputRef}
-        type="file"
-        accept="image/*"
-        required={required}
-        onChange={async (event) => {
-          const file = event.target.files?.[0];
-          if (!file) return;
-          if (!file.type.startsWith('image/')) {
-            setErrorMessage('이미지 파일만 업로드할 수 있습니다');
-            return;
-          }
-          setUploading(true);
-          setErrorMessage('');
-          setSelectedFileName(file.name);
-
-          try {
-            // 1. 미리보기용 원본 이미지 표시
-            const reader = new FileReader();
-            reader.onload = () => {
-              setPreviewUrl(String(reader.result || ''));
-            };
-            reader.readAsDataURL(file);
-
-            // 2. 클라이언트에서 압축 (2MB 초과 시)
-            const MAX_SIZE = 2 * 1024 * 1024; // 2MB
-            let fileToUpload = file;
-
-            if (file.size > MAX_SIZE) {
-              const compressed = await compressImageInBrowser(file, MAX_SIZE);
-              fileToUpload = compressed.file;
-              console.log(`압축 완료: ${(file.size / 1024 / 1024).toFixed(2)}MB → ${(fileToUpload.size / 1024 / 1024).toFixed(2)}MB`);
-            }
-
-            // 3. 서버로 업로드
-            const formData = new FormData();
-            formData.append('file', fileToUpload);
-            formData.append('sectionId', sectionId);
-
-            const response = await fetch('/api/admin/upload', {
-              method: 'POST',
-              body: formData,
-            });
-
-            if (!response.ok) {
-              throw new Error('upload failed');
-            }
-
-            const result = (await response.json()) as {
-              url: string;
-              uuid: string;
-              originalName: string;
-            };
-            setValue(result.url);
-            setUploadedMeta({ uuid: result.uuid, filename: result.originalName });
-          } catch (error) {
-            console.error('Image upload failed:', error);
-            setErrorMessage('업로드에 실패했습니다. 다시 시도해 주세요.');
-          } finally {
-            setUploading(false);
-          }
-        }}
-        className="w-full rounded-[10px] border border-[var(--border-light)] bg-white/70 px-3 py-2 text-[14px] text-[var(--text-primary)] file:mr-3 file:rounded-[8px] file:border-0 file:bg-[var(--bg-secondary)] file:px-3 file:py-1.5 file:text-[14px] file:text-[var(--text-secondary)]"
-      />
+      <div
+        className={`rounded-[12px] border-2 border-dashed px-4 py-5 transition-colors ${
+          isDragging
+            ? 'border-[var(--accent-rose-dark)] bg-[var(--bg-secondary)]/70'
+            : 'border-[var(--border-light)] bg-white/60'
+        }`}
+        onDragEnter={handleDragEnter}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+      >
+        <input
+          id={id}
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          required={required}
+          onChange={handleInputChange}
+          className="sr-only"
+        />
+        <div className="flex flex-col items-center gap-2 text-center">
+          <p className="text-[14px] font-medium text-[var(--text-primary)]">
+            이미지를 드래그하거나 아래 버튼으로 선택하세요
+          </p>
+          <label
+            htmlFor={id}
+            className="inline-flex cursor-pointer items-center rounded-[8px] bg-[var(--bg-secondary)] px-3 py-1.5 text-[14px] text-[var(--text-secondary)]"
+          >
+            파일 선택
+          </label>
+          <p className="text-[13px] text-[var(--text-muted)]">PNG, JPG, WEBP 등 이미지 파일</p>
+        </div>
+      </div>
       <input
         ref={hiddenInputRef}
         type="hidden"
