@@ -67,12 +67,9 @@ export const DDayCountdown = ({ weddingDateTime, couple }: DDayCountdownProps) =
     <div className="flex flex-col items-center gap-4" suppressHydrationWarning data-animate="fade-up">
       {/* D-Day 뱃지 */}
       <div className="flex flex-col items-center gap-2">
-        <span className="font-serif-en text-[42px] font-light tracking-wide text-[#f87171]">
+        <span className="font-bold text-[42px] font-light tracking-wide text-[#f87171]">
           {dDayText}
         </span>
-        <p className="text-[16px] text-[var(--text-tertiary)]">
-          {parts?.isPast ? '오늘, 우리 결혼해요' : '결혼식까지'}
-        </p>
       </div>
 
       {/* 시간 카운트다운 */}
@@ -117,7 +114,7 @@ export const DDayCountdown = ({ weddingDateTime, couple }: DDayCountdownProps) =
         </span>
         <span>{`${couple.bride.firstName}`}</span>
         {parts?.isPast ? (
-          <span className="ml-1">오늘 결혼해요</span>
+          <span className="ml-1">오늘 결혼해요 😍</span>
         ) : (
           <>
             <span className="ml-1">결혼식까지</span>
