@@ -82,7 +82,10 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
                 const isPortrait = portraitMap[image.id] === true;
 
                 return (
-                <SwiperSlide key={image.id} className="!flex !items-center !justify-center">
+                <SwiperSlide
+                  key={image.id}
+                  className="!flex !items-center !justify-center bg-transparent"
+                >
                   <button
                     type="button"
                     onClick={() => setModalIndex(index)}
@@ -186,7 +189,7 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
               className="gallery-thumb"
             >
               {gallery.images.map((image, index) => (
-                <SwiperSlide key={image.id} className="!w-16 pt-2">
+                <SwiperSlide key={image.id} className="!w-16 pt-2 bg-transparent">
                   <button
                     type="button"
                     onClick={() => {

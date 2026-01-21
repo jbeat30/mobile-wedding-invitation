@@ -156,6 +156,14 @@ body::before {
         font-family: var(--font-sans);
     }
 
+    .admin-scope {
+        font-family: var(--font-sans);
+    }
+
+    .admin-scope * {
+        font-family: inherit;
+    }
+
     svg {
         @apply max-w-full h-auto;
     }
@@ -215,21 +223,6 @@ body::before {
         stroke-dashoffset: 0;
         opacity: 0.9;
     }
-}
-
-/* Swiper 갤러리 커스텀 */
-.swiper-slide {
-    background: transparent !important;
-}
-
-.gallery-thumbs .swiper-slide {
-    width: auto !important;
-}
-
-.gallery-thumbs .swiper-slide-thumb-active button {
-    border-color: var(--accent) !important;
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(193, 154, 123, 0.4);
 }
 
 @media (prefers-reduced-motion: reduce) {

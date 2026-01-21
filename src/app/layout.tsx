@@ -1,11 +1,13 @@
 import type { Metadata, Viewport } from 'next';
-import { Geist, Nanum_Myeongjo, Gowun_Batang, Crimson_Pro, Noto_Sans_KR } from 'next/font/google';
+import { Geist, Nanum_Myeongjo, Gowun_Batang, Crimson_Pro } from 'next/font/google';
 import './globals.css';
 import { loadInvitationTheme, loadOgMetadata } from '@/app/invitationData';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],
+  display: 'swap',
+  preload: false,
 });
 
 const nanumMyeongjo = Nanum_Myeongjo({
@@ -13,7 +15,7 @@ const nanumMyeongjo = Nanum_Myeongjo({
   subsets: ['latin'],
   variable: '--font-nanum',
   display: 'swap',
-  preload: true,
+  preload: false,
 });
 
 const gowunBatang = Gowun_Batang({
@@ -29,13 +31,7 @@ const crimsonPro = Crimson_Pro({
   subsets: ['latin', 'latin-ext'],
   variable: '--font-crimson',
   display: 'swap',
-});
-
-const notoSansKr = Noto_Sans_KR({
-  weight: ['400', '500', '600', '700'],
-  subsets: ['latin'],
-  variable: '--font-admin-sans',
-  display: 'swap',
+  preload: false,
 });
 
 /**
@@ -142,7 +138,7 @@ export default async function RootLayout({
   return (
     <html
       lang="ko"
-      className={`${geistSans.variable} ${nanumMyeongjo.variable} ${gowunBatang.variable} ${crimsonPro.variable} ${notoSansKr.variable}`}
+      className={`${geistSans.variable} ${nanumMyeongjo.variable} ${gowunBatang.variable} ${crimsonPro.variable}`}
       style={themeStyle}
     >
       <head />

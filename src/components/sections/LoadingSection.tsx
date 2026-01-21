@@ -148,7 +148,7 @@ export const LoadingSection = ({
             alt=""
             fill
             className="absolute inset-0 h-full w-full object-cover object-bottom opacity-85 saturate-[0.95] will-change-[transform,opacity] animate-[loading-reveal_1.1s_ease-out_both] pointer-events-none select-none [-webkit-user-drag:none] z-[1]"
-            sizes="100vw"
+            sizes="(max-width: 480px) 100vw, 480px"
             priority
             // 모바일/웹뷰 이미지 드래그 방지용임
             draggable={false}
