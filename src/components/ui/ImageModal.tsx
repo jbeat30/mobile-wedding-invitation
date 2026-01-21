@@ -10,6 +10,7 @@ type ImageModalProps = {
   onClose: () => void;
   images: { id: string; src: string; alt: string }[];
   initialIndex: number;
+  onIndexChange?: (index: number) => void;
 };
 
 /**
@@ -17,10 +18,24 @@ type ImageModalProps = {
  * @param props ImageModalProps
  * @returns JSX.Element | null
  */
-export const ImageModal = ({ isOpen, onClose, images, initialIndex }: ImageModalProps) => {
+export const ImageModal = ({
+  isOpen,
+  onClose,
+  images,
+  initialIndex,
+  onIndexChange,
+}: ImageModalProps) => {
   const scrollPosRef = useRef(0);
   const scrollBehaviorRef = useRef<string | null>(null);
   const hasOpenedRef = useRef(false);
+
+  /**
+   * 모달 내 슬라이드 변경 처리
+   * @param index 현재 슬라이드 인덱스
+   */
+  const handleSlideChange = (index: number) => {
+    onIndexChange?.(index);
+  };
 
   useEffect(() => {
     const html = document.documentElement;
@@ -92,15 +107,43 @@ export const ImageModal = ({ isOpen, onClose, images, initialIndex }: ImageModal
         ×
       </button>
       <div
-        className="relative max-h-[80dvh] max-w-[90vw]"
+        className="relative flex max-h-[80dvh] max-w-[90vw] flex-col gap-3"
         onClick={(e) => e.stopPropagation()}
         style={{ touchAction: 'pan-y', maxHeight: '600px' }}
       >
+        <div className="pointer-events-none flex items-center justify-center" aria-hidden="true">
+          <span className="flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-[12px] font-medium text-white/85 backdrop-blur">
+            <svg
+              viewBox="0 0 24 24"
+              className="h-4 w-4"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="m15 18-6-6 6-6" />
+            </svg>
+            <svg
+              viewBox="0 0 24 24"
+              className="h-4 w-4"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="m9 6 6 6-6 6" />
+            </svg>
+            <span>좌우로 슬라이드</span>
+          </span>
+        </div>
         <Swiper
           key={initialIndex}
           slidesPerView={1}
           spaceBetween={0}
           initialSlide={initialIndex}
+          onSlideChange={(swiper) => handleSlideChange(swiper.realIndex)}
           className="h-[80dvh] max-h-[600px] w-[90vw] max-w-[520px]"
         >
           {images.map((image, index) => (

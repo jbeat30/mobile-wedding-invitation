@@ -4,7 +4,12 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { InvitationAccounts } from '@/mock/invitation.mock';
 import { Button } from '@/components/ui/Button';
 import { SectionHeader } from '@/components/ui/SectionHeader';
-import { SurfaceCard } from '@/components/ui/SurfaceCard';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 import { Toast } from '@/components/ui/Toast';
 import { copyText } from '@/utils/clipboard';
 
@@ -66,46 +71,46 @@ export const AccountsSection = ({ accounts }: AccountsSectionProps) => {
           />
         </div>
 
-        <div className="flex flex-col gap-5" data-animate="stagger">
+        <Accordion type="single" collapsible className="flex flex-col gap-5" data-animate="stagger">
           {sections.map((section) => (
-            <SurfaceCard
-              key={section.title}
-              className="p-5"
-              data-animate-item
-            >
-              <p className="text-[16px] font-medium text-[var(--text-primary)]">{section.title}</p>
-              <div className="mt-4 flex flex-col gap-3">
-                {section.entries.map((entry) => (
-                  <div
-                    key={`${section.title}-${entry.accountNumber}`}
-                    className="flex items-center justify-between gap-4 rounded-[12px] bg-[var(--bg-secondary)] px-4 py-3"
-                  >
-                    <div className="flex flex-col gap-0.5">
-                      {entry.label && (
-                        <span className="text-[15px] font-medium text-[var(--text-primary)]">
-                          {entry.label}
-                        </span>
-                      )}
-                      <span className="text-[15px] text-[var(--text-muted)]">{entry.bankName}</span>
-                      <span className="text-[15px] text-[var(--text-primary)]">
-                        {entry.accountNumber}
-                      </span>
-                      <span className="text-[15px] text-[var(--text-muted)]">{entry.holder}</span>
-                    </div>
-                    <Button
-                      type="button"
-                      variant="accent"
-                      size="md"
-                      onClick={() => copyToClipboard(entry.accountNumber)}
+            <AccordionItem key={section.title} value={section.title} data-animate-item>
+              <AccordionTrigger>{section.title}</AccordionTrigger>
+              <AccordionContent>
+                <div className="flex flex-col gap-3">
+                  {section.entries.map((entry) => (
+                    <div
+                      key={`${section.title}-${entry.accountNumber}`}
+                      className="flex items-center justify-between gap-4 rounded-[12px] bg-[var(--bg-secondary)] px-4 py-3"
                     >
-                      복사
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            </SurfaceCard>
+                      <div className="flex flex-col gap-0.5">
+                        {entry.label && (
+                          <span className="text-[15px] font-medium text-[var(--text-primary)]">
+                            {entry.label}
+                          </span>
+                        )}
+                        <span className="text-[15px] text-[var(--text-muted)]">
+                          {entry.bankName}
+                        </span>
+                        <span className="text-[15px] text-[var(--text-primary)]">
+                          {entry.accountNumber}
+                        </span>
+                        <span className="text-[15px] text-[var(--text-muted)]">{entry.holder}</span>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="accent"
+                        size="md"
+                        onClick={() => copyToClipboard(entry.accountNumber)}
+                      >
+                        복사
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
           ))}
-        </div>
+        </Accordion>
       </div>
       <Toast isOpen={!!toast} message={toast?.message} toastClassName="py-2" />
     </section>
