@@ -1,12 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 
 const STORAGE_KEY = 'wedding-bgm-enabled';
 
 type UseBgmPreferenceResult = {
   enabled: boolean;
-  setEnabled: (value: boolean) => void;
+  setEnabled: Dispatch<SetStateAction<boolean>>;
 };
 
 /**

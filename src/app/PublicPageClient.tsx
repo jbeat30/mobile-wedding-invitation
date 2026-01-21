@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import type { InvitationMock } from '@/mock/invitation.mock';
@@ -46,8 +46,32 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
   const { enabled: bgmEnabled, setEnabled: setBgmEnabled } = useBgmPreference(
     content.bgm.autoPlay
   );
-  const [isBgmPlaying, setIsBgmPlaying] = useState(false);
   const isBgmActive = bgmAvailable && bgmEnabled;
+
+  useEffect(() => {
+    const isLocalhost =
+      window.location.hostname === 'localhost' && window.location.port === '3000';
+    if (isLocalhost) return;
+
+    const preventContextMenu = (event: Event) => {
+      event.preventDefault();
+    };
+
+    const preventImageDrag = (event: DragEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (target?.tagName === 'IMG') {
+        event.preventDefault();
+      }
+    };
+
+    document.addEventListener('contextmenu', preventContextMenu);
+    document.addEventListener('dragstart', preventImageDrag);
+
+    return () => {
+      document.removeEventListener('contextmenu', preventContextMenu);
+      document.removeEventListener('dragstart', preventImageDrag);
+    };
+  }, []);
 
   useEffect(() => {
     // 모바일/웹뷰 리사이즈 리프레시 과다 방지용 설정임
@@ -93,12 +117,6 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
       clearTimeout(resizeTimer);
     };
   }, []);
-
-  useEffect(() => {
-    if (!bgmEnabled) {
-      setIsBgmPlaying(false);
-    }
-  }, [bgmEnabled]);
 
   useEffect(() => {
     if (!showContent) return;
@@ -207,7 +225,7 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
   }, [showContent]);
 
   return (
-    <div className="bg-[var(--bg-primary)] text-[var(--text-primary)]">
+    <div className="bg-[var(--bg-primary)] text-[var(--text-primary)] [&_img]:select-none [&_img]:[-webkit-touch-callout:none]">
       <main
         ref={contentRef}
         className="relative overflow-x-hidden bg-[var(--bg-primary)] shadow-[0_40px_120px_rgba(44,34,28,0.12)] min-[481px]:mx-auto min-[481px]:max-w-[480px] min-[481px]:rounded-[28px] min-[481px]:border min-[481px]:border-white/65 min-[481px]:shadow-[0_50px_120px_rgba(41,32,26,0.22)]"
@@ -221,15 +239,9 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
               imageSrc={assets.loadingImage}
               isVisible={isLoading}
               isHintVisible={isHintVisible}
-              bgmEnabled={isBgmPlaying}
+              bgmEnabled={isBgmActive}
               bgmDisabled={!bgmAvailable}
-              onBgmToggle={() => {
-                if (isBgmPlaying) {
-                  setBgmEnabled(false);
-                  return;
-                }
-                setBgmEnabled(true);
-              }}
+              onBgmToggle={() => setBgmEnabled((prev) => !prev)}
             />
           )}
           <div
@@ -289,7 +301,6 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
         audioUrl={content.bgm.audioUrl || ''}
         enabled={isBgmActive}
         loop={content.bgm.loop}
-        onPlaybackChange={setIsBgmPlaying}
       />
     </div>
   );

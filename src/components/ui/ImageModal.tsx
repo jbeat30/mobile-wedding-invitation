@@ -2,13 +2,14 @@
 
 import { useEffect, useRef } from 'react';
 import Image from 'next/image';
+import { Swiper, SwiperSlide } from 'swiper/react';
 import { ModalShell } from '@/components/ui/ModalShell';
 
 type ImageModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  imageSrc: string;
-  imageAlt: string;
+  images: { id: string; src: string; alt: string }[];
+  initialIndex: number;
 };
 
 /**
@@ -16,7 +17,7 @@ type ImageModalProps = {
  * @param props ImageModalProps
  * @returns JSX.Element | null
  */
-export const ImageModal = ({ isOpen, onClose, imageSrc, imageAlt }: ImageModalProps) => {
+export const ImageModal = ({ isOpen, onClose, images, initialIndex }: ImageModalProps) => {
   const scrollPosRef = useRef(0);
   const scrollBehaviorRef = useRef<string | null>(null);
   const hasOpenedRef = useRef(false);
@@ -70,7 +71,7 @@ export const ImageModal = ({ isOpen, onClose, imageSrc, imageAlt }: ImageModalPr
     };
   }, [isOpen]);
 
-  if (!isOpen) {
+  if (!isOpen || images.length === 0) {
     return null;
   }
 
@@ -79,7 +80,7 @@ export const ImageModal = ({ isOpen, onClose, imageSrc, imageAlt }: ImageModalPr
       isOpen={isOpen}
       onClose={onClose}
       className="z-[9999] bg-black/85 p-4 backdrop-blur-sm"
-      style={{ touchAction: 'none' }}
+      style={{ touchAction: 'pan-y' }}
     >
       <button
         type="button"
@@ -93,18 +94,32 @@ export const ImageModal = ({ isOpen, onClose, imageSrc, imageAlt }: ImageModalPr
       <div
         className="relative max-h-[80dvh] max-w-[90vw]"
         onClick={(e) => e.stopPropagation()}
-        style={{ touchAction: 'none', maxHeight: '600px' }}
+        style={{ touchAction: 'pan-y', maxHeight: '600px' }}
       >
-        <Image
-          src={imageSrc}
-          alt={imageAlt}
-          width={800}
-          height={600}
-          className="h-auto w-auto object-contain select-none"
-          style={{ maxHeight: '600px', maxWidth: '90vw' }}
-          unoptimized
-          draggable={false}
-        />
+        <Swiper
+          key={initialIndex}
+          slidesPerView={1}
+          spaceBetween={0}
+          initialSlide={initialIndex}
+          className="h-[80dvh] max-h-[600px] w-[90vw] max-w-[520px]"
+        >
+          {images.map((image, index) => (
+            <SwiperSlide key={image.id} className="!flex !items-center !justify-center">
+              <div className="relative h-full w-full">
+                <Image
+                  src={image.src}
+                  alt={image.alt}
+                  fill
+                  sizes="(max-width: 520px) 100vw, 520px"
+                  className="object-contain select-none"
+                  priority={index === initialIndex}
+                  loading={index === initialIndex ? 'eager' : 'lazy'}
+                  draggable={false}
+                />
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
       </div>
     </ModalShell>
   );

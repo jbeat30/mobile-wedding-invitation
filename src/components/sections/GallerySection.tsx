@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import type { SyntheticEvent } from 'react';
 import Image from 'next/image';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Navigation, Thumbs } from 'swiper/modules';
@@ -22,9 +23,19 @@ type GallerySectionProps = {
 };
 
 export const GallerySection = ({ gallery }: GallerySectionProps) => {
-  const [modalImage, setModalImage] = useState<{ src: string; alt: string } | null>(null);
+  const [modalIndex, setModalIndex] = useState<number | null>(null);
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null);
   const mainSwiperRef = useRef<SwiperType | null>(null);
+  const [portraitMap, setPortraitMap] = useState<Record<string, boolean>>({});
+
+  const handleImageLoad = (id: string) => (event: SyntheticEvent<HTMLImageElement>) => {
+    const image = event.currentTarget;
+    const isPortrait = image.naturalHeight > image.naturalWidth;
+    setPortraitMap((prev) => {
+      if (prev[id] === isPortrait) return prev;
+      return { ...prev, [id]: isPortrait };
+    });
+  };
 
   return (
     <>
@@ -67,22 +78,39 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
               className="rounded-[18px] overflow-hidden shadow-[0_8px_32px_rgba(41,32,26,0.12)] border border-white/50"
               style={{ touchAction: 'pan-y' }}
             >
-              {gallery.images.map((image) => (
+              {gallery.images.map((image, index) => {
+                const isPortrait = portraitMap[image.id] === true;
+
+                return (
                 <SwiperSlide key={image.id} className="!flex !items-center !justify-center">
                   <button
                     type="button"
-                    onClick={() => setModalImage({ src: image.src, alt: image.alt })}
-                    className="relative w-full h-full overflow-hidden group cursor-pointer block"
+                    onClick={() => setModalIndex(index)}
+                    className="relative w-full overflow-hidden group cursor-pointer block aspect-[4/3] bg-[var(--bg-secondary)]"
                     aria-label={`${image.alt} 크게 보기`}
-                    style={{ aspectRatio: '4/3' }}
                   >
+                    {isPortrait && (
+                      <Image
+                        src={image.src}
+                        alt=""
+                        fill
+                        sizes="(max-width: 520px) 100vw, 520px"
+                        className="object-cover scale-105 blur-md opacity-60"
+                        aria-hidden
+                        draggable={false}
+                      />
+                    )}
                     <Image
                       src={image.src}
                       alt={image.alt}
                       fill
                       sizes="(max-width: 520px) 100vw, 520px"
-                      className="object-cover transition-transform duration-700 group-hover:scale-105"
-                      unoptimized
+                      className={`transition-transform duration-700 group-hover:scale-105 ${
+                        isPortrait ? 'object-contain' : 'object-cover'
+                      }`}
+                      onLoad={handleImageLoad(image.id)}
+                      priority={index === 0}
+                      loading={index === 0 ? 'eager' : 'lazy'}
                       draggable={false}
                       style={{ width: '100%', height: '100%' }}
                     />
@@ -109,7 +137,8 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
                     </div>
                   </button>
                 </SwiperSlide>
-              ))}
+                );
+              })}
             </Swiper>
 
             {/* 네비게이션 버튼 */}
@@ -174,7 +203,7 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
                       fill
                       sizes="64px"
                       className="object-cover"
-                      unoptimized
+                      loading="lazy"
                       draggable={false}
                     />
                   </button>
@@ -191,10 +220,10 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
       </section>
 
       <ImageModal
-        isOpen={modalImage !== null}
-        onClose={() => setModalImage(null)}
-        imageSrc={modalImage?.src || ''}
-        imageAlt={modalImage?.alt || ''}
+        isOpen={modalIndex !== null}
+        onClose={() => setModalIndex(null)}
+        images={gallery.images}
+        initialIndex={modalIndex ?? 0}
       />
     </>
   );
