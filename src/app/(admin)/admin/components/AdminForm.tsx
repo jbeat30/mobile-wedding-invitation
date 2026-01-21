@@ -1,6 +1,15 @@
 'use client';
 
-import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+  type ReactNode,
+} from 'react';
 import { useActionState } from 'react';
 import { Toast } from '@/components/ui/Toast';
 import {
@@ -30,6 +39,117 @@ type AdminFormProps = {
   children: ReactNode;
 };
 
+type AdminFormContextValue = {
+  isDirty: boolean;
+  isEmpty: boolean;
+};
+
+const AdminFormContext = createContext<AdminFormContextValue | null>(null);
+
+/**
+ * 관리자 폼 상태 조회
+ * @returns AdminFormContextValue
+ */
+export const useAdminFormState = () => {
+  const context = useContext(AdminFormContext);
+  return context ?? { isDirty: true, isEmpty: false };
+};
+
+type AdminFormValueMap = Record<string, string[]>;
+
+/**
+ * 추적 가능한 폼 요소만 수집
+ * @param form HTMLFormElement
+ * @returns HTMLElement[]
+ */
+const getTrackableElements = (form: HTMLFormElement) => {
+  return Array.from(form.elements).filter(
+    (
+      element
+    ): element is HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement => {
+      if (
+        !(
+          element instanceof HTMLInputElement ||
+          element instanceof HTMLTextAreaElement ||
+          element instanceof HTMLSelectElement
+        )
+      ) {
+        return false;
+      }
+      if (!element.name) return false;
+      if (element instanceof HTMLInputElement && element.type === 'file') {
+        return false;
+      }
+      if (element instanceof HTMLInputElement && element.type === 'hidden') {
+        return element.dataset.adminTrack === 'true';
+      }
+      return element.type !== 'submit' && element.type !== 'button';
+    }
+  );
+};
+
+/**
+ * 비어있음 체크 대상 요소 필터링
+ * @param form HTMLFormElement
+ * @returns HTMLElement[]
+ */
+const getValueElements = (form: HTMLFormElement) => {
+  return getTrackableElements(form).filter((element) => {
+    if (element instanceof HTMLInputElement) {
+      if (['checkbox', 'radio', 'hidden', 'file', 'submit', 'button'].includes(element.type)) {
+        return false;
+      }
+    }
+    return true;
+  });
+};
+
+/**
+ * 폼 값 스냅샷 생성
+ * @param form HTMLFormElement
+ * @returns AdminFormValueMap
+ */
+const getFormValues = (form: HTMLFormElement): AdminFormValueMap => {
+  const values: AdminFormValueMap = {};
+  const elements = getTrackableElements(form);
+  elements.forEach((element) => {
+    const name = element.name;
+    const currentValues = values[name] ?? [];
+    if (element instanceof HTMLInputElement && (element.type === 'checkbox' || element.type === 'radio')) {
+      currentValues.push(element.checked ? 'on' : '');
+    } else {
+      currentValues.push(element.value);
+    }
+    values[name] = currentValues;
+  });
+  return values;
+};
+
+/**
+ * 폼 값 비교용 시리얼라이즈
+ * @param values AdminFormValueMap
+ * @returns string
+ */
+const serializeFormValues = (values: AdminFormValueMap) => {
+  return Object.keys(values)
+    .sort()
+    .map((key) => `${key}:${values[key].join('|')}`)
+    .join('||');
+};
+
+/**
+ * 폼이 비어있는지 판정
+ * @param values AdminFormValueMap
+ * @returns boolean
+ */
+const isFormEmpty = (form: HTMLFormElement) => {
+  const elements = getValueElements(form);
+  if (elements.length === 0) {
+    return false;
+  }
+  return elements.every((element) => element.value.trim().length === 0);
+};
+
 /**
  * 관리자 저장 폼 래퍼
  * @param props AdminFormProps
@@ -47,8 +167,11 @@ export const AdminForm = ({
   const [toastOpen, setToastOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
+  const [isEmpty, setIsEmpty] = useState(true);
   const allowSubmitRef = useRef(false);
   const formRef = useRef<HTMLFormElement | null>(null);
+  const initialValuesRef = useRef<string>('');
 
   const [state, formAction] = useActionState<AdminFormState, FormData>(
     async (_prevState, formData) => {
@@ -75,6 +198,35 @@ export const AdminForm = ({
   }, [state.status, state.submittedAt, successMessage, errorMessage]);
 
   /**
+   * 폼 상태 재계산
+   * @returns void
+   */
+  const evaluateFormState = useCallback(() => {
+    if (!formRef.current) return;
+    const values = getFormValues(formRef.current);
+    const serialized = serializeFormValues(values);
+    setIsDirty(serialized !== initialValuesRef.current);
+    setIsEmpty(isFormEmpty(formRef.current));
+  }, []);
+
+  useEffect(() => {
+    if (!formRef.current) return;
+    const values = getFormValues(formRef.current);
+    initialValuesRef.current = serializeFormValues(values);
+    setIsDirty(false);
+    setIsEmpty(isFormEmpty(formRef.current));
+  }, []);
+
+  useEffect(() => {
+    if (state.status !== 'success') return;
+    if (!formRef.current) return;
+    const values = getFormValues(formRef.current);
+    initialValuesRef.current = serializeFormValues(values);
+    setIsDirty(false);
+    setIsEmpty(isFormEmpty(formRef.current));
+  }, [state.status, state.submittedAt]);
+
+  /**
    * 저장 전 확인 다이얼로그 열기
    * @param event React.FormEvent<HTMLFormElement>
    */
@@ -98,8 +250,15 @@ export const AdminForm = ({
   };
 
   return (
-    <>
-      <form ref={formRef} action={formAction} className={className} onSubmit={handleSubmit}>
+    <AdminFormContext.Provider value={{ isDirty, isEmpty }}>
+      <form
+        ref={formRef}
+        action={formAction}
+        className={className}
+        onSubmit={handleSubmit}
+        onInput={evaluateFormState}
+        onChange={evaluateFormState}
+      >
         {children}
       </form>
       <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
@@ -119,6 +278,6 @@ export const AdminForm = ({
         message={toastMessage}
         containerClassName="justify-end pr-6"
       />
-    </>
+    </AdminFormContext.Provider>
   );
 };

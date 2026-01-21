@@ -84,7 +84,6 @@ type InvitationLocationRow = {
 type InvitationGuestbookRow = {
   id: string;
   privacy_notice: string;
-  retention_text: string;
   display_mode: string;
   page_size: number;
   recent_notice: string | null;
@@ -282,42 +281,137 @@ export const loadAdminData = async () => {
   const supabase = createSupabaseAdmin();
   const invitation = await getOrCreateInvitation();
 
-  const [loading, profile, parents, assets, greeting, share, bgm, gallery, location, guestbook, rsvp, accounts, closing, sectionTitles, event] =
-    (await Promise.all([
-      ensureSingleRow(supabase, 'invitation_loading', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
-      ensureSingleRow(supabase, 'invitation_profile', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
-      ensureSingleRow(supabase, 'invitation_parents', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
-      ensureSingleRow(supabase, 'invitation_assets', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
-      ensureSingleRow(supabase, 'invitation_greeting', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
-      ensureSingleRow(supabase, 'invitation_share', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
-      ensureSingleRow(supabase, 'invitation_bgm', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
-      ensureSingleRow(supabase, 'invitation_gallery', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
-      ensureSingleRow(supabase, 'invitation_location', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
-      ensureSingleRow(supabase, 'invitation_guestbook', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
-      ensureSingleRow(supabase, 'invitation_rsvp', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
-      ensureSingleRow(supabase, 'invitation_accounts', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
-      ensureSingleRow(supabase, 'invitation_closing', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
-      ensureSingleRow(supabase, 'invitation_section_titles', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
-      ensureSingleRow(supabase, 'invitation_event', { invitation_id: invitation.id }, { invitation_id: invitation.id, date_time: new Date().toISOString() }),
-    ])) as [
-      InvitationLoadingRow,
-      InvitationProfileRow,
-      InvitationParentsRow,
-      InvitationAssetsRow,
-      InvitationGreetingRow,
-      InvitationShareRow,
-      InvitationBgmRow,
-      InvitationGalleryRow,
-      InvitationLocationRow,
-      InvitationGuestbookRow,
-      InvitationRsvpRow,
-      InvitationAccountsRow,
-      InvitationClosingRow,
-      InvitationSectionTitlesRow,
-      InvitationEventRow
-    ];
+  const [
+    loading,
+    profile,
+    parents,
+    assets,
+    greeting,
+    share,
+    bgm,
+    gallery,
+    location,
+    guestbook,
+    rsvp,
+    accounts,
+    closing,
+    sectionTitles,
+    event,
+  ] = (await Promise.all([
+    ensureSingleRow(
+      supabase,
+      'invitation_loading',
+      { invitation_id: invitation.id },
+      { invitation_id: invitation.id }
+    ),
+    ensureSingleRow(
+      supabase,
+      'invitation_profile',
+      { invitation_id: invitation.id },
+      { invitation_id: invitation.id }
+    ),
+    ensureSingleRow(
+      supabase,
+      'invitation_parents',
+      { invitation_id: invitation.id },
+      { invitation_id: invitation.id }
+    ),
+    ensureSingleRow(
+      supabase,
+      'invitation_assets',
+      { invitation_id: invitation.id },
+      { invitation_id: invitation.id }
+    ),
+    ensureSingleRow(
+      supabase,
+      'invitation_greeting',
+      { invitation_id: invitation.id },
+      { invitation_id: invitation.id }
+    ),
+    ensureSingleRow(
+      supabase,
+      'invitation_share',
+      { invitation_id: invitation.id },
+      { invitation_id: invitation.id }
+    ),
+    ensureSingleRow(
+      supabase,
+      'invitation_bgm',
+      { invitation_id: invitation.id },
+      { invitation_id: invitation.id }
+    ),
+    ensureSingleRow(
+      supabase,
+      'invitation_gallery',
+      { invitation_id: invitation.id },
+      { invitation_id: invitation.id }
+    ),
+    ensureSingleRow(
+      supabase,
+      'invitation_location',
+      { invitation_id: invitation.id },
+      { invitation_id: invitation.id }
+    ),
+    ensureSingleRow(
+      supabase,
+      'invitation_guestbook',
+      { invitation_id: invitation.id },
+      { invitation_id: invitation.id }
+    ),
+    ensureSingleRow(
+      supabase,
+      'invitation_rsvp',
+      { invitation_id: invitation.id },
+      { invitation_id: invitation.id }
+    ),
+    ensureSingleRow(
+      supabase,
+      'invitation_accounts',
+      { invitation_id: invitation.id },
+      { invitation_id: invitation.id }
+    ),
+    ensureSingleRow(
+      supabase,
+      'invitation_closing',
+      { invitation_id: invitation.id },
+      { invitation_id: invitation.id }
+    ),
+    ensureSingleRow(
+      supabase,
+      'invitation_section_titles',
+      { invitation_id: invitation.id },
+      { invitation_id: invitation.id }
+    ),
+    ensureSingleRow(
+      supabase,
+      'invitation_event',
+      { invitation_id: invitation.id },
+      { invitation_id: invitation.id, date_time: new Date().toISOString() }
+    ),
+  ])) as [
+    InvitationLoadingRow,
+    InvitationProfileRow,
+    InvitationParentsRow,
+    InvitationAssetsRow,
+    InvitationGreetingRow,
+    InvitationShareRow,
+    InvitationBgmRow,
+    InvitationGalleryRow,
+    InvitationLocationRow,
+    InvitationGuestbookRow,
+    InvitationRsvpRow,
+    InvitationAccountsRow,
+    InvitationClosingRow,
+    InvitationSectionTitlesRow,
+    InvitationEventRow,
+  ];
 
-  const transportation = (await ensureSingleRow(supabase, 'invitation_transportation', { location_id: location.id }, { location_id: location.id })) as InvitationTransportationRow;
+  const transportation = (await ensureSingleRow(
+    supabase,
+    'invitation_transportation',
+    { location_id: location.id },
+    { location_id: location.id }
+  )) as InvitationTransportationRow;
 
   const { data: galleryImagesRaw, error: galleryError } = await supabase
     .from('invitation_gallery_images')
@@ -496,7 +590,6 @@ export const loadAdminData = async () => {
     guestbook: {
       id: guestbook.id,
       privacy_notice: guestbook.privacy_notice,
-      retention_text: guestbook.retention_text,
       display_mode: String(guestbook.display_mode || 'recent').trim(),
       page_size: guestbook.page_size,
       recent_notice: guestbook.recent_notice,

@@ -92,14 +92,6 @@ export const AdminSectionGuestbook = ({
               defaultValue={guestbook.privacy_notice}
             />
           </div>
-          <div className="flex flex-col gap-2 md:col-span-2">
-            <Label htmlFor="guestbook_retention_text">보관 기간 안내</Label>
-            <Input
-              id="guestbook_retention_text"
-              name="guestbook_retention_text"
-              defaultValue={guestbook.retention_text}
-            />
-          </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="guestbook_display_mode">표시 방식</Label>
             <AdminSelectField
@@ -112,7 +104,7 @@ export const AdminSectionGuestbook = ({
                 { value: 'paginated', label: '페이지네이션' },
               ]}
             />
-            <p className="text-[11px] text-[var(--text-muted)]">
+            <p className="text-[14px] text-[var(--text-muted)]">
               현재 퍼블릭 페이지에서 사용 중인 방식입니다.
             </p>
           </div>

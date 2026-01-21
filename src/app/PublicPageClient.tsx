@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import type { InvitationMock } from '@/mock/invitation.mock';
@@ -28,6 +28,30 @@ type PublicPageClientProps = {
 };
 
 /**
+ * 애니메이션 옵션 숫자 파싱
+ * @param value 데이터셋 값
+ * @param fallback 기본값
+ * @returns 파싱된 숫자
+ */
+const parseAnimationNumber = (value: string | undefined, fallback: number) => {
+  if (!value) return fallback;
+  const parsed = Number.parseFloat(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+};
+
+/**
+ * 스태거 애니메이션 옵션 생성
+ * @param element 대상 요소
+ * @returns 스태거 옵션
+ */
+const getStaggerOptions = (element: HTMLElement) => ({
+  y: parseAnimationNumber(element.dataset.animateY, 24),
+  duration: parseAnimationNumber(element.dataset.animateDuration, 1.35),
+  stagger: parseAnimationNumber(element.dataset.animateStagger, 0.18),
+  delay: parseAnimationNumber(element.dataset.animateDelay, 0),
+});
+
+/**
  * 퍼블릭 싱글 페이지
  * @param props PublicPageClientProps
  * @returns JSX.Element
@@ -46,8 +70,32 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
   const { enabled: bgmEnabled, setEnabled: setBgmEnabled } = useBgmPreference(
     content.bgm.autoPlay
   );
-  const [isBgmPlaying, setIsBgmPlaying] = useState(false);
   const isBgmActive = bgmAvailable && bgmEnabled;
+
+  useEffect(() => {
+    const isLocalhost =
+      window.location.hostname === 'localhost' && window.location.port === '3000';
+    if (isLocalhost) return;
+
+    const preventContextMenu = (event: Event) => {
+      event.preventDefault();
+    };
+
+    const preventImageDrag = (event: DragEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (target?.tagName === 'IMG') {
+        event.preventDefault();
+      }
+    };
+
+    document.addEventListener('contextmenu', preventContextMenu);
+    document.addEventListener('dragstart', preventImageDrag);
+
+    return () => {
+      document.removeEventListener('contextmenu', preventContextMenu);
+      document.removeEventListener('dragstart', preventImageDrag);
+    };
+  }, []);
 
   useEffect(() => {
     // 모바일/웹뷰 리사이즈 리프레시 과다 방지용 설정임
@@ -95,12 +143,6 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
   }, []);
 
   useEffect(() => {
-    if (!bgmEnabled) {
-      setIsBgmPlaying(false);
-    }
-  }, [bgmEnabled]);
-
-  useEffect(() => {
     if (!showContent) return;
     const container = contentRef.current;
     if (!container) return;
@@ -132,14 +174,16 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
               .toArray<HTMLElement>(element.querySelectorAll('[data-animate-item]'))
               .slice(0);
             if (!items.length) return;
+            const options = getStaggerOptions(element);
 
-            gsap.set(items, { opacity: 0, y: 24 });
+            gsap.set(items, { opacity: 0, y: options.y });
             gsap.to(items, {
               opacity: 1,
               y: 0,
-              duration: 1.05,
+              duration: options.duration,
               ease: 'power3.out',
-              stagger: 0.12,
+              stagger: options.stagger,
+              delay: options.delay,
               scrollTrigger: {
                 // 그룹의 컨테이너 기준으로 스크롤 진입 감지
                 trigger: element,
@@ -163,7 +207,7 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
             opacity: 1,
             y: 0,
             scale: 1,
-            duration: 1.1,
+            duration: 1.5,
             ease: 'power3.out',
             scrollTrigger: {
               // 요소 상단이 뷰포트 진입 시점에 트리거
@@ -207,7 +251,7 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
   }, [showContent]);
 
   return (
-    <div className="bg-[var(--bg-primary)] text-[var(--text-primary)]">
+    <div className="bg-[var(--bg-primary)] text-[var(--text-primary)] [&_img]:select-none [&_img]:[-webkit-touch-callout:none]">
       <main
         ref={contentRef}
         className="relative overflow-x-hidden bg-[var(--bg-primary)] shadow-[0_40px_120px_rgba(44,34,28,0.12)] min-[481px]:mx-auto min-[481px]:max-w-[480px] min-[481px]:rounded-[28px] min-[481px]:border min-[481px]:border-white/65 min-[481px]:shadow-[0_50px_120px_rgba(41,32,26,0.22)]"
@@ -221,15 +265,9 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
               imageSrc={assets.loadingImage}
               isVisible={isLoading}
               isHintVisible={isHintVisible}
-              bgmEnabled={isBgmPlaying}
+              bgmEnabled={isBgmActive}
               bgmDisabled={!bgmAvailable}
-              onBgmToggle={() => {
-                if (isBgmPlaying) {
-                  setBgmEnabled(false);
-                  return;
-                }
-                setBgmEnabled(true);
-              }}
+              onBgmToggle={() => setBgmEnabled((prev) => !prev)}
             />
           )}
           <div
@@ -289,7 +327,6 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
         audioUrl={content.bgm.audioUrl || ''}
         enabled={isBgmActive}
         loop={content.bgm.loop}
-        onPlaybackChange={setIsBgmPlaying}
       />
     </div>
   );

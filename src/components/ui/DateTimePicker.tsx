@@ -136,7 +136,7 @@ export const DateTimePicker = ({
   );
   const minuteOptions = useMemo(() => ['00', '30'], []);
   const selectClassName =
-    'h-9 w-full rounded-md border border-[var(--border-light)] bg-white/70 px-2 text-[12px] font-sans text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-rose)] focus:ring-offset-2';
+    'h-9 w-full rounded-md border border-[var(--border-light)] bg-white/70 px-2 text-[14px] font-sans text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-rose)] focus:ring-offset-2';
 
   return (
     <div className="flex flex-col gap-2">

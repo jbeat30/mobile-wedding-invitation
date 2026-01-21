@@ -91,7 +91,7 @@ export const KakaoMap = ({ lat, lng, level = 3, className = '' }: KakaoMapProps)
   if (errorMessage) {
     return (
       <div
-        className={`flex h-full w-full items-center justify-center text-[12px] text-[var(--text-muted)] ${className}`}
+        className={`flex h-full w-full items-center justify-center text-[14px] text-[var(--text-muted)] ${className}`}
       >
         {errorMessage}
       </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
@@ -37,6 +37,8 @@ export const AdminSelectField = ({
   const [value, setValue] = useState(resolvedDefault);
   const currentLabel =
     options.find((option) => option.value === value)?.label || value || '';
+  const hiddenInputRef = useRef<HTMLInputElement | null>(null);
+  const hasMountedRef = useRef(false);
 
   useEffect(() => {
     const nextDefault = String(defaultValue || '').trim();
@@ -45,6 +47,24 @@ export const AdminSelectField = ({
       : fallbackValue;
     setValue(resolved);
   }, [defaultValue, fallbackValue, options]);
+
+  /**
+   * 변경 이벤트 전달
+   * @returns void
+   */
+  const notifyChange = useCallback(() => {
+    if (!hiddenInputRef.current) return;
+    hiddenInputRef.current.dispatchEvent(new Event('input', { bubbles: true }));
+    hiddenInputRef.current.dispatchEvent(new Event('change', { bubbles: true }));
+  }, []);
+
+  useEffect(() => {
+    if (!hasMountedRef.current) {
+      hasMountedRef.current = true;
+      return;
+    }
+    notifyChange();
+  }, [value, notifyChange]);
 
   return (
     <>
@@ -64,7 +84,13 @@ export const AdminSelectField = ({
           </SelectContent>
         </Select>
       )}
-      <input type="hidden" name={name} value={value} />
+      <input
+        ref={hiddenInputRef}
+        type="hidden"
+        name={name}
+        value={value}
+        data-admin-track="true"
+      />
     </>
   );
 };

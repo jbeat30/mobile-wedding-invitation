@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Label } from '@/components/ui/label';
 import { compressImageInBrowser } from '@/lib/clientImageCompression';
 
@@ -42,6 +42,8 @@ export const AdminImageFileField = ({
   );
   const [selectedFileName, setSelectedFileName] = useState<string>(defaultFileName || '');
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const hiddenInputRef = useRef<HTMLInputElement | null>(null);
+  const hasMountedRef = useRef(false);
   const showPreview = previewUrl.trim().length > 0 && !errorMessage;
 
   const toggleFormSubmit = (disabled: boolean) => {
@@ -71,6 +73,24 @@ export const AdminImageFileField = ({
       toggleFormSubmit(false);
     };
   }, [uploading]);
+
+  /**
+   * 변경 이벤트 전달
+   * @returns void
+   */
+  const notifyChange = useCallback(() => {
+    if (!hiddenInputRef.current) return;
+    hiddenInputRef.current.dispatchEvent(new Event('input', { bubbles: true }));
+    hiddenInputRef.current.dispatchEvent(new Event('change', { bubbles: true }));
+  }, []);
+
+  useEffect(() => {
+    if (!hasMountedRef.current) {
+      hasMountedRef.current = true;
+      return;
+    }
+    notifyChange();
+  }, [value, uploadedMeta, notifyChange]);
 
   return (
     <div className="flex flex-col gap-2">
@@ -138,17 +158,28 @@ export const AdminImageFileField = ({
             setUploading(false);
           }
         }}
-        className="w-full rounded-[10px] border border-[var(--border-light)] bg-white/70 px-3 py-2 text-[13px] text-[var(--text-primary)] file:mr-3 file:rounded-[8px] file:border-0 file:bg-[var(--bg-secondary)] file:px-3 file:py-1.5 file:text-[12px] file:text-[var(--text-secondary)]"
+        className="w-full rounded-[10px] border border-[var(--border-light)] bg-white/70 px-3 py-2 text-[14px] text-[var(--text-primary)] file:mr-3 file:rounded-[8px] file:border-0 file:bg-[var(--bg-secondary)] file:px-3 file:py-1.5 file:text-[14px] file:text-[var(--text-secondary)]"
       />
-      <input type="hidden" name={name} value={value} />
-      <input type="hidden" name={`${name}_uuid`} value={uploadedMeta?.uuid || ''} />
-      <input type="hidden" name={`${name}_filename`} value={uploadedMeta?.filename || ''} />
+      <input
+        ref={hiddenInputRef}
+        type="hidden"
+        name={name}
+        value={value}
+        data-admin-track="true"
+      />
+      <input type="hidden" name={`${name}_uuid`} value={uploadedMeta?.uuid || ''} data-admin-track="true" />
+      <input
+        type="hidden"
+        name={`${name}_filename`}
+        value={uploadedMeta?.filename || ''}
+        data-admin-track="true"
+      />
       {selectedFileName ? (
-        <p className="text-[11px] text-[var(--text-secondary)]">
+        <p className="text-[14px] text-[var(--text-secondary)]">
           선택된 파일: <span className="font-medium">{selectedFileName}</span>
         </p>
       ) : null}
-      {hint ? <p className="text-[11px] text-[var(--text-muted)]">{hint}</p> : null}
+      {hint ? <p className="text-[14px] text-[var(--text-muted)]">{hint}</p> : null}
       {previewUrl.trim().length > 0 ? (
         <div className="relative overflow-hidden rounded-[12px] border border-[var(--border-light)] bg-white/60">
           {showPreview ? (
@@ -163,20 +194,20 @@ export const AdminImageFileField = ({
               />
             </div>
           ) : (
-            <div className="flex h-[120px] items-center justify-center text-[12px] text-[var(--text-muted)]">
+            <div className="flex h-[120px] items-center justify-center text-[14px] text-[var(--text-muted)]">
               미리보기를 불러올 수 없습니다
             </div>
           )}
         </div>
       ) : null}
       {uploading ? (
-        <p className="inline-flex items-center gap-2 text-[11px] text-[var(--text-secondary)]">
+        <p className="inline-flex items-center gap-2 text-[14px] text-[var(--text-secondary)]">
           <span className="h-3 w-3 animate-spin rounded-full border border-[var(--text-secondary)] border-t-transparent" />
           업로드 중...
         </p>
       ) : null}
       {errorMessage ? (
-        <p className="text-[11px] text-[var(--accent-burgundy)]">{errorMessage}</p>
+        <p className="text-[14px] text-[var(--accent-burgundy)]">{errorMessage}</p>
       ) : null}
     </div>
   );

@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
  */
 export const Table = ({ className, ...props }: React.HTMLAttributes<HTMLTableElement>) => (
   <div className="w-full overflow-auto">
-    <table className={cn('w-full caption-bottom text-[12px]', className)} {...props} />
+    <table className={cn('w-full caption-bottom text-[14px]', className)} {...props} />
   </div>
 );
 
@@ -78,5 +78,5 @@ export const TableCell = ({
   className,
   ...props
 }: React.TdHTMLAttributes<HTMLTableCellElement>) => (
-  <td className={cn('p-4 align-middle text-[13px]', className)} {...props} />
+  <td className={cn('p-4 align-middle text-[14px]', className)} {...props} />
 );

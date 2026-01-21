@@ -18,7 +18,7 @@ export const SelectTrigger = React.forwardRef<
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      'flex h-9 w-full items-center justify-between rounded-md border border-[var(--border-light)] bg-white/70 px-3 text-[12px] text-[var(--text-primary)] shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-rose)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ring-offset-[var(--bg-primary)]',
+      'flex h-9 w-full items-center justify-between rounded-md border border-[var(--border-light)] bg-white/70 px-3 text-[14px] text-[var(--text-primary)] shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-rose)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ring-offset-[var(--bg-primary)]',
       className
     )}
     {...props}
@@ -67,7 +67,7 @@ export const SelectItem = React.forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      'relative flex cursor-pointer select-none items-center rounded-[8px] px-3 py-2 text-[12px] text-[var(--text-secondary)] outline-none focus:bg-[var(--bg-secondary)] focus:text-[var(--text-primary)] data-[state=checked]:font-semibold',
+      'relative flex cursor-pointer select-none items-center rounded-[8px] px-3 py-2 text-[14px] text-[var(--text-secondary)] outline-none focus:bg-[var(--bg-secondary)] focus:text-[var(--text-primary)] data-[state=checked]:font-semibold',
       className
     )}
     {...props}

@@ -14,7 +14,7 @@ type FieldLabelProps = {
 export const FieldLabel = ({ htmlFor, required, children }: FieldLabelProps) => {
   return (
     <label
-      className="font-label text-[11px] text-[var(--text-muted)]"
+      className="font-label text-[14px] text-[var(--text-muted)]"
       htmlFor={htmlFor}
     >
       {children}

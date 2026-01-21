@@ -56,6 +56,7 @@ export const AdminSectionBasic = ({
                 id="groom_last_name"
                 name="groom_last_name"
                 defaultValue={data.profile.groom_last_name}
+                required
               />
             </div>
             <div className="flex flex-col gap-2">
@@ -64,6 +65,7 @@ export const AdminSectionBasic = ({
                 id="groom_first_name"
                 name="groom_first_name"
                 defaultValue={data.profile.groom_first_name}
+                required
               />
             </div>
           </div>
@@ -74,6 +76,7 @@ export const AdminSectionBasic = ({
                 id="bride_last_name"
                 name="bride_last_name"
                 defaultValue={data.profile.bride_last_name}
+                required
               />
             </div>
             <div className="flex flex-col gap-2">
@@ -82,10 +85,11 @@ export const AdminSectionBasic = ({
                 id="bride_first_name"
                 name="bride_first_name"
                 defaultValue={data.profile.bride_first_name}
+                required
               />
             </div>
           </div>
-          <div className="text-[13px] font-semibold text-[var(--text-secondary)] md:col-span-2">
+          <div className="text-[14px] font-semibold text-[var(--text-secondary)] md:col-span-2">
             부모님 성함
           </div>
           <div className="flex flex-col gap-2">
@@ -154,7 +158,13 @@ export const AdminSectionBasic = ({
           </div>
           <div className="flex flex-col gap-2 md:col-span-2">
             <Label htmlFor="event_venue">예식장</Label>
-            <Input id="event_venue" name="event_venue" ref={venueInputRef} defaultValue={data.event.venue} />
+            <Input
+              id="event_venue"
+              name="event_venue"
+              ref={venueInputRef}
+              defaultValue={data.event.venue}
+              required
+            />
           </div>
           <div className="flex flex-col gap-2 md:col-span-2">
             <Label htmlFor="event_address">주소</Label>
@@ -167,6 +177,7 @@ export const AdminSectionBasic = ({
                 readOnly
                 onClick={onOpenPlaceSearchModal}
                 className="flex-1"
+                required
               />
               <div className="flex flex-wrap gap-2">
                 <Button type="button" size="sm" variant="ghost" onClick={onOpenPlaceSearchModal}>
@@ -182,7 +193,7 @@ export const AdminSectionBasic = ({
             <div className="h-[220px]">
               <KakaoMap lat={locationCoords.lat} lng={locationCoords.lng} />
             </div>
-            <div className="pointer-events-none absolute bottom-3 right-3 rounded-[12px] border border-[var(--border-light)] bg-white/80 p-3 text-[12px] font-medium text-[var(--text-primary)] shadow-[var(--shadow-card)]">
+            <div className="pointer-events-none absolute bottom-3 right-3 rounded-[12px] border border-[var(--border-light)] bg-white/80 p-3 text-[14px] font-medium text-[var(--text-primary)] shadow-[var(--shadow-card)]">
               <p className="leading-tight">위도: {formatCoordinate(locationCoords.lat)}</p>
               <p className="leading-tight">경도: {formatCoordinate(locationCoords.lng)}</p>
             </div>
@@ -198,7 +209,7 @@ export const AdminSectionBasic = ({
             value={Number.isFinite(locationCoords.lng) ? locationCoords.lng : ''}
           />
           <div className="md:col-span-2">
-            <p className="text-[12px] text-[var(--text-muted)]">
+            <p className="text-[14px] text-[var(--text-muted)]">
               좌표는 장소 검색 결과로 자동 채워지고 수정되지 않습니다.
             </p>
           </div>

@@ -396,10 +396,9 @@ const mapTheme = (row: InvitationThemeRow | null): InvitationTheme => {
  * @returns 테마 설정 (조회 실패 시 기본값 반환)
  */
 export const loadInvitationTheme = async (): Promise<InvitationTheme> => {
-  const supabase = createSupabaseAdmin();
-  const invitation = await getOrCreateInvitation();
-
   try {
+    const supabase = createSupabaseAdmin();
+    const invitation = await getOrCreateInvitation();
     const { data: themeRow, error } = await supabase
       .from('invitation_theme')
       .select('*')
@@ -420,264 +419,268 @@ export const loadInvitationTheme = async (): Promise<InvitationTheme> => {
  * @returns 청첩장 전체 데이터 (InvitationMock 타입)
  */
 export const loadInvitationView = async (): Promise<InvitationMock> => {
-  const supabase = createSupabaseAdmin();
-  const invitation = await getOrCreateInvitation();
+  try {
+    const supabase = createSupabaseAdmin();
+    const invitation = await getOrCreateInvitation();
 
-  const [
-    loading,
-    profile,
-    parents,
-    event,
-    location,
-    greeting,
-    gallery,
-    accounts,
-    guestbook,
-    rsvp,
-    share,
-    assets,
-    bgm,
-    closing,
-    sectionTitles,
-  ] = (await Promise.all([
-    ensureSingleRow(supabase, 'invitation_loading', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
-    ensureSingleRow(supabase, 'invitation_profile', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
-    ensureSingleRow(supabase, 'invitation_parents', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
-    ensureSingleRow(supabase, 'invitation_event', { invitation_id: invitation.id }, { invitation_id: invitation.id, date_time: new Date().toISOString() }),
-    ensureSingleRow(supabase, 'invitation_location', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
-    ensureSingleRow(supabase, 'invitation_greeting', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
-    ensureSingleRow(supabase, 'invitation_gallery', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
-    ensureSingleRow(supabase, 'invitation_accounts', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
-    ensureSingleRow(supabase, 'invitation_guestbook', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
-    ensureSingleRow(supabase, 'invitation_rsvp', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
-    ensureSingleRow(supabase, 'invitation_share', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
-    ensureSingleRow(supabase, 'invitation_assets', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
-    ensureSingleRow(supabase, 'invitation_bgm', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
-    ensureSingleRow(supabase, 'invitation_closing', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
-    ensureSingleRow(supabase, 'invitation_section_titles', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
-  ])) as [
-    InvitationLoadingRow,
-    InvitationProfileRow,
-    InvitationParentsRow,
-    InvitationEventRow,
-    InvitationLocationRow,
-    InvitationGreetingRow,
-    InvitationGalleryRow,
-    InvitationAccountsRow,
-    InvitationGuestbookRow,
-    InvitationRsvpRow,
-    InvitationShareRow,
-    InvitationAssetsRow,
-    InvitationBgmRow,
-    InvitationClosingRow,
-    InvitationSectionTitlesRow
-  ];
+    const [
+      loading,
+      profile,
+      parents,
+      event,
+      location,
+      greeting,
+      gallery,
+      accounts,
+      guestbook,
+      rsvp,
+      share,
+      assets,
+      bgm,
+      closing,
+      sectionTitles,
+    ] = (await Promise.all([
+      ensureSingleRow(supabase, 'invitation_loading', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
+      ensureSingleRow(supabase, 'invitation_profile', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
+      ensureSingleRow(supabase, 'invitation_parents', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
+      ensureSingleRow(supabase, 'invitation_event', { invitation_id: invitation.id }, { invitation_id: invitation.id, date_time: new Date().toISOString() }),
+      ensureSingleRow(supabase, 'invitation_location', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
+      ensureSingleRow(supabase, 'invitation_greeting', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
+      ensureSingleRow(supabase, 'invitation_gallery', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
+      ensureSingleRow(supabase, 'invitation_accounts', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
+      ensureSingleRow(supabase, 'invitation_guestbook', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
+      ensureSingleRow(supabase, 'invitation_rsvp', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
+      ensureSingleRow(supabase, 'invitation_share', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
+      ensureSingleRow(supabase, 'invitation_assets', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
+      ensureSingleRow(supabase, 'invitation_bgm', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
+      ensureSingleRow(supabase, 'invitation_closing', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
+      ensureSingleRow(supabase, 'invitation_section_titles', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
+    ])) as [
+      InvitationLoadingRow,
+      InvitationProfileRow,
+      InvitationParentsRow,
+      InvitationEventRow,
+      InvitationLocationRow,
+      InvitationGreetingRow,
+      InvitationGalleryRow,
+      InvitationAccountsRow,
+      InvitationGuestbookRow,
+      InvitationRsvpRow,
+      InvitationShareRow,
+      InvitationAssetsRow,
+      InvitationBgmRow,
+      InvitationClosingRow,
+      InvitationSectionTitlesRow
+    ];
 
-  const transportation = (await ensureSingleRow(
-    supabase,
-    'invitation_transportation',
-    { location_id: location.id },
-    { location_id: location.id }
-  )) as InvitationTransportationRow;
+    const transportation = (await ensureSingleRow(
+      supabase,
+      'invitation_transportation',
+      { location_id: location.id },
+      { location_id: location.id }
+    )) as InvitationTransportationRow;
 
-  const galleryId = gallery.id;
-  const accountsId = accounts.id;
-  const guestbookId = guestbook.id;
+    const galleryId = gallery.id;
+    const accountsId = accounts.id;
+    const guestbookId = guestbook.id;
 
-  const { data: galleryImagesRaw } = await supabase
-    .from('invitation_gallery_images')
-    .select('*')
-    .eq('gallery_id', galleryId)
-    .order('sort_order', { ascending: true })
-    .order('created_at', { ascending: true });
+    const { data: galleryImagesRaw } = await supabase
+      .from('invitation_gallery_images')
+      .select('*')
+      .eq('gallery_id', galleryId)
+      .order('sort_order', { ascending: true })
+      .order('created_at', { ascending: true });
 
-  const { data: accountEntriesRaw } = await supabase
-    .from('invitation_account_entries')
-    .select('*')
-    .eq('accounts_id', accountsId)
-    .order('sort_order', { ascending: true })
-    .order('created_at', { ascending: true });
+    const { data: accountEntriesRaw } = await supabase
+      .from('invitation_account_entries')
+      .select('*')
+      .eq('accounts_id', accountsId)
+      .order('sort_order', { ascending: true })
+      .order('created_at', { ascending: true });
 
-  const { data: guestbookEntriesRaw } = await supabase
-    .from('invitation_guestbook_entries')
-    .select('*')
-    .eq('guestbook_id', guestbookId)
-    .order('created_at', { ascending: false });
+    const { data: guestbookEntriesRaw } = await supabase
+      .from('invitation_guestbook_entries')
+      .select('*')
+      .eq('guestbook_id', guestbookId)
+      .order('created_at', { ascending: false });
 
-  const galleryImages = (galleryImagesRaw || []) as InvitationGalleryImageRow[];
-  const accountEntries = (accountEntriesRaw || []) as InvitationAccountEntryRow[];
-  const guestbookEntries = (guestbookEntriesRaw || []) as InvitationGuestbookEntryRow[];
+    const galleryImages = (galleryImagesRaw || []) as InvitationGalleryImageRow[];
+    const accountEntries = (accountEntriesRaw || []) as InvitationAccountEntryRow[];
+    const guestbookEntries = (guestbookEntriesRaw || []) as InvitationGuestbookEntryRow[];
 
-  const theme = await loadInvitationTheme();
+    const theme = await loadInvitationTheme();
 
-  return {
-    meta: {
-      locale: invitation.locale || DEFAULT_LOCALE,
-      timeZone: invitation.time_zone || DEFAULT_TIMEZONE,
-    },
-    theme,
-    storage: {
-      guestbook: { key: `invitation-${invitation.id}-guestbook` },
-      rsvp: { key: `invitation-${invitation.id}-rsvp` },
-    },
-    assets: {
-      heroImage: assets.hero_image || '',
-      loadingImage: assets.loading_image || '',
-      share: {
-        ogImage: assets.share_og_image || '',
-        kakaoImage: assets.share_kakao_image || '',
+    return {
+      meta: {
+        locale: invitation.locale || DEFAULT_LOCALE,
+        timeZone: invitation.time_zone || DEFAULT_TIMEZONE,
       },
-    },
-    content: {
-      loading: {
-        enabled: loading.enabled,
-        message: loading.message,
-        minDuration: loading.min_duration,
-        additionalDuration: loading.additional_duration,
+      theme,
+      storage: {
+        guestbook: { key: `invitation-${invitation.id}-guestbook` },
+        rsvp: { key: `invitation-${invitation.id}-rsvp` },
       },
-      event: {
-        dateTime: event.date_time,
-        venue: event.venue,
-        address: event.address,
-      },
-      greeting: {
-        message: greeting.message_lines || [],
-        poeticNote: greeting.poetic_note || '',
-      },
-      couple: {
-        groom: {
-          firstName: profile.groom_first_name,
-          lastName: profile.groom_last_name,
-          bio: profile.groom_bio || '',
-          profileImage: profile.groom_profile_image || '',
+      assets: {
+        heroImage: assets.hero_image || '',
+        loadingImage: assets.loading_image || '',
+        share: {
+          ogImage: assets.share_og_image || '',
+          kakaoImage: assets.share_kakao_image || '',
         },
-        bride: {
-          firstName: profile.bride_first_name,
-          lastName: profile.bride_last_name,
-          bio: profile.bride_bio || '',
-          profileImage: profile.bride_profile_image || '',
+      },
+      content: {
+        loading: {
+          enabled: loading.enabled,
+          message: loading.message,
+          minDuration: loading.min_duration,
+          additionalDuration: loading.additional_duration,
         },
-        parents: {
+        event: {
+          dateTime: event.date_time,
+          venue: event.venue,
+          address: event.address,
+        },
+        greeting: {
+          message: greeting.message_lines || [],
+          poeticNote: greeting.poetic_note || '',
+        },
+        couple: {
           groom: {
-            father: parents.groom_father || '',
-            mother: parents.groom_mother || '',
+            firstName: profile.groom_first_name,
+            lastName: profile.groom_last_name,
+            bio: profile.groom_bio || '',
+            profileImage: profile.groom_profile_image || '',
           },
           bride: {
-            father: parents.bride_father || '',
-            mother: parents.bride_mother || '',
+            firstName: profile.bride_first_name,
+            lastName: profile.bride_last_name,
+            bio: profile.bride_bio || '',
+            profileImage: profile.bride_profile_image || '',
+          },
+          parents: {
+            groom: {
+              father: parents.groom_father || '',
+              mother: parents.groom_mother || '',
+            },
+            bride: {
+              father: parents.bride_father || '',
+              mother: parents.bride_mother || '',
+            },
           },
         },
-      },
-      location: {
-        placeName: location.place_name,
-        coordinates: {
-          lat: parseNumber(location.latitude),
-          lng: parseNumber(location.longitude),
+        location: {
+          placeName: location.place_name,
+          coordinates: {
+            lat: parseNumber(location.latitude),
+            lng: parseNumber(location.longitude),
+          },
+          transportation: {
+            subway: transportation.subway || [],
+            bus: transportation.bus || [],
+            car: transportation.car || '',
+            parking: transportation.parking || '',
+          },
+          notices: location.notices || [],
         },
-        transportation: {
-          subway: transportation.subway || [],
-          bus: transportation.bus || [],
-          car: transportation.car || '',
-          parking: transportation.parking || '',
-        },
-        notices: location.notices || [],
-      },
-      gallery: {
-        title: gallery.title,
-        description: gallery.description || '',
-        images: galleryImages.map((image) => ({
-          id: image.id,
-          src: image.src,
-          alt: image.alt || '',
-          thumbnail: image.thumbnail || undefined,
-          width: image.width || undefined,
-          height: image.height || undefined,
-        })),
-        autoplay: gallery.autoplay,
-        autoplayDelay: gallery.autoplay_delay ?? undefined,
-      },
-      share: {
-        title: share.title,
-        description: share.description,
-        imageUrl: share.image_url || assets.share_og_image || '',
-        kakaoTemplate: {
-          title: share.kakao_title || share.title,
-          description: share.kakao_description || share.description,
-          imageUrl: share.kakao_image_url || assets.share_kakao_image || share.image_url || '',
-          buttonLabel: share.kakao_button_label || '청첩장 보기',
-        },
-      },
-      rsvp: {
-        enabled: rsvp.enabled,
-        deadline: rsvp.deadline || '',
-        fields: DEFAULT_RSVP_FIELDS,
-        consent: {
-          title: rsvp.consent_title || '',
-          description: rsvp.consent_description || '',
-          retention: rsvp.consent_retention || '',
-          notice: rsvp.consent_notice || '',
-        },
-      },
-      rsvpResponses: [],
-      guestbook: {
-        privacyNotice: guestbook.privacy_notice,
-        retentionText: guestbook.retention_text,
-        mockEntries: guestbookEntries.map((entry) => ({
-          id: entry.id,
-          name: entry.name,
-          message: entry.message,
-          createdAt: entry.created_at,
-          passwordHash: entry.password_hash || undefined,
-        })),
-        displayMode: guestbook.display_mode === 'paginated' ? 'paginated' : 'recent',
-        pageSize: guestbook.page_size,
-        recentNotice: guestbook.recent_notice || '',
-        enablePassword: guestbook.enable_password,
-        enableEdit: guestbook.enable_edit,
-        enableDelete: guestbook.enable_delete,
-      },
-      accounts: {
-        title: accounts.title,
-        description: accounts.description || '',
-        groom: accountEntries
-          .filter((entry) => entry.group_type === 'groom')
-          .map((entry) => ({
-            bankName: entry.bank_name,
-            accountNumber: entry.account_number,
-            holder: entry.holder,
-            label: entry.label || '',
+        gallery: {
+          title: gallery.title,
+          description: gallery.description || '',
+          images: galleryImages.map((image) => ({
+            id: image.id,
+            src: image.src,
+            alt: image.alt || '',
+            thumbnail: image.thumbnail || undefined,
+            width: image.width || undefined,
+            height: image.height || undefined,
           })),
-        bride: accountEntries
-          .filter((entry) => entry.group_type === 'bride')
-          .map((entry) => ({
-            bankName: entry.bank_name,
-            accountNumber: entry.account_number,
-            holder: entry.holder,
-            label: entry.label || '',
+          autoplay: gallery.autoplay,
+          autoplayDelay: gallery.autoplay_delay ?? undefined,
+        },
+        share: {
+          title: share.title,
+          description: share.description,
+          imageUrl: share.image_url || assets.share_og_image || '',
+          kakaoTemplate: {
+            title: share.kakao_title || share.title,
+            description: share.kakao_description || share.description,
+            imageUrl: share.kakao_image_url || assets.share_kakao_image || share.image_url || '',
+            buttonLabel: share.kakao_button_label || '청첩장 보기',
+          },
+        },
+        rsvp: {
+          enabled: rsvp.enabled,
+          deadline: rsvp.deadline || '',
+          fields: DEFAULT_RSVP_FIELDS,
+          consent: {
+            title: rsvp.consent_title || '',
+            description: rsvp.consent_description || '',
+            retention: rsvp.consent_retention || '',
+            notice: rsvp.consent_notice || '',
+          },
+        },
+        rsvpResponses: [],
+        guestbook: {
+          privacyNotice: guestbook.privacy_notice,
+          retentionText: guestbook.retention_text,
+          mockEntries: guestbookEntries.map((entry) => ({
+            id: entry.id,
+            name: entry.name,
+            message: entry.message,
+            createdAt: entry.created_at,
+            passwordHash: entry.password_hash || undefined,
           })),
+          displayMode: guestbook.display_mode === 'paginated' ? 'paginated' : 'recent',
+          pageSize: guestbook.page_size,
+          recentNotice: guestbook.recent_notice || '',
+          enablePassword: guestbook.enable_password,
+          enableEdit: guestbook.enable_edit,
+          enableDelete: guestbook.enable_delete,
+        },
+        accounts: {
+          title: accounts.title,
+          description: accounts.description || '',
+          groom: accountEntries
+            .filter((entry) => entry.group_type === 'groom')
+            .map((entry) => ({
+              bankName: entry.bank_name,
+              accountNumber: entry.account_number,
+              holder: entry.holder,
+              label: entry.label || '',
+            })),
+          bride: accountEntries
+            .filter((entry) => entry.group_type === 'bride')
+            .map((entry) => ({
+              bankName: entry.bank_name,
+              accountNumber: entry.account_number,
+              holder: entry.holder,
+              label: entry.label || '',
+            })),
+        },
+        bgm: {
+          enabled: bgm.enabled,
+          audioUrl: bgm.audio_url || '',
+          autoPlay: bgm.auto_play,
+          loop: bgm.loop,
+        },
+        closing: {
+          title: closing.title,
+          message: closing.message,
+          copyright: closing.copyright || '',
+        },
+        sectionTitles: {
+          greeting: sectionTitles.greeting,
+          couple: sectionTitles.couple,
+          wedding: sectionTitles.wedding,
+          location: sectionTitles.location,
+          guestbook: sectionTitles.guestbook,
+          rsvp: sectionTitles.rsvp,
+          share: sectionTitles.share,
+        },
       },
-      bgm: {
-        enabled: bgm.enabled,
-        audioUrl: bgm.audio_url || '',
-        autoPlay: bgm.auto_play,
-        loop: bgm.loop,
-      },
-      closing: {
-        title: closing.title,
-        message: closing.message,
-        copyright: closing.copyright || '',
-      },
-      sectionTitles: {
-        greeting: sectionTitles.greeting,
-        couple: sectionTitles.couple,
-        wedding: sectionTitles.wedding,
-        location: sectionTitles.location,
-        guestbook: sectionTitles.guestbook,
-        rsvp: sectionTitles.rsvp,
-        share: sectionTitles.share,
-      },
-    },
-  };
+    };
+  } catch {
+    return invitationMock;
+  }
 };
 
 
@@ -694,8 +697,6 @@ export type OgMetadata = {
  * @returns OG 메타데이터 (title, description, imageUrl)
  */
 export const loadOgMetadata = async (): Promise<OgMetadata> => {
-  const supabase = createSupabaseAdmin();
-
   const defaultMeta: OgMetadata = {
     title: '결혼식에 초대합니다',
     description: '소중한 분들을 초대합니다',
@@ -703,6 +704,7 @@ export const loadOgMetadata = async (): Promise<OgMetadata> => {
   };
 
   try {
+    const supabase = createSupabaseAdmin();
     const invitation = await getOrCreateInvitation();
 
     const [shareResult, assetsResult] = await Promise.all([
