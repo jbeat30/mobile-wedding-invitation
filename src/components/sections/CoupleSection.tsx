@@ -14,7 +14,11 @@ type CoupleSectionProps = {
  */
 export const CoupleSection = ({ couple, title }: CoupleSectionProps) => {
   return (
-    <section id="couple" className="bg-[var(--bg-primary)] py-20">
+    <section
+      id="couple"
+      className="bg-[var(--bg-primary)] py-20"
+      style={{ contentVisibility: 'auto', containIntrinsicSize: '900px' }}
+    >
       <div className="mx-auto flex w-full max-w-[640px] flex-col gap-14 px-6">
         {/* 섹션 헤더 */}
         <div className="text-center" data-animate="fade-up">
@@ -27,7 +31,11 @@ export const CoupleSection = ({ couple, title }: CoupleSectionProps) => {
         </div>
 
         {/* 프로필 */}
-        <div className="grid gap-16 sm:grid-cols-1" data-animate="stagger">
+        <div
+          className="grid gap-18 sm:grid-cols-1"
+          data-animate="stagger"
+          data-animate-stagger="0.45"
+        >
           {/* 신랑 */}
           <div className="flex items-start gap-8 text-left" data-animate-item>
             <div className="relative h-[200px] w-[200px] shrink-0 overflow-hidden bg-white shadow-[var(--shadow-card)]">
@@ -36,8 +44,8 @@ export const CoupleSection = ({ couple, title }: CoupleSectionProps) => {
                   src={couple.groom.profileImage}
                   alt={`${couple.groom.lastName}${couple.groom.firstName} 프로필`}
                   fill
-                  className="object-cover scale-120"
-                  unoptimized
+                  sizes="200px"
+                  className="object-cover"
                 />
               )}
             </div>
@@ -62,8 +70,8 @@ export const CoupleSection = ({ couple, title }: CoupleSectionProps) => {
                   src={couple.bride.profileImage}
                   alt={`${couple.bride.lastName}${couple.bride.firstName} 프로필`}
                   fill
-                  className="object-cover scale-120"
-                  unoptimized
+                  sizes="200px"
+                  className="object-cover"
                 />
               )}
             </div>
