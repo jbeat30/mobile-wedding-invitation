@@ -92,14 +92,6 @@ export const AdminSectionGuestbook = ({
               defaultValue={guestbook.privacy_notice}
             />
           </div>
-          <div className="flex flex-col gap-2 md:col-span-2">
-            <Label htmlFor="guestbook_retention_text">보관 기간 안내</Label>
-            <Input
-              id="guestbook_retention_text"
-              name="guestbook_retention_text"
-              defaultValue={guestbook.retention_text}
-            />
-          </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="guestbook_display_mode">표시 방식</Label>
             <AdminSelectField

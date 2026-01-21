@@ -35,24 +35,35 @@ export const GreetingSection = ({ greeting, couple, title }: GreetingSectionProp
         </div>
 
         {/* 인사말 */}
-        <div className="flex flex-col gap-6 text-center" data-animate="fade-up">
+        <div className="flex flex-col gap-6 text-center">
           {/* 인사말 본문 */}
-          <div className="flex flex-col gap-2 text-[16px] leading-[2] text-[var(--text-secondary)]">
+          <div
+            className="flex flex-col gap-2 text-[16px] leading-[2] text-[var(--text-secondary)]"
+            data-animate="stagger"
+            data-animate-y="10"
+            data-animate-duration="1.25"
+            data-animate-stagger="0.12"
+          >
             {greeting.message.map((line, index) =>
               line === '' ? (
-                <div key={index} className="h-4" />
+                <div key={index} className="h-4" data-animate-item />
               ) : (
-                <p key={index}>{line}</p>
+                <p key={index} data-animate-item className="opacity-0 translate-y-2">
+                  {line}
+                </p>
               ),
             )}
-          </div>
 
-          {/* 시적 문구 */}
-          {greeting.poeticNote && (
-            <p className="mt-2 text-[14px] italic text-[var(--text-tertiary)]">
-              &ldquo;{greeting.poeticNote}&rdquo;
-            </p>
-          )}
+            {/* 시적 문구 */}
+            {greeting.poeticNote && (
+              <p
+                data-animate-item
+                className="mt-2 text-[14px] italic text-[var(--text-tertiary)] opacity-0 translate-y-2"
+              >
+                &ldquo;{greeting.poeticNote}&rdquo;
+              </p>
+            )}
+          </div>
         </div>
 
         {/* SVG 하트 라인 드로잉 */}
