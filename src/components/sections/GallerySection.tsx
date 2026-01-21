@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import type { SyntheticEvent } from 'react';
 import Image from 'next/image';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -27,6 +27,7 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null);
   const mainSwiperRef = useRef<SwiperType | null>(null);
   const [portraitMap, setPortraitMap] = useState<Record<string, boolean>>({});
+  const [activeIndex, setActiveIndex] = useState(0);
 
   const handleImageLoad = (id: string) => (event: SyntheticEvent<HTMLImageElement>) => {
     const image = event.currentTarget;
@@ -36,6 +37,24 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
       return { ...prev, [id]: isPortrait };
     });
   };
+
+  /**
+   * 메인 슬라이더 변경 처리
+   * @param swiper Swiper 인스턴스
+   */
+  const handleMainSlideChange = useCallback((swiper: SwiperType) => {
+    setActiveIndex(swiper.realIndex);
+  }, []);
+
+  /**
+   * 모달 닫기 시 메인 슬라이더 동기화
+   */
+  const handleModalClose = useCallback(() => {
+    setModalIndex(null);
+    if (mainSwiperRef.current && mainSwiperRef.current.realIndex !== activeIndex) {
+      mainSwiperRef.current.slideTo(activeIndex);
+    }
+  }, [activeIndex]);
 
   return (
     <>
@@ -72,6 +91,7 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
                 nextEl: '.gallery-next',
                 prevEl: '.gallery-prev',
               }}
+              onSlideChange={handleMainSlideChange}
               onSwiper={(swiper) => {
                 mainSwiperRef.current = swiper;
               }}
@@ -88,7 +108,10 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
                 >
                   <button
                     type="button"
-                    onClick={() => setModalIndex(index)}
+                    onClick={() => {
+                      setActiveIndex(index);
+                      setModalIndex(index);
+                    }}
                     className="relative w-full overflow-hidden group cursor-pointer block aspect-[4/3] bg-[var(--bg-secondary)]"
                     aria-label={`${image.alt} 크게 보기`}
                   >
@@ -196,6 +219,7 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
                       if (mainSwiperRef.current) {
                         mainSwiperRef.current.slideTo(index);
                       }
+                      setActiveIndex(index);
                     }}
                     className="relative h-16 w-16 overflow-hidden rounded-[10px] border-2 transition-all duration-300 swiper-slide-thumb-active:border-[var(--accent)] swiper-slide-thumb-active:scale-105 swiper-slide-thumb-active:shadow-[0_4px_12px_rgba(193,154,123,0.4)] border-white/60 hover:border-[var(--accent-soft)] hover:scale-105"
                     aria-label={`${image.alt} 보기`}
@@ -224,9 +248,10 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
 
       <ImageModal
         isOpen={modalIndex !== null}
-        onClose={() => setModalIndex(null)}
+        onClose={handleModalClose}
         images={gallery.images}
         initialIndex={modalIndex ?? 0}
+        onIndexChange={setActiveIndex}
       />
     </>
   );
