@@ -21,7 +21,7 @@ export const CoupleSection = ({ couple, title }: CoupleSectionProps) => {
     >
       <div className="mx-auto flex w-full max-w-[640px] flex-col gap-14 px-6">
         {/* 섹션 헤더 */}
-        <div className="text-center" data-animate="fade-up">
+        <div className="text-center" data-animate="fade-up" data-animate-start="85">
           <SectionHeader
             kicker="COUPLE"
             title={title}
@@ -34,6 +34,7 @@ export const CoupleSection = ({ couple, title }: CoupleSectionProps) => {
         <div
           className="grid gap-18 sm:grid-cols-1"
           data-animate="stagger"
+          data-animate-start="85"
           data-animate-stagger="0.45"
         >
           {/* 신랑 */}

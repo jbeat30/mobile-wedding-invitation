@@ -64,7 +64,12 @@ export const DDayCountdown = ({ weddingDateTime, couple }: DDayCountdownProps) =
   const daysRemaining = parts?.totalDays ?? 0;
 
   return (
-    <div className="flex flex-col items-center gap-4" suppressHydrationWarning data-animate="fade-up">
+    <div
+      className="flex flex-col items-center gap-4"
+      suppressHydrationWarning
+      data-animate="fade-up"
+      data-animate-start="85"
+    >
       {/* D-Day 뱃지 */}
       <div className="flex flex-col items-center gap-2">
         <span className="font-bold text-[42px] font-light tracking-wide text-[#f87171]">
