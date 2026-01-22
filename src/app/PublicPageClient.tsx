@@ -462,19 +462,19 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
 
   return (
     <div className="public-page bg-[var(--bg-primary)] text-[var(--text-primary)]">
-      <div className="pointer-events-none fixed top-[calc(env(safe-area-inset-top)+12px)] right-0 z-[90] -translate-x-1/2">
-        <div className="pointer-events-auto">
-          <BgmToggle
-            enabled={isBgmActive}
-            disabled={!bgmAvailable}
-            onToggle={() => setBgmEnabled((prev) => !prev)}
-          />
-        </div>
-      </div>
       <main
         ref={contentRef}
         className="relative overflow-x-hidden bg-[var(--bg-primary)] shadow-[0_40px_120px_rgba(44,34,28,0.12)] min-[481px]:mx-auto min-[481px]:max-w-[480px] min-[481px]:rounded-[28px] min-[481px]:border min-[481px]:border-white/65 min-[481px]:shadow-[0_50px_120px_rgba(41,32,26,0.22)]"
       >
+        <div className="pointer-events-none fixed top-[calc(env(safe-area-inset-top)+12px)] right-[12px] z-[90] min-[481px]:absolute min-[481px]:right-[12px]">
+          <div className="pointer-events-auto">
+            <BgmToggle
+              enabled={isBgmActive}
+              disabled={!bgmAvailable}
+              onToggle={() => setBgmEnabled((prev) => !prev)}
+            />
+          </div>
+        </div>
         <div className="relative">
           <CherryBlossomCanvas density={35000} zIndex={40} opacity={0.7} minPetalCount={15} />
           <CherryBlossomCanvas density={50000} zIndex={50} opacity={0.5} minPetalCount={8} />
