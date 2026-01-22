@@ -34,8 +34,11 @@ export const IntroSection = ({ couple, event, heroImage }: IntroSectionProps) =>
           alt="Wedding Main"
           fill
           priority
-          className="object-cover object-center"
+          className="object-cover object-center pointer-events-none select-none"
           sizes="(max-width: 480px) 100vw, 480px"
+          draggable={false}
+          onContextMenu={(e) => e.preventDefault()}
+          onTouchStart={(e) => e.preventDefault()}
         />
         {/* 배경 딤드 오버레이 - 하단부 텍스트 가독성을 위해 아래쪽이 더 어둡게 */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/30 to-black/60" />

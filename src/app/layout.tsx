@@ -1,7 +1,8 @@
 import type { Metadata, Viewport } from 'next';
 import { Geist, Nanum_Myeongjo, Gowun_Batang, Crimson_Pro } from 'next/font/google';
 import './globals.css';
-import { loadInvitationTheme, loadOgMetadata } from '@/app/invitationData';
+import { loadOgMetadata } from '@/app/invitationData';
+import { getCachedTheme } from '@/lib/invitationCache';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -104,7 +105,8 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const theme = await loadInvitationTheme();
+  // React.cache()로 캐시됨 - page.tsx에서 재호출해도 중복 쿼리 없음
+  const theme = await getCachedTheme();
   const themeStyle = {
     '--font-serif': theme.fonts.serif,
     '--font-serif-en': theme.fonts.serifEn,

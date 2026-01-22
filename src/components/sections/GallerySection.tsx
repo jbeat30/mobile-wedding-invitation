@@ -73,7 +73,11 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
           </div>
 
           {/* 메인 슬라이더 */}
-          <div className="relative" data-animate="scale">
+          <div
+            className="relative"
+            data-animate="scale"
+            onContextMenu={(e) => e.preventDefault()}
+          >
             <Swiper
               modules={[Navigation, Thumbs, Autoplay]}
               spaceBetween={0}
@@ -95,7 +99,7 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
               onSwiper={(swiper) => {
                 mainSwiperRef.current = swiper;
               }}
-              className="rounded-[18px] overflow-hidden shadow-[0_8px_32px_rgba(41,32,26,0.12)] border border-white/50"
+              className="rounded-[18px] overflow-hidden shadow-[0_8px_32px_rgba(41,32,26,0.12)] border border-white/50 [&_img]:pointer-events-none [&_img]:select-none"
               style={{ touchAction: 'pan-y' }}
             >
               {gallery.images.map((image, index) => {
@@ -105,6 +109,7 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
                 <SwiperSlide
                   key={image.id}
                   className="!flex !items-center !justify-center bg-transparent"
+                  onContextMenu={(e) => e.preventDefault()}
                 >
                   <button
                     type="button"
@@ -112,6 +117,7 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
                       setActiveIndex(index);
                       setModalIndex(index);
                     }}
+                    onContextMenu={(e) => e.preventDefault()}
                     className="relative w-full overflow-hidden group cursor-pointer block aspect-[4/3] bg-[var(--bg-secondary)]"
                     aria-label={`${image.alt} 크게 보기`}
                   >
@@ -121,9 +127,11 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
                         alt=""
                         fill
                         sizes="(max-width: 520px) 100vw, 520px"
-                        className="object-cover scale-105 blur-md opacity-60"
+                        className="object-cover scale-105 blur-md opacity-60 pointer-events-none select-none"
                         aria-hidden
                         draggable={false}
+                        onContextMenu={(e) => e.preventDefault()}
+                        onTouchStart={(e) => e.preventDefault()}
                       />
                     )}
                     <Image
@@ -131,14 +139,16 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
                       alt={image.alt}
                       fill
                       sizes="(max-width: 520px) 100vw, 520px"
-                      className={`transition-transform duration-700 group-hover:scale-105 ${
+                      className={`transition-transform duration-700 group-hover:scale-105 pointer-events-none select-none ${
                         isPortrait ? 'object-contain' : 'object-cover'
                       }`}
                       onLoad={handleImageLoad(image.id)}
                       priority={index === 0}
                       loading={index === 0 ? 'eager' : 'lazy'}
                       draggable={false}
-                      style={{ width: '100%', height: '100%' }}
+                      onContextMenu={(e) => e.preventDefault()}
+                      onTouchStart={(e) => e.preventDefault()}
+                      style={{ width: '100%', height: '100%', pointerEvents: 'none' }}
                     />
                     {/* 그라데이션 오버레이 */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
@@ -201,7 +211,7 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
           </div>
 
           {/* 썸네일 Swiper (좌측 정렬, 반응형 래핑) */}
-          <div data-animate="fade">
+          <div data-animate="fade" onContextMenu={(e) => e.preventDefault()}>
             <Swiper
               modules={[Thumbs]}
               watchSlidesProgress
@@ -209,10 +219,14 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
               slidesPerView="auto"
               spaceBetween={10}
               freeMode={true}
-              className="gallery-thumb"
+              className="gallery-thumb [&_img]:pointer-events-none [&_img]:select-none"
             >
               {gallery.images.map((image, index) => (
-                <SwiperSlide key={image.id} className="!w-16 pt-2 bg-transparent">
+                <SwiperSlide
+                  key={image.id}
+                  className="!w-16 pt-2 bg-transparent"
+                  onContextMenu={(e) => e.preventDefault()}
+                >
                   <button
                     type="button"
                     onClick={() => {
@@ -221,6 +235,7 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
                       }
                       setActiveIndex(index);
                     }}
+                    onContextMenu={(e) => e.preventDefault()}
                     className="relative h-16 w-16 overflow-hidden rounded-[10px] border-2 transition-all duration-300 swiper-slide-thumb-active:border-[var(--accent)] swiper-slide-thumb-active:scale-105 swiper-slide-thumb-active:shadow-[0_4px_12px_rgba(193,154,123,0.4)] border-white/60 hover:border-[var(--accent-soft)] hover:scale-105"
                     aria-label={`${image.alt} 보기`}
                   >
@@ -229,9 +244,11 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
                       alt={image.alt}
                       fill
                       sizes="64px"
-                      className="object-cover"
+                      className="object-cover pointer-events-none select-none"
                       loading="lazy"
                       draggable={false}
+                      onContextMenu={(e) => e.preventDefault()}
+                      onTouchStart={(e) => e.preventDefault()}
                     />
                   </button>
                 </SwiperSlide>

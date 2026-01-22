@@ -179,8 +179,9 @@ export const LoadingSection = ({
             className="pointer-events-none absolute inset-0 z-[1] h-full w-full animate-[loading-reveal_1.1s_ease-out_both] object-cover object-bottom opacity-85 saturate-[0.95] will-change-[transform,opacity] select-none [-webkit-user-drag:none]"
             sizes="(max-width: 480px) 100vw, 480px"
             priority
-            // 모바일/웹뷰 이미지 드래그 방지용임
             draggable={false}
+            onContextMenu={(e) => e.preventDefault()}
+            onTouchStart={(e) => e.preventDefault()}
           />
           <div className="absolute inset-0 z-[3] bg-[linear-gradient(180deg,rgba(0,0,0,0.35)_0%,rgba(12,8,6,0.7)_70%)]" />
         </div>

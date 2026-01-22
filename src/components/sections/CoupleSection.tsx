@@ -46,7 +46,10 @@ export const CoupleSection = ({ couple, title }: CoupleSectionProps) => {
                   alt={`${couple.groom.lastName}${couple.groom.firstName} 프로필`}
                   fill
                   sizes="200px"
-                  className="object-cover"
+                  className="object-cover pointer-events-none select-none"
+                  draggable={false}
+                  onContextMenu={(e) => e.preventDefault()}
+                  onTouchStart={(e) => e.preventDefault()}
                 />
               )}
             </div>
@@ -72,7 +75,10 @@ export const CoupleSection = ({ couple, title }: CoupleSectionProps) => {
                   alt={`${couple.bride.lastName}${couple.bride.firstName} 프로필`}
                   fill
                   sizes="200px"
-                  className="object-cover"
+                  className="object-cover pointer-events-none select-none"
+                  draggable={false}
+                  onContextMenu={(e) => e.preventDefault()}
+                  onTouchStart={(e) => e.preventDefault()}
                 />
               )}
             </div>
