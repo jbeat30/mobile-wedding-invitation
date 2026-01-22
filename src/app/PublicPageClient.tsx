@@ -7,6 +7,7 @@ import type { InvitationMock } from '@/mock/invitation.mock';
 import { LoadingSection } from '@/components/sections/LoadingSection';
 import { CherryBlossomCanvas } from '@/components/sections/CherryBlossomCanvas';
 import { BgmPlayer } from '@/components/sections/BgmPlayer';
+import { BgmToggle } from '@/components/sections/BgmToggle';
 import { IntroSection } from '@/components/sections/IntroSection';
 import { GreetingSection } from '@/components/sections/GreetingSection';
 import { CoupleSection } from '@/components/sections/CoupleSection';
@@ -356,6 +357,15 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
 
   return (
     <div className="public-page bg-[var(--bg-primary)] text-[var(--text-primary)]">
+      <div
+        className="pointer-events-auto fixed z-[90] flex items-center justify-center"
+        style={{
+          top: 'calc(env(safe-area-inset-top) + 12px)',
+          right: 'calc(env(safe-area-inset-right) + 12px)',
+        }}
+      >
+        <BgmToggle enabled={isBgmActive} disabled={!bgmAvailable} onToggle={() => setBgmEnabled((prev) => !prev)} />
+      </div>
       <main
         ref={contentRef}
         className="relative overflow-x-hidden bg-[var(--bg-primary)] shadow-[0_40px_120px_rgba(44,34,28,0.12)] min-[481px]:mx-auto min-[481px]:max-w-[480px] min-[481px]:rounded-[28px] min-[481px]:border min-[481px]:border-white/65 min-[481px]:shadow-[0_50px_120px_rgba(41,32,26,0.22)]"
@@ -369,9 +379,6 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
               imageSrc={assets.loadingImage}
               isVisible={isLoading}
               isHintVisible={isHintVisible}
-              bgmEnabled={isBgmActive}
-              bgmDisabled={!bgmAvailable}
-              onBgmToggle={() => setBgmEnabled((prev) => !prev)}
             />
           )}
           <div

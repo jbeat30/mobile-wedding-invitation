@@ -30,7 +30,7 @@ export const WeddingInfoSection = ({ event, couple, title }: WeddingInfoSectionP
 
   return (
     <section id="wedding-info" className="bg-[var(--bg-primary)] py-16">
-      <div className="mx-auto flex w-full max-w-[520px] flex-col gap-10 px-6">
+      <div className="mx-auto flex w-full max-w-[520px] flex-col gap-6 px-6">
         {/* 섹션 헤더 */}
         <div className="text-center" data-animate="fade-up" data-animate-start="100">
           <SectionHeader

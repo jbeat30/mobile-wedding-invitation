@@ -4,16 +4,12 @@ import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { gsap } from 'gsap';
 import { ScrollIndicator } from '@/components/ui/ScrollIndicator';
-import { BgmToggle } from '@/components/sections/BgmToggle';
 
 export type LoadingSectionProps = {
   message: string;
   imageSrc: string;
   isVisible: boolean;
   isHintVisible: boolean;
-  bgmEnabled: boolean;
-  bgmDisabled: boolean;
-  onBgmToggle: () => void;
 };
 
 /**
@@ -55,9 +51,6 @@ export const LoadingSection = ({
   imageSrc,
   isVisible,
   isHintVisible,
-  bgmEnabled,
-  bgmDisabled,
-  onBgmToggle,
 }: LoadingSectionProps) => {
   const [showHint, setShowHint] = useState(false);
   const initialHeightRef = useRef<number>(0);
@@ -243,11 +236,6 @@ export const LoadingSection = ({
               strokeDashoffset={550}
             />
           </svg>
-        </div>
-
-        {/* BGM 토글 */}
-        <div className="pointer-events-auto absolute top-8 right-8 z-[70] translate-y-0 opacity-100 transition duration-500 ease-out">
-          <BgmToggle enabled={bgmEnabled} disabled={bgmDisabled} onToggle={onBgmToggle} />
         </div>
 
         {/* 스크롤 인디케이터 */}
