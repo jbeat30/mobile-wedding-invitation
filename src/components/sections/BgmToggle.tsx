@@ -14,11 +14,12 @@ type BgmToggleProps = {
  */
 export const BgmToggle = ({ enabled, playing, onToggle, disabled = false }: BgmToggleProps) => {
   const isAnimating = playing ?? enabled;
+  const isActive = playing ?? enabled;
   return (
     <button
       type="button"
       className={`flex h-7 w-7 items-center justify-center rounded-full border bg-white/85 text-[var(--text-secondary)] shadow-[0_8px_18px_rgba(41,32,26,0.12)] backdrop-blur-sm transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-rose-dark)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-primary)] ${
-        enabled ? 'border-[var(--accent-rose-dark)] text-[var(--accent-rose-dark)]' : 'border-white/70'
+        isActive ? 'border-[var(--accent-rose-dark)] text-[var(--accent-rose-dark)]' : 'border-white/70'
       } ${
         disabled ? 'cursor-not-allowed opacity-50' : 'hover:bg-white'
       }`}
@@ -75,7 +76,7 @@ export const BgmToggle = ({ enabled, playing, onToggle, disabled = false }: BgmT
             width="2"
             height={bar.h}
             rx="1"
-            fill={enabled ? 'var(--accent-strong)' : 'var(--text-muted)'}
+            fill={isActive ? 'var(--accent-strong)' : 'var(--text-muted)'}
           >
             {isAnimating ? (
               <>
