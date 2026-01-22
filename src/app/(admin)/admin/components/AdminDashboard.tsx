@@ -25,7 +25,19 @@ const AdminSectionSkeleton = ({ title }: { title: string }) => {
         <h3 className="text-[16px] font-semibold text-[var(--text-primary)]">{title}</h3>
         <span className="text-[14px] text-[var(--text-muted)]">불러오는 중...</span>
       </div>
-      <div className="mt-4 h-[120px] animate-pulse rounded-[12px] bg-[var(--bg-secondary)]" />
+      <div className="mt-5 space-y-4 animate-pulse">
+        <div className="h-4 w-2/3 rounded-full bg-[var(--bg-secondary)]" />
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="h-10 rounded-[10px] bg-[var(--bg-secondary)]" />
+          <div className="h-10 rounded-[10px] bg-[var(--bg-secondary)]" />
+          <div className="h-10 rounded-[10px] bg-[var(--bg-secondary)]" />
+          <div className="h-10 rounded-[10px] bg-[var(--bg-secondary)]" />
+        </div>
+        <div className="flex items-center justify-between">
+          <div className="h-3 w-32 rounded-full bg-[var(--bg-secondary)]" />
+          <div className="h-9 w-24 rounded-[999px] bg-[var(--bg-secondary)]" />
+        </div>
+      </div>
     </div>
   );
 };

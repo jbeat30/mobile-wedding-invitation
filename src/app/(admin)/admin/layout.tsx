@@ -28,17 +28,21 @@ export default async function AdminLayout({ children }: { children: ReactNode })
       style={{ '--font-sans': 'var(--font-admin-sans)' } as CSSProperties}
     >
       <AdminBodyFontScope fontClassName={notoSans.variable} />
-      <header className="border-b border-[var(--border-light)] bg-white/90 px-6 py-4 backdrop-blur">
-        <div className="mx-auto flex max-w-[1200px] items-center justify-between">
-          <div className="flex flex-col">
-            <Link href="/admin" className="text-[18px] font-semibold">
-              Wedding Admin
-            </Link>
-            <span className="text-[14px] text-[var(--text-tertiary)]">모바일 청첩장 관리 센터</span>
+      {adminPayload ? (
+        <header className="border-b border-[var(--border-light)] bg-white/90 px-6 py-4 backdrop-blur">
+          <div className="mx-auto flex max-w-[1200px] items-center justify-between">
+            <div className="flex flex-col">
+              <Link href="/admin" className="text-[18px] font-semibold">
+                Wedding Admin
+              </Link>
+              <span className="text-[14px] text-[var(--text-tertiary)]">
+                모바일 청첩장 관리 센터
+              </span>
+            </div>
+            <AdminLogoutButton />
           </div>
-          {adminPayload ? <AdminLogoutButton /> : null}
-        </div>
-      </header>
+        </header>
+      ) : null}
 
       <main className="mx-auto w-full max-w-[1200px] px-6 py-8">
         <QueryProvider>{children}</QueryProvider>
