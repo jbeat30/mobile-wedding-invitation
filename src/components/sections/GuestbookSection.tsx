@@ -250,7 +250,7 @@ export const GuestbookSection = ({ guestbook, storageKey, title }: GuestbookSect
     <>
       <section id="guestbook" className="bg-[var(--bg-primary)] py-12">
         <div className="mx-auto flex w-full max-w-[520px] flex-col gap-8 px-6">
-          <div className="text-center" data-animate="fade-up">
+          <div className="text-center" data-animate="fade-up" data-animate-trigger="section">
             <SectionHeader
               kicker="GUESTBOOK"
               title={title}

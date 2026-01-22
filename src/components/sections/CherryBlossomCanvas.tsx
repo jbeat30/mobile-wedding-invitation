@@ -49,7 +49,7 @@ export const CherryBlossomCanvas = ({
       Boolean(connection?.saveData) || (deviceMemory ?? 8) <= 4 || isCoarsePointer || isKakaoWebView; // 저사양 장치 감지
     // 웹뷰에서 과한 DPR/프레임 쓰면 스크롤 끊김 생겨서 제한하는 값
     const maxDpr = isKakaoWebView ? 1.25 : isLowPower ? 1.5 : 2;
-    const frameInterval = isKakaoWebView ? 1000 / 24 : isLowPower ? 1000 / 30 : 1000 / 60;
+    const baseFrameInterval = isKakaoWebView ? 1000 / 24 : isLowPower ? 1000 / 30 : 1000 / 60;
 
     let dpr = Math.min(window.devicePixelRatio || 1, maxDpr);
     let width = 0;
@@ -59,8 +59,10 @@ export const CherryBlossomCanvas = ({
     let lastDpr = dpr;
     let animationFrame = 0;
     let lastFrameTime = 0;
+    let frameInterval = baseFrameInterval;
     let isAnimating = false;
     let isVisible = true;
+    let resizeRaf = 0;
     const petals: Petal[] = [];
 
     // 단일 벚꽃 잎 파티클
@@ -270,6 +272,9 @@ export const CherryBlossomCanvas = ({
     const handleResize = () => {
       dpr = Math.min(window.devicePixelRatio || 1, maxDpr);
       resizeCanvas();
+      const heightRatio = Math.max(1, height / Math.max(window.innerHeight, 1));
+      const clampedRatio = Math.min(2, heightRatio);
+      frameInterval = baseFrameInterval * (1 + (clampedRatio - 1) * 0.6);
     };
 
     const handleVisibilityChange = () => {
@@ -302,7 +307,15 @@ export const CherryBlossomCanvas = ({
       { threshold: 0.05 }
     );
 
-    const resizeObserver = new ResizeObserver(handleResize);
+    const scheduleResize = () => {
+      if (resizeRaf) return;
+      resizeRaf = window.requestAnimationFrame(() => {
+        resizeRaf = 0;
+        handleResize();
+      });
+    };
+
+    const resizeObserver = new ResizeObserver(scheduleResize);
     if (canvas.parentElement) {
       resizeObserver.observe(canvas.parentElement);
     }
@@ -313,14 +326,18 @@ export const CherryBlossomCanvas = ({
     } else {
       startAnimation();
     }
-    window.addEventListener('resize', handleResize);
-    window.visualViewport?.addEventListener('resize', handleResize);
+    window.addEventListener('resize', scheduleResize);
+    window.visualViewport?.addEventListener('resize', scheduleResize);
     document.addEventListener('visibilitychange', handleVisibilityChange);
     visibilityObserver.observe(canvas);
 
     return () => {
-      window.removeEventListener('resize', handleResize);
-      window.visualViewport?.removeEventListener('resize', handleResize);
+      if (resizeRaf) {
+        window.cancelAnimationFrame(resizeRaf);
+        resizeRaf = 0;
+      }
+      window.removeEventListener('resize', scheduleResize);
+      window.visualViewport?.removeEventListener('resize', scheduleResize);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       resizeObserver.disconnect();
       visibilityObserver.disconnect();

@@ -14,7 +14,12 @@ export const ClosingSection = ({ closing, couple }: ClosingSectionProps) => {
     <section id="closing" className="bg-[var(--bg-primary)] py-12 pb-8">
       <div className="mx-auto flex w-full max-w-[520px] flex-col gap-8 px-6">
         {/* 섹션 헤더 */}
-        <div className="text-center" data-animate="fade-up" data-animate-start="98">
+        <div
+          className="text-center"
+          data-animate="fade-up"
+          data-animate-start="80"
+          data-animate-trigger="section"
+        >
           <SectionHeader
             kicker={closing.title || 'THANK YOU'}
             kickerClassName="font-label text-[14px] text-[var(--accent-rose)]"
@@ -22,7 +27,7 @@ export const ClosingSection = ({ closing, couple }: ClosingSectionProps) => {
         </div>
 
         {/* 마무리 인사 */}
-        <div className="text-center" data-animate="fade-up" data-animate-start="98">
+        <div className="text-center" data-animate="fade-up" data-animate-start="80">
           <p className="whitespace-pre-line font-serif text-[14px] leading-[1.9] text-[var(--text-secondary)] break-keep">
             {closing.message}
           </p>
@@ -36,7 +41,7 @@ export const ClosingSection = ({ closing, couple }: ClosingSectionProps) => {
         </div>
 
         {closing.copyright && (
-          <div className="text-center pt-12" data-animate="fade" data-animate-start="85">
+          <div className="text-center pt-12" data-animate="fade" data-animate-start="95">
             <p className="text-[11px] text-[var(--text-tertiary)]">{closing.copyright}</p>
           </div>
         )}

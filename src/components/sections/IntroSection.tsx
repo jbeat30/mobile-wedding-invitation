@@ -45,7 +45,7 @@ export const IntroSection = ({ couple, event, heroImage }: IntroSectionProps) =>
 
         {/* Hero 텍스트 */}
         <div className="absolute inset-0 flex items-end justify-center pb-16">
-          <div className="text-center" data-animate="fade-up" data-animate-start="85">
+          <div className="text-center" data-animate="fade-up" data-animate-start="80">
             <p className="font-label text-[11px] text-[var(--accent-rose-light)] drop-shadow-md font-bold">
               WEDDING INVITATION
             </p>
