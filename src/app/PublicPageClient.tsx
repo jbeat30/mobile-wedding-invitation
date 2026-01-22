@@ -45,11 +45,26 @@ const parseAnimationNumber = (value: string | undefined, fallback: number) => {
  * @returns 스태거 옵션
  */
 const getStaggerOptions = (element: HTMLElement) => ({
-  y: parseAnimationNumber(element.dataset.animateY, 24),
-  duration: parseAnimationNumber(element.dataset.animateDuration, 1.35),
-  stagger: parseAnimationNumber(element.dataset.animateStagger, 0.18),
+  y: parseAnimationNumber(element.dataset.animateY, 18),
+  duration: parseAnimationNumber(element.dataset.animateDuration, 1.1),
+  stagger: parseAnimationNumber(element.dataset.animateStagger, 0.16),
   delay: parseAnimationNumber(element.dataset.animateDelay, 0),
 });
+
+/**
+ * 스크롤 트리거 시작 위치 계산
+ * @param element 대상 요소
+ * @param fallbackPercent 기본 시작 퍼센트
+ * @returns ScrollTrigger start 문자열
+ */
+const getTriggerStart = (element: HTMLElement, fallbackPercent: number) => {
+  const raw = element.dataset.animateStart?.trim();
+  if (!raw) return `top ${fallbackPercent}%`;
+  if (raw.includes(' ')) return raw;
+  const parsed = Number.parseFloat(raw);
+  if (Number.isFinite(parsed)) return `top ${parsed}%`;
+  return raw;
+};
 
 /**
  * 입력 가능한 요소인지 여부 확인
@@ -173,6 +188,14 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
     let lastWidth = window.innerWidth;
     let lastHeight = window.innerHeight;
     let resizeTimer: number;
+    let lastRefreshAt = 0;
+
+    const scheduleRefresh = () => {
+      const now = Date.now();
+      if (now - lastRefreshAt < 400) return;
+      lastRefreshAt = now;
+      ScrollTrigger.refresh();
+    };
 
     const handleSmartResize = () => {
       clearTimeout(resizeTimer);
@@ -182,16 +205,16 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
 
         // 너비 변경 = 실제 리사이즈 (가로↔세로, 창 크기 변경)
         const widthChanged = Math.abs(currentWidth - lastWidth) > 50;
-        // 높이만 변경 = 주소창/네비 바 (무시)
-        const onlyHeightChanged = Math.abs(currentHeight - lastHeight) > 50 && !widthChanged;
+        const heightChanged = Math.abs(currentHeight - lastHeight) > 50;
 
         if (widthChanged) {
           // 실제 리사이즈만 ScrollTrigger refresh
-          ScrollTrigger.refresh();
+          scheduleRefresh();
           lastWidth = currentWidth;
           lastHeight = currentHeight;
-        } else if (onlyHeightChanged) {
-          // 높이만 변경 = 주소창/네비 바 변경 (refresh 안함)
+        } else if (heightChanged) {
+          // 높이만 변경 = 주소창/네비 바 변경 (지연 후 refresh)
+          scheduleRefresh();
           lastHeight = currentHeight;
         }
       }, 150);
@@ -199,10 +222,22 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
 
     window.addEventListener('resize', handleSmartResize);
     window.visualViewport?.addEventListener('resize', handleSmartResize);
+    window.addEventListener('orientationchange', handleSmartResize);
+
+    const handleLoad = () => {
+      scheduleRefresh();
+    };
+
+    window.addEventListener('load', handleLoad);
+    document.fonts?.ready.then(() => {
+      scheduleRefresh();
+    });
 
     return () => {
       window.removeEventListener('resize', handleSmartResize);
       window.visualViewport?.removeEventListener('resize', handleSmartResize);
+      window.removeEventListener('orientationchange', handleSmartResize);
+      window.removeEventListener('load', handleLoad);
       clearTimeout(resizeTimer);
     };
   }, []);
@@ -240,6 +275,7 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
               .slice(0);
             if (!items.length) return;
             const options = getStaggerOptions(element);
+            const start = getTriggerStart(element, 95);
 
             gsap.set(items, { opacity: 0, y: options.y });
             gsap.to(items, {
@@ -252,8 +288,9 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
               scrollTrigger: {
                 // 그룹의 컨테이너 기준으로 스크롤 진입 감지
                 trigger: element,
-                start: 'top 80%',
+                start,
                 toggleActions: 'play none none none',
+                invalidateOnRefresh: true,
               },
             });
             return;
@@ -262,23 +299,25 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
           // 기본 애니메이션 초기 상태 정의
           const initial =
             type === 'scale'
-              ? { opacity: 0, y: 18, scale: 0.98 }
+              ? { opacity: 0, y: 14, scale: 0.985 }
               : type === 'fade'
                 ? { opacity: 0 }
-                : { opacity: 0, y: 24 };
+                : { opacity: 0, y: 18 };
+          const start = getTriggerStart(element, 95);
 
           gsap.set(element, initial);
           gsap.to(element, {
             opacity: 1,
             y: 0,
             scale: 1,
-            duration: 1.5,
+            duration: 1.1,
             ease: 'power3.out',
             scrollTrigger: {
               // 요소 상단이 뷰포트 진입 시점에 트리거
               trigger: element,
-              start: 'top 82%',
+              start,
               toggleActions: 'play none none none',
+              invalidateOnRefresh: true,
             },
           });
         });
