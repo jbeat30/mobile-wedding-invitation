@@ -209,13 +209,13 @@ export const LoadingSection = ({
         >
           <p
             data-loading-text
-            className="translate-y-3 text-[12px] font-bold tracking-[0.6em] text-[var(--accent-soft)] uppercase opacity-0 will-change-[transform,opacity]"
+            className="translate-y-3 text-[11px] font-bold tracking-[0.6em] text-[var(--accent-soft)] uppercase opacity-0 will-change-[transform,opacity]"
           >
             WEDDING INVITATION
           </p>
           <p
             data-loading-text
-            className="mt-3.5 translate-y-3 text-[26px] font-semibold tracking-[0.12em] opacity-0 will-change-[transform,opacity]"
+            className="mt-3.5 translate-y-3 text-[26px] leading-[36px] font-semibold tracking-[0.12em] opacity-0 will-change-[transform,opacity]"
           >
             {message}
           </p>
