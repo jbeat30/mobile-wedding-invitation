@@ -25,7 +25,7 @@ export const GreetingSection = ({ greeting, couple, title }: GreetingSectionProp
     <section id="greeting" className="bg-[var(--bg-primary)] py-16">
       <div className="mx-auto flex w-full max-w-[520px] flex-col gap-12 px-6">
         {/* 섹션 헤더 */}
-        <div className="text-center" data-animate="fade-up" data-animate-start="85">
+        <div className="text-center" data-animate="fade-up" data-animate-start="80">
           <SectionHeader
             kicker="INVITATION"
             title={title}
@@ -40,7 +40,7 @@ export const GreetingSection = ({ greeting, couple, title }: GreetingSectionProp
           <div
             className="flex flex-col gap-2 text-[16px] leading-[2] text-[var(--text-secondary)]"
             data-animate="stagger"
-            data-animate-start="85"
+            data-animate-start="80"
             data-animate-y="10"
             data-animate-duration="1.25"
             data-animate-stagger="0.12"
@@ -68,7 +68,7 @@ export const GreetingSection = ({ greeting, couple, title }: GreetingSectionProp
         </div>
 
         {/* SVG 하트 라인 드로잉 */}
-        <div className="flex justify-center" data-animate="fade" data-animate-start="85">
+        <div className="flex justify-center" data-animate="fade" data-animate-start="80">
           <HeartLineDrawing
             width={240}
             height={60}
@@ -79,7 +79,7 @@ export const GreetingSection = ({ greeting, couple, title }: GreetingSectionProp
         </div>
 
         {/* 부모님 성함 */}
-        <div className="flex gap-16 justify-center text-center" data-animate="fade-up" data-animate-start="85">
+        <div className="flex gap-16 justify-center text-center" data-animate="fade-up" data-animate-start="80">
           {groomParentsLines.length ? (
             <div className="flex flex-col justify-between gap-1.5">
               <div className="flex flex-col gap-1 text-[14px] text-[var(--text-muted)]">

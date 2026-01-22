@@ -90,6 +90,18 @@ const getTriggerStart = (element: HTMLElement, fallbackPercent: number) => {
 };
 
 /**
+ * 스크롤 트리거 기준 요소 선택
+ * @param element 애니메이션 대상 요소
+ * @returns 트리거 기준 요소
+ */
+const resolveTriggerElement = (element: HTMLElement) => {
+  const triggerType = element.dataset.animateTrigger?.trim();
+  if (!triggerType || triggerType === 'self') return element;
+  if (triggerType === 'section') return element.closest('section') ?? element;
+  return element.closest(triggerType) ?? element;
+};
+
+/**
  * 입력 가능한 요소인지 여부 확인
  * @param target 이벤트 타겟
  * @returns 입력 가능 여부
@@ -401,7 +413,8 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
                 .slice(0);
               if (!items.length) return;
               const options = getStaggerOptions(element);
-              const start = getTriggerStart(element, 95);
+              const start = getTriggerStart(element, 80);
+              const trigger = resolveTriggerElement(element);
 
               gsap.set(items, { opacity: 0, y: options.y });
               gsap.to(items, {
@@ -413,7 +426,7 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
                 delay: options.delay,
                 scrollTrigger: {
                   // 그룹의 컨테이너 기준으로 스크롤 진입 감지
-                  trigger: element,
+                  trigger,
                   start,
                   toggleActions: 'play none none none',
                   invalidateOnRefresh: true,
@@ -429,7 +442,8 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
                 : type === 'fade'
                   ? { opacity: 0 }
                   : { opacity: 0, y: 18 };
-            const start = getTriggerStart(element, 95);
+            const start = getTriggerStart(element, 80);
+            const trigger = resolveTriggerElement(element);
 
             gsap.set(element, initial);
             gsap.to(element, {
@@ -440,7 +454,7 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
               ease: 'power3.out',
               scrollTrigger: {
                 // 요소 상단이 뷰포트 진입 시점에 트리거
-                trigger: element,
+                trigger,
                 start,
                 toggleActions: 'play none none none',
                 invalidateOnRefresh: true,
