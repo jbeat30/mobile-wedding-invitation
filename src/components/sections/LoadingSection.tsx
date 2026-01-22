@@ -168,7 +168,6 @@ export const LoadingSection = ({
         height: initialHeightRef.current ? `${initialHeightRef.current}px` : '100vh',
         minHeight: initialHeightRef.current ? `${initialHeightRef.current}px` : '100vh',
         maxHeight: initialHeightRef.current ? `${initialHeightRef.current}px` : '100vh',
-        background: 'linear-gradient(135deg, #f7f2ec 0%, #efe3d7 100%)',
       }}
     >
       <div className="relative flex h-full w-full items-center justify-center">
@@ -183,8 +182,7 @@ export const LoadingSection = ({
             // 모바일/웹뷰 이미지 드래그 방지용임
             draggable={false}
           />
-          <div className="absolute inset-0 z-[3] bg-[linear-gradient(180deg,rgba(0,0,0,0.25)_0%,rgba(20,14,10,0.55)_70%)]" />
-          <div className="absolute inset-0 z-[4] bg-[radial-gradient(60%_40%_at_50%_30%,rgba(255,255,255,0.4),transparent_70%)] opacity-70 mix-blend-screen" />
+          <div className="absolute inset-0 z-[3] bg-[linear-gradient(180deg,rgba(0,0,0,0.35)_0%,rgba(12,8,6,0.7)_70%)]" />
         </div>
 
         <div
