@@ -84,6 +84,8 @@ const isEditableElement = (target: EventTarget | null) => {
  * @returns attach/detach 함수
  */
 const createSecurityGuards = () => {
+  let longPressTimer: number | null = null;
+
   const preventDefault = (event: Event) => {
     event.preventDefault();
   };
@@ -121,6 +123,41 @@ const createSecurityGuards = () => {
     }
   };
 
+  /**
+   * 모바일 롱프레스 다운로드 차단 (iOS/Android)
+   */
+  const preventLongPress = (event: Event) => {
+    const target = event.target as HTMLElement | null;
+    if (target?.tagName === 'IMG' || target?.closest('img')) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  };
+
+  const handleTouchStart = (event: TouchEvent) => {
+    const target = event.target as HTMLElement | null;
+    if (target?.tagName === 'IMG' || target?.closest('img')) {
+      longPressTimer = window.setTimeout(() => {
+        event.preventDefault();
+        event.stopPropagation();
+      }, 100);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (longPressTimer !== null) {
+      clearTimeout(longPressTimer);
+      longPressTimer = null;
+    }
+  };
+
+  const handleTouchMove = () => {
+    if (longPressTimer !== null) {
+      clearTimeout(longPressTimer);
+      longPressTimer = null;
+    }
+  };
+
   const attach = () => {
     document.addEventListener('contextmenu', preventDefault);
     document.addEventListener('dragstart', preventImageDrag);
@@ -129,9 +166,21 @@ const createSecurityGuards = () => {
     document.addEventListener('cut', preventClipboard);
     document.addEventListener('paste', preventClipboard);
     document.addEventListener('keydown', preventKeyShortcuts);
+
+    // 모바일 롱프레스 차단
+    document.addEventListener('touchstart', handleTouchStart, { passive: false });
+    document.addEventListener('touchend', handleTouchEnd, { passive: false });
+    document.addEventListener('touchmove', handleTouchMove, { passive: false });
+    document.addEventListener('touchcancel', handleTouchEnd, { passive: false });
+    document.addEventListener('gesturestart', preventLongPress, { passive: false });
   };
 
   const detach = () => {
+    if (longPressTimer !== null) {
+      clearTimeout(longPressTimer);
+      longPressTimer = null;
+    }
+
     document.removeEventListener('contextmenu', preventDefault);
     document.removeEventListener('dragstart', preventImageDrag);
     document.removeEventListener('selectstart', preventSelection);
@@ -139,6 +188,13 @@ const createSecurityGuards = () => {
     document.removeEventListener('cut', preventClipboard);
     document.removeEventListener('paste', preventClipboard);
     document.removeEventListener('keydown', preventKeyShortcuts);
+
+    // 모바일 롱프레스 차단 해제
+    document.removeEventListener('touchstart', handleTouchStart);
+    document.removeEventListener('touchend', handleTouchEnd);
+    document.removeEventListener('touchmove', handleTouchMove);
+    document.removeEventListener('touchcancel', handleTouchEnd);
+    document.removeEventListener('gesturestart', preventLongPress);
   };
 
   return { attach, detach };
@@ -356,7 +412,7 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
   }, [showContent]);
 
   return (
-    <div className="public-page bg-[var(--bg-primary)] text-[var(--text-primary)] [&_img]:[-webkit-touch-callout:none]">
+    <div className="public-page bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <div className="pointer-events-none fixed top-[calc(env(safe-area-inset-top)+12px)] right-0 z-[90] -translate-x-1/2">
         <div className="pointer-events-auto">
           <BgmToggle

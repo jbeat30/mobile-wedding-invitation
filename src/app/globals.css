@@ -104,6 +104,9 @@ body::before {
         -moz-osx-font-smoothing: grayscale;
         touch-action: pan-y pan-x;
         -webkit-text-size-adjust: 100%;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
     }
 
     img,
@@ -182,6 +185,49 @@ body::before {
 
 .public-page img {
     -webkit-user-drag: none;
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    user-select: none !important;
+    pointer-events: auto;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Next.js Image 컴포넌트 내부 img 태그도 모두 차단 */
+.public-page img[src],
+.public-page img[srcset] {
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    user-select: none !important;
+    -webkit-user-drag: none !important;
+    user-drag: none !important;
+    pointer-events: none !important;
+}
+
+/* 이미지를 감싸는 부모 요소에서 pointer-events 복원 */
+.public-page button img,
+.public-page a img {
+    pointer-events: none !important;
+}
+
+/* Swiper 컨테이너 내부 모든 이미지 완전 차단 */
+.public-page .swiper img,
+.public-page .swiper-slide img,
+.public-page [class*='swiper'] img {
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    user-select: none !important;
+    -webkit-user-drag: none !important;
+    pointer-events: none !important;
+}
+
+/* 모달 내부 모든 이미지 차단 */
+.public-page [role='dialog'] img,
+.public-page [class*='modal'] img {
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    user-select: none !important;
+    -webkit-user-drag: none !important;
+    pointer-events: none !important;
 }
 
 .public-page :is(input, textarea, select, [contenteditable='true']) {

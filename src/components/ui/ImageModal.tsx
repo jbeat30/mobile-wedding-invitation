@@ -109,6 +109,7 @@ export const ImageModal = ({
       <div
         className="relative flex max-h-[80dvh] max-w-[90vw] flex-col gap-3"
         onClick={(e) => e.stopPropagation()}
+        onContextMenu={(e) => e.preventDefault()}
         style={{ touchAction: 'pan-y', maxHeight: '600px' }}
       >
         <div className="pointer-events-none flex items-center justify-center" aria-hidden="true">
@@ -144,20 +145,30 @@ export const ImageModal = ({
           spaceBetween={0}
           initialSlide={initialIndex}
           onSlideChange={(swiper) => handleSlideChange(swiper.realIndex)}
-          className="h-[80dvh] max-h-[600px] w-[90vw] max-w-[520px]"
+          className="h-[80dvh] max-h-[600px] w-[90vw] max-w-[520px] [&_img]:pointer-events-none [&_img]:select-none"
         >
           {images.map((image, index) => (
-            <SwiperSlide key={image.id} className="!flex !items-center !justify-center">
-              <div className="relative h-full w-full">
+            <SwiperSlide
+              key={image.id}
+              className="!flex !items-center !justify-center"
+              onContextMenu={(e) => e.preventDefault()}
+            >
+              <div
+                className="relative h-full w-full"
+                onContextMenu={(e) => e.preventDefault()}
+              >
                 <Image
                   src={image.src}
                   alt={image.alt}
                   fill
                   sizes="(max-width: 520px) 100vw, 520px"
-                  className="object-contain select-none"
+                  className="object-contain select-none pointer-events-none"
                   priority={index === initialIndex}
                   loading={index === initialIndex ? 'eager' : 'lazy'}
                   draggable={false}
+                  onContextMenu={(e) => e.preventDefault()}
+                  onTouchStart={(e) => e.preventDefault()}
+                  style={{ pointerEvents: 'none' }}
                 />
               </div>
             </SwiperSlide>
