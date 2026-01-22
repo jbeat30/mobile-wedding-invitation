@@ -2,6 +2,7 @@
 
 type BgmToggleProps = {
   enabled: boolean;
+  playing?: boolean;
   onToggle: () => void;
   disabled?: boolean;
 };
@@ -11,7 +12,8 @@ type BgmToggleProps = {
  * @param props BgmToggleProps
  * @returns JSX.Element
  */
-export const BgmToggle = ({ enabled, onToggle, disabled = false }: BgmToggleProps) => {
+export const BgmToggle = ({ enabled, playing, onToggle, disabled = false }: BgmToggleProps) => {
+  const isAnimating = playing ?? enabled;
   return (
     <button
       type="button"
@@ -75,7 +77,7 @@ export const BgmToggle = ({ enabled, onToggle, disabled = false }: BgmToggleProp
             rx="1"
             fill={enabled ? 'var(--accent-strong)' : 'var(--text-muted)'}
           >
-            {enabled ? (
+            {isAnimating ? (
               <>
                 <animate
                   attributeName="height"
