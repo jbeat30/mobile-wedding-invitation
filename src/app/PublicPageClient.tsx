@@ -356,7 +356,7 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
   }, [showContent]);
 
   return (
-    <div className="public-page bg-[var(--bg-primary)] text-[var(--text-primary)]">
+    <div className="public-page bg-[var(--bg-primary)] text-[var(--text-primary)] [&_img]:[-webkit-touch-callout:none]">
       <div className="pointer-events-none fixed top-[calc(env(safe-area-inset-top)+12px)] right-0 z-[90] -translate-x-1/2">
         <div className="pointer-events-auto">
           <BgmToggle
