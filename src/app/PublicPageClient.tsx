@@ -357,14 +357,14 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
 
   return (
     <div className="public-page bg-[var(--bg-primary)] text-[var(--text-primary)]">
-      <div
-        className="pointer-events-auto fixed z-[90] flex items-center justify-center"
-        style={{
-          top: 'calc(env(safe-area-inset-top) + 12px)',
-          right: 'calc(env(safe-area-inset-right) + 12px)',
-        }}
-      >
-        <BgmToggle enabled={isBgmActive} disabled={!bgmAvailable} onToggle={() => setBgmEnabled((prev) => !prev)} />
+      <div className="pointer-events-none fixed top-[calc(env(safe-area-inset-top)+12px)] right-0 z-[90] -translate-x-1/2">
+        <div className="pointer-events-auto">
+          <BgmToggle
+            enabled={isBgmActive}
+            disabled={!bgmAvailable}
+            onToggle={() => setBgmEnabled((prev) => !prev)}
+          />
+        </div>
       </div>
       <main
         ref={contentRef}
@@ -381,64 +381,56 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
               isHintVisible={isHintVisible}
             />
           )}
-          <div
-            aria-hidden={!showContent}
-            style={{
-              visibility: showContent ? 'visible' : 'hidden',
-              pointerEvents: showContent ? 'auto' : 'none',
-            }}
-          >
-            <GreetingSection
-              greeting={content.greeting}
-              couple={content.couple}
-              title={sectionTitles.greeting}
-            />
-            <IntroSection
-              couple={content.couple}
+          {showContent ? (
+            <div>
+              <GreetingSection
+                greeting={content.greeting}
+                couple={content.couple}
+                title={sectionTitles.greeting}
+              />
+              <IntroSection
+                couple={content.couple}
+                event={content.event}
+                heroImage={assets.heroImage}
+              />
+            </div>
+          ) : null}
+        </div>
+        {showContent ? (
+          <div>
+            <CoupleSection couple={content.couple} title={sectionTitles.couple} />
+            <WeddingInfoSection
               event={content.event}
-              heroImage={assets.heroImage}
+              couple={content.couple}
+              title={sectionTitles.wedding}
             />
+            <LocationSection
+              location={content.location}
+              event={content.event}
+              title={sectionTitles.location}
+            />
+            <GallerySection gallery={content.gallery} />
+            <AccountsSection accounts={content.accounts} />
+            <GuestbookSection
+              guestbook={content.guestbook}
+              storageKey={storage.guestbook.key}
+              title={sectionTitles.guestbook}
+            />
+            <RSVPSection
+              rsvp={content.rsvp}
+              storageKey={storage.rsvp.key}
+              title={sectionTitles.rsvp}
+            />
+            <ShareSection share={content.share} title={sectionTitles.share} />
+            <ClosingSection closing={content.closing} couple={content.couple} />
           </div>
-        </div>
-        <div
-          aria-hidden={!showContent}
-          style={{
-            visibility: showContent ? 'visible' : 'hidden',
-            pointerEvents: showContent ? 'auto' : 'none',
-          }}
-        >
-          <CoupleSection couple={content.couple} title={sectionTitles.couple} />
-          <WeddingInfoSection
-            event={content.event}
-            couple={content.couple}
-            title={sectionTitles.wedding}
-          />
-          <LocationSection
-            location={content.location}
-            event={content.event}
-            title={sectionTitles.location}
-          />
-          <GallerySection gallery={content.gallery} />
-          <AccountsSection accounts={content.accounts} />
-          <GuestbookSection
-            guestbook={content.guestbook}
-            storageKey={storage.guestbook.key}
-            title={sectionTitles.guestbook}
-          />
-          <RSVPSection
-            rsvp={content.rsvp}
-            storageKey={storage.rsvp.key}
-            title={sectionTitles.rsvp}
-          />
-          <ShareSection share={content.share} title={sectionTitles.share} />
-          <ClosingSection closing={content.closing} couple={content.couple} />
-        </div>
+        ) : null}
+        <BgmPlayer
+          audioUrl={content.bgm.audioUrl || ''}
+          enabled={isBgmActive}
+          loop={content.bgm.loop}
+        />
       </main>
-      <BgmPlayer
-        audioUrl={content.bgm.audioUrl || ''}
-        enabled={isBgmActive}
-        loop={content.bgm.loop}
-      />
     </div>
   );
 };
