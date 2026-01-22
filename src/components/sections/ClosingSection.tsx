@@ -35,9 +35,8 @@ export const ClosingSection = ({ closing, couple }: ClosingSectionProps) => {
           </p>
         </div>
 
-        {/* 저작권 - 최하단이라 애니메이션 트리거 안됨, 항상 표시 */}
         {closing.copyright && (
-          <div className="text-center pt-12">
+          <div className="text-center pt-12" data-animate="fade" data-animate-start="85">
             <p className="text-[11px] text-[var(--text-tertiary)]">{closing.copyright}</p>
           </div>
         )}

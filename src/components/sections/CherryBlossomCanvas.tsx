@@ -13,6 +13,7 @@ type CherryBlossomCanvasProps = {
   opacity?: number; // 전체 투명도 (기본: 0.8)
   zIndex?: number; // z-index 값 (기본: 20)
   minPetalCount?: number; // 최소 꽃잎 개수 (기본: 22)
+  spawnOffset?: number; // 신규 꽃잎 생성 시작 위치 (기본: 0)
 };
 
 export const CherryBlossomCanvas = ({
@@ -20,8 +21,14 @@ export const CherryBlossomCanvas = ({
   opacity = 0.8,
   zIndex = 20,
   minPetalCount = DEFAULT_MIN_PETAL_COUNT,
+  spawnOffset = 0,
 }: CherryBlossomCanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const spawnOffsetRef = useRef(0);
+
+  useEffect(() => {
+    spawnOffsetRef.current = Math.max(0, spawnOffset);
+  }, [spawnOffset]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -139,22 +146,53 @@ export const CherryBlossomCanvas = ({
       }
     }
 
-    const init = () => {
-      petals.length = 0;
+    const getTargetCount = () => {
       // 밀도를 낮춰 잎 사이 간격이 넓게 보임
       // 카톡 웹뷰/저사양이면 개체 수 줄여서 렌더링 부하 낮추는 용도임
       const densityScale = isKakaoWebView ? 2.1 : isLowPower ? 1.7 : 1;
       const adjustedMinCount = isLowPower
         ? Math.max(6, Math.floor(minPetalCount * 0.5))
         : minPetalCount;
-      const count = Math.max(
-        adjustedMinCount,
-        Math.floor((width * height) / (density * densityScale))
+      const areaCount = Math.floor((width * height) / (density * densityScale));
+      const baseAreaCount = Math.floor(
+        (width * Math.max(window.innerHeight, 1)) / (density * densityScale) * 0.75
       );
-      const maxCount = isKakaoWebView ? 60 : isLowPower ? 80 : 160;
-      const finalCount = Math.min(count, maxCount);
-      for (let i = 0; i < finalCount; i += 1) {
-        petals.push(new Petal(true));
+      const extraCount = Math.max(0, areaCount - baseAreaCount);
+      const softenedCount = baseAreaCount + Math.floor(extraCount * 0.45);
+      const count = Math.max(adjustedMinCount, softenedCount);
+      const baseMaxCount = isKakaoWebView ? 60 : isLowPower ? 80 : 160;
+      const heightScale = Math.min(2, Math.max(1, height / Math.max(window.innerHeight, 1)));
+      const softenedScale = 1 + (heightScale - 1) * 0.5;
+      const maxCount = Math.round(baseMaxCount * softenedScale);
+      return Math.min(count, maxCount);
+    };
+
+    const getSpawnRange = (initialSpawn: boolean) => {
+      const offset = spawnOffsetRef.current;
+      if (initialSpawn) {
+        const maxY = Math.min(height * 0.7, offset > 0 ? offset : height * 0.7);
+        return { minY: 0, maxY };
+      }
+      const minY = Math.max(lastHeight, offset);
+      return { minY, maxY: height };
+    };
+
+    const syncPetalCount = () => {
+      const targetCount = getTargetCount();
+      if (petals.length === targetCount) return;
+      if (petals.length > targetCount) {
+        petals.length = targetCount;
+        return;
+      }
+      const nextCount = targetCount - petals.length;
+      const initialSpawn = petals.length === 0;
+      const range = getSpawnRange(initialSpawn);
+      for (let i = 0; i < nextCount; i += 1) {
+        const petal = new Petal(true);
+        if (range.maxY > range.minY) {
+          petal.y = Math.random() * (range.maxY - range.minY) + range.minY;
+        }
+        petals.push(petal);
       }
     };
 
@@ -220,11 +258,7 @@ export const CherryBlossomCanvas = ({
       canvas.style.height = `${height}px`;
       context.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      // 초기 로딩 시에만 새로운 꽃잎 생성
-      if (petals.length === 0) {
-        // 초기 로딩 시에만 새로운 꽃잎 생성
-        init();
-      }
+      syncPetalCount();
 
       lastWidth = width;
       lastHeight = height;
