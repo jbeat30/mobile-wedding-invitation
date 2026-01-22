@@ -11,10 +11,10 @@ type ClosingSectionProps = {
  */
 export const ClosingSection = ({ closing, couple }: ClosingSectionProps) => {
   return (
-    <section id="closing" className="bg-[var(--bg-primary)] py-16 pb-8">
+    <section id="closing" className="bg-[var(--bg-primary)] py-12 pb-8">
       <div className="mx-auto flex w-full max-w-[520px] flex-col gap-8 px-6">
         {/* 섹션 헤더 */}
-        <div className="text-center" data-animate="fade-up">
+        <div className="text-center" data-animate="fade-up" data-animate-start="98">
           <SectionHeader
             kicker={closing.title || 'THANK YOU'}
             kickerClassName="font-label text-[14px] text-[var(--accent-rose)]"
@@ -22,7 +22,7 @@ export const ClosingSection = ({ closing, couple }: ClosingSectionProps) => {
         </div>
 
         {/* 마무리 인사 */}
-        <div className="text-center" data-animate="fade-up">
+        <div className="text-center" data-animate="fade-up" data-animate-start="98">
           <p className="whitespace-pre-line font-serif text-[14px] leading-[1.9] text-[var(--text-secondary)] break-keep">
             {closing.message}
           </p>

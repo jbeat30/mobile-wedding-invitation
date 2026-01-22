@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import type { InvitationMock } from '@/mock/invitation.mock';
 import { LoadingSection } from '@/components/sections/LoadingSection';
@@ -242,6 +242,7 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
     content.bgm.autoPlay
   );
   const isBgmActive = bgmAvailable && bgmEnabled;
+  const [isBgmPlaying, setIsBgmPlaying] = useState(false);
 
   useEffect(() => {
     const isLocalhost =
@@ -470,6 +471,7 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
           <div className="pointer-events-auto">
             <BgmToggle
               enabled={isBgmActive}
+              playing={isBgmPlaying}
               disabled={!bgmAvailable}
               onToggle={() => setBgmEnabled((prev) => !prev)}
             />
@@ -534,6 +536,7 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
           audioUrl={content.bgm.audioUrl || ''}
           enabled={isBgmActive}
           loop={content.bgm.loop}
+          onPlaybackChange={setIsBgmPlaying}
         />
       </main>
     </div>
