@@ -28,7 +28,7 @@ export const IntroSection = ({ couple, event, heroImage }: IntroSectionProps) =>
   return (
     <section id="intro" className="relative bg-[var(--bg-primary)]">
       {/* Hero 영역 */}
-      <div className="relative h-[60vh] min-h-[480px] max-h-[640px] overflow-hidden">
+      <div className="relative h-[clamp(480px,60vh,640px)] overflow-hidden supports-[height:100svh]:h-[clamp(480px,60svh,640px)]">
         <Image
           src={heroImage}
           alt="Wedding Main"

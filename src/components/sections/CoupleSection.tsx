@@ -16,7 +16,7 @@ export const CoupleSection = ({ couple, title }: CoupleSectionProps) => {
   return (
     <section
       id="couple"
-      className="bg-[var(--bg-primary)] py-20"
+      className="bg-[var(--bg-primary)] py-16"
       style={{ contentVisibility: 'auto', containIntrinsicSize: '900px' }}
     >
       <div className="mx-auto flex w-full max-w-[640px] flex-col gap-14 px-6">

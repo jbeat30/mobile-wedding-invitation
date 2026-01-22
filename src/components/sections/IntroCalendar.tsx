@@ -35,13 +35,12 @@ export const IntroCalendar = ({
 
   return (
     <div className="w-full px-5" data-animate="fade-up">
-      <div className="mb-4"></div>
       <div className="w-full">
         {/* 상단 구분선 */}
-        <div className="my-8 h-[1px] w-full shrink-0 bg-black opacity-10"></div>
+        <div className="my-6 h-[1px] w-full shrink-0 bg-black opacity-10"></div>
 
         {/* 달력 그리드 */}
-        <div className="grid grid-cols-7 gap-y-6 text-center font-normal">
+        <div className="grid grid-cols-7 gap-y-4 text-center font-bold font-serif">
           {/* 요일 헤더 */}
           {WEEKDAY_LABELS.map((label, index) => (
             <div
@@ -90,7 +89,7 @@ export const IntroCalendar = ({
               return (
                 <div
                   key={key}
-                  className={`px-2 py-1 font-extralight ${textColor}`}
+                  className={`px-1 py-1 font-extralight ${textColor}`}
                 >
                   {day}
                 </div>
@@ -100,7 +99,7 @@ export const IntroCalendar = ({
         </div>
 
         {/* 하단 구분선 */}
-        <div className="my-8 h-[1px] w-full shrink-0 bg-black opacity-10"></div>
+        <div className="my-6 h-[1px] w-full shrink-0 bg-black opacity-10"></div>
       </div>
     </div>
   );

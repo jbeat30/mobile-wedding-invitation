@@ -199,11 +199,11 @@ body::before {
 @keyframes loading-reveal {
     0% {
         opacity: 0;
-        transform: scale(1.05);
+        transform: scale(1.35);
     }
     100% {
         opacity: 1;
-        transform: scale(1);
+        transform: scale(1.05);
     }
 }
 

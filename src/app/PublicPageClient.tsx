@@ -7,6 +7,7 @@ import type { InvitationMock } from '@/mock/invitation.mock';
 import { LoadingSection } from '@/components/sections/LoadingSection';
 import { CherryBlossomCanvas } from '@/components/sections/CherryBlossomCanvas';
 import { BgmPlayer } from '@/components/sections/BgmPlayer';
+import { BgmToggle } from '@/components/sections/BgmToggle';
 import { IntroSection } from '@/components/sections/IntroSection';
 import { GreetingSection } from '@/components/sections/GreetingSection';
 import { CoupleSection } from '@/components/sections/CoupleSection';
@@ -355,7 +356,16 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
   }, [showContent]);
 
   return (
-    <div className="public-page bg-[var(--bg-primary)] text-[var(--text-primary)]">
+    <div className="public-page bg-[var(--bg-primary)] text-[var(--text-primary)] [&_img]:[-webkit-touch-callout:none]">
+      <div className="pointer-events-none fixed top-[calc(env(safe-area-inset-top)+12px)] right-0 z-[90] -translate-x-1/2">
+        <div className="pointer-events-auto">
+          <BgmToggle
+            enabled={isBgmActive}
+            disabled={!bgmAvailable}
+            onToggle={() => setBgmEnabled((prev) => !prev)}
+          />
+        </div>
+      </div>
       <main
         ref={contentRef}
         className="relative overflow-x-hidden bg-[var(--bg-primary)] shadow-[0_40px_120px_rgba(44,34,28,0.12)] min-[481px]:mx-auto min-[481px]:max-w-[480px] min-[481px]:rounded-[28px] min-[481px]:border min-[481px]:border-white/65 min-[481px]:shadow-[0_50px_120px_rgba(41,32,26,0.22)]"
@@ -369,69 +379,58 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
               imageSrc={assets.loadingImage}
               isVisible={isLoading}
               isHintVisible={isHintVisible}
-              bgmEnabled={isBgmActive}
-              bgmDisabled={!bgmAvailable}
-              onBgmToggle={() => setBgmEnabled((prev) => !prev)}
             />
           )}
-          <div
-            aria-hidden={!showContent}
-            style={{
-              visibility: showContent ? 'visible' : 'hidden',
-              pointerEvents: showContent ? 'auto' : 'none',
-            }}
-          >
-            <GreetingSection
-              greeting={content.greeting}
-              couple={content.couple}
-              title={sectionTitles.greeting}
-            />
-            <IntroSection
-              couple={content.couple}
+          {showContent ? (
+            <div>
+              <GreetingSection
+                greeting={content.greeting}
+                couple={content.couple}
+                title={sectionTitles.greeting}
+              />
+              <IntroSection
+                couple={content.couple}
+                event={content.event}
+                heroImage={assets.heroImage}
+              />
+            </div>
+          ) : null}
+        </div>
+        {showContent ? (
+          <div>
+            <CoupleSection couple={content.couple} title={sectionTitles.couple} />
+            <WeddingInfoSection
               event={content.event}
-              heroImage={assets.heroImage}
+              couple={content.couple}
+              title={sectionTitles.wedding}
             />
+            <LocationSection
+              location={content.location}
+              event={content.event}
+              title={sectionTitles.location}
+            />
+            <GallerySection gallery={content.gallery} />
+            <AccountsSection accounts={content.accounts} />
+            <GuestbookSection
+              guestbook={content.guestbook}
+              storageKey={storage.guestbook.key}
+              title={sectionTitles.guestbook}
+            />
+            <RSVPSection
+              rsvp={content.rsvp}
+              storageKey={storage.rsvp.key}
+              title={sectionTitles.rsvp}
+            />
+            <ShareSection share={content.share} title={sectionTitles.share} />
+            <ClosingSection closing={content.closing} couple={content.couple} />
           </div>
-        </div>
-        <div
-          aria-hidden={!showContent}
-          style={{
-            visibility: showContent ? 'visible' : 'hidden',
-            pointerEvents: showContent ? 'auto' : 'none',
-          }}
-        >
-          <CoupleSection couple={content.couple} title={sectionTitles.couple} />
-          <WeddingInfoSection
-            event={content.event}
-            couple={content.couple}
-            title={sectionTitles.wedding}
-          />
-          <LocationSection
-            location={content.location}
-            event={content.event}
-            title={sectionTitles.location}
-          />
-          <GallerySection gallery={content.gallery} />
-          <AccountsSection accounts={content.accounts} />
-          <GuestbookSection
-            guestbook={content.guestbook}
-            storageKey={storage.guestbook.key}
-            title={sectionTitles.guestbook}
-          />
-          <RSVPSection
-            rsvp={content.rsvp}
-            storageKey={storage.rsvp.key}
-            title={sectionTitles.rsvp}
-          />
-          <ShareSection share={content.share} title={sectionTitles.share} />
-          <ClosingSection closing={content.closing} couple={content.couple} />
-        </div>
+        ) : null}
+        <BgmPlayer
+          audioUrl={content.bgm.audioUrl || ''}
+          enabled={isBgmActive}
+          loop={content.bgm.loop}
+        />
       </main>
-      <BgmPlayer
-        audioUrl={content.bgm.audioUrl || ''}
-        enabled={isBgmActive}
-        loop={content.bgm.loop}
-      />
     </div>
   );
 };
