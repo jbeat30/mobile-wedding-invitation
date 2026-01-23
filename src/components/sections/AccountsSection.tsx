@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { InvitationAccounts } from '@/mock/invitation.mock';
+import { getBankIcon } from '@/constants/banks';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import {
   Accordion,
@@ -20,39 +21,6 @@ type AccountsSectionProps = {
 type ToastState = {
   message: string;
 };
-
-const BANK_ICON_MAP: Record<string, { path: string; alt: string }> = {
-  국민은행: { path: '/icon/bank/kb-kookmin/original.jpg', alt: 'KB국민은행' },
-  KB국민은행: { path: '/icon/bank/kb-kookmin/original.jpg', alt: 'KB국민은행' },
-  신한은행: { path: '/icon/bank/shinhan/original.jpg', alt: '신한은행' },
-  KEB하나은행: { path: '/icon/bank/hana/original.jpg', alt: '하나은행' },
-  하나은행: { path: '/icon/bank/hana/original.jpg', alt: '하나은행' },
-  우리은행: { path: '/icon/bank/woori/original.jpg', alt: '우리은행' },
-  IBK기업은행: { path: '/icon/bank/ibk/original.jpg', alt: 'IBK기업은행' },
-  KDB산업은행: { path: '/icon/bank/kdb/original.jpg', alt: 'KDB산업은행' },
-  SC제일은행: { path: '/icon/bank/sc-first/original.jpg', alt: 'SC제일은행' },
-  iM뱅크: { path: '/icon/bank/im-bank/original.jpg', alt: 'iM뱅크' },
-  카카오뱅크: { path: '/icon/bank/kakao-bank/original.jpg', alt: '카카오뱅크' },
-  케이뱅크: { path: '/icon/bank/k-bank/original.jpg', alt: '케이뱅크' },
-  토스뱅크: { path: '/icon/bank/toss-bank/original.jpg', alt: '토스뱅크' },
-  씨티은행: { path: '/icon/bank/citi-bank/original.jpg', alt: '씨티은행' },
-  시티은행: { path: '/icon/bank/citi-bank/original.jpg', alt: '씨티은행' },
-  NH농협은행: { path: '/icon/bank/nh-bank/original.jpg', alt: 'NH농협은행' },
-  수협은행: { path: '/icon/bank/suhyup-bank/original.jpg', alt: '수협은행' },
-  신협: { path: '/icon/bank/shinhyup/mono.jpg', alt: '신협' },
-  우체국: { path: '/icon/bank/korea-post/mono.jpg', alt: '우체국' },
-  부산은행: { path: '/icon/bank/busan-bank/original.jpg', alt: '부산은행' },
-  경남은행: { path: '/icon/bank/kyongnam-bank/original.jpg', alt: '경남은행' },
-  제주은행: { path: '/icon/bank/jeju-bank/original.jpg', alt: '제주은행' },
-  광주은행: { path: '/icon/bank/gwangju-bank/original.jpg', alt: '광주은행' },
-  전북은행: { path: '/icon/bank/jeonbuk-bank/original.jpg', alt: '전북은행' },
-  SBI저축은행: { path: '/icon/bank/sbi-savings/original.jpg', alt: 'SBI저축은행' },
-};
-
-/**
- * 은행명에 맞는 아이콘 정보를 반환합니다.
- */
-const getBankIcon = (bankName: string) => BANK_ICON_MAP[bankName] ?? null;
 
 /**
  * 계좌 안내 섹션 구성 확인
@@ -149,8 +117,8 @@ export const AccountsSection = ({ accounts }: AccountsSectionProps) => {
                             {bankIcon ? (
                               <span className="flex items-center gap-1.5">
                                 <Image
-                                  src={bankIcon.path}
-                                  alt={bankIcon.alt}
+                                  src={bankIcon.iconPath}
+                                  alt={bankIcon.iconAlt}
                                   width={16}
                                   height={16}
                                   className="h-4 w-4 rounded-full object-cover"

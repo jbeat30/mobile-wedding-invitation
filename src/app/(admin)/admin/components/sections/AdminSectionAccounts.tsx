@@ -14,7 +14,9 @@ import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { SelectField } from '@/components/ui/SelectField';
 import { Textarea } from '@/components/ui/textarea';
+import { BANK_OPTIONS } from '@/constants/banks';
 
 type AdminSectionAccountsProps = {
   accounts: AdminDashboardData['accounts'];
@@ -23,6 +25,21 @@ type AdminSectionAccountsProps = {
   accountFormOpen: { groom: boolean; bride: boolean };
   setAccountFormOpen: Dispatch<SetStateAction<{ groom: boolean; bride: boolean }>>;
 };
+
+/**
+ * 은행 옵션 목록에 포함되는지 확인
+ * @param bankName 은행명
+ * @returns boolean
+ */
+const isSupportedBank = (bankName: string) =>
+  BANK_OPTIONS.some((option) => option.name === bankName);
+
+/**
+ * 셀렉트 기본값을 반환
+ * @param bankName 은행명
+ * @returns string
+ */
+const getDefaultBankValue = (bankName: string) => (isSupportedBank(bankName) ? bankName : '');
 
 /**
  * 어카운트 섹션
@@ -103,7 +120,21 @@ export const AdminSectionAccounts = ({
                       <input type="hidden" name="group_type" value={groupKey} />
                       <div className="flex flex-col gap-2">
                         <Label htmlFor={`${groupKey}_bank_name`}>은행명</Label>
-                        <Input id={`${groupKey}_bank_name`} name="bank_name" />
+                        <SelectField
+                          id={`${groupKey}_bank_name`}
+                          name="bank_name"
+                          defaultValue=""
+                          required
+                        >
+                          <option value="" disabled>
+                            은행을 선택하세요
+                          </option>
+                          {BANK_OPTIONS.map((option) => (
+                            <option key={option.name} value={option.name}>
+                              {option.name}
+                            </option>
+                          ))}
+                        </SelectField>
                       </div>
                       <div className="flex flex-col gap-2">
                         <Label htmlFor={`${groupKey}_account_number`}>계좌번호</Label>
@@ -139,11 +170,21 @@ export const AdminSectionAccounts = ({
                               <div className="grid gap-3 md:grid-cols-2">
                                 <div className="flex flex-col gap-2">
                                   <Label htmlFor={`bank_name_${entry.id}`}>은행명</Label>
-                                  <Input
+                                  <SelectField
                                     id={`bank_name_${entry.id}`}
                                     name="bank_name"
-                                    defaultValue={entry.bank_name}
-                                  />
+                                    defaultValue={getDefaultBankValue(entry.bank_name)}
+                                    required
+                                  >
+                                    <option value="" disabled>
+                                      은행을 선택하세요
+                                    </option>
+                                    {BANK_OPTIONS.map((option) => (
+                                      <option key={option.name} value={option.name}>
+                                        {option.name}
+                                      </option>
+                                    ))}
+                                  </SelectField>
                                 </div>
                                 <div className="flex flex-col gap-2">
                                   <Label htmlFor={`account_number_${entry.id}`}>
