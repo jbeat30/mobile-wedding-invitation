@@ -17,7 +17,7 @@ export const ClosingSection = ({ closing, couple }: ClosingSectionProps) => {
         <div
           className="text-center"
           data-animate="fade-up"
-          data-animate-start="80"
+          data-animate-start="90"
           data-animate-trigger="section"
         >
           <SectionHeader
@@ -27,7 +27,7 @@ export const ClosingSection = ({ closing, couple }: ClosingSectionProps) => {
         </div>
 
         {/* 마무리 인사 */}
-        <div className="text-center" data-animate="fade-up" data-animate-start="80">
+        <div className="text-center" data-animate="fade-up" data-animate-start="90">
           <p className="whitespace-pre-line font-serif text-[14px] leading-[1.9] text-[var(--text-secondary)] break-keep">
             {closing.message}
           </p>
@@ -41,7 +41,7 @@ export const ClosingSection = ({ closing, couple }: ClosingSectionProps) => {
         </div>
 
         {closing.copyright && (
-          <div className="text-center pt-12" data-animate="fade" data-animate-start="95">
+          <div className="text-center pt-12" data-animate="fade" data-animate-start="90">
             <p className="text-[11px] text-[var(--text-tertiary)]">{closing.copyright}</p>
           </div>
         )}

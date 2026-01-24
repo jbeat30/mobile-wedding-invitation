@@ -61,7 +61,12 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
       <section id="gallery" className="bg-[var(--bg-primary)] py-12">
         <div className="mx-auto flex w-full max-w-[520px] flex-col gap-8 px-6">
           {/* 헤더 */}
-          <div className="text-center" data-animate="fade-up" data-animate-trigger="section">
+          <div
+            className="text-center"
+            data-animate="fade-up"
+            data-animate-start="90"
+            data-animate-trigger="section"
+          >
             <SectionHeader
               kicker="GALLERY"
               title={gallery.title}
@@ -76,6 +81,7 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
           <div
             className="relative"
             data-animate="scale"
+            data-animate-start="90"
             onContextMenu={(e) => e.preventDefault()}
           >
             <Swiper
@@ -211,7 +217,7 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
           </div>
 
           {/* 썸네일 Swiper (좌측 정렬, 반응형 래핑) */}
-          <div data-animate="fade" onContextMenu={(e) => e.preventDefault()}>
+          <div data-animate="fade" data-animate-start="90" onContextMenu={(e) => e.preventDefault()}>
             <Swiper
               modules={[Thumbs]}
               watchSlidesProgress
@@ -257,7 +263,11 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
           </div>
 
           {/* 하단 안내 */}
-          <p className="text-center text-[12px] text-[var(--text-muted)]" data-animate="fade">
+          <p
+            className="text-center text-[12px] text-[var(--text-muted)]"
+            data-animate="fade"
+            data-animate-start="90"
+          >
             사진을 클릭하거나 좌우로 슬라이드하여 감상하세요
           </p>
         </div>

@@ -249,8 +249,6 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
   const showLoading = loading.enabled;
   const showContent = !loading.enabled || !isLoading;
   const contentRef = useRef<HTMLElement | null>(null);
-  const loadingRef = useRef<HTMLDivElement | null>(null);
-  const [loadingSectionHeight, setLoadingSectionHeight] = useState(0);
   const bgmAvailable = Boolean(content.bgm.enabled);
   const { enabled: bgmEnabled, setEnabled: setBgmEnabled } = useBgmPreference(
     content.bgm.autoPlay
@@ -271,25 +269,6 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
     };
   }, []);
 
-  useEffect(() => {
-    if (!showLoading || !loadingRef.current) return;
-    const element = loadingRef.current;
-
-    const updateHeight = () => {
-      const nextHeight = Math.round(element.getBoundingClientRect().height);
-      if (nextHeight > 0) {
-        setLoadingSectionHeight(nextHeight);
-      }
-    };
-
-    updateHeight();
-    const observer = new ResizeObserver(updateHeight);
-    observer.observe(element);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [showLoading]);
 
   useEffect(() => {
     // GSAP 로드 후 ScrollTrigger 설정
@@ -307,6 +286,7 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
       let lastHeight = window.innerHeight;
       let resizeTimer: number;
       let lastRefreshAt = 0;
+      let resizeObserver: ResizeObserver | null = null;
 
       const scheduleRefresh = () => {
         const now = Date.now();
@@ -351,12 +331,21 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
         scheduleRefresh();
       });
 
+      const root = contentRef.current;
+      if (root) {
+        resizeObserver = new ResizeObserver(() => {
+          scheduleRefresh();
+        });
+        resizeObserver.observe(root);
+      }
+
       return () => {
         window.removeEventListener('resize', handleSmartResize);
         window.visualViewport?.removeEventListener('resize', handleSmartResize);
         window.removeEventListener('orientationchange', handleSmartResize);
         window.removeEventListener('load', handleLoad);
         clearTimeout(resizeTimer);
+        resizeObserver?.disconnect();
       };
     };
 
@@ -503,25 +492,6 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
         ref={contentRef}
         className="relative overflow-x-hidden bg-[var(--bg-primary)] shadow-[0_40px_120px_rgba(44,34,28,0.12)] min-[481px]:mx-auto min-[481px]:max-w-[480px] min-[481px]:rounded-[28px] min-[481px]:border min-[481px]:border-white/65 min-[481px]:shadow-[0_50px_120px_rgba(41,32,26,0.22)]"
       >
-        <div
-          className="pointer-events-none absolute inset-0 overflow-hidden"
-          aria-hidden="true"
-        >
-          <CherryBlossomCanvas
-            density={35000}
-            zIndex={40}
-            opacity={0.7}
-            minPetalCount={15}
-            spawnOffset={loadingSectionHeight}
-          />
-          <CherryBlossomCanvas
-            density={50000}
-            zIndex={50}
-            opacity={0.5}
-            minPetalCount={8}
-            spawnOffset={loadingSectionHeight}
-          />
-        </div>
         <div className="pointer-events-none fixed top-[calc(env(safe-area-inset-top)+12px)] right-[12px] z-[90] min-[481px]:absolute min-[481px]:right-[12px]">
           <div className="pointer-events-auto">
             <BgmToggle
@@ -533,15 +503,14 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
           </div>
         </div>
         <div className="relative">
+          <CherryBlossomCanvas density={35000} zIndex={40} opacity={0.7} minPetalCount={15} />
           {showLoading && (
-            <div ref={loadingRef}>
-              <LoadingSection
-                message={loading.message}
-                imageSrc={assets.loadingImage}
-                isVisible={isLoading}
-                isHintVisible={isHintVisible}
-              />
-            </div>
+            <LoadingSection
+              message={loading.message}
+              imageSrc={assets.loadingImage}
+              isVisible={isLoading}
+              isHintVisible={isHintVisible}
+            />
           )}
           {showContent ? (
             <div>
@@ -559,7 +528,8 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
           ) : null}
         </div>
         {showContent ? (
-          <div>
+          <div className="relative">
+            <CherryBlossomCanvas density={50000} zIndex={50} opacity={0.5} minPetalCount={8} fullHeight={true} />
             <CoupleSection couple={content.couple} title={sectionTitles.couple} />
             <WeddingInfoSection
               event={content.event}

@@ -250,7 +250,12 @@ export const GuestbookSection = ({ guestbook, storageKey, title }: GuestbookSect
     <>
       <section id="guestbook" className="bg-[var(--bg-primary)] py-12">
         <div className="mx-auto flex w-full max-w-[520px] flex-col gap-8 px-6">
-          <div className="text-center" data-animate="fade-up" data-animate-trigger="section">
+          <div
+            className="text-center"
+            data-animate="fade-up"
+            data-animate-start="90"
+            data-animate-trigger="section"
+          >
             <SectionHeader
               kicker="GUESTBOOK"
               title={title}
@@ -266,6 +271,7 @@ export const GuestbookSection = ({ guestbook, storageKey, title }: GuestbookSect
             className="flex flex-col gap-4 p-5"
             onSubmit={handleSubmit}
             data-animate="fade-up"
+            data-animate-start="90"
           >
             <div className="flex flex-col gap-2">
               <FieldLabel htmlFor="guest-name">NAME</FieldLabel>
@@ -328,7 +334,7 @@ export const GuestbookSection = ({ guestbook, storageKey, title }: GuestbookSect
             </Button>
           </SurfaceCard>
 
-          <div className="flex flex-col gap-3" data-animate="stagger">
+          <div className="flex flex-col gap-3" data-animate="stagger" data-animate-start="90">
             {guestbook.displayMode === 'recent' && (
               <p
                 className="rounded-[12px] bg-[var(--bg-secondary)] px-4 py-3 text-center text-[12px] text-[var(--text-muted)]"
@@ -423,6 +429,7 @@ export const GuestbookSection = ({ guestbook, storageKey, title }: GuestbookSect
             <div
               className="flex items-center justify-center gap-4 rounded-[16px] border border-white/70 bg-white/80 px-4 py-3 text-[12px] text-[var(--text-muted)] shadow-[0_12px_24px_rgba(41,32,26,0.1)]"
               data-animate="fade-up"
+              data-animate-start="90"
             >
               <button
                 type="button"

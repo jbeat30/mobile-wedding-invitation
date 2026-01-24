@@ -133,7 +133,12 @@ export const ShareSection = ({ share, title }: ShareSectionProps) => {
       >
         <div className="mx-auto flex w-full max-w-[520px] flex-col gap-8 px-6">
           {/* 섹션 헤더 */}
-          <div className="text-center" data-animate="fade-up" data-animate-trigger="section">
+          <div
+            className="text-center"
+            data-animate="fade-up"
+            data-animate-start="90"
+            data-animate-trigger="section"
+          >
             <SectionHeader
               kicker="SHARE"
               title={title}
@@ -145,7 +150,7 @@ export const ShareSection = ({ share, title }: ShareSectionProps) => {
           </div>
 
           {/* 공유 버튼 그룹 */}
-          <div className="flex flex-col gap-3" data-animate="stagger">
+          <div className="flex flex-col gap-3" data-animate="stagger" data-animate-start="90">
             {/* 카카오톡 공유 */}
             <Button
               onClick={handleKakaoShare}
