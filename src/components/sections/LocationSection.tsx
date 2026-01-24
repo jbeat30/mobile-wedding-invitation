@@ -95,7 +95,12 @@ export const LocationSection = ({ event, location, title }: LocationSectionProps
     <section id="location" className="bg-[var(--bg-primary)] py-12">
       <div className="mx-auto flex w-full max-w-[520px] flex-col gap-10 px-6">
         {/* 섹션 헤더 */}
-        <div className="text-center" data-animate="fade-up" data-animate-trigger="section">
+        <div
+          className="text-center"
+          data-animate="fade-up"
+          data-animate-start="90"
+          data-animate-trigger="section"
+        >
           <SectionHeader
             kicker="LOCATION"
             title={title}
@@ -108,6 +113,7 @@ export const LocationSection = ({ event, location, title }: LocationSectionProps
         <div
           className="overflow-hidden rounded-[var(--radius-md)] border border-[var(--card-border)] shadow-[var(--shadow-soft)]"
           data-animate="scale"
+          data-animate-start="90"
         >
           <div className="relative h-[220px]">
             <KakaoMap lat={location.coordinates.lat} lng={location.coordinates.lng} />
@@ -115,7 +121,7 @@ export const LocationSection = ({ event, location, title }: LocationSectionProps
         </div>
 
         {/* 주소 정보 */}
-        <div className="flex flex-col gap-2 text-center" data-animate="fade-up">
+        <div className="flex flex-col gap-2 text-center" data-animate="fade-up" data-animate-start="90">
           <p className="text-[20px] font-medium text-[var(--text-primary)]">
             {event.venue}
           </p>
@@ -125,7 +131,7 @@ export const LocationSection = ({ event, location, title }: LocationSectionProps
         </div>
 
         {/* 내비게이션 버튼 */}
-        <div className="grid grid-cols-2 gap-3" data-animate="stagger">
+        <div className="grid grid-cols-2 gap-3" data-animate="stagger" data-animate-start="90">
           <button
             type="button"
             onClick={() => openNavigation('naver')}
@@ -182,6 +188,7 @@ export const LocationSection = ({ event, location, title }: LocationSectionProps
         <div
           className="rounded-[var(--radius-md)] border border-[var(--card-border)] bg-white/50"
           data-animate="fade-up"
+          data-animate-start="90"
         >
           <button
             type="button"

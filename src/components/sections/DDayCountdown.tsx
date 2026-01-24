@@ -68,7 +68,7 @@ export const DDayCountdown = ({ weddingDateTime, couple }: DDayCountdownProps) =
       className="flex flex-col items-center gap-4"
       suppressHydrationWarning
       data-animate="fade-up"
-      data-animate-start="80"
+      data-animate-start="90"
     >
       {/* D-Day 뱃지 */}
       <div className="flex flex-col items-center gap-2">

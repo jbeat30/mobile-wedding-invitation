@@ -61,7 +61,12 @@ export const AccountsSection = ({ accounts }: AccountsSectionProps) => {
   return (
     <section id="accounts" className="bg-[var(--bg-primary)] py-12">
       <div className="mx-auto flex w-full max-w-[520px] flex-col gap-8 px-6">
-        <div className="text-center" data-animate="fade-up" data-animate-trigger="section">
+        <div
+          className="text-center"
+          data-animate="fade-up"
+          data-animate-start="90"
+          data-animate-trigger="section"
+        >
           <SectionHeader
             kicker="ACCOUNTS"
             title={accounts.title}
@@ -72,7 +77,13 @@ export const AccountsSection = ({ accounts }: AccountsSectionProps) => {
           />
         </div>
 
-        <Accordion type="single" collapsible className="flex flex-col gap-5" data-animate="stagger">
+        <Accordion
+          type="single"
+          collapsible
+          className="flex flex-col gap-5"
+          data-animate="stagger"
+          data-animate-start="90"
+        >
           {sections.map((section) => (
             <AccordionItem key={section.title} value={section.title} data-animate-item>
               <AccordionTrigger>{section.title}</AccordionTrigger>

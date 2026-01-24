@@ -307,6 +307,7 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
       let lastHeight = window.innerHeight;
       let resizeTimer: number;
       let lastRefreshAt = 0;
+      let resizeObserver: ResizeObserver | null = null;
 
       const scheduleRefresh = () => {
         const now = Date.now();
@@ -351,12 +352,21 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
         scheduleRefresh();
       });
 
+      const root = contentRef.current;
+      if (root) {
+        resizeObserver = new ResizeObserver(() => {
+          scheduleRefresh();
+        });
+        resizeObserver.observe(root);
+      }
+
       return () => {
         window.removeEventListener('resize', handleSmartResize);
         window.visualViewport?.removeEventListener('resize', handleSmartResize);
         window.removeEventListener('orientationchange', handleSmartResize);
         window.removeEventListener('load', handleLoad);
         clearTimeout(resizeTimer);
+        resizeObserver?.disconnect();
       };
     };
 

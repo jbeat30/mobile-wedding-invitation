@@ -123,7 +123,12 @@ export const RSVPSection = ({ rsvp, storageKey, title }: RSVPSectionProps) => {
       >
         <div className="mx-auto flex w-full max-w-[520px] flex-col gap-8 px-6">
           {/* 섹션 헤더 */}
-          <div className="text-center" data-animate="fade-up" data-animate-trigger="section">
+          <div
+            className="text-center"
+            data-animate="fade-up"
+            data-animate-start="90"
+            data-animate-trigger="section"
+          >
             <SectionHeader
               kicker="RSVP"
               title={title}
@@ -140,6 +145,7 @@ export const RSVPSection = ({ rsvp, storageKey, title }: RSVPSectionProps) => {
             className="flex flex-col gap-4 p-5"
             onSubmit={handleSubmit}
             data-animate="fade-up"
+            data-animate-start="90"
           >
             {rsvp.fields.map((field) => (
               <div key={field.key} className="flex flex-col gap-2">

@@ -35,7 +35,7 @@ export const WeddingInfoSection = ({ event, couple, title }: WeddingInfoSectionP
         <div
           className="text-center"
           data-animate="fade-up"
-          data-animate-start="80"
+          data-animate-start="90"
           data-animate-trigger="section"
         >
           <SectionHeader
@@ -47,14 +47,14 @@ export const WeddingInfoSection = ({ event, couple, title }: WeddingInfoSectionP
         </div>
 
         {/* 날짜/시간 */}
-        <div className="text-center" data-animate="fade-up" data-animate-start="80">
+        <div className="text-center" data-animate="fade-up" data-animate-start="90">
           <p className="text-[18px] leading-relaxed text-[var(--text-secondary)]">
             {formattedDateTime}
           </p>
         </div>
 
         {/* 달력 */}
-        <div data-animate="scale" data-animate-start="80">
+        <div data-animate="scale" data-animate-start="90">
           <IntroCalendar
             weddingDateTime={event.dateTime}
             highlightDates={highlightDates}
