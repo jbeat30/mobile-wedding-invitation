@@ -104,7 +104,7 @@ export const updateGalleryAction = async (formData: FormData) => {
   const galleryId = String(formData.get('gallery_id') || '');
 
   const payload = {
-    title: String(formData.get('gallery_title') || ''),
+    section_title: String(formData.get('gallery_section_title') || ''),
     description: String(formData.get('gallery_description') || ''),
     autoplay: formData.get('gallery_autoplay') === 'on',
     autoplay_delay: toNumber(formData.get('gallery_autoplay_delay'), 0) || null,

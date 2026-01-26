@@ -218,7 +218,7 @@ export const updateClosingAction = async (formData: FormData) => {
   const { id } = await getOrCreateInvitation();
 
   const payload = {
-    title: String(formData.get('closing_title') || ''),
+    section_title: String(formData.get('closing_title') || ''),
     message: String(formData.get('closing_message') || ''),
     copyright: String(formData.get('closing_copyright') || ''),
   };

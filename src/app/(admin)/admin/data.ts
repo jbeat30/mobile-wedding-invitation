@@ -66,7 +66,7 @@ type InvitationBgmRow = {
 
 type InvitationGalleryRow = {
   id: string;
-  title: string;
+  section_title: string;
   description: string | null;
   autoplay: boolean;
   autoplay_delay: number | null;
@@ -104,13 +104,13 @@ type InvitationRsvpRow = {
 
 type InvitationAccountsRow = {
   id: string;
-  title: string;
+  section_title: string;
   description: string | null;
 };
 
 type InvitationClosingRow = {
   id: string;
-  title: string;
+  section_title: string;
   message: string;
   copyright: string | null;
 };
@@ -551,7 +551,8 @@ export const loadAdminData = async () => {
     },
     gallery: {
       id: gallery.id,
-      title: gallery.title,
+      title: gallery.section_title,
+      section_title: gallery.section_title,
       description: gallery.description || '',
       autoplay: gallery.autoplay,
       autoplay_delay: gallery.autoplay_delay,
@@ -624,7 +625,7 @@ export const loadAdminData = async () => {
     })),
     accounts: {
       id: accounts.id,
-      title: accounts.title,
+      section_title: accounts.section_title,
       description: accounts.description || '',
     },
     accountEntries: accountEntries.map((entry) => ({
@@ -639,7 +640,8 @@ export const loadAdminData = async () => {
     })),
     closing: {
       id: closing.id,
-      title: closing.title,
+      title: closing.section_title,
+      section_title: closing.section_title,
       message: closing.message,
       copyright: closing.copyright || '',
     },

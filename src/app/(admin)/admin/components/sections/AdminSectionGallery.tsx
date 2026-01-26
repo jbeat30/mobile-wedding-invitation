@@ -140,8 +140,12 @@ export const AdminSectionGallery = ({
             >
               <input type="hidden" name="gallery_id" value={gallery.id} />
               <div className="flex flex-col gap-2 md:col-span-2">
-                <Label htmlFor="gallery_title">갤러리 타이틀</Label>
-                <Input id="gallery_title" name="gallery_title" defaultValue={gallery.title} />
+                <Label htmlFor="gallery_section_title">섹션 타이틀</Label>
+                <Input
+                  id="gallery_section_title"
+                  name="gallery_section_title"
+                  defaultValue={gallery.section_title}
+                />
               </div>
               <div className="flex flex-col gap-2 md:col-span-2">
                 <Label htmlFor="gallery_description">설명</Label>

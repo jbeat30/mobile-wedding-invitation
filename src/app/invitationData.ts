@@ -96,7 +96,7 @@ type InvitationGreetingRow = {
 /** 갤러리 설정 DB 로우 타입 */
 type InvitationGalleryRow = {
   id: string;
-  title: string;
+  section_title: string;
   description: string | null;
   autoplay: boolean;
   autoplay_delay: number | null;
@@ -115,7 +115,7 @@ type InvitationGalleryImageRow = {
 /** 계좌 정보 섹션 DB 로우 타입 */
 type InvitationAccountsRow = {
   id: string;
-  title: string;
+  section_title: string;
   description: string | null;
 };
 
@@ -190,7 +190,7 @@ type InvitationBgmRow = {
 
 /** 클로징 문구 DB 로우 타입 */
 type InvitationClosingRow = {
-  title: string;
+  section_title: string;
   message: string;
   copyright: string | null;
 };
@@ -441,7 +441,7 @@ export const loadInvitationView = async (): Promise<InvitationMock> => {
           notices: location.notices || [],
         },
         gallery: {
-          title: gallery.title,
+          title: gallery.section_title,
           description: gallery.description || '',
           images: galleryImages.map((image) => ({
             id: image.id,
@@ -495,7 +495,7 @@ export const loadInvitationView = async (): Promise<InvitationMock> => {
           enableDelete: guestbook.enable_delete,
         },
         accounts: {
-          title: accounts.title,
+          title: accounts.section_title,
           description: accounts.description || '',
           groom: accountEntries
             .filter((entry) => entry.group_type === 'groom')
@@ -521,7 +521,7 @@ export const loadInvitationView = async (): Promise<InvitationMock> => {
           loop: bgm.loop,
         },
         closing: {
-          title: closing.title,
+          title: closing.section_title,
           message: closing.message,
           copyright: closing.copyright || '',
         },

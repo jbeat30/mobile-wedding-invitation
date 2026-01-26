@@ -35,7 +35,7 @@ export const AdminSectionClosing = ({ closing }: AdminSectionClosingProps) => {
             <Input
               id="closing_title"
               name="closing_title"
-              defaultValue={closing.title}
+              defaultValue={closing.section_title}
               placeholder="예: THANK YOU"
             />
           </div>
