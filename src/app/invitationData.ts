@@ -5,6 +5,7 @@ import type {
 } from '@/mock/invitation.mock';
 import { invitationMock } from '@/mock/invitation.mock';
 import { getCachedInvitation, getCachedTheme } from '@/lib/invitationCache';
+import { headers } from 'next/headers';
 
 /** 기본 로케일 설정 */
 const DEFAULT_LOCALE = 'ko-KR';
@@ -573,15 +574,19 @@ export type OgMetadata = {
  * @returns OG 메타데이터 (title, description, imageUrl)
  */
 export const loadOgMetadata = async (): Promise<OgMetadata> => {
-  const defaultUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
+  const headersList = await headers();
+  const host = headersList.get('host');
+  const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+  const currentUrl = process.env.NEXT_PUBLIC_SITE_URL || (host ? `${protocol}://${host}` : `${protocol}://localhost:3000`);
+
   const defaultMeta: OgMetadata = {
     title: '결혼식에 초대합니다',
     description: '소중한 분들을 초대합니다',
     imageUrl: null,
     type: 'website',
-    url: defaultUrl,
-    siteName: 'jbeat',
-    developer: 'jbeat',
+    url: currentUrl,
+    siteName: 'Wedding Invitation',
+    developer: '',
   };
 
   try {
@@ -610,7 +615,7 @@ export const loadOgMetadata = async (): Promise<OgMetadata> => {
       description: share?.og_description || share?.description || defaultMeta.description,
       imageUrl: share?.og_image_url || assets?.share_og_image || null,
       type: 'website',
-      url: defaultUrl,
+      url: currentUrl,
       siteName: share?.og_title || defaultMeta.title,
       developer: share?.developer || 'jbeat',
     };

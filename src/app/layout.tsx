@@ -60,6 +60,7 @@ export const generateMetadata = async (): Promise<Metadata> => {
       title: ogMeta.title,
       description: ogMeta.description,
       type: 'website',
+      url: ogMeta.url,
       siteName: ogMeta.siteName,
       locale: 'ko_KR',
       ...(ogMeta.imageUrl && {
