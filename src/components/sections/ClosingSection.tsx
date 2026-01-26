@@ -21,7 +21,7 @@ export const ClosingSection = ({ closing, couple }: ClosingSectionProps) => {
           data-animate-trigger="section"
         >
           <SectionHeader
-            kicker={closing.title || 'THANK YOU'}
+            kicker={closing.section_title || 'THANK YOU'}
             kickerClassName="font-label text-[14px] text-[var(--accent-rose)]"
           />
         </div>

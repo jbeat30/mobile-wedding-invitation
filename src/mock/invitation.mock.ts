@@ -119,6 +119,7 @@ export type InvitationGuestbook = {
   enablePassword: boolean;
   enableEdit: boolean;
   enableDelete: boolean;
+  section_title?: string;
 };
 
 export type InvitationRsvpField = {
@@ -141,6 +142,7 @@ export type InvitationRsvp = {
   deadline: string;
   fields: InvitationRsvpField[];
   consent: InvitationRsvpConsent;
+  section_title?: string;
 };
 
 export type InvitationAccount = {
@@ -151,7 +153,7 @@ export type InvitationAccount = {
 };
 
 export type InvitationAccounts = {
-  title: string;
+  section_title: string;
   description: string;
   groom: InvitationAccount[];
   bride: InvitationAccount[];
@@ -162,7 +164,7 @@ export type InvitationLoading = {
   message: string;
   minDuration: number;
   additionalDuration: number;
-  title: string;
+  section_title: string;
 };
 
 export type GalleryImage = {
@@ -175,7 +177,7 @@ export type GalleryImage = {
 };
 
 export type InvitationGallery = {
-  title: string;
+  section_title: string;
   description?: string;
   images: GalleryImage[];
   autoplay?: boolean;
@@ -192,11 +194,13 @@ export type InvitationShare = {
     imageUrl: string;
     buttonLabel?: string;
   };
+  section_title?: string;
 };
 
 export type InvitationGreeting = {
   message: string[];
   poeticNote?: string;
+  section_title?: string;
 };
 
 export type InvitationSectionTitles = {
@@ -240,10 +244,11 @@ export type InvitationLocation = {
     parking?: string;
   };
   notices?: string[];
+  section_title?: string;
 };
 
 export type InvitationClosing = {
-  title: string;
+  section_title: string;
   message: string;
   copyright?: string;
 };
@@ -348,7 +353,7 @@ export const invitationMock: InvitationMock = {
   content: {
     loading: {
       enabled: true,
-      title: 'WEDDING INVITATION',
+      section_title: 'WEDDING INVITATION',
       message: 'We are getting married',
       minDuration: 1500,
       additionalDuration: 1000,
@@ -367,6 +372,7 @@ export const invitationMock: InvitationMock = {
         '그 첫걸음을 함께해 주시면 감사하겠습니다.',
       ],
       poeticNote: '민들레 홀씨처럼 날아와 영원한 사랑을 만났습니다',
+      section_title: '초대합니다',
     },
     couple: {
       groom: {
@@ -391,6 +397,7 @@ export const invitationMock: InvitationMock = {
           mother: '이어머니',
         },
       },
+      section_title: '두 사람을 소개합니다',
     },
     location: {
       placeName: '채림웨딩홀',
@@ -407,9 +414,10 @@ export const invitationMock: InvitationMock = {
         '예식 후 간단한 식사가 준비되어 있습니다.',
         '주말 교통 혼잡이 예상되오니 여유 있게 출발해주세요.',
       ],
+      section_title: '오시는 길',
     },
     gallery: {
-      title: '우리의 갤러리',
+      section_title: '우리의 갤러리',
       description: '함께한 시간을 담은 작은 기록',
       images: [
         {
@@ -459,6 +467,7 @@ export const invitationMock: InvitationMock = {
       autoplayDelay: 3000,
     },
     share: {
+      section_title: '청첩장 공유하기',
       title: '강신랑 · 장신부 결혼식에 초대합니다',
       description: '2026년 05월 16일 오후 3시 00분 | 채림 웨딩홀',
       imageUrl: assets.share.ogImage,
@@ -498,6 +507,7 @@ export const invitationMock: InvitationMock = {
         retention: '수집일로부터 예식 종료 후 최대 12개월까지 보관합니다.',
         notice: '동의하지 않을 경우 참석 여부 접수가 제한됩니다.',
       },
+      section_title: '참석 여부',
     },
     rsvpResponses: [
       {
@@ -528,6 +538,7 @@ export const invitationMock: InvitationMock = {
       enablePassword: true,
       enableEdit: true,
       enableDelete: true,
+      section_title: '축하 메시지',
       mockEntries: [
         {
           id: 'guest-1',
@@ -546,7 +557,7 @@ export const invitationMock: InvitationMock = {
       ],
     },
     accounts: {
-      title: '마음 전하실 곳',
+      section_title: '마음 전하실 곳',
       description: '축하의 마음만 전해주셔도 감사한 하루입니다.',
       groom: [
         {
@@ -584,7 +595,7 @@ export const invitationMock: InvitationMock = {
       loop: true,
     },
     closing: {
-      title: 'THANK YOU',
+      section_title: 'THANK YOU',
       message: '소중한 분들과 함께하는 이 자리, 오래 기억하겠습니다.',
       copyright: '© 2026. All rights reserved.',
     },

@@ -13,14 +13,13 @@ export const updateShareAction = async (formData: FormData) => {
   await requireAdminSession();
   const supabase = createSupabaseAdmin();
   const { id } = await getOrCreateInvitation();
-  const shareSectionTitle = formData.get('share_section_title');
-
   const payload: Record<string, string> = {
+    section_title: String(formData.get('share_section_title') || ''),
     image_url: String(formData.get('share_image_url') || ''),
   };
 
   if (formData.has('share_title')) {
-    payload.title = String(formData.get('share_title') || '');
+    payload.subtitle = String(formData.get('share_title') || '');
   }
   if (formData.has('share_description')) {
     payload.description = String(formData.get('share_description') || '');
@@ -41,13 +40,5 @@ export const updateShareAction = async (formData: FormData) => {
   assertNoError(
     await supabase.from('invitation_share').update(payload).eq('invitation_id', id)
   );
-  if (shareSectionTitle !== null) {
-    assertNoError(
-      await supabase
-        .from('invitation_section_titles')
-        .update({ share: String(shareSectionTitle || '') })
-        .eq('invitation_id', id)
-    );
-  }
   revalidateAdmin();
 };

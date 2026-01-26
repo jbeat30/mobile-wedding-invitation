@@ -14,7 +14,6 @@ export const updateRsvpAction = async (formData: FormData) => {
   const supabase = createSupabaseAdmin();
   const { id } = await getOrCreateInvitation();
   const deadlineValue = String(formData.get('rsvp_deadline') || '').trim();
-  const rsvpSectionTitle = formData.get('rsvp_section_title');
 
   const payload = {
     enabled: formData.get('rsvp_enabled') === 'on',
@@ -23,18 +22,11 @@ export const updateRsvpAction = async (formData: FormData) => {
     consent_description: String(formData.get('rsvp_consent_description') || ''),
     consent_retention: String(formData.get('rsvp_consent_retention') || ''),
     consent_notice: String(formData.get('rsvp_consent_notice') || ''),
+    section_title: String(formData.get('rsvp_section_title') || ''),
   };
 
   assertNoError(
     await supabase.from('invitation_rsvp').update(payload).eq('invitation_id', id)
   );
-  if (rsvpSectionTitle !== null) {
-    assertNoError(
-      await supabase
-        .from('invitation_section_titles')
-        .update({ rsvp: String(rsvpSectionTitle || '') })
-        .eq('invitation_id', id)
-    );
-  }
   revalidateAdmin();
 };

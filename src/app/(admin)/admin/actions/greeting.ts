@@ -24,14 +24,8 @@ export const updateGreetingAction = async (formData: FormData) => {
       .update({
         poetic_note: String(formData.get('poetic_note') || ''),
         message_lines: lines,
+        section_title: String(formData.get('greeting_section_title') || ''),
       })
-      .eq('invitation_id', id)
-  );
-
-  assertNoError(
-    await supabase
-      .from('invitation_section_titles')
-      .update({ greeting: String(formData.get('greeting_section_title') || '') })
       .eq('invitation_id', id)
   );
 

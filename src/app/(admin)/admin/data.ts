@@ -9,6 +9,7 @@ type InvitationLoadingRow = {
   message: string;
   min_duration: number;
   additional_duration: number;
+  section_title: string;
 };
 
 type InvitationProfileRow = {
@@ -21,6 +22,7 @@ type InvitationProfileRow = {
   bride_last_name: string;
   bride_bio: string | null;
   bride_profile_image: string | null;
+  section_title: string;
 };
 
 type InvitationParentsRow = {
@@ -43,17 +45,19 @@ type InvitationGreetingRow = {
   id: string;
   poetic_note: string | null;
   message_lines: string[];
+  section_title: string;
 };
 
 type InvitationShareRow = {
   id: string;
-  title: string;
+  subtitle: string | null;
   description: string;
   image_url: string | null;
   kakao_title: string | null;
   kakao_description: string | null;
   kakao_image_url: string | null;
   kakao_button_label: string | null;
+  section_title: string;
 };
 
 type InvitationBgmRow = {
@@ -79,6 +83,7 @@ type InvitationLocationRow = {
   latitude: number | string | null;
   longitude: number | string | null;
   notices: string[] | null;
+  section_title: string;
 };
 
 type InvitationGuestbookRow = {
@@ -90,6 +95,7 @@ type InvitationGuestbookRow = {
   enable_password: boolean;
   enable_edit: boolean;
   enable_delete: boolean;
+  section_title: string;
 };
 
 type InvitationRsvpRow = {
@@ -100,6 +106,7 @@ type InvitationRsvpRow = {
   consent_description: string | null;
   consent_retention: string | null;
   consent_notice: string | null;
+  section_title: string;
 };
 
 type InvitationAccountsRow = {
@@ -115,23 +122,12 @@ type InvitationClosingRow = {
   copyright: string | null;
 };
 
-type InvitationSectionTitlesRow = {
-  id: string;
-  loading: string;
-  greeting: string;
-  couple: string;
-  wedding: string;
-  location: string;
-  guestbook: string;
-  rsvp: string;
-  share: string;
-};
-
 type InvitationEventRow = {
   id: string;
   date_time: string;
   venue: string;
   address: string;
+  section_title: string;
 };
 
 type InvitationTransportationRow = {
@@ -296,7 +292,6 @@ export const loadAdminData = async () => {
     rsvp,
     accounts,
     closing,
-    sectionTitles,
     event,
   ] = (await Promise.all([
     ensureSingleRow(
@@ -379,12 +374,6 @@ export const loadAdminData = async () => {
     ),
     ensureSingleRow(
       supabase,
-      'invitation_section_titles',
-      { invitation_id: invitation.id },
-      { invitation_id: invitation.id }
-    ),
-    ensureSingleRow(
-      supabase,
       'invitation_event',
       { invitation_id: invitation.id },
       { invitation_id: invitation.id, date_time: new Date().toISOString() }
@@ -403,9 +392,19 @@ export const loadAdminData = async () => {
     InvitationRsvpRow,
     InvitationAccountsRow,
     InvitationClosingRow,
-    InvitationSectionTitlesRow,
     InvitationEventRow,
   ];
+
+  const sectionTitles = {
+    loading: loading.section_title,
+    greeting: greeting.section_title,
+    couple: profile.section_title,
+    wedding: event.section_title,
+    location: location.section_title,
+    guestbook: guestbook.section_title,
+    rsvp: rsvp.section_title,
+    share: share.section_title,
+  };
 
   const transportation = (await ensureSingleRow(
     supabase,
@@ -533,8 +532,9 @@ export const loadAdminData = async () => {
       message_lines: greeting.message_lines || [],
     },
     share: {
+      section_title: share.section_title,
       id: share.id,
-      title: share.title,
+      title: share.subtitle || '',
       description: share.description,
       image_url: share.image_url,
       kakao_title: share.kakao_title || '',
@@ -551,7 +551,6 @@ export const loadAdminData = async () => {
     },
     gallery: {
       id: gallery.id,
-      title: gallery.section_title,
       section_title: gallery.section_title,
       description: gallery.description || '',
       autoplay: gallery.autoplay,
@@ -598,6 +597,7 @@ export const loadAdminData = async () => {
       enable_password: guestbook.enable_password,
       enable_edit: guestbook.enable_edit,
       enable_delete: guestbook.enable_delete,
+      section_title: guestbook.section_title,
     },
     guestbookEntries: guestbookEntries.map((entry) => ({
       id: entry.id,
@@ -613,6 +613,7 @@ export const loadAdminData = async () => {
       consent_description: rsvp.consent_description || '',
       consent_retention: rsvp.consent_retention || '',
       consent_notice: rsvp.consent_notice || '',
+      section_title: rsvp.section_title,
     },
     rsvpResponses: rsvpResponses.map((entry) => ({
       id: entry.id,
@@ -640,7 +641,6 @@ export const loadAdminData = async () => {
     })),
     closing: {
       id: closing.id,
-      title: closing.section_title,
       section_title: closing.section_title,
       message: closing.message,
       copyright: closing.copyright || '',

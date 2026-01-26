@@ -53,16 +53,11 @@ export const updateProfileAction = async (formData: FormData) => {
     groom_profile_image: String(formData.get('groom_profile_image') || ''),
     bride_bio: String(formData.get('bride_bio') || ''),
     bride_profile_image: String(formData.get('bride_profile_image') || ''),
+    section_title: String(formData.get('couple_section_title') || ''),
   };
 
   assertNoError(
     await supabase.from('invitation_profile').update(payload).eq('invitation_id', id)
-  );
-  assertNoError(
-    await supabase
-      .from('invitation_section_titles')
-      .update({ couple: String(formData.get('couple_section_title') || '') })
-      .eq('invitation_id', id)
   );
 
   revalidateAdmin();
@@ -83,17 +78,11 @@ export const updateLoadingAction = async (formData: FormData) => {
     message: String(formData.get('loading_message') || ''),
     min_duration: toNumber(formData.get('loading_min_duration')),
     additional_duration: toNumber(formData.get('loading_additional_duration')),
+    section_title: String(formData.get('loading_section_title') || ''),
   };
-  const sectionTitle = String(formData.get('loading_section_title') || '');
 
   assertNoError(
     await supabase.from('invitation_loading').update(payload).eq('invitation_id', id)
-  );
-  assertNoError(
-    await supabase
-      .from('invitation_section_titles')
-      .update({ loading: sectionTitle })
-      .eq('invitation_id', id)
   );
   revalidateAdmin();
 };
@@ -147,8 +136,8 @@ export const updateLocationSectionTitleAction = async (formData: FormData) => {
 
   assertNoError(
     await supabase
-      .from('invitation_section_titles')
-      .update({ location: String(formData.get('location_section_title') || '') })
+      .from('invitation_location')
+      .update({ section_title: String(formData.get('location_section_title') || '') })
       .eq('invitation_id', id)
   );
 
@@ -170,8 +159,13 @@ export const updateWeddingInfoSectionAction = async (formData: FormData) => {
 
   assertNoError(
     await supabase
-      .from('invitation_section_titles')
-      .update({ wedding: sectionTitle })
+      .from('invitation_event')
+      .update({
+        section_title: sectionTitle,
+        date_time: eventDateTime,
+        venue: eventVenue,
+        address: eventAddress,
+      })
       .eq('invitation_id', id)
   );
 
@@ -218,7 +212,7 @@ export const updateClosingAction = async (formData: FormData) => {
   const { id } = await getOrCreateInvitation();
 
   const payload = {
-    section_title: String(formData.get('closing_title') || ''),
+    section_title: String(formData.get('closing_section_title') || ''),
     message: String(formData.get('closing_message') || ''),
     copyright: String(formData.get('closing_copyright') || ''),
   };
