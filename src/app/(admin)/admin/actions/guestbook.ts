@@ -13,8 +13,6 @@ export const updateGuestbookAction = async (formData: FormData) => {
   await requireAdminSession();
   const supabase = createSupabaseAdmin();
   const { id } = await getOrCreateInvitation();
-  const guestbookSectionTitle = formData.get('guestbook_section_title');
-
   const payload = {
     privacy_notice: String(formData.get('guestbook_privacy_notice') || ''),
     retention_text: String(formData.get('guestbook_retention_text') || ''),
@@ -24,18 +22,11 @@ export const updateGuestbookAction = async (formData: FormData) => {
     enable_password: formData.get('guestbook_enable_password') === 'on',
     enable_edit: formData.get('guestbook_enable_edit') === 'on',
     enable_delete: formData.get('guestbook_enable_delete') === 'on',
+    section_title: String(formData.get('guestbook_section_title') || ''),
   };
 
   assertNoError(
     await supabase.from('invitation_guestbook').update(payload).eq('invitation_id', id)
   );
-  if (guestbookSectionTitle !== null) {
-    assertNoError(
-      await supabase
-        .from('invitation_section_titles')
-        .update({ guestbook: String(guestbookSectionTitle || '') })
-        .eq('invitation_id', id)
-    );
-  }
   revalidateAdmin();
 };

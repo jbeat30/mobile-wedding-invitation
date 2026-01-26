@@ -69,7 +69,7 @@ export const AccountsSection = ({ accounts }: AccountsSectionProps) => {
         >
           <SectionHeader
             kicker="ACCOUNTS"
-            title={accounts.title}
+            title={accounts.section_title}
             description={accounts.description}
             kickerClassName="font-label text-[14px] text-[var(--accent-rose)]"
             titleClassName="mt-2 text-[24px] font-medium text-[var(--text-primary)]"

@@ -5,6 +5,7 @@ import type {
 } from '@/mock/invitation.mock';
 import { invitationMock } from '@/mock/invitation.mock';
 import { getCachedInvitation, getCachedTheme } from '@/lib/invitationCache';
+import { headers } from 'next/headers';
 
 /** 기본 로케일 설정 */
 const DEFAULT_LOCALE = 'ko-KR';
@@ -40,6 +41,7 @@ type InvitationLoadingRow = {
   message: string;
   min_duration: number;
   additional_duration: number;
+  section_title: string;
 };
 
 /** 신랑/신부 프로필 DB 로우 타입 */
@@ -52,6 +54,7 @@ type InvitationProfileRow = {
   bride_last_name: string;
   bride_bio: string | null;
   bride_profile_image: string | null;
+  section_title: string;
 };
 
 /** 부모님 정보 DB 로우 타입 */
@@ -67,6 +70,7 @@ type InvitationEventRow = {
   date_time: string;
   venue: string;
   address: string;
+  section_title: string;
 };
 
 /** 장소 정보 DB 로우 타입 */
@@ -77,6 +81,7 @@ type InvitationLocationRow = {
   latitude: number | string | null;
   longitude: number | string | null;
   notices: string[] | null;
+  section_title: string;
 };
 
 /** 교통편 안내 DB 로우 타입 */
@@ -91,12 +96,13 @@ type InvitationTransportationRow = {
 type InvitationGreetingRow = {
   poetic_note: string | null;
   message_lines: string[];
+  section_title: string;
 };
 
 /** 갤러리 설정 DB 로우 타입 */
 type InvitationGalleryRow = {
   id: string;
-  title: string;
+  section_title: string;
   description: string | null;
   autoplay: boolean;
   autoplay_delay: number | null;
@@ -115,7 +121,7 @@ type InvitationGalleryImageRow = {
 /** 계좌 정보 섹션 DB 로우 타입 */
 type InvitationAccountsRow = {
   id: string;
-  title: string;
+  section_title: string;
   description: string | null;
 };
 
@@ -140,6 +146,7 @@ type InvitationGuestbookRow = {
   enable_password: boolean;
   enable_edit: boolean;
   enable_delete: boolean;
+  section_title: string;
 };
 
 /** 방명록 항목 DB 로우 타입 */
@@ -159,17 +166,21 @@ type InvitationRsvpRow = {
   consent_description: string | null;
   consent_retention: string | null;
   consent_notice: string | null;
+  section_title: string;
 };
 
 /** 공유 설정 DB 로우 타입 */
 type InvitationShareRow = {
-  title: string;
   description: string;
-  image_url: string | null;
+  og_title: string | null;
+  og_description: string | null;
+  developer: string | null;
+  og_image_url: string | null;
   kakao_title: string | null;
   kakao_description: string | null;
   kakao_image_url: string | null;
   kakao_button_label: string | null;
+  section_title: string;
 };
 
 /** 에셋(이미지) DB 로우 타입 */
@@ -190,22 +201,12 @@ type InvitationBgmRow = {
 
 /** 클로징 문구 DB 로우 타입 */
 type InvitationClosingRow = {
-  title: string;
+  section_title: string;
   message: string;
   copyright: string | null;
 };
 
 /** 섹션 타이틀 DB 로우 타입 */
-type InvitationSectionTitlesRow = {
-  greeting: string;
-  couple: string;
-  wedding: string;
-  location: string;
-  guestbook: string;
-  rsvp: string;
-  share: string;
-};
-
 /**
  * 단일 로우 보장 (없으면 생성)
  * @param supabase Supabase 클라이언트
@@ -293,7 +294,6 @@ export const loadInvitationView = async (): Promise<InvitationMock> => {
       assets,
       bgm,
       closing,
-      sectionTitles,
     ] = (await Promise.all([
       ensureSingleRow(supabase, 'invitation_loading', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
       ensureSingleRow(supabase, 'invitation_profile', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
@@ -309,7 +309,6 @@ export const loadInvitationView = async (): Promise<InvitationMock> => {
       ensureSingleRow(supabase, 'invitation_assets', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
       ensureSingleRow(supabase, 'invitation_bgm', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
       ensureSingleRow(supabase, 'invitation_closing', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
-      ensureSingleRow(supabase, 'invitation_section_titles', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
     ])) as [
       InvitationLoadingRow,
       InvitationProfileRow,
@@ -324,9 +323,19 @@ export const loadInvitationView = async (): Promise<InvitationMock> => {
       InvitationShareRow,
       InvitationAssetsRow,
       InvitationBgmRow,
-      InvitationClosingRow,
-      InvitationSectionTitlesRow
+      InvitationClosingRow
     ];
+
+    const sectionTitles = {
+      loading: loading.section_title,
+      greeting: greeting.section_title,
+      couple: profile.section_title,
+      wedding: event.section_title,
+      location: location.section_title,
+      guestbook: guestbook.section_title,
+      rsvp: rsvp.section_title,
+      share: share.section_title,
+    };
 
     const transportation = (await ensureSingleRow(
       supabase,
@@ -390,6 +399,7 @@ export const loadInvitationView = async (): Promise<InvitationMock> => {
           message: loading.message,
           minDuration: loading.min_duration,
           additionalDuration: loading.additional_duration,
+          section_title: sectionTitles.loading,
         },
         event: {
           dateTime: event.date_time,
@@ -399,6 +409,7 @@ export const loadInvitationView = async (): Promise<InvitationMock> => {
         greeting: {
           message: greeting.message_lines || [],
           poeticNote: greeting.poetic_note || '',
+          section_title: greeting.section_title,
         },
         couple: {
           groom: {
@@ -423,6 +434,7 @@ export const loadInvitationView = async (): Promise<InvitationMock> => {
               mother: parents.bride_mother || '',
             },
           },
+          section_title: profile.section_title,
         },
         location: {
           placeName: location.place_name,
@@ -437,9 +449,10 @@ export const loadInvitationView = async (): Promise<InvitationMock> => {
             parking: transportation.parking || '',
           },
           notices: location.notices || [],
+          section_title: location.section_title,
         },
         gallery: {
-          title: gallery.title,
+          section_title: gallery.section_title,
           description: gallery.description || '',
           images: galleryImages.map((image) => ({
             id: image.id,
@@ -453,15 +466,16 @@ export const loadInvitationView = async (): Promise<InvitationMock> => {
           autoplayDelay: gallery.autoplay_delay ?? undefined,
         },
         share: {
-          title: share.title,
+          section_title: share.section_title,
           description: share.description,
-          imageUrl: share.image_url || assets.share_og_image || '',
-          kakaoTemplate: {
-            title: share.kakao_title || share.title,
-            description: share.kakao_description || share.description,
-            imageUrl: share.kakao_image_url || assets.share_kakao_image || share.image_url || '',
-            buttonLabel: share.kakao_button_label || '청첩장 보기',
-          },
+          og_title: share.og_title,
+          og_description: share.og_description,
+          developer: share.developer || 'jbeat',
+          og_image_url: share.og_image_url,
+          kakao_title: share.kakao_title,
+          kakao_description: share.kakao_description,
+          kakao_image_url: share.kakao_image_url,
+          kakao_button_label: share.kakao_button_label,
         },
         rsvp: {
           enabled: rsvp.enabled,
@@ -473,6 +487,7 @@ export const loadInvitationView = async (): Promise<InvitationMock> => {
             retention: rsvp.consent_retention || '',
             notice: rsvp.consent_notice || '',
           },
+          section_title: rsvp.section_title,
         },
         rsvpResponses: [],
         guestbook: {
@@ -491,9 +506,10 @@ export const loadInvitationView = async (): Promise<InvitationMock> => {
           enablePassword: guestbook.enable_password,
           enableEdit: guestbook.enable_edit,
           enableDelete: guestbook.enable_delete,
+          section_title: guestbook.section_title,
         },
         accounts: {
-          title: accounts.title,
+          section_title: accounts.section_title,
           description: accounts.description || '',
           groom: accountEntries
             .filter((entry) => entry.group_type === 'groom')
@@ -519,11 +535,12 @@ export const loadInvitationView = async (): Promise<InvitationMock> => {
           loop: bgm.loop,
         },
         closing: {
-          title: closing.title,
+          section_title: closing.section_title,
           message: closing.message,
           copyright: closing.copyright || '',
         },
         sectionTitles: {
+          loading: sectionTitles.loading,
           greeting: sectionTitles.greeting,
           couple: sectionTitles.couple,
           wedding: sectionTitles.wedding,
@@ -545,6 +562,10 @@ export type OgMetadata = {
   title: string;
   description: string;
   imageUrl: string | null;
+  type: string;
+  url: string;
+  siteName: string;
+  developer: string;
 };
 
 /**
@@ -553,10 +574,19 @@ export type OgMetadata = {
  * @returns OG 메타데이터 (title, description, imageUrl)
  */
 export const loadOgMetadata = async (): Promise<OgMetadata> => {
+  const headersList = await headers();
+  const host = headersList.get('host');
+  const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+  const currentUrl = process.env.NEXT_PUBLIC_SITE_URL || (host ? `${protocol}://${host}` : `${protocol}://localhost:3000`);
+
   const defaultMeta: OgMetadata = {
     title: '결혼식에 초대합니다',
     description: '소중한 분들을 초대합니다',
     imageUrl: null,
+    type: 'website',
+    url: currentUrl,
+    siteName: 'Wedding Invitation',
+    developer: '',
   };
 
   try {
@@ -567,7 +597,7 @@ export const loadOgMetadata = async (): Promise<OgMetadata> => {
     const [shareResult, assetsResult] = await Promise.all([
       supabase
         .from('invitation_share')
-        .select('title, description, image_url')
+        .select('description, og_title, og_description, og_image_url, developer')
         .eq('invitation_id', invitation.id)
         .maybeSingle(),
       supabase
@@ -581,9 +611,13 @@ export const loadOgMetadata = async (): Promise<OgMetadata> => {
     const assets = assetsResult.data as Pick<InvitationAssetsRow, 'share_og_image'> | null;
 
     return {
-      title: share?.title || defaultMeta.title,
-      description: share?.description || defaultMeta.description,
-      imageUrl: share?.image_url || assets?.share_og_image || null,
+      title: share?.og_title || defaultMeta.title,
+      description: share?.og_description || share?.description || defaultMeta.description,
+      imageUrl: share?.og_image_url || assets?.share_og_image || null,
+      type: 'website',
+      url: currentUrl,
+      siteName: share?.og_title || defaultMeta.title,
+      developer: share?.developer || 'jbeat',
     };
   } catch {
     return defaultMeta;

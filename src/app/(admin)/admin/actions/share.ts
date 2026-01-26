@@ -13,18 +13,13 @@ export const updateShareAction = async (formData: FormData) => {
   await requireAdminSession();
   const supabase = createSupabaseAdmin();
   const { id } = await getOrCreateInvitation();
-  const shareSectionTitle = formData.get('share_section_title');
-
   const payload: Record<string, string> = {
-    image_url: String(formData.get('share_image_url') || ''),
+    section_title: String(formData.get('section_title') || ''),
+    description: String(formData.get('description') || ''),
+    og_title: String(formData.get('og_title') || ''),
+    og_description: String(formData.get('og_description') || ''),
+    developer: 'jbeat',
   };
-
-  if (formData.has('share_title')) {
-    payload.title = String(formData.get('share_title') || '');
-  }
-  if (formData.has('share_description')) {
-    payload.description = String(formData.get('share_description') || '');
-  }
   if (formData.has('kakao_title')) {
     payload.kakao_title = String(formData.get('kakao_title') || '');
   }
@@ -41,13 +36,5 @@ export const updateShareAction = async (formData: FormData) => {
   assertNoError(
     await supabase.from('invitation_share').update(payload).eq('invitation_id', id)
   );
-  if (shareSectionTitle !== null) {
-    assertNoError(
-      await supabase
-        .from('invitation_section_titles')
-        .update({ share: String(shareSectionTitle || '') })
-        .eq('invitation_id', id)
-    );
-  }
   revalidateAdmin();
 };

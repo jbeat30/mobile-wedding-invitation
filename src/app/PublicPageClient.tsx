@@ -510,6 +510,7 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
               imageSrc={assets.loadingImage}
               isVisible={isLoading}
               isHintVisible={isHintVisible}
+              title={sectionTitles.loading ?? 'WEDDING INVITATION'}
             />
           )}
           {showContent ? (

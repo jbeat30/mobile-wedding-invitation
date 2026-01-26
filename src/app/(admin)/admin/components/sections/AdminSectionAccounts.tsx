@@ -66,8 +66,12 @@ export const AdminSectionAccounts = ({
             className="grid gap-4 md:grid-cols-2"
           >
             <div className="flex flex-col gap-2">
-              <Label htmlFor="accounts_title">타이틀</Label>
-              <Input id="accounts_title" name="accounts_title" defaultValue={accounts.title} />
+              <Label htmlFor="accounts_section_title">섹션 타이틀</Label>
+              <Input
+                id="accounts_section_title"
+                name="accounts_section_title"
+                defaultValue={accounts.section_title}
+              />
             </div>
             <div className="flex flex-col gap-2 md:col-span-2">
               <Label htmlFor="accounts_description">설명</Label>

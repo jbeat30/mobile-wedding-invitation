@@ -67,7 +67,7 @@ export const updateShareImagesAction = async (formData: FormData) => {
       .eq('invitation_id', id)
   );
   assertNoError(
-    await supabase.from('invitation_share').update({ image_url: ogImage }).eq('invitation_id', id)
+    await supabase.from('invitation_share').update({ og_image_url: ogImage }).eq('invitation_id', id)
   );
 
   revalidateAdmin();
@@ -104,7 +104,7 @@ export const updateGalleryAction = async (formData: FormData) => {
   const galleryId = String(formData.get('gallery_id') || '');
 
   const payload = {
-    title: String(formData.get('gallery_title') || ''),
+    section_title: String(formData.get('gallery_section_title') || ''),
     description: String(formData.get('gallery_description') || ''),
     autoplay: formData.get('gallery_autoplay') === 'on',
     autoplay_delay: toNumber(formData.get('gallery_autoplay_delay'), 0) || null,

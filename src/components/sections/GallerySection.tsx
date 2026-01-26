@@ -69,7 +69,7 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
           >
             <SectionHeader
               kicker="GALLERY"
-              title={gallery.title}
+              title={gallery.section_title}
               description={gallery.description}
               kickerClassName="font-label text-[14px] text-[var(--accent-rose)]"
               titleClassName="mt-2 text-[24px] font-medium text-[var(--text-primary)]"

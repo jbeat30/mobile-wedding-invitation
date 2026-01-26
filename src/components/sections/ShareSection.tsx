@@ -51,25 +51,18 @@ export const ShareSection = ({ share, title }: ShareSectionProps) => {
       return;
     }
 
-    const template = share.kakaoTemplate
-      ? {
-          ...share.kakaoTemplate,
-          imageUrl: share.kakaoTemplate.imageUrl || share.imageUrl,
-        }
-      : {
-          title: share.title,
-          description: share.description,
-          imageUrl: share.imageUrl,
-          buttonLabel: '청첩장 보기',
-        };
+    const kakaoTitle = share.kakao_title || share.og_title || share.description;
+    const kakaoDescription = share.kakao_description || share.og_description || share.description;
+    const kakaoImageUrl = share.kakao_image_url || share.og_image_url || '';
+    const kakaoButtonLabel = share.kakao_button_label || '청첩장 보기';
 
     try {
       window.Kakao.Share.sendDefault({
         objectType: 'feed',
         content: {
-          title: template.title,
-          description: template.description,
-          imageUrl: template.imageUrl,
+          title: kakaoTitle,
+          description: kakaoDescription,
+          imageUrl: kakaoImageUrl,
           link: {
             mobileWebUrl: getCurrentUrl(),
             webUrl: getCurrentUrl(),
@@ -77,7 +70,7 @@ export const ShareSection = ({ share, title }: ShareSectionProps) => {
         },
         buttons: [
           {
-            title: template.buttonLabel || '청첩장 보기',
+            title: kakaoButtonLabel,
             link: {
               mobileWebUrl: getCurrentUrl(),
               webUrl: getCurrentUrl(),
@@ -111,9 +104,12 @@ export const ShareSection = ({ share, title }: ShareSectionProps) => {
     }
 
     try {
+      const shareTitle = share.og_title || share.description;
+      const shareDescription = share.og_description || share.description || '';
+
       await navigator.share({
-        title: share.title,
-        text: share.description,
+        title: shareTitle || '',
+        text: shareDescription,
         url: getCurrentUrl(),
       });
     } catch (error: unknown) {
@@ -124,6 +120,8 @@ export const ShareSection = ({ share, title }: ShareSectionProps) => {
       }
     }
   }, [share, getCurrentUrl, showToastMessage]);
+
+  const headerDescription = share.description || '소중한 분들과 함께 나눠주세요';
 
   return (
     <>
@@ -142,7 +140,7 @@ export const ShareSection = ({ share, title }: ShareSectionProps) => {
             <SectionHeader
               kicker="SHARE"
               title={title}
-              description="소중한 분들과 함께 나눠주세요"
+              description={headerDescription}
               kickerClassName="font-label text-[14px] text-[var(--accent-rose)]"
               titleClassName="mt-2 text-[24px] font-medium text-[var(--text-primary)]"
               descriptionClassName="mt-2 text-[14px] text-[var(--text-tertiary)]"

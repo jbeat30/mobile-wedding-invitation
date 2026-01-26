@@ -15,7 +15,7 @@ export const updateAccountsAction = async (formData: FormData) => {
   const { id } = await getOrCreateInvitation();
 
   const payload = {
-    title: String(formData.get('accounts_title') || ''),
+    section_title: String(formData.get('accounts_section_title') || ''),
     description: String(formData.get('accounts_description') || ''),
   };
 

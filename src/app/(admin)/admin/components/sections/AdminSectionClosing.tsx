@@ -31,11 +31,11 @@ export const AdminSectionClosing = ({ closing }: AdminSectionClosingProps) => {
           className="flex flex-col gap-4"
         >
           <div className="flex flex-col gap-2">
-            <Label htmlFor="closing_title">섹션 타이틀</Label>
+            <Label htmlFor="closing_section_title">섹션 타이틀</Label>
             <Input
-              id="closing_title"
-              name="closing_title"
-              defaultValue={closing.title}
+              id="closing_section_title"
+              name="closing_section_title"
+              defaultValue={closing.section_title}
               placeholder="예: THANK YOU"
             />
           </div>
