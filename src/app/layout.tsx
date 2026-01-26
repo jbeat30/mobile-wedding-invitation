@@ -3,6 +3,7 @@ import { Geist, Nanum_Myeongjo, Gowun_Batang, Crimson_Pro } from 'next/font/goog
 import './globals.css';
 import { loadOgMetadata } from '@/app/invitationData';
 import { getCachedTheme } from '@/lib/invitationCache';
+import { Agentation } from 'agentation';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -146,6 +147,7 @@ export default async function RootLayout({
       <head />
       <body className="antialiased [text-rendering:optimizeLegibility] isolate min-[481px]:[background:radial-gradient(circle_at_top,_#FAF9F7_0%,_#F0EDE8_100%)]">
         {children}
+        {process.env.NODE_ENV === 'development' && <Agentation />}
       </body>
     </html>
   );
