@@ -84,9 +84,16 @@ export const updateLoadingAction = async (formData: FormData) => {
     min_duration: toNumber(formData.get('loading_min_duration')),
     additional_duration: toNumber(formData.get('loading_additional_duration')),
   };
+  const sectionTitle = String(formData.get('loading_section_title') || '');
 
   assertNoError(
     await supabase.from('invitation_loading').update(payload).eq('invitation_id', id)
+  );
+  assertNoError(
+    await supabase
+      .from('invitation_section_titles')
+      .update({ loading: sectionTitle })
+      .eq('invitation_id', id)
   );
   revalidateAdmin();
 };

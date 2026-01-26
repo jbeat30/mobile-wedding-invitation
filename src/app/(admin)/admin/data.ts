@@ -117,6 +117,7 @@ type InvitationClosingRow = {
 
 type InvitationSectionTitlesRow = {
   id: string;
+  loading: string;
   greeting: string;
   couple: string;
   wedding: string;
@@ -643,6 +644,7 @@ export const loadAdminData = async () => {
       copyright: closing.copyright || '',
     },
     sectionTitles: {
+      loading: sectionTitles.loading,
       greeting: sectionTitles.greeting,
       couple: sectionTitles.couple,
       wedding: sectionTitles.wedding,

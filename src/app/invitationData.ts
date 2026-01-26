@@ -197,6 +197,7 @@ type InvitationClosingRow = {
 
 /** 섹션 타이틀 DB 로우 타입 */
 type InvitationSectionTitlesRow = {
+  loading: string;
   greeting: string;
   couple: string;
   wedding: string;
@@ -390,6 +391,7 @@ export const loadInvitationView = async (): Promise<InvitationMock> => {
           message: loading.message,
           minDuration: loading.min_duration,
           additionalDuration: loading.additional_duration,
+          title: sectionTitles.loading,
         },
         event: {
           dateTime: event.date_time,
@@ -524,6 +526,7 @@ export const loadInvitationView = async (): Promise<InvitationMock> => {
           copyright: closing.copyright || '',
         },
         sectionTitles: {
+          loading: sectionTitles.loading,
           greeting: sectionTitles.greeting,
           couple: sectionTitles.couple,
           wedding: sectionTitles.wedding,

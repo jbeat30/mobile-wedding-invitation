@@ -10,6 +10,7 @@ export type LoadingSectionProps = {
   imageSrc: string;
   isVisible: boolean;
   isHintVisible: boolean;
+  title: string;
 };
 
 /**
@@ -51,6 +52,7 @@ export const LoadingSection = ({
   imageSrc,
   isVisible,
   isHintVisible,
+  title,
 }: LoadingSectionProps) => {
   const [showHint, setShowHint] = useState(false);
   const initialHeightRef = useRef<number>(0);
@@ -210,7 +212,7 @@ export const LoadingSection = ({
             data-loading-text
             className="translate-y-3 text-[11px] font-bold tracking-[0.6em] text-[var(--accent-soft)] uppercase opacity-0 will-change-[transform,opacity]"
           >
-            WEDDING INVITATION
+            {title}
           </p>
           <p
             data-loading-text

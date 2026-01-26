@@ -15,6 +15,7 @@ type AdminSectionLoadingProps = {
   loading: AdminDashboardData['loading'];
   assets: AdminDashboardData['assets'];
   fileUrlToNameMap: AdminDashboardData['fileUrlToNameMap'];
+  sectionTitle: AdminDashboardData['sectionTitles']['loading'];
 };
 
 /**
@@ -22,7 +23,7 @@ type AdminSectionLoadingProps = {
  * @param props AdminSectionLoadingProps
  * @returns JSX.Element
  */
-export const AdminSectionLoading = ({ loading, assets, fileUrlToNameMap }: AdminSectionLoadingProps) => {
+export const AdminSectionLoading = ({ loading, assets, fileUrlToNameMap, sectionTitle }: AdminSectionLoadingProps) => {
   return (
     <div className="flex flex-col gap-6">
       <Card>
@@ -35,17 +36,21 @@ export const AdminSectionLoading = ({ loading, assets, fileUrlToNameMap }: Admin
             successMessage="로딩 설정이 저장되었습니다"
             className="grid gap-4 md:grid-cols-2"
           >
-            <AdminSwitchField
-              id="loading_enabled"
-              name="loading_enabled"
-              label="사용"
-              defaultChecked={loading.enabled}
-              className="md:col-span-2"
-            />
-            <div className="flex flex-col gap-2 md:col-span-2">
-              <Label htmlFor="loading_message">로딩 메시지</Label>
-              <Input id="loading_message" name="loading_message" defaultValue={loading.message} />
-            </div>
+          <AdminSwitchField
+            id="loading_enabled"
+            name="loading_enabled"
+            label="사용"
+            defaultChecked={loading.enabled}
+            className="md:col-span-2"
+          />
+          <div className="flex flex-col gap-2 md:col-span-2">
+            <Label htmlFor="loading_section_title">로딩 섹션 타이틀</Label>
+            <Input id="loading_section_title" name="loading_section_title" defaultValue={sectionTitle} />
+          </div>
+          <div className="flex flex-col gap-2 md:col-span-2">
+            <Label htmlFor="loading_message">로딩 메시지</Label>
+            <Input id="loading_message" name="loading_message" defaultValue={loading.message} />
+          </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="loading_min_duration">최소 로딩 보장 시간 (ms)</Label>
               <Input

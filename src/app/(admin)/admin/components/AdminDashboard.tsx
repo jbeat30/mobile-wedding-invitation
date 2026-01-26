@@ -484,7 +484,14 @@ export const AdminDashboard = ({ initialData }: AdminDashboardProps) => {
       case 'overview':
         return <AdminSectionOverview overview={data.overview} />;
       case 'loading':
-        return <AdminSectionLoading loading={data.loading} assets={data.assets} fileUrlToNameMap={data.fileUrlToNameMap} />;
+        return (
+          <AdminSectionLoading
+            loading={data.loading}
+            assets={data.assets}
+            fileUrlToNameMap={data.fileUrlToNameMap}
+            sectionTitle={data.sectionTitles.loading}
+          />
+        );
       case 'intro':
         return (
           <AdminSectionIntro

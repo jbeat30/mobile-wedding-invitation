@@ -162,6 +162,7 @@ export type InvitationLoading = {
   message: string;
   minDuration: number;
   additionalDuration: number;
+  title: string;
 };
 
 export type GalleryImage = {
@@ -199,6 +200,7 @@ export type InvitationGreeting = {
 };
 
 export type InvitationSectionTitles = {
+  loading: string;
   greeting: string;
   couple: string;
   wedding: string;
@@ -346,6 +348,7 @@ export const invitationMock: InvitationMock = {
   content: {
     loading: {
       enabled: true,
+      title: 'WEDDING INVITATION',
       message: 'We are getting married',
       minDuration: 1500,
       additionalDuration: 1000,
@@ -586,6 +589,7 @@ export const invitationMock: InvitationMock = {
       copyright: '© 2026. All rights reserved.',
     },
     sectionTitles: {
+      loading: 'WEDDING INVITATION',
       greeting: '초대합니다',
       couple: '두 사람을 소개합니다',
       wedding: '결혼합니다',
