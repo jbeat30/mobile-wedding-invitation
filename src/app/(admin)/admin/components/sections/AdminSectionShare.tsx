@@ -9,11 +9,11 @@ import { AdminImageFileField } from '@/app/(admin)/admin/components/AdminImageFi
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 
 type AdminSectionShareProps = {
   share: AdminDashboardData['share'];
   assets: AdminDashboardData['assets'];
-  sectionTitles: AdminDashboardData['sectionTitles'];
   fileUrlToNameMap: AdminDashboardData['fileUrlToNameMap'];
 };
 
@@ -22,7 +22,9 @@ type AdminSectionShareProps = {
  * @param props AdminSectionShareProps
  * @returns JSX.Element
  */
-export const AdminSectionShare = ({ share, assets, sectionTitles, fileUrlToNameMap }: AdminSectionShareProps) => {
+export const AdminSectionShare = ({ share, assets, fileUrlToNameMap }: AdminSectionShareProps) => {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://jbeat.com';
+
   return (
     <div className="flex flex-col gap-6">
       <Card>
@@ -31,40 +33,72 @@ export const AdminSectionShare = ({ share, assets, sectionTitles, fileUrlToNameM
         </CardHeader>
         <CardContent>
           <p className="text-[14px] text-[var(--text-muted)]">
-            청첩장 화면에 표시되는 공유 섹션의 제목/문구를 설정합니다.
+            청첩장 화면에 표시되는 공유 섹션 제목/문구와 OG 메타 정보를 분리해서 설정합니다.
           </p>
           <AdminForm
             action={updateShareAction}
             successMessage="공유 섹션이 저장되었습니다"
             className="mt-4 grid gap-4 md:grid-cols-2"
           >
-            <input type="hidden" name="share_image_url" value={assets.share_og_image || ''} />
             <div className="flex flex-col gap-2 md:col-span-2">
-              <Label htmlFor="share_section_title">공유 섹션 타이틀</Label>
+              <Label htmlFor="section_title">공유 섹션 타이틀</Label>
               <Input
-                id="share_section_title"
-                name="share_section_title"
-                defaultValue={sectionTitles.share}
-                placeholder="예: 공유하기"
+                id="section_title"
+                name="section_title"
+                defaultValue={share.section_title}
+                placeholder="예: 청첩장 공유하기"
               />
             </div>
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="share_title">공유 타이틀</Label>
-              <Input
-                id="share_title"
-                name="share_title"
-                defaultValue={share.title}
-                placeholder="예: 우리 결혼합니다"
-              />
-            </div>
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="share_description">공유 설명</Label>
-              <Input
-                id="share_description"
-                name="share_description"
+            <div className="flex flex-col gap-2 md:col-span-2">
+              <Label htmlFor="description">공유 섹션 문구</Label>
+              <Textarea
+                id="description"
+                name="description"
                 defaultValue={share.description}
-                placeholder="예: 소중한 날에 함께해 주세요"
+                placeholder="예: 소중한 분들과 함께 이야기를 나눌게요"
               />
+              <p className="text-[11px] text-[var(--text-muted)]">
+                이 문구는 공개 페이지의 공유 섹션 하단 설명으로 사용됩니다.
+              </p>
+            </div>
+            <div className="md:col-span-2">
+              <div className="rounded-2xl border border-dashed border-[var(--border-light)] bg-white/60 p-4">
+                <p className="text-[13px] font-semibold text-[var(--text-primary)]">OG 메타 정보</p>
+                <p className="mt-1 text-[12px] text-[var(--text-muted)]">
+                  OG 타이틀과 설명은 소셜 미리보기에서 사용하는 데이터입니다. 아래 값들은
+                  자동으로 함께 제공됩니다.
+                </p>
+                <div className="mt-3 space-y-1 text-[12px] text-[var(--text-secondary)]">
+                  <p>og:type: website (고정)</p>
+                  <p>og:url: {siteUrl}</p>
+                  <p>og:site_name: jbeat</p>
+                  <p>developer: jbeat (관리자화면에는 노출되지 않으며 변경할 수 없습니다)</p>
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="og_title">OG 타이틀</Label>
+              <Input
+                id="og_title"
+                name="og_title"
+                defaultValue={share.og_title || ''}
+                placeholder="예: 강신랑 · 장신부 결혼식에 초대합니다"
+              />
+              <p className="text-[11px] text-[var(--text-muted)]">
+                OG 타이틀은 메신저/브라우저 미리보기 제목으로 사용되며 60자 내외로 입력하세요.
+              </p>
+            </div>
+            <div className="flex flex-col gap-2 md:col-span-2">
+              <Label htmlFor="og_description">OG 설명</Label>
+              <Textarea
+                id="og_description"
+                name="og_description"
+                defaultValue={share.og_description || ''}
+                placeholder="예: 2026년 05월 16일 오후 3시 00분 | 채림 웨딩홀"
+              />
+              <p className="text-[11px] text-[var(--text-muted)]">
+                OG 설명은 메신저/브라우저 미리보기 본문으로 사용됩니다. 최대 두 줄을 권장합니다.
+              </p>
             </div>
             <div className="md:col-span-2 flex justify-end">
               <AdminSubmitButton size="sm" pendingText="저장 중...">
@@ -88,7 +122,6 @@ export const AdminSectionShare = ({ share, assets, sectionTitles, fileUrlToNameM
             successMessage="카카오 공유 카드가 저장되었습니다"
             className="mt-4 grid gap-4 md:grid-cols-2"
           >
-            <input type="hidden" name="share_image_url" value={assets.share_og_image || ''} />
             <div className="flex flex-col gap-2">
               <Label htmlFor="kakao_title">카카오 타이틀</Label>
               <Input

@@ -170,9 +170,11 @@ type InvitationRsvpRow = {
 
 /** 공유 설정 DB 로우 타입 */
 type InvitationShareRow = {
-  subtitle: string | null;
   description: string;
-  image_url: string | null;
+  og_title: string | null;
+  og_description: string | null;
+  developer: string | null;
+  og_image_url: string | null;
   kakao_title: string | null;
   kakao_description: string | null;
   kakao_image_url: string | null;
@@ -464,15 +466,15 @@ export const loadInvitationView = async (): Promise<InvitationMock> => {
         },
         share: {
           section_title: share.section_title,
-          title: share.subtitle || '',
           description: share.description,
-          imageUrl: share.image_url || assets.share_og_image || '',
-          kakaoTemplate: {
-            title: share.kakao_title || share.subtitle || '',
-            description: share.kakao_description || share.description,
-            imageUrl: share.kakao_image_url || assets.share_kakao_image || share.image_url || '',
-            buttonLabel: share.kakao_button_label || '청첩장 보기',
-          },
+          og_title: share.og_title,
+          og_description: share.og_description,
+          developer: share.developer || 'jbeat',
+          og_image_url: share.og_image_url,
+          kakao_title: share.kakao_title,
+          kakao_description: share.kakao_description,
+          kakao_image_url: share.kakao_image_url,
+          kakao_button_label: share.kakao_button_label,
         },
         rsvp: {
           enabled: rsvp.enabled,
@@ -559,6 +561,10 @@ export type OgMetadata = {
   title: string;
   description: string;
   imageUrl: string | null;
+  type: string;
+  url: string;
+  siteName: string;
+  developer: string;
 };
 
 /**
@@ -567,10 +573,15 @@ export type OgMetadata = {
  * @returns OG 메타데이터 (title, description, imageUrl)
  */
 export const loadOgMetadata = async (): Promise<OgMetadata> => {
+  const defaultUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
   const defaultMeta: OgMetadata = {
     title: '결혼식에 초대합니다',
     description: '소중한 분들을 초대합니다',
     imageUrl: null,
+    type: 'website',
+    url: defaultUrl,
+    siteName: 'jbeat',
+    developer: 'jbeat',
   };
 
   try {
@@ -581,7 +592,7 @@ export const loadOgMetadata = async (): Promise<OgMetadata> => {
     const [shareResult, assetsResult] = await Promise.all([
       supabase
         .from('invitation_share')
-        .select('title, description, image_url')
+        .select('description, og_title, og_description, og_image_url, developer')
         .eq('invitation_id', invitation.id)
         .maybeSingle(),
       supabase
@@ -595,9 +606,13 @@ export const loadOgMetadata = async (): Promise<OgMetadata> => {
     const assets = assetsResult.data as Pick<InvitationAssetsRow, 'share_og_image'> | null;
 
     return {
-      title: share?.title || defaultMeta.title,
-      description: share?.description || defaultMeta.description,
-      imageUrl: share?.image_url || assets?.share_og_image || null,
+      title: share?.og_title || defaultMeta.title,
+      description: share?.og_description || share?.description || defaultMeta.description,
+      imageUrl: share?.og_image_url || assets?.share_og_image || null,
+      type: 'website',
+      url: defaultUrl,
+      siteName: share?.og_title || defaultMeta.title,
+      developer: share?.developer || 'jbeat',
     };
   } catch {
     return defaultMeta;

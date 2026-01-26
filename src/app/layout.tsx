@@ -60,6 +60,7 @@ export const generateMetadata = async (): Promise<Metadata> => {
       title: ogMeta.title,
       description: ogMeta.description,
       type: 'website',
+      siteName: ogMeta.siteName,
       locale: 'ko_KR',
       ...(ogMeta.imageUrl && {
         images: [
@@ -78,6 +79,9 @@ export const generateMetadata = async (): Promise<Metadata> => {
       description: ogMeta.description,
       ...(ogMeta.imageUrl && { images: [ogMeta.imageUrl] }),
     },
+    other: ogMeta.developer
+      ? { 'og:developer': ogMeta.developer }
+      : {},
     appleWebApp: {
       capable: true,
       statusBarStyle: 'default',

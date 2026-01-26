@@ -93,6 +93,7 @@ export type InvitationCouple = {
   groom: InvitationPerson;
   bride: InvitationPerson;
   parents: InvitationParents;
+  section_title?: string;
 };
 
 export type InvitationEvent = {
@@ -185,16 +186,16 @@ export type InvitationGallery = {
 };
 
 export type InvitationShare = {
-  title: string;
+  section_title: string;
   description: string;
-  imageUrl: string;
-  kakaoTemplate?: {
-    title: string;
-    description: string;
-    imageUrl: string;
-    buttonLabel?: string;
-  };
-  section_title?: string;
+  og_title: string | null;
+  og_description: string | null;
+  developer: string;
+  og_image_url: string | null;
+  kakao_title: string | null;
+  kakao_description: string | null;
+  kakao_image_url: string | null;
+  kakao_button_label: string | null;
 };
 
 export type InvitationGreeting = {
@@ -468,15 +469,15 @@ export const invitationMock: InvitationMock = {
     },
     share: {
       section_title: '청첩장 공유하기',
-      title: '강신랑 · 장신부 결혼식에 초대합니다',
-      description: '2026년 05월 16일 오후 3시 00분 | 채림 웨딩홀',
-      imageUrl: assets.share.ogImage,
-      kakaoTemplate: {
-        title: '결혼식에 초대합니다',
-        description: '강신랑 · 장신부\n2026년 05월 16일 오후 3시 00분\n채림 웨딩홀',
-        imageUrl: assets.share.kakaoImage,
-        buttonLabel: '청첩장 보기',
-      },
+      description: '소중한 분들과 함께 나눠주세요',
+      og_title: '강신랑 · 장신부 결혼식에 초대합니다',
+      og_description: '2026년 05월 16일 오후 3시 00분 | 채림 웨딩홀',
+      developer: 'jbeat',
+      og_image_url: assets.share.ogImage,
+      kakao_title: '결혼식에 초대합니다',
+      kakao_description: '강신랑 · 장신부\n2026년 05월 16일 오후 3시 00분\n채림 웨딩홀',
+      kakao_image_url: assets.share.kakaoImage,
+      kakao_button_label: '청첩장 보기',
     },
     rsvp: {
       enabled: true,

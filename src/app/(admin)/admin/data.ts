@@ -50,14 +50,16 @@ type InvitationGreetingRow = {
 
 type InvitationShareRow = {
   id: string;
-  subtitle: string | null;
+  section_title: string;
   description: string;
-  image_url: string | null;
+  og_title: string | null;
+  og_description: string | null;
+  developer: string | null;
+  og_image_url: string | null;
   kakao_title: string | null;
   kakao_description: string | null;
   kakao_image_url: string | null;
   kakao_button_label: string | null;
-  section_title: string;
 };
 
 type InvitationBgmRow = {
@@ -532,15 +534,17 @@ export const loadAdminData = async () => {
       message_lines: greeting.message_lines || [],
     },
     share: {
-      section_title: share.section_title,
       id: share.id,
-      title: share.subtitle || '',
+      section_title: share.section_title,
       description: share.description,
-      image_url: share.image_url,
-      kakao_title: share.kakao_title || '',
-      kakao_description: share.kakao_description || '',
-      kakao_image_url: share.kakao_image_url || '',
-      kakao_button_label: share.kakao_button_label || '',
+      og_title: share.og_title,
+      og_description: share.og_description,
+      developer: share.developer || 'jbeat',
+      og_image_url: share.og_image_url,
+      kakao_title: share.kakao_title,
+      kakao_description: share.kakao_description,
+      kakao_image_url: share.kakao_image_url,
+      kakao_button_label: share.kakao_button_label,
     },
     bgm: {
       id: bgm.id,

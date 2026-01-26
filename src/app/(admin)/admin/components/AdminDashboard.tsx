@@ -572,7 +572,6 @@ export const AdminDashboard = ({ initialData }: AdminDashboardProps) => {
           <AdminSectionShare
             share={data.share}
             assets={data.assets}
-            sectionTitles={data.sectionTitles}
             fileUrlToNameMap={data.fileUrlToNameMap}
           />
         );

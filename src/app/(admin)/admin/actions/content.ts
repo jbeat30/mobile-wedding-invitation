@@ -155,6 +155,9 @@ export const updateWeddingInfoSectionAction = async (formData: FormData) => {
   const { id } = await getOrCreateInvitation();
 
   const sectionTitle = String(formData.get('wedding_section_title') || '');
+  const eventDateTime = String(formData.get('event_date_time') || new Date().toISOString());
+  const eventVenue = String(formData.get('event_venue') || '');
+  const eventAddress = String(formData.get('event_address') || '');
   const notices = parseLines(String(formData.get('location_notices') || ''));
 
   assertNoError(

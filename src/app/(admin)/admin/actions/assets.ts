@@ -67,7 +67,7 @@ export const updateShareImagesAction = async (formData: FormData) => {
       .eq('invitation_id', id)
   );
   assertNoError(
-    await supabase.from('invitation_share').update({ image_url: ogImage }).eq('invitation_id', id)
+    await supabase.from('invitation_share').update({ og_image_url: ogImage }).eq('invitation_id', id)
   );
 
   revalidateAdmin();
