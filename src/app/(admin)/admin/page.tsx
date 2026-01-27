@@ -1,7 +1,5 @@
-import { redirect } from 'next/navigation';
 import { loadAdminData } from '@/app/(admin)/admin/data';
 import { AdminDashboard } from '@/app/(admin)/admin/components/AdminDashboard';
-import { requireAccessToken } from '@/lib/adminAuth';
 
 /**
  * 관리자 대시보드
@@ -10,12 +8,6 @@ import { requireAccessToken } from '@/lib/adminAuth';
 export const dynamic = 'force-dynamic';
 
 export default async function AdminPage() {
-  try {
-    await requireAccessToken();
-  } catch {
-    redirect('/admin/login');
-  }
-
   const data = await loadAdminData();
 
   return (
