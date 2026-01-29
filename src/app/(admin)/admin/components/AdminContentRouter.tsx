@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 
 // 스켈레톤 로더
 const SectionSkeleton = ({ title: _title }: { title: string }) => (
-  <div className="p-8 max-w-7xl mx-auto">
+  <div className="p-8">
     <div className="animate-pulse">
       <div className="h-8 bg-gray-200 rounded w-1/4 mb-6"></div>
       <div className="space-y-4">
@@ -174,7 +174,7 @@ export const AdminContentRouter = () => {
     
     default:
       return (
-        <div className="p-8 max-w-7xl mx-auto">
+        <div className="p-8">
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
             <h2 className="text-xl font-semibold text-gray-900 mb-2">
               페이지를 찾을 수 없습니다

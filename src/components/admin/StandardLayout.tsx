@@ -21,7 +21,7 @@ export const StandardLayout = ({ children }: StandardLayoutProps) => {
       <StandardSidebar />
 
       {/* 메인 컨텐츠 */}
-      <div className="flex-1 lg:ml-64 flex flex-col overflow-hidden">
+      <div className="flex-1 lg:ml-64 overflow-hidden">
         {/* 에러 표시 */}
         {error && (
           <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4">
@@ -30,8 +30,8 @@ export const StandardLayout = ({ children }: StandardLayoutProps) => {
           </div>
         )}
 
-        {/* 컨텐츠 영역 */}
-        <main className="flex-1 overflow-y-auto bg-gray-50">
+        {/* 컨텐츠 영역 - 스크롤 가능 */}
+        <main className="h-full overflow-y-auto bg-gray-50">
           {children}
         </main>
       </div>

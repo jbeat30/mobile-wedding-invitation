@@ -51,7 +51,7 @@ export const AdminSectionOverview = ({ overview }: AdminSectionOverviewProps) =>
   ];
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
+    <div className="p-8">
       {/* 페이지 헤더 */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 flex items-center">
