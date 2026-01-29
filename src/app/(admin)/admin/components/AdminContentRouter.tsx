@@ -37,8 +37,8 @@ const AdminSectionCouple = dynamic(
 );
 
 const AdminSectionLocation = dynamic(
-  () => import('@/app/(admin)/admin/components/sections/AdminSectionLocation')
-    .then(m => ({ default: m.AdminSectionLocation })),
+  () => import('@/app/(admin)/admin/components/sections/AdminSectionVenue')
+    .then(m => ({ default: m.AdminSectionVenue })),
   { loading: () => <SectionSkeleton title="예식장 정보" /> }
 );
 
@@ -105,7 +105,19 @@ export const AdminContentRouter = () => {
       );
     
     case 'location':
-      return <AdminSectionLocation data={data} />;
+    case 'venue':
+      return (
+        <AdminSectionLocation 
+          venue={data.location ? {
+            id: data.location.id,
+            name: data.location.place_name,
+            address: data.location.address,
+            latitude: data.location.latitude,
+            longitude: data.location.longitude,
+          } : undefined}
+          sectionTitles={data.sectionTitles}
+        />
+      );
     
     case 'gallery':
       return (
