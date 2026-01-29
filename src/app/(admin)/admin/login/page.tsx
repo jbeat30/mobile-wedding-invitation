@@ -32,23 +32,23 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
       <div className="max-w-md w-full space-y-8">
         {/* 로고 */}
         <div className="text-center">
-          <div className="mx-auto h-12 w-12 bg-blue-600 rounded-lg flex items-center justify-center">
+          <div className="mx-auto h-14 w-14 bg-blue-600 rounded-xl flex items-center justify-center">
             <ShieldCheckIcon className="h-8 w-8 text-white" />
           </div>
           <h2 className="mt-6 text-3xl font-bold text-gray-900">
             관리자 로그인
           </h2>
-          <p className="mt-2 text-sm text-gray-600">
+          <p className="mt-2 text-base text-gray-600">
             청첩장 관리 시스템
           </p>
         </div>
 
         {/* 로그인 폼 */}
-        <div className="bg-white py-8 px-6 shadow rounded-lg border border-gray-200">
+        <div className="bg-white py-8 px-6 shadow-sm rounded-lg border border-gray-200">
           <form action={formAction} className="space-y-6">
             <div>
               <StandardInput

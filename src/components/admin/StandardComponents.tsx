@@ -15,7 +15,7 @@ interface StandardCardProps {
  */
 export const StandardCard = ({ title, children, className, actions }: StandardCardProps) => {
   return (
-    <div className={cn('bg-white rounded-lg shadow border border-gray-200', className)}>
+    <div className={cn('bg-white rounded-lg shadow-sm border border-gray-200', className)}>
       {title && (
         <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
           <h3 className="text-lg font-semibold text-gray-900">{title}</h3>

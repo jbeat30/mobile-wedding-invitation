@@ -77,14 +77,14 @@ export const AdminSectionBasic = ({ data }: AdminSectionBasicProps) => {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className="p-8 max-w-7xl mx-auto">
       {/* 페이지 헤더 */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 flex items-center">
-          <UserIcon className="w-6 h-6 mr-3 text-blue-600" />
+        <h1 className="text-3xl font-bold text-gray-900 flex items-center">
+          <UserIcon className="w-8 h-8 mr-3 text-blue-600" />
           기본 정보
         </h1>
-        <p className="text-gray-600 mt-1">신랑신부의 기본 정보를 입력하세요</p>
+        <p className="text-gray-600 mt-2 text-base">신랑신부의 기본 정보를 입력하세요</p>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6 mb-6">

@@ -65,8 +65,8 @@ export const StandardSidebar = () => {
       )}>
         {/* 브랜드 */}
         <div className="p-6 border-b border-gray-800">
-          <h1 className="text-xl font-bold">청첩장 관리</h1>
-          <p className="text-sm text-gray-400 mt-1">Wedding CMS</p>
+          <h1 className="text-xl font-bold text-white">청첩장 CMS</h1>
+          <p className="text-sm text-gray-400 mt-1">Wedding Management</p>
         </div>
 
         {/* 네비게이션 */}
@@ -81,35 +81,31 @@ export const StandardSidebar = () => {
                   <button
                     onClick={() => setActiveTab(item.id)}
                     className={cn(
-                      'w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors',
+                      'w-full flex items-center space-x-3 px-3 py-3 rounded-lg text-left transition-colors text-sm font-medium',
                       isActive 
                         ? 'bg-blue-600 text-white' 
                         : 'text-gray-300 hover:bg-gray-800 hover:text-white'
                     )}
                   >
-                    <Icon className="w-5 h-5" />
-                    <span>{item.label}</span>
+                    <Icon className="w-5 h-5 flex-shrink-0" />
+                    <span className="truncate">{item.label}</span>
                   </button>
                 </li>
               );
             })}
           </ul>
-
-          {/* 설정 및 로그아웃 */}
-          <div className="mt-8 px-3 pt-4 border-t border-gray-800">
-            <ul className="space-y-1">
-              <li>
-                <button
-                  onClick={handleLogout}
-                  className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
-                >
-                  <LogOutIcon className="w-5 h-5" />
-                  <span>로그아웃</span>
-                </button>
-              </li>
-            </ul>
-          </div>
         </nav>
+
+        {/* 로그아웃 - 하단 고정 */}
+        <div className="p-3 border-t border-gray-800">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center space-x-3 px-3 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors text-sm font-medium"
+          >
+            <LogOutIcon className="w-5 h-5 flex-shrink-0" />
+            <span>로그아웃</span>
+          </button>
+        </div>
       </div>
 
       {/* 모바일 오버레이 */}
