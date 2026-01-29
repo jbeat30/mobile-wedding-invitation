@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import type { AdminDashboardData } from '@/app/(admin)/admin/data';
 import { useAdminStore } from '@/stores/adminStore';
-import { AdminLayout } from './AdminLayout';
+import { ModernLayout } from '@/components/admin/ModernLayout';
 import { AdminContentRouter } from './AdminContentRouter';
 import { AdminModals } from './AdminModals';
 
@@ -59,9 +59,9 @@ export const AdminDashboard = ({ initialData }: AdminDashboardProps) => {
   }, [error, setError]);
 
   return (
-    <AdminLayout>
+    <ModernLayout>
       <AdminContentRouter />
       <AdminModals />
-    </AdminLayout>
+    </ModernLayout>
   );
 };

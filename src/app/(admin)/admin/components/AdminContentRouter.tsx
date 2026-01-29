@@ -38,7 +38,7 @@ const AdminSectionOverview = dynamic(
 );
 
 const AdminSectionBasic = dynamic(
-  () => import('@/app/(admin)/admin/components/sections/AdminSectionBasic')
+  () => import('@/app/(admin)/admin/components/sections/AdminSectionBasicModern')
     .then(m => ({ default: m.AdminSectionBasic })),
   { loading: () => <SectionSkeleton title="기본 정보" /> }
 );
@@ -68,7 +68,7 @@ const AdminSectionLocation = dynamic(
 );
 
 const AdminSectionGallery = dynamic(
-  () => import('@/app/(admin)/admin/components/sections/AdminSectionGallery')
+  () => import('@/app/(admin)/admin/components/sections/AdminSectionGalleryModern')
     .then(m => ({ default: m.AdminSectionGallery })),
   { loading: () => <SectionSkeleton title="갤러리 섹션" /> }
 );
@@ -164,7 +164,6 @@ export const AdminContentRouter = () => {
       return (
         <AdminSectionGallery
           gallery={data.gallery}
-          initialGalleryItems={data.galleryImages}
           galleryItems={data.galleryImages}
           setGalleryItems={() => {}}
           draggedImageId={null}
