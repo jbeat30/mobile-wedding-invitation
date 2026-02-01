@@ -23,6 +23,7 @@ export const AdminSectionBgm = ({ bgm }: AdminSectionBgmProps) => {
   const [audioUrl, setAudioUrl] = useState(bgm.audio_url || '');
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState('');
+  const [uploadSuccess, setUploadSuccess] = useState(false);
 
   /**
    * BGM 파일 업로드 처리
@@ -36,6 +37,7 @@ export const AdminSectionBgm = ({ bgm }: AdminSectionBgmProps) => {
     }
     setUploading(true);
     setUploadError('');
+    setUploadSuccess(false);
 
     const formData = new FormData();
     formData.append('file', file);
@@ -51,6 +53,7 @@ export const AdminSectionBgm = ({ bgm }: AdminSectionBgmProps) => {
       }
       const result = (await response.json()) as { url: string };
       setAudioUrl(result.url);
+      setUploadSuccess(true);
     } catch (error) {
       console.error('BGM upload failed:', error);
       setUploadError('업로드에 실패했습니다. 다시 시도해 주세요.');
@@ -125,12 +128,17 @@ export const AdminSectionBgm = ({ bgm }: AdminSectionBgmProps) => {
                 className="w-full rounded-[10px] border border-[var(--border-light)] bg-white/70 px-3 py-2 text-[14px] text-[var(--text-primary)] file:mr-3 file:rounded-[8px] file:border-0 file:bg-[var(--bg-secondary)] file:px-3 file:py-1.5 file:text-[14px] file:text-[var(--text-secondary)]"
               />
               <p className="text-[14px] text-[var(--text-muted)]">
-                mp3 등 오디오 파일을 업로드하면 URL이 자동으로 저장됩니다.
+                mp3 등 오디오 파일을 업로드한 후 반드시 하단의 &ldquo;저장하기&rdquo; 버튼을 눌러주세요.
               </p>
               {uploading ? (
                 <p className="inline-flex items-center gap-2 text-[14px] text-[var(--text-secondary)]">
                   <span className="h-3 w-3 animate-spin rounded-full border border-[var(--text-secondary)] border-t-transparent" />
                   업로드 중...
+                </p>
+              ) : null}
+              {uploadSuccess ? (
+                <p className="text-[14px] text-green-600 font-medium">
+                  ✓ 업로드 완료! 아래 &ldquo;저장하기&rdquo; 버튼을 눌러 적용하세요.
                 </p>
               ) : null}
               {uploadError ? (

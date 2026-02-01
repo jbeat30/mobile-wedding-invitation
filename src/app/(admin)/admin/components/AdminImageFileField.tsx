@@ -16,6 +16,8 @@ type AdminImageFileFieldProps = {
   hint?: string;
   previewClassName?: string;
   required?: boolean;
+  containerClassName?: string;
+  fullWidth?: boolean;
 };
 
 /**
@@ -33,6 +35,8 @@ export const AdminImageFileField = ({
   hint,
   previewClassName = 'h-[360px]',
   required = false,
+  containerClassName,
+  fullWidth = true,
 }: AdminImageFileFieldProps) => {
   const [value, setValue] = useState<string>(defaultValue || '');
   const [previewUrl, setPreviewUrl] = useState<string>(defaultValue || '');
@@ -217,61 +221,76 @@ export const AdminImageFileField = ({
   );
 
   return (
-    <div className="flex flex-col gap-2">
-      <Label htmlFor={id}>{label}</Label>
-      <div
-        className={`rounded-[12px] border-2 border-dashed px-4 py-5 transition-colors ${
-          isDragging
-            ? 'border-[var(--accent-rose-dark)] bg-[var(--bg-secondary)]/70'
-            : 'border-[var(--border-light)] bg-white/60'
-        }`}
-        onDragEnter={handleDragEnter}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-      >
-        <input
-          id={id}
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          required={required}
-          onChange={handleInputChange}
-          className="sr-only"
-        />
-        <div className="flex flex-col items-center gap-2 text-center">
-          <p className="text-[14px] font-medium text-[var(--text-primary)]">
-            이미지를 드래그하거나 아래 버튼으로 선택하세요
-          </p>
-          <label
-            htmlFor={id}
-            className="inline-flex cursor-pointer items-center rounded-[8px] bg-[var(--bg-secondary)] px-3 py-1.5 text-[14px] text-[var(--text-secondary)]"
-          >
-            파일 선택
-          </label>
-          <p className="text-[13px] text-[var(--text-muted)]">PNG, JPG, WEBP 등 이미지 파일</p>
+    <div
+      className={`flex flex-col gap-3 md:grid md:grid-cols-2 md:items-start md:gap-5 ${
+        fullWidth ? 'md:col-span-2' : ''
+      } ${containerClassName || ''}`}
+    >
+      <div className="flex flex-col gap-2">
+        <Label htmlFor={id}>{label}</Label>
+        <div
+          className={`rounded-[12px] border-2 border-dashed px-4 py-5 transition-colors ${
+            isDragging
+              ? 'border-[var(--accent-rose-dark)] bg-[var(--bg-secondary)]/70'
+              : 'border-[var(--border-light)] bg-white/60'
+          }`}
+          onDragEnter={handleDragEnter}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+        >
+          <input
+            id={id}
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            required={required}
+            onChange={handleInputChange}
+            className="sr-only"
+          />
+          <div className="flex flex-col items-center gap-2 text-center">
+            <p className="text-[14px] font-medium text-[var(--text-primary)]">
+              이미지를 드래그하거나 아래 버튼으로 선택하세요
+            </p>
+            <label
+              htmlFor={id}
+              className="inline-flex cursor-pointer items-center rounded-[8px] bg-[var(--bg-secondary)] px-3 py-1.5 text-[14px] text-[var(--text-secondary)]"
+            >
+              파일 선택
+            </label>
+            <p className="text-[13px] text-[var(--text-muted)]">PNG, JPG, WEBP 등 이미지 파일</p>
+          </div>
         </div>
+        <input
+          ref={hiddenInputRef}
+          type="hidden"
+          name={name}
+          value={value}
+          data-admin-track="true"
+        />
+        <input type="hidden" name={`${name}_uuid`} value={uploadedMeta?.uuid || ''} data-admin-track="true" />
+        <input
+          type="hidden"
+          name={`${name}_filename`}
+          value={uploadedMeta?.filename || ''}
+          data-admin-track="true"
+        />
+        {selectedFileName ? (
+          <p className="text-[14px] text-[var(--text-secondary)]">
+            선택된 파일: <span className="font-medium">{selectedFileName}</span>
+          </p>
+        ) : null}
+        {hint ? <p className="text-[14px] text-[var(--text-muted)]">{hint}</p> : null}
+        {uploading ? (
+          <p className="inline-flex items-center gap-2 text-[14px] text-[var(--text-secondary)]">
+            <span className="h-3 w-3 animate-spin rounded-full border border-[var(--text-secondary)] border-t-transparent" />
+            업로드 중...
+          </p>
+        ) : null}
+        {errorMessage ? (
+          <p className="text-[14px] text-[var(--accent-burgundy)]">{errorMessage}</p>
+        ) : null}
       </div>
-      <input
-        ref={hiddenInputRef}
-        type="hidden"
-        name={name}
-        value={value}
-        data-admin-track="true"
-      />
-      <input type="hidden" name={`${name}_uuid`} value={uploadedMeta?.uuid || ''} data-admin-track="true" />
-      <input
-        type="hidden"
-        name={`${name}_filename`}
-        value={uploadedMeta?.filename || ''}
-        data-admin-track="true"
-      />
-      {selectedFileName ? (
-        <p className="text-[14px] text-[var(--text-secondary)]">
-          선택된 파일: <span className="font-medium">{selectedFileName}</span>
-        </p>
-      ) : null}
-      {hint ? <p className="text-[14px] text-[var(--text-muted)]">{hint}</p> : null}
       {previewUrl.trim().length > 0 ? (
         <div className="relative overflow-hidden rounded-[12px] border border-[var(--border-light)] bg-white/60">
           {showPreview ? (
@@ -281,7 +300,7 @@ export const AdminImageFileField = ({
                 alt={`${label} 미리보기`}
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover"
+                className="object-contain bg-white"
                 unoptimized
               />
             </div>
@@ -291,15 +310,6 @@ export const AdminImageFileField = ({
             </div>
           )}
         </div>
-      ) : null}
-      {uploading ? (
-        <p className="inline-flex items-center gap-2 text-[14px] text-[var(--text-secondary)]">
-          <span className="h-3 w-3 animate-spin rounded-full border border-[var(--text-secondary)] border-t-transparent" />
-          업로드 중...
-        </p>
-      ) : null}
-      {errorMessage ? (
-        <p className="text-[14px] text-[var(--accent-burgundy)]">{errorMessage}</p>
       ) : null}
     </div>
   );

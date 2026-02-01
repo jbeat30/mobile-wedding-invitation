@@ -2,12 +2,10 @@
 
 import type { AdminDashboardData } from '@/app/(admin)/admin/data';
 import { updateClosingAction } from '@/app/(admin)/admin/actions/content';
-import { AdminForm } from '@/app/(admin)/admin/components/AdminForm';
-import { AdminSubmitButton } from '@/app/(admin)/admin/components/AdminSubmitButton';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import { StandardButton, StandardCard, StandardInput } from '@/components/admin/StandardComponents';
+import { SaveIcon } from 'lucide-react';
+import { useState } from 'react';
+import toast from 'react-hot-toast';
 
 type AdminSectionClosingProps = {
   closing: AdminDashboardData['closing'];
@@ -19,45 +17,63 @@ type AdminSectionClosingProps = {
  * @returns JSX.Element
  */
 export const AdminSectionClosing = ({ closing }: AdminSectionClosingProps) => {
+  const [form, setForm] = useState({
+    sectionTitle: closing.section_title || '',
+    message: closing.message || '',
+    copyright: closing.copyright || '',
+  });
+  const [saving, setSaving] = useState(false);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      const formData = new FormData();
+      formData.append('closing_section_title', form.sectionTitle);
+      formData.append('closing_message', form.message);
+      formData.append('closing_copyright', form.copyright);
+      await updateClosingAction(formData);
+      toast.success('마무리 인삿말이 저장되었습니다.');
+    } catch (_error) {
+      toast.error('저장에 실패했습니다.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>마무리 인삿말</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <AdminForm
-          action={updateClosingAction}
-          successMessage="마무리 인삿말이 저장되었습니다"
-          className="flex flex-col gap-4"
-        >
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="closing_section_title">섹션 타이틀</Label>
-            <Input
-              id="closing_section_title"
-              name="closing_section_title"
-              defaultValue={closing.section_title}
-              placeholder="예: THANK YOU"
-            />
-          </div>
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="closing_message">메시지</Label>
-            <Textarea id="closing_message" name="closing_message" defaultValue={closing.message} />
-          </div>
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="closing_copyright">저작권 표기</Label>
-            <Input
-              id="closing_copyright"
-              name="closing_copyright"
-              defaultValue={closing.copyright || ''}
-            />
-          </div>
-          <div className="flex justify-end">
-            <AdminSubmitButton size="sm" pendingText="저장 중...">
-              저장하기
-            </AdminSubmitButton>
-          </div>
-        </AdminForm>
-      </CardContent>
-    </Card>
+    <StandardCard
+      title="마무리 인삿말"
+      actions={
+        <StandardButton size="sm" loading={saving} onClick={handleSave}>
+          <SaveIcon className="w-4 h-4 mr-2" />
+          저장
+        </StandardButton>
+      }
+    >
+      <div className="space-y-4">
+        <StandardInput
+          label="섹션 타이틀"
+          value={form.sectionTitle}
+          onChange={(value) => setForm((prev) => ({ ...prev, sectionTitle: value }))}
+          placeholder="입력하세요"
+        />
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700">메시지</label>
+          <textarea
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            rows={4}
+            value={form.message}
+            onChange={(event) => setForm((prev) => ({ ...prev, message: event.target.value }))}
+            placeholder="입력하세요"
+          />
+        </div>
+        <StandardInput
+          label="저작권 표기"
+          value={form.copyright}
+          onChange={(value) => setForm((prev) => ({ ...prev, copyright: value }))}
+          placeholder="입력하세요"
+        />
+      </div>
+    </StandardCard>
   );
 };

@@ -1,7 +1,8 @@
 'use client';
 
-import type { RefObject } from 'react';
+import { useRef } from 'react';
 import type { AdminDashboardData } from '@/app/(admin)/admin/data';
+import { useAdminStore } from '@/stores/adminStore';
 import { updateBasicInfoAction, updateLocationAction } from '@/app/(admin)/admin/actions/content';
 import { AdminForm } from '@/app/(admin)/admin/components/AdminForm';
 import { AdminSubmitButton } from '@/app/(admin)/admin/components/AdminSubmitButton';
@@ -14,11 +15,6 @@ import { DateTimePicker } from '@/components/ui/DateTimePicker';
 
 type AdminSectionBasicProps = {
   data: AdminDashboardData;
-  locationCoords: { lat: number; lng: number };
-  onOpenPlaceSearchModal: () => void | Promise<void>;
-  onOpenPostcodeModal: () => void | Promise<void>;
-  addressInputRef: RefObject<HTMLInputElement | null>;
-  venueInputRef: RefObject<HTMLInputElement | null>;
 };
 
 /**
@@ -26,14 +22,11 @@ type AdminSectionBasicProps = {
  * @param props AdminSectionBasicProps
  * @returns JSX.Element
  */
-export const AdminSectionBasic = ({
-  data,
-  locationCoords,
-  onOpenPlaceSearchModal,
-  onOpenPostcodeModal,
-  addressInputRef,
-  venueInputRef,
-}: AdminSectionBasicProps) => {
+export const AdminSectionBasic = ({ data }: AdminSectionBasicProps) => {
+  const { locationCoords, openPlaceSearchModal, openPostcodeModal } = useAdminStore();
+  const addressInputRef = useRef<HTMLInputElement | null>(null);
+  const venueInputRef = useRef<HTMLInputElement | null>(null);
+
   const formatCoordinate = (value: number) =>
     Number.isFinite(value) ? value.toFixed(6) : '—';
 
@@ -175,15 +168,15 @@ export const AdminSectionBasic = ({
                 ref={addressInputRef}
                 defaultValue={data.event.address}
                 readOnly
-                onClick={onOpenPlaceSearchModal}
+                onClick={openPlaceSearchModal}
                 className="flex-1"
                 required
               />
               <div className="flex flex-wrap gap-2">
-                <Button type="button" size="sm" variant="ghost" onClick={onOpenPlaceSearchModal}>
+                <Button type="button" size="sm" variant="ghost" onClick={openPlaceSearchModal}>
                   장소 검색
                 </Button>
-                <Button type="button" size="sm" variant="outline" onClick={onOpenPostcodeModal}>
+                <Button type="button" size="sm" variant="outline" onClick={openPostcodeModal}>
                   주소 검색
                 </Button>
               </div>

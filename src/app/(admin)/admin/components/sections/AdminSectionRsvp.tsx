@@ -101,7 +101,7 @@ export const AdminSectionRsvp = ({
               defaultChecked={rsvp.enabled}
               className="md:col-span-2"
             />
-            <div className="flex flex-col gap-2 md:col-span-2">
+            <div className="flex flex-col gap-2">
               <DateTimePicker
                 id="rsvp_deadline"
                 name="rsvp_deadline"

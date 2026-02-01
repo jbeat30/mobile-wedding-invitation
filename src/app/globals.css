@@ -177,6 +177,101 @@ body::before {
     }
 }
 
+@layer components {
+    .admin-scope main button:not([data-admin-switch]),
+    .admin-scope main input[type="submit"],
+    .admin-scope main input[type="button"],
+    .admin-scope main a[role="button"],
+    .admin-scope .admin-modal button:not([data-admin-switch]) {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-weight: 500 !important;
+        border-radius: 0.375rem !important;
+        transition: color 150ms, background-color 150ms, border-color 150ms !important;
+        outline: none !important;
+        box-shadow: none !important;
+        background-color: #2563eb !important;
+        color: #ffffff !important;
+        padding: 0.5rem 0.75rem !important;
+        font-size: 0.875rem !important;
+        line-height: 1.25rem !important;
+    }
+
+    .admin-scope main button:not([data-admin-switch]):hover,
+    .admin-scope main input[type="submit"]:hover,
+    .admin-scope main input[type="button"]:hover,
+    .admin-scope main a[role="button"]:hover,
+    .admin-scope .admin-modal button:not([data-admin-switch]):hover {
+        background-color: #1d4ed8 !important;
+        color: #ffffff !important;
+    }
+
+    .admin-scope main button:not([data-admin-switch]):focus-visible,
+    .admin-scope main input[type="submit"]:focus-visible,
+    .admin-scope main input[type="button"]:focus-visible,
+    .admin-scope main a[role="button"]:focus-visible,
+    .admin-scope .admin-modal button:not([data-admin-switch]):focus-visible {
+        box-shadow: 0 0 0 2px #3b82f6 !important;
+        outline: none !important;
+    }
+
+    .admin-scope main button:not([data-admin-switch]):disabled,
+    .admin-scope main input[type="submit"]:disabled,
+    .admin-scope main input[type="button"]:disabled,
+    .admin-scope main a[role="button"][aria-disabled="true"],
+    .admin-scope .admin-modal button:not([data-admin-switch]):disabled {
+        opacity: 0.5 !important;
+        cursor: not-allowed !important;
+    }
+}
+
+@layer components {
+    .admin-dialog,
+    .admin-dialog * {
+        font-family: var(--font-admin-sans), var(--font-sans) !important;
+    }
+
+    .admin-dialog button {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-weight: 500 !important;
+        border-radius: 0.375rem !important;
+        transition: color 150ms, background-color 150ms, border-color 150ms !important;
+        outline: none !important;
+        box-shadow: none !important;
+        background-color: #2563eb !important;
+        color: #ffffff !important;
+        padding: 0.5rem 0.75rem !important;
+        font-size: 0.875rem !important;
+        line-height: 1.25rem !important;
+    }
+
+    .admin-dialog button:hover {
+        background-color: #1d4ed8 !important;
+    }
+
+    .admin-dialog button[data-admin-variant="cancel"] {
+        background-color: #6b7280 !important;
+        color: #ffffff !important;
+    }
+
+    .admin-dialog button[data-admin-variant="cancel"]:hover {
+        background-color: #4b5563 !important;
+    }
+
+    .admin-dialog button:focus-visible {
+        box-shadow: 0 0 0 2px #3b82f6 !important;
+        outline: none !important;
+    }
+
+    .admin-dialog button:disabled {
+        opacity: 0.5 !important;
+        cursor: not-allowed !important;
+    }
+}
+
 .public-page {
     -webkit-touch-callout: none;
     -webkit-user-select: none;

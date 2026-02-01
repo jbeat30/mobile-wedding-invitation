@@ -23,7 +23,8 @@ type AdminSectionShareProps = {
  * @returns JSX.Element
  */
 export const AdminSectionShare = ({ share, assets, fileUrlToNameMap }: AdminSectionShareProps) => {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://jbeat.com';
+  const nowUrl = typeof window !== 'undefined' ? window.location.origin : '';
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || nowUrl;
 
   return (
     <div className="flex flex-col gap-6">
@@ -46,7 +47,7 @@ export const AdminSectionShare = ({ share, assets, fileUrlToNameMap }: AdminSect
                 id="section_title"
                 name="section_title"
                 defaultValue={share.section_title}
-                placeholder="예: 청첩장 공유하기"
+                placeholder="입력하세요"
               />
             </div>
             <div className="flex flex-col gap-2 md:col-span-2">
@@ -55,7 +56,7 @@ export const AdminSectionShare = ({ share, assets, fileUrlToNameMap }: AdminSect
                 id="description"
                 name="description"
                 defaultValue={share.description}
-                placeholder="예: 소중한 분들과 함께 이야기를 나눌게요"
+                placeholder="입력하세요"
               />
               <p className="text-[11px] text-[var(--text-muted)]">
                 이 문구는 공개 페이지의 공유 섹션 하단 설명으로 사용됩니다.
@@ -71,8 +72,8 @@ export const AdminSectionShare = ({ share, assets, fileUrlToNameMap }: AdminSect
                 <div className="mt-3 space-y-1 text-[12px] text-[var(--text-secondary)]">
                   <p>og:type: website (고정)</p>
                   <p>og:url: {siteUrl}</p>
-                  <p>og:site_name: jbeat</p>
-                  <p>developer: jbeat (관리자화면에는 노출되지 않으며 변경할 수 없습니다)</p>
+                  <p>og:site_name: Wedding Invitation</p>
+                  <p>developer: jbeat</p>
                 </div>
               </div>
             </div>
@@ -82,7 +83,7 @@ export const AdminSectionShare = ({ share, assets, fileUrlToNameMap }: AdminSect
                 id="og_title"
                 name="og_title"
                 defaultValue={share.og_title || ''}
-                placeholder="예: 강신랑 · 장신부 결혼식에 초대합니다"
+                placeholder="입력하세요"
               />
               <p className="text-[11px] text-[var(--text-muted)]">
                 OG 타이틀은 메신저/브라우저 미리보기 제목으로 사용되며 60자 내외로 입력하세요.
@@ -94,7 +95,7 @@ export const AdminSectionShare = ({ share, assets, fileUrlToNameMap }: AdminSect
                 id="og_description"
                 name="og_description"
                 defaultValue={share.og_description || ''}
-                placeholder="예: 2026년 05월 16일 오후 3시 00분 | 채림 웨딩홀"
+                placeholder="입력하세요"
               />
               <p className="text-[11px] text-[var(--text-muted)]">
                 OG 설명은 메신저/브라우저 미리보기 본문으로 사용됩니다. 최대 두 줄을 권장합니다.
@@ -128,7 +129,7 @@ export const AdminSectionShare = ({ share, assets, fileUrlToNameMap }: AdminSect
                 id="kakao_title"
                 name="kakao_title"
                 defaultValue={share.kakao_title || ''}
-                placeholder="예: 철수 ❤️ 영희의 결혼식"
+                placeholder="입력하세요"
               />
             </div>
             <div className="flex flex-col gap-2">
@@ -137,7 +138,7 @@ export const AdminSectionShare = ({ share, assets, fileUrlToNameMap }: AdminSect
                 id="kakao_description"
                 name="kakao_description"
                 defaultValue={share.kakao_description || ''}
-                placeholder="예: 2024.12.25 토요일 오후 2시"
+                placeholder="입력하세요"
               />
             </div>
             <AdminImageFileField
@@ -155,7 +156,7 @@ export const AdminSectionShare = ({ share, assets, fileUrlToNameMap }: AdminSect
                 id="kakao_button_label"
                 name="kakao_button_label"
                 defaultValue={share.kakao_button_label || ''}
-                placeholder="예: 모바일 청첩장 보기"
+                placeholder="입력하세요"
               />
             </div>
             <div className="md:col-span-2 flex justify-end">
