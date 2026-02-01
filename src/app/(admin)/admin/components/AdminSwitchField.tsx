@@ -56,7 +56,13 @@ export const AdminSwitchField = ({
       <Label htmlFor={id} className="text-[14px] text-[var(--text-primary)]">
         {label}
       </Label>
-      <Switch id={id} checked={checked} onCheckedChange={setChecked} />
+      <Switch
+        id={id}
+        data-admin-switch="true"
+        checked={checked}
+        onCheckedChange={setChecked}
+        className="focus-visible:ring-blue-500 data-[state=checked]:bg-blue-600 data-[state=unchecked]:bg-gray-300"
+      />
       <input
         ref={hiddenInputRef}
         type="hidden"

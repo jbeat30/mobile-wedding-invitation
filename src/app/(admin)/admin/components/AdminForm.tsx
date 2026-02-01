@@ -11,6 +11,7 @@ import {
   type ReactNode,
 } from 'react';
 import { useActionState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { Toast } from '@/components/ui/Toast';
 import {
   AlertDialog,
@@ -36,6 +37,7 @@ type AdminFormProps = {
   confirmTitle?: string;
   confirmDescription?: string;
   className?: string;
+  formId?: string;
   children: ReactNode;
 };
 
@@ -162,8 +164,10 @@ export const AdminForm = ({
   confirmTitle = '저장하시겠어요?',
   confirmDescription = '확인 버튼을 누르면 즉시 반영됩니다.',
   className,
+  formId,
   children,
 }: AdminFormProps) => {
+  const queryClient = useQueryClient();
   const [toastOpen, setToastOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -193,9 +197,12 @@ export const AdminForm = ({
     const message = state.status === 'success' ? successMessage : errorMessage;
     setToastMessage(message);
     setToastOpen(true);
+    if (state.status === 'success') {
+      void queryClient.invalidateQueries({ queryKey: ['adminData'] });
+    }
     const timer = window.setTimeout(() => setToastOpen(false), 2000);
     return () => window.clearTimeout(timer);
-  }, [state.status, state.submittedAt, successMessage, errorMessage]);
+  }, [state.status, state.submittedAt, successMessage, errorMessage, queryClient]);
 
   /**
    * 폼 상태 재계산
@@ -253,6 +260,7 @@ export const AdminForm = ({
     <AdminFormContext.Provider value={{ isDirty, isEmpty }}>
       <form
         ref={formRef}
+        id={formId}
         action={formAction}
         className={className}
         onSubmit={handleSubmit}
@@ -262,13 +270,13 @@ export const AdminForm = ({
         {children}
       </form>
       <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent className="admin-dialog">
           <AlertDialogHeader>
             <AlertDialogTitle>{confirmTitle}</AlertDialogTitle>
             <AlertDialogDescription>{confirmDescription}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>취소</AlertDialogCancel>
+            <AlertDialogCancel data-admin-variant="cancel">취소</AlertDialogCancel>
             <AlertDialogAction onClick={handleConfirm}>확인</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

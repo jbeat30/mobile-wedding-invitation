@@ -80,6 +80,14 @@ export const AdminModals = () => {
     if (Number.isFinite(lat) && Number.isFinite(lng)) {
       setLocationCoords({ lat, lng });
     }
+
+    // store에 선택된 장소 정보 저장
+    const { setSelectedVenue } = useAdminStore.getState();
+    setSelectedVenue({
+      name: place.place_name,
+      address: place.road_address_name || place.address_name,
+    });
+
     closePlaceSearchModal();
   }, [setLocationCoords, closePlaceSearchModal]);
 
@@ -157,10 +165,17 @@ export const AdminModals = () => {
         }
 
         postcodeContainerRef.current.innerHTML = '';
-        const postcode = new (window.daum as unknown as { 
-          Postcode: new (options: unknown) => { embed: (container: HTMLElement) => void } 
+        const postcode = new (window.daum as unknown as {
+          Postcode: new (options: unknown) => { embed: (container: HTMLElement) => void }
         }).Postcode({
-          oncomplete: () => {
+          oncomplete: (data: { address: string; roadAddress: string }) => {
+            // store에 주소 정보 저장
+            const { setSelectedVenue } = useAdminStore.getState();
+            const currentVenue = useAdminStore.getState().selectedVenue;
+            setSelectedVenue({
+              name: currentVenue?.name || '',
+              address: data.roadAddress || data.address,
+            });
             closePostcodeModal();
           },
           onresize: (size: { height: number }) => {
@@ -230,7 +245,7 @@ export const AdminModals = () => {
     <>
       {/* 장소 검색 모달 */}
       {modals.placeSearchOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/50">
+        <div className="admin-modal fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/50">
           <div className="w-full max-w-4xl bg-white rounded-xl shadow-2xl overflow-hidden">
             <div className="flex items-center justify-between p-6 border-b border-slate-200">
               <h3 className="text-lg font-semibold text-slate-900">카카오 장소 검색</h3>
@@ -313,7 +328,7 @@ export const AdminModals = () => {
 
       {/* 우편번호 검색 모달 */}
       {modals.postcodeOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/50">
+        <div className="admin-modal fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/50">
           <div className="w-full max-w-2xl bg-white rounded-xl shadow-2xl overflow-hidden">
             <div className="flex items-center justify-between p-6 border-b border-slate-200">
               <h3 className="text-lg font-semibold text-slate-900">우편번호 검색</h3>
