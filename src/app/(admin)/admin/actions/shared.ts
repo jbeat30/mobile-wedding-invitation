@@ -4,6 +4,7 @@ import { createSupabaseAdmin } from '@/lib/supabaseAdmin';
 import { requireAdminAuth } from '@/lib/adminAuth';
 
 const ADMIN_PATH = '/admin';
+const PUBLIC_PATH = '/';
 
 /**
  * 줄 단위 배열 파싱
@@ -34,6 +35,14 @@ export const toNumber = (value: FormDataEntryValue | null, fallback = 0) => {
  */
 export const revalidateAdmin = () => {
   revalidatePath(ADMIN_PATH);
+};
+
+/**
+ * 공개 페이지 갱신
+ * @returns void
+ */
+export const revalidatePublic = () => {
+  revalidatePath(PUBLIC_PATH);
 };
 
 /**

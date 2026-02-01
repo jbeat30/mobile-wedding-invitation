@@ -13,13 +13,19 @@ export const updateShareAction = async (formData: FormData) => {
   await requireAdminSession();
   const supabase = createSupabaseAdmin();
   const { id } = await getOrCreateInvitation();
-  const payload: Record<string, string> = {
-    section_title: String(formData.get('section_title') || ''),
-    description: String(formData.get('description') || ''),
-    og_title: String(formData.get('og_title') || ''),
-    og_description: String(formData.get('og_description') || ''),
-    developer: 'jbeat',
-  };
+  const payload: Record<string, string> = { developer: 'jbeat' };
+  if (formData.has('section_title')) {
+    payload.section_title = String(formData.get('section_title') || '');
+  }
+  if (formData.has('description')) {
+    payload.description = String(formData.get('description') || '');
+  }
+  if (formData.has('og_title')) {
+    payload.og_title = String(formData.get('og_title') || '');
+  }
+  if (formData.has('og_description')) {
+    payload.og_description = String(formData.get('og_description') || '');
+  }
   if (formData.has('kakao_title')) {
     payload.kakao_title = String(formData.get('kakao_title') || '');
   }
