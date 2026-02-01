@@ -173,7 +173,7 @@ export const AdminSectionGallery = ({
         <div className="grid md:grid-cols-2 gap-6">
           <ModernInput
             label="갤러리 제목"
-            placeholder="예: 갤러리, 우리의 순간들"
+            placeholder="입력하세요"
             value={gallerySettings.title}
             onChange={(value) => setGallerySettings(prev => ({ ...prev, title: value }))}
             hint="갤러리 섹션에 표시될 제목입니다"
@@ -181,7 +181,7 @@ export const AdminSectionGallery = ({
 
           <ModernTextarea
             label="갤러리 부제목"
-            placeholder="예: 우리의 소중한 순간들을 함께 나누고 싶어요"
+            placeholder="입력하세요"
             value={gallerySettings.subtitle}
             onChange={(value) => setGallerySettings(prev => ({ ...prev, subtitle: value }))}
             rows={2}

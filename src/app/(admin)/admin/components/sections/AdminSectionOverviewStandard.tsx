@@ -3,7 +3,6 @@
 import { useAdminStore } from '@/stores/adminStore';
 import { StandardCard, StandardButton } from '@/components/admin/StandardComponents';
 import { 
-  PlusIcon,
   EyeIcon,
   BarChart3Icon,
   ImageIcon,
@@ -45,7 +44,7 @@ export const AdminSectionOverview = ({ overview }: AdminSectionOverviewProps) =>
 
   const quickActions = [
     { label: '갤러리 관리', action: 'gallery', icon: ImageIcon },
-    { label: '기본정보 설정', action: 'basic', icon: PlusIcon },
+    { label: '커플정보 설정', action: 'couple', icon: UsersIcon },
     { label: '방명록 확인', action: 'guestbook', icon: MessageSquareIcon },
     { label: '청첩장 보기', action: 'preview', icon: EyeIcon }
   ];

@@ -169,6 +169,7 @@ export const AdminSectionAccounts = ({
                               action={updateAccountEntryAction}
                               successMessage="계좌가 저장되었습니다"
                               className="grid gap-3"
+                              formId={`account-entry-${entry.id}`}
                             >
                               <input type="hidden" name="entry_id" value={entry.id} />
                               <div className="grid gap-3 md:grid-cols-2">
@@ -219,13 +220,11 @@ export const AdminSectionAccounts = ({
                                   />
                                 </div>
                               </div>
-                              <div className="flex justify-end">
-                                <AdminSubmitButton size="sm" pendingText="저장 중...">
-                                  저장
-                                </AdminSubmitButton>
-                              </div>
                             </AdminForm>
                             <div className="flex items-center justify-end gap-2">
+                              <button type="submit" form={`account-entry-${entry.id}`}>
+                                저장
+                              </button>
                               <AdminForm
                                 action={deleteAccountEntryAction}
                                 successMessage="계좌가 삭제되었습니다"
@@ -233,9 +232,9 @@ export const AdminSectionAccounts = ({
                                 confirmDescription="삭제 후에는 복구할 수 없습니다."
                               >
                                 <input type="hidden" name="entry_id" value={entry.id} />
-                                <Button type="submit" variant="destructive" size="sm">
+                                <button type="submit" data-admin-variant="cancel">
                                   삭제
-                                </Button>
+                                </button>
                               </AdminForm>
                             </div>
                           </div>

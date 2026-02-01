@@ -60,9 +60,14 @@ export const AdminSectionBasic = ({ data }: AdminSectionBasicProps) => {
     setSaving(prev => ({ ...prev, basic: true }));
     try {
       const formData = new FormData();
-      Object.entries(basicInfo).forEach(([key, value]) => {
-        formData.append(key, value);
-      });
+      formData.append('groom_first_name', basicInfo.groomFirstName);
+      formData.append('groom_last_name', basicInfo.groomLastName);
+      formData.append('bride_first_name', basicInfo.brideFirstName);
+      formData.append('bride_last_name', basicInfo.brideLastName);
+      formData.append('groom_father_name', basicInfo.groomFatherName);
+      formData.append('groom_mother_name', basicInfo.groomMotherName);
+      formData.append('bride_father_name', basicInfo.brideFatherName);
+      formData.append('bride_mother_name', basicInfo.brideMotherName);
 
       await updateBasicInfoAction(formData);
       toast.success('기본 정보가 저장되었습니다.');
@@ -79,11 +84,12 @@ export const AdminSectionBasic = ({ data }: AdminSectionBasicProps) => {
     setSaving(prev => ({ ...prev, wedding: true }));
     try {
       const formData = new FormData();
-      Object.entries(weddingInfo).forEach(([key, value]) => {
-        formData.append(key, value);
-      });
-      formData.append('latitude', locationCoords.lat.toString());
-      formData.append('longitude', locationCoords.lng.toString());
+      const dateTime = `${weddingInfo.weddingDate}T${weddingInfo.weddingTime}:00`;
+      formData.append('event_date_time', dateTime);
+      formData.append('event_venue', weddingInfo.placeName);
+      formData.append('event_address', weddingInfo.address);
+      formData.append('location_latitude', locationCoords.lat.toString());
+      formData.append('location_longitude', locationCoords.lng.toString());
 
       await updateLocationAction(formData);
       toast.success('예식 정보가 저장되었습니다.');
@@ -161,14 +167,14 @@ export const AdminSectionBasic = ({ data }: AdminSectionBasicProps) => {
           <div className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
               <ModernInput
-                label="성 (영문)"
-                placeholder="예: Kim"
+                label="신랑 성"
+                placeholder="입력하세요"
                 value={basicInfo.groomLastName}
                 onChange={(value) => setBasicInfo(prev => ({ ...prev, groomLastName: value }))}
               />
               <ModernInput
-                label="이름 (영문)"
-                placeholder="예: Minsu"
+                label="신랑 이름"
+                placeholder="입력하세요"
                 value={basicInfo.groomFirstName}
                 onChange={(value) => setBasicInfo(prev => ({ ...prev, groomFirstName: value }))}
               />
@@ -176,7 +182,7 @@ export const AdminSectionBasic = ({ data }: AdminSectionBasicProps) => {
 
             <ModernInput
               label="한글 이름 ⭐"
-              placeholder="예: 김민수"
+              placeholder="입력하세요"
               value={basicInfo.groomNameKor}
               onChange={(value) => setBasicInfo(prev => ({ ...prev, groomNameKor: value }))}
               required
@@ -186,13 +192,13 @@ export const AdminSectionBasic = ({ data }: AdminSectionBasicProps) => {
             <div className="grid grid-cols-2 gap-4">
               <ModernInput
                 label="신랑 아버지 성함"
-                placeholder="예: 김철수"
+                placeholder="입력하세요"
                 value={basicInfo.groomFatherName}
                 onChange={(value) => setBasicInfo(prev => ({ ...prev, groomFatherName: value }))}
               />
               <ModernInput
                 label="신랑 어머니 성함"
-                placeholder="예: 이영희"
+                placeholder="입력하세요"
                 value={basicInfo.groomMotherName}
                 onChange={(value) => setBasicInfo(prev => ({ ...prev, groomMotherName: value }))}
               />
@@ -220,14 +226,14 @@ export const AdminSectionBasic = ({ data }: AdminSectionBasicProps) => {
           <div className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
               <ModernInput
-                label="성 (영문)"
-                placeholder="예: Lee"
+                label="신부 성"
+                placeholder="입력하세요"
                 value={basicInfo.brideLastName}
                 onChange={(value) => setBasicInfo(prev => ({ ...prev, brideLastName: value }))}
               />
               <ModernInput
-                label="이름 (영문)"
-                placeholder="예: Jihye"
+                label="신부 이름"
+                placeholder="입력하세요"
                 value={basicInfo.brideFirstName}
                 onChange={(value) => setBasicInfo(prev => ({ ...prev, brideFirstName: value }))}
               />
@@ -235,7 +241,7 @@ export const AdminSectionBasic = ({ data }: AdminSectionBasicProps) => {
 
             <ModernInput
               label="한글 이름 ⭐"
-              placeholder="예: 이지혜"
+              placeholder="입력하세요"
               value={basicInfo.brideNameKor}
               onChange={(value) => setBasicInfo(prev => ({ ...prev, brideNameKor: value }))}
               required
@@ -245,13 +251,13 @@ export const AdminSectionBasic = ({ data }: AdminSectionBasicProps) => {
             <div className="grid grid-cols-2 gap-4">
               <ModernInput
                 label="신부 아버지 성함"
-                placeholder="예: 이수호"
+                placeholder="입력하세요"
                 value={basicInfo.brideFatherName}
                 onChange={(value) => setBasicInfo(prev => ({ ...prev, brideFatherName: value }))}
               />
               <ModernInput
                 label="신부 어머니 성함"
-                placeholder="예: 박미라"
+                placeholder="입력하세요"
                 value={basicInfo.brideMotherName}
                 onChange={(value) => setBasicInfo(prev => ({ ...prev, brideMotherName: value }))}
               />
@@ -300,7 +306,7 @@ export const AdminSectionBasic = ({ data }: AdminSectionBasicProps) => {
 
           <ModernInput
             label="예식장 이름 ⭐"
-            placeholder="예: 롯데호텔 월드 사파이어볼룸"
+            placeholder="입력하세요"
             value={weddingInfo.placeName}
             onChange={(value) => setWeddingInfo(prev => ({ ...prev, placeName: value }))}
             required
@@ -342,7 +348,7 @@ export const AdminSectionBasic = ({ data }: AdminSectionBasicProps) => {
 
           <ModernInput
             label="상세 주소"
-            placeholder="예: B1층 사파이어볼룸"
+            placeholder="입력하세요"
             value={weddingInfo.detailAddress}
             onChange={(value) => setWeddingInfo(prev => ({ ...prev, detailAddress: value }))}
           />

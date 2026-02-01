@@ -1,253 +1,394 @@
 'use client';
 
-import { useState } from 'react';
-import { MapPinIcon, SearchIcon, Car, TrainIcon } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import type { AdminDashboardData } from '@/app/(admin)/admin/data';
+import {
+  updateLocationAction,
+  updateLocationSectionTitleAction,
+  updateTransportationAction,
+  updateWeddingInfoSectionAction,
+} from '@/app/(admin)/admin/actions/content';
+import { StandardCard, StandardInput, StandardButton } from '@/components/admin/StandardComponents';
+import { useAdminStore } from '@/stores/adminStore';
+import { Car, MapPinIcon, SaveIcon, SearchIcon, TrainIcon } from 'lucide-react';
+import toast from 'react-hot-toast';
 
-interface Venue {
-  id: string;
-  name: string;
-  address: string;
-  detailed_address?: string;
-  latitude?: number;
-  longitude?: number;
-}
+type AdminSectionVenueProps = {
+  data: AdminDashboardData;
+};
 
-interface AdminSectionVenueProps {
-  venue?: Venue;
-  sectionTitles?: {
-    wedding?: string;
+const getLocalDateTime = (isoValue?: string) => {
+  if (!isoValue) {
+    return { date: '', time: '' };
+  }
+  const parsed = new Date(isoValue);
+  if (Number.isNaN(parsed.getTime())) {
+    return { date: '', time: '' };
+  }
+  return {
+    date: parsed.toLocaleDateString('en-CA'),
+    time: parsed.toLocaleTimeString('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    }),
   };
-}
+};
+
+const buildIsoDateTime = (date: string, time: string) => {
+  if (!date || !time) return '';
+  const [year, month, day] = date.split('-').map(Number);
+  const [hour, minute] = time.split(':').map(Number);
+  if (
+    !Number.isFinite(year) ||
+    !Number.isFinite(month) ||
+    !Number.isFinite(day) ||
+    !Number.isFinite(hour) ||
+    !Number.isFinite(minute)
+  ) {
+    return '';
+  }
+  const localDate = new Date(year, month - 1, day, hour, minute, 0, 0);
+  return localDate.toISOString();
+};
 
 /**
  * 예식장 정보 관리 섹션
  */
-export const AdminSectionVenue = ({ venue, sectionTitles }: AdminSectionVenueProps) => {
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const venues = [
-    { id: '1', name: '더컨벤션 웨딩홀', address: '서울시 강남구 테헤란로 123' },
-    { id: '2', name: '그랜드 볼룸', address: '서울시 서초구 서초대로 456' },
-    { id: '3', name: '로얄 웨딩홀', address: '서울시 송파구 올림픽로 789' },
-  ];
+export const AdminSectionVenue = ({ data }: AdminSectionVenueProps) => {
+  const {
+    openPlaceSearchModal,
+    openPostcodeModal,
+    selectedVenue,
+    setSelectedVenue,
+    locationCoords,
+  } = useAdminStore();
 
-  const handleVenueSelect = (_selectedVenue: Venue) => {
-    // 예식장 선택 시 주소 자동 입력
-    setIsSearchOpen(false);
+  const initialDateTime = useMemo(
+    () => getLocalDateTime(data.event?.date_time),
+    [data.event?.date_time]
+  );
+
+  const [venueInfo, setVenueInfo] = useState({
+    weddingDate: initialDateTime.date,
+    weddingTime: initialDateTime.time,
+    placeName: data.event?.venue || data.location?.place_name || '',
+    address: data.event?.address || data.location?.address || '',
+  });
+
+  const [weddingMeta, setWeddingMeta] = useState({
+    weddingSectionTitle: data.sectionTitles?.wedding || '',
+    notices: (data.location?.notices || []).join('\n'),
+  });
+
+  const [transportation, setTransportation] = useState({
+    locationSectionTitle: data.sectionTitles?.location || '',
+    subway: (data.transportation?.subway || []).join('\n'),
+    bus: (data.transportation?.bus || []).join('\n'),
+    car: data.transportation?.car || '',
+    parking: data.transportation?.parking || '',
+  });
+
+  const [saving, setSaving] = useState({
+    venue: false,
+    wedding: false,
+    transport: false,
+  });
+
+  useEffect(() => {
+    setVenueInfo({
+      weddingDate: initialDateTime.date,
+      weddingTime: initialDateTime.time,
+      placeName: data.event?.venue || data.location?.place_name || '',
+      address: data.event?.address || data.location?.address || '',
+    });
+    setWeddingMeta({
+      weddingSectionTitle: data.sectionTitles?.wedding || '',
+      notices: (data.location?.notices || []).join('\n'),
+    });
+    setTransportation({
+      locationSectionTitle: data.sectionTitles?.location || '',
+      subway: (data.transportation?.subway || []).join('\n'),
+      bus: (data.transportation?.bus || []).join('\n'),
+      car: data.transportation?.car || '',
+      parking: data.transportation?.parking || '',
+    });
+  }, [data, initialDateTime.date, initialDateTime.time]);
+
+  useEffect(() => {
+    if (!selectedVenue) return;
+    setVenueInfo((prev) => ({
+      ...prev,
+      placeName: selectedVenue.name || prev.placeName,
+      address: selectedVenue.address || prev.address,
+    }));
+    setSelectedVenue(null);
+  }, [selectedVenue, setSelectedVenue]);
+
+  const handlePlaceSearch = () => {
+    setSelectedVenue({ name: venueInfo.placeName, address: venueInfo.address });
+    openPlaceSearchModal();
   };
 
-  const handleDirectInput = () => {
-    setIsSearchOpen(false);
+  const handleAddressSearch = () => {
+    setSelectedVenue({ name: venueInfo.placeName, address: venueInfo.address });
+    openPostcodeModal();
+  };
+
+  const handleSaveVenueInfo = async () => {
+    setSaving((prev) => ({ ...prev, venue: true }));
+    try {
+      const isoDateTime = buildIsoDateTime(venueInfo.weddingDate, venueInfo.weddingTime);
+      if (!isoDateTime) {
+        toast.error('예식 날짜와 시간을 확인해주세요.');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('event_date_time', isoDateTime);
+      formData.append('event_venue', venueInfo.placeName);
+      formData.append('event_address', venueInfo.address);
+      if (Number.isFinite(locationCoords.lat)) {
+        formData.append('location_latitude', String(locationCoords.lat));
+      }
+      if (Number.isFinite(locationCoords.lng)) {
+        formData.append('location_longitude', String(locationCoords.lng));
+      }
+
+      await updateLocationAction(formData);
+      toast.success('예식장 기본 정보가 저장되었습니다.');
+    } catch (_error) {
+      toast.error('저장에 실패했습니다.');
+    } finally {
+      setSaving((prev) => ({ ...prev, venue: false }));
+    }
+  };
+
+  const handleSaveWeddingMeta = async () => {
+    setSaving((prev) => ({ ...prev, wedding: true }));
+    try {
+      const isoDateTime = buildIsoDateTime(venueInfo.weddingDate, venueInfo.weddingTime);
+      if (!isoDateTime) {
+        toast.error('예식 날짜와 시간을 확인해주세요.');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('wedding_section_title', weddingMeta.weddingSectionTitle);
+      formData.append('location_notices', weddingMeta.notices);
+      formData.append('event_date_time', isoDateTime);
+      formData.append('event_venue', venueInfo.placeName);
+      formData.append('event_address', venueInfo.address);
+
+      await updateWeddingInfoSectionAction(formData);
+      toast.success('예식 안내 문구가 저장되었습니다.');
+    } catch (_error) {
+      toast.error('저장에 실패했습니다.');
+    } finally {
+      setSaving((prev) => ({ ...prev, wedding: false }));
+    }
+  };
+
+  const handleSaveTransportation = async () => {
+    setSaving((prev) => ({ ...prev, transport: true }));
+    try {
+      const titleFormData = new FormData();
+      titleFormData.append('location_section_title', transportation.locationSectionTitle);
+      await updateLocationSectionTitleAction(titleFormData);
+
+      const formData = new FormData();
+      formData.append('location_id', data.location.id);
+      formData.append('transport_subway', transportation.subway);
+      formData.append('transport_bus', transportation.bus);
+      formData.append('transport_car', transportation.car);
+      formData.append('transport_parking', transportation.parking);
+      await updateTransportationAction(formData);
+
+      toast.success('교통 안내가 저장되었습니다.');
+    } catch (_error) {
+      toast.error('저장에 실패했습니다.');
+    } finally {
+      setSaving((prev) => ({ ...prev, transport: false }));
+    }
   };
 
   return (
-    <div className="p-8">
-      {/* 페이지 헤더 */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 flex items-center">
-          <MapPinIcon className="w-8 h-8 mr-3 text-blue-600" />
-          예식장 정보
-        </h1>
-        <p className="text-gray-600 mt-2 text-base">예식장 정보와 오시는 길을 관리하세요</p>
+    <div className="space-y-6">
+      <div className="flex items-start gap-3">
+        <MapPinIcon className="w-7 h-7 text-blue-600 mt-1" />
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">예식장 정보</h1>
+          <p className="text-gray-600 mt-1">예식장 정보와 오시는 길을 관리하세요</p>
+        </div>
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-8">
-        {/* 예식장 기본 정보 */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
-            <MapPinIcon className="w-5 h-5 mr-2 text-blue-600" />
-            예식장 기본 정보
-          </h2>
-
-          <div className="space-y-6">
-            {/* 섹션 제목 */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                섹션 제목
-              </label>
-              <input
-                type="text"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                defaultValue={sectionTitles?.wedding || '예식 안내'}
-                placeholder="예: 예식 안내"
+      <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+        <div className="space-y-6">
+          <StandardCard title="예식 안내 문구">
+            <div className="space-y-4">
+              <StandardInput
+                label="예식 섹션 타이틀"
+                value={weddingMeta.weddingSectionTitle}
+                onChange={(value) =>
+                  setWeddingMeta((prev) => ({ ...prev, weddingSectionTitle: value }))
+                }
               />
-            </div>
-
-            {/* 예식장 이름 검색/입력 */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                예식장 이름
-              </label>
-              <div className="relative">
-                <input
-                  type="text"
-                  className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
-                  defaultValue={venue?.name || ''}
-                  placeholder="클릭하여 예식장 검색 또는 직접 입력"
-                  onClick={() => setIsSearchOpen(true)}
-                  readOnly
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-700">안내 문구 (줄바꿈)</label>
+                <textarea
+                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  rows={4}
+                  value={weddingMeta.notices}
+                  onChange={(event) =>
+                    setWeddingMeta((prev) => ({ ...prev, notices: event.target.value }))
+                  }
+                  placeholder="예식 안내 문구를 입력하세요"
                 />
-                <SearchIcon className="absolute right-3 top-2.5 w-5 h-5 text-gray-400" />
+              </div>
+              <div className="flex justify-end">
+                <StandardButton
+                  size="sm"
+                  loading={saving.wedding}
+                  onClick={handleSaveWeddingMeta}
+                >
+                  <SaveIcon className="w-4 h-4 mr-2" />
+                  안내 문구 저장
+                </StandardButton>
               </div>
             </div>
+          </StandardCard>
 
-            {/* 주소 */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                주소
-              </label>
-              <input
-                type="text"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                defaultValue={venue?.address || ''}
-                placeholder="예식장 주소가 자동으로 입력됩니다"
-              />
-            </div>
-
-            {/* 상세 주소 */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                상세 주소 (선택)
-              </label>
-              <input
-                type="text"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                defaultValue={venue?.detailed_address || ''}
-                placeholder="예: 3층 그랜드볼룸"
-              />
-            </div>
-
-            {/* 예식 일시 */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  예식 날짜
-                </label>
-                <input
+          <StandardCard title="예식장 기본 정보">
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <StandardInput
+                  label="결혼식 날짜"
                   type="date"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  value={venueInfo.weddingDate}
+                  onChange={(value) => setVenueInfo((prev) => ({ ...prev, weddingDate: value }))}
+                  required
+                />
+                <StandardInput
+                  label="결혼식 시간"
+                  type="time"
+                  value={venueInfo.weddingTime}
+                  onChange={(value) => setVenueInfo((prev) => ({ ...prev, weddingTime: value }))}
+                  required
                 />
               </div>
+              <StandardInput
+                label="예식장 이름"
+                placeholder="예식장 이름을 입력하세요"
+                value={venueInfo.placeName}
+                onChange={(value) => setVenueInfo((prev) => ({ ...prev, placeName: value }))}
+                required
+              />
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  예식 시간
-                </label>
-                <input
-                  type="time"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                <StandardInput
+                  label="주소"
+                  placeholder="예식장 주소를 입력하세요"
+                  value={venueInfo.address}
+                  onChange={(value) => setVenueInfo((prev) => ({ ...prev, address: value }))}
                 />
+                <div className="flex flex-wrap gap-2 mt-2">
+                  <StandardButton
+                    type="button"
+                    size="sm"
+                    variant="secondary"
+                    onClick={handlePlaceSearch}
+                  >
+                    <SearchIcon className="w-4 h-4 mr-1" />
+                    장소 검색
+                  </StandardButton>
+                  <StandardButton
+                    type="button"
+                    size="sm"
+                    variant="secondary"
+                    onClick={handleAddressSearch}
+                  >
+                    <SearchIcon className="w-4 h-4 mr-1" />
+                    주소 검색
+                  </StandardButton>
+                </div>
+              </div>
+              <div className="flex justify-end">
+                <StandardButton
+                  size="sm"
+                  loading={saving.venue}
+                  onClick={handleSaveVenueInfo}
+                >
+                  <SaveIcon className="w-4 h-4 mr-2" />
+                  기본 정보 저장
+                </StandardButton>
               </div>
             </div>
-          </div>
+          </StandardCard>
         </div>
 
-        {/* 교통 정보 */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
-            <Car className="w-5 h-5 mr-2 text-green-600" />
-            교통 안내
-          </h2>
-
-          <div className="space-y-6">
-            {/* 지하철 */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+        <StandardCard title="교통 안내">
+          <div className="space-y-4">
+            <StandardInput
+              label="오시는 길 섹션 타이틀"
+              value={transportation.locationSectionTitle}
+              onChange={(value) =>
+                setTransportation((prev) => ({ ...prev, locationSectionTitle: value }))
+              }
+            />
+            <div className="space-y-2">
+              <label className="flex items-center text-sm font-medium text-gray-700">
                 <TrainIcon className="w-4 h-4 mr-1" />
-                지하철
+                지하철 (줄바꿈)
               </label>
               <textarea
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 rows={3}
+                value={transportation.subway}
+                onChange={(event) =>
+                  setTransportation((prev) => ({ ...prev, subway: event.target.value }))
+                }
                 placeholder="지하철 이용 안내를 입력하세요"
               />
             </div>
-
-            {/* 버스 */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+            <div className="space-y-2">
+              <label className="flex items-center text-sm font-medium text-gray-700">
                 <Car className="w-4 h-4 mr-1" />
-                버스
+                버스 (줄바꿈)
               </label>
               <textarea
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 rows={3}
+                value={transportation.bus}
+                onChange={(event) =>
+                  setTransportation((prev) => ({ ...prev, bus: event.target.value }))
+                }
                 placeholder="버스 이용 안내를 입력하세요"
               />
             </div>
-
-            {/* 자가용 */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
-                <Car className="w-4 h-4 mr-1" />
-                자가용 & 주차
-              </label>
-              <textarea
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                rows={3}
-                placeholder="자가용 및 주차 안내를 입력하세요"
-              />
+            <StandardInput
+              label="자가용"
+              value={transportation.car}
+              onChange={(value) => setTransportation((prev) => ({ ...prev, car: value }))}
+              placeholder="자가용 및 주차 안내를 입력하세요"
+            />
+            <StandardInput
+              label="주차"
+              value={transportation.parking}
+              onChange={(value) => setTransportation((prev) => ({ ...prev, parking: value }))}
+              placeholder="주차 안내를 입력하세요"
+            />
+            <div className="flex justify-end">
+              <StandardButton
+                size="sm"
+                loading={saving.transport}
+                onClick={handleSaveTransportation}
+              >
+                <SaveIcon className="w-4 h-4 mr-2" />
+                교통 안내 저장
+              </StandardButton>
             </div>
           </div>
-        </div>
+        </StandardCard>
       </div>
-
-      {/* 저장 버튼 */}
-      <div className="mt-8 flex justify-end">
-        <button className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
-          변경사항 저장
-        </button>
-      </div>
-
-      {/* 예식장 검색 다이얼로그 */}
-      {isSearchOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg w-full max-w-md mx-4">
-            <div className="p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">예식장 검색</h3>
-              
-              <div className="mb-4">
-                <input
-                  type="text"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="예식장 이름을 입력하세요"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-
-              <div className="max-h-60 overflow-y-auto space-y-2 mb-4">
-                {venues
-                  .filter(v => v.name.toLowerCase().includes(searchQuery.toLowerCase()))
-                  .map((venue) => (
-                    <div
-                      key={venue.id}
-                      className="p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer"
-                      onClick={() => handleVenueSelect(venue)}
-                    >
-                      <div className="font-medium text-gray-900">{venue.name}</div>
-                      <div className="text-sm text-gray-600">{venue.address}</div>
-                    </div>
-                  ))}
-              </div>
-
-              <div className="flex gap-3">
-                <button
-                  onClick={handleDirectInput}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
-                >
-                  직접 입력
-                </button>
-                <button
-                  onClick={() => setIsSearchOpen(false)}
-                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                >
-                  취소
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
