@@ -22,7 +22,6 @@ import {
 
 const NAVIGATION_ITEMS = [
   { id: 'overview', label: '대시보드', icon: HomeIcon },
-  { id: 'basic', label: '기본 정보', icon: DocumentTextIcon },
   { id: 'loading', label: '로딩 섹션', icon: PlayIcon },
   { id: 'intro', label: '인트로 섹션', icon: DocumentTextIcon },
   { id: 'couple', label: '커플 섹션', icon: UserGroupIcon },

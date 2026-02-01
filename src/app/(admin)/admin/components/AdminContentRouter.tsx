@@ -1,6 +1,7 @@
 'use client';
 
 import { useAdminStore } from '@/stores/adminStore';
+import { useState } from 'react';
 import dynamic from 'next/dynamic';
 
 // 스켈레톤 로더
@@ -24,10 +25,16 @@ const AdminSectionOverview = dynamic(
   { loading: () => <SectionSkeleton title="대시보드" /> }
 );
 
-const AdminSectionBasic = dynamic(
-  () => import('@/app/(admin)/admin/components/sections/AdminSectionBasicStandard')
-    .then(m => ({ default: m.AdminSectionBasic })),
-  { loading: () => <SectionSkeleton title="기본 정보" /> }
+const AdminSectionIntro = dynamic(
+  () => import('@/app/(admin)/admin/components/sections/AdminSectionIntro')
+    .then(m => ({ default: m.AdminSectionIntro })),
+  { loading: () => <SectionSkeleton title="인트로" /> }
+);
+
+const AdminSectionLoading = dynamic(
+  () => import('@/app/(admin)/admin/components/sections/AdminSectionLoading')
+    .then(m => ({ default: m.AdminSectionLoading })),
+  { loading: () => <SectionSkeleton title="로딩" /> }
 );
 
 const AdminSectionCouple = dynamic(
@@ -78,11 +85,18 @@ const AdminSectionBgm = dynamic(
   { loading: () => <SectionSkeleton title="BGM" /> }
 );
 
+const AdminSectionClosing = dynamic(
+  () => import('@/app/(admin)/admin/components/sections/AdminSectionClosing')
+    .then(m => ({ default: m.AdminSectionClosing })),
+  { loading: () => <SectionSkeleton title="마무리 인사" /> }
+);
+
 /**
  * 관리자 컨텐츠 라우터
  */
 export const AdminContentRouter = () => {
   const { activeTab, data } = useAdminStore();
+  const [accountFormOpen, setAccountFormOpen] = useState({ groom: false, bride: false });
 
   if (!data) {
     return <SectionSkeleton title="데이터 로딩 중..." />;
@@ -93,12 +107,40 @@ export const AdminContentRouter = () => {
       return <AdminSectionOverview overview={data.overview} />;
     
     case 'basic':
-      return <AdminSectionBasic data={data} />;
+      return (
+        <AdminSectionCouple
+          profile={data.profile}
+          parents={data.parents}
+          sectionTitles={data.sectionTitles}
+          fileUrlToNameMap={data.fileUrlToNameMap}
+        />
+      );
+
+    case 'intro':
+      return (
+        <AdminSectionIntro
+          assets={data.assets}
+          greeting={data.greeting}
+          sectionTitles={data.sectionTitles}
+          fileUrlToNameMap={data.fileUrlToNameMap}
+        />
+      );
+    
+    case 'loading':
+      return (
+        <AdminSectionLoading
+          loading={data.loading}
+          assets={data.assets}
+          sectionTitle={data.sectionTitles.loading}
+          fileUrlToNameMap={data.fileUrlToNameMap}
+        />
+      );
     
     case 'couple':
       return (
         <AdminSectionCouple
           profile={data.profile}
+          parents={data.parents}
           sectionTitles={data.sectionTitles}
           fileUrlToNameMap={data.fileUrlToNameMap}
         />
@@ -107,16 +149,7 @@ export const AdminContentRouter = () => {
     case 'location':
     case 'venue':
       return (
-        <AdminSectionLocation 
-          venue={data.location ? {
-            id: data.location.id,
-            name: data.location.place_name,
-            address: data.location.address,
-            latitude: data.location.latitude,
-            longitude: data.location.longitude,
-          } : undefined}
-          sectionTitles={data.sectionTitles}
-        />
+        <AdminSectionLocation data={data} />
       );
     
     case 'gallery':
@@ -141,8 +174,8 @@ export const AdminContentRouter = () => {
           accounts={data.accounts}
           groomEntries={data.accountEntries?.filter((entry) => entry.group_type === 'groom') || []}
           brideEntries={data.accountEntries?.filter((entry) => entry.group_type === 'bride') || []}
-          accountFormOpen={{ groom: false, bride: false }}
-          setAccountFormOpen={() => {}}
+          accountFormOpen={accountFormOpen}
+          setAccountFormOpen={setAccountFormOpen}
         />
       );
     
@@ -183,6 +216,9 @@ export const AdminContentRouter = () => {
           bgm={data.bgm}
         />
       );
+
+    case 'closing':
+      return <AdminSectionClosing closing={data.closing} />;
     
     default:
       return (

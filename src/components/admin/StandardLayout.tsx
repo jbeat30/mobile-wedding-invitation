@@ -16,23 +16,23 @@ export const StandardLayout = ({ children }: StandardLayoutProps) => {
   const { error } = useAdminStore();
 
   return (
-    <div className="flex h-screen bg-gray-50">
-      {/* 사이드바 */}
+    <div className="min-h-screen bg-gray-50">
+      {/* 고정 사이드바 */}
       <StandardSidebar />
 
-      {/* 메인 컨텐츠 */}
-      <div className="flex-1 lg:ml-64 overflow-hidden">
+      {/* 메인 콘텐츠 - 사이드바 너비만큼 왼쪽 패딩 */}
+      <div className="lg:pl-64">
         {/* 에러 표시 */}
         {error && (
-          <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4">
+          <div className="border-l-4 border-red-500 bg-red-50 p-4 text-red-700">
             <p className="font-medium">오류가 발생했습니다</p>
             <p className="text-sm">{error}</p>
           </div>
         )}
 
-        {/* 컨텐츠 영역 - 스크롤 가능 */}
-        <main className="h-full overflow-y-auto bg-gray-50">
-          {children}
+        {/* 스크롤 가능한 콘텐츠 영역 */}
+        <main className="min-h-screen p-6">
+          <div className="mx-auto max-w-7xl">{children}</div>
         </main>
       </div>
 

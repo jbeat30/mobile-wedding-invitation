@@ -16,13 +16,15 @@ import {
   ClipboardListIcon,
   ShareIcon,
   MusicIcon,
+  HandHeartIcon,
   LogOutIcon,
 } from 'lucide-react';
 import { logoutAction } from '@/app/(admin)/admin/actions/auth';
 
 const NAVIGATION_ITEMS = [
   { id: 'overview', label: '대시보드', icon: HomeIcon },
-  { id: 'basic', label: '기본 정보', icon: FileTextIcon },
+  { id: 'loading', label: '로딩 섹션', icon: FileTextIcon },
+  { id: 'intro', label: '인트로 섹션', icon: FileTextIcon },
   { id: 'couple', label: '커플 정보', icon: UsersIcon },
   { id: 'location', label: '예식장 정보', icon: MapPinIcon },
   { id: 'gallery', label: '갤러리', icon: ImageIcon },
@@ -31,6 +33,7 @@ const NAVIGATION_ITEMS = [
   { id: 'rsvp', label: 'RSVP', icon: ClipboardListIcon },
   { id: 'share', label: '공유 설정', icon: ShareIcon },
   { id: 'bgm', label: 'BGM', icon: MusicIcon },
+  { id: 'closing', label: '마무리 인사', icon: HandHeartIcon },
 ];
 
 /**
@@ -38,7 +41,7 @@ const NAVIGATION_ITEMS = [
  */
 export const StandardSidebar = () => {
   const { activeTab, setActiveTab } = useAdminStore();
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
 
   const handleLogout = async () => {
     if (confirm('로그아웃 하시겠습니까?')) {

@@ -52,6 +52,12 @@ interface AdminState {
     status: string | null;
     error: string | null;
   };
+
+  // 선택된 장소 정보 (모달에서 선택 시 저장)
+  selectedVenue: {
+    name: string;
+    address: string;
+  } | null;
 }
 
 interface AdminActions {
@@ -91,7 +97,10 @@ interface AdminActions {
   setPlaceSearchResults: (results: KakaoPlace[]) => void;
   setPlaceSearchStatus: (status: string | null) => void;
   setPlaceSearchError: (error: string | null) => void;
-  
+
+  // 선택된 장소 설정
+  setSelectedVenue: (venue: { name: string; address: string } | null) => void;
+
   // 초기화
   resetState: () => void;
 }
@@ -140,6 +149,7 @@ const initialState: AdminState = {
     status: null,
     error: null,
   },
+  selectedVenue: null,
 };
 
 export const useAdminStore = create<AdminState & AdminActions>()(
@@ -249,7 +259,11 @@ export const useAdminStore = create<AdminState & AdminActions>()(
         setPlaceSearchError: (error) => set((state) => {
           state.placeSearch.error = error;
         }),
-        
+
+        setSelectedVenue: (venue) => set((state) => {
+          state.selectedVenue = venue;
+        }),
+
         // 초기화
         resetState: () => set(() => ({ ...initialState })),
       }))
