@@ -39,6 +39,7 @@ interface StandardInputProps {
   disabled?: boolean;
   error?: string;
   className?: string;
+  name?: string;
 }
 
 /**
@@ -54,6 +55,7 @@ export const StandardInput = forwardRef<HTMLInputElement, StandardInputProps>(({
   disabled = false,
   error,
   className,
+  name,
   ...props
 }, ref) => {
   return (
@@ -67,6 +69,7 @@ export const StandardInput = forwardRef<HTMLInputElement, StandardInputProps>(({
       <input
         ref={ref}
         type={type}
+        name={name}
         value={value}
         onChange={(e) => onChange?.(e.target.value)}
         placeholder={placeholder}

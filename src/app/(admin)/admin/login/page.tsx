@@ -52,6 +52,7 @@ export default function AdminLoginPage() {
           <form action={formAction} className="space-y-6">
             <div>
               <StandardInput
+                name="username"
                 label="아이디"
                 placeholder="관리자 아이디"
                 value={username}
@@ -62,6 +63,7 @@ export default function AdminLoginPage() {
 
             <div>
               <StandardInput
+                name="password"
                 label="비밀번호"
                 type="password"
                 placeholder="비밀번호"
