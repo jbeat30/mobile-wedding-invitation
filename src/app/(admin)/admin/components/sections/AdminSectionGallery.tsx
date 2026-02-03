@@ -29,6 +29,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { LayoutGridIcon } from 'lucide-react';
 
 type GalleryImage = AdminDashboardData['galleryImages'][number];
 
@@ -125,6 +126,13 @@ export const AdminSectionGallery = ({
   }, []);
 
   return (
+    <div className="space-y-6">
+      <div className="flex items-start gap-3">
+        <LayoutGridIcon className="w-7 h-7 text-blue-600 mt-1" />
+        <h1 className="text-2xl font-bold text-gray-900">갤러리</h1>
+        <p className="text-gray-600 mt-1">갤러리 이미지를 관리하고 순서를 정렬하세요</p>
+      </div>
+
     <Card>
       <CardHeader>
         <CardTitle>갤러리 이미지</CardTitle>
@@ -368,5 +376,6 @@ export const AdminSectionGallery = ({
         </AlertDialogContent>
       </AlertDialog>
     </Card>
+    </div>
   );
 };

@@ -247,9 +247,10 @@ export const AdminGalleryUploadField = ({
   );
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-3" data-admin-field-wrapper="true">
       <Label htmlFor={id}>{label}</Label>
       <div
+        data-admin-dropzone="true"
         className={`rounded-[12px] border-2 border-dashed px-4 py-5 transition-colors ${
           isDragging
             ? 'border-[var(--accent-rose-dark)] bg-[var(--bg-secondary)]/70'

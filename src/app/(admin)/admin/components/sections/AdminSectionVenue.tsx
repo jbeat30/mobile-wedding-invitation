@@ -9,8 +9,10 @@ import {
   updateWeddingInfoSectionAction,
 } from '@/app/(admin)/admin/actions/content';
 import { StandardCard, StandardInput, StandardButton } from '@/components/admin/StandardComponents';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useAdminStore } from '@/stores/adminStore';
-import { Car, MapPinIcon, SaveIcon, SearchIcon, TrainIcon } from 'lucide-react';
+import { CalendarIcon, Car, ClockIcon, MapPinIcon, SaveIcon, SearchIcon, TrainIcon } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 type AdminSectionVenueProps = {
@@ -52,6 +54,204 @@ const buildIsoDateTime = (date: string, time: string) => {
   return localDate.toISOString();
 };
 
+type DateFieldProps = {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  required?: boolean;
+  error?: string;
+};
+
+const DateField = ({ label, value, onChange, required = false, error }: DateFieldProps) => {
+  const selectedDate = value ? new Date(`${value}T00:00:00`) : undefined;
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="space-y-2">
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <div>
+            <StandardInput
+              label={label}
+              value={value}
+              placeholder="날짜를 선택하세요"
+              required={required}
+              readOnly
+              icon={<CalendarIcon className="h-4 w-4" />}
+              error={error}
+              onClick={() => setOpen(true)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  setOpen(true);
+                }
+              }}
+            />
+          </div>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0" sideOffset={10}>
+          <div className="rounded-xl border border-[var(--border-light)] bg-white p-4 shadow-[var(--shadow-card)]">
+            <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-[var(--text-primary)]">
+              <CalendarIcon className="h-4 w-4 text-[var(--text-muted)]" />
+              결혼식 날짜 선택
+            </div>
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              defaultMonth={selectedDate ?? new Date()}
+              onSelect={(date) =>
+                onChange(date ? date.toLocaleDateString('en-CA') : '')
+              }
+            />
+            <div className="mt-3 rounded-md border border-[var(--border-light)] bg-[var(--bg-secondary)]/70 px-3 py-2 text-xs text-[var(--text-muted)]">
+              선택됨: {value || '없음'}
+            </div>
+          </div>
+        </PopoverContent>
+      </Popover>
+    </div>
+  );
+};
+
+type TimeFieldProps = {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  required?: boolean;
+  error?: string;
+};
+
+const timeHourOptions = Array.from({ length: 12 }, (_, index) =>
+  String(index + 1).padStart(2, '0')
+);
+const timeMinuteOptions = Array.from({ length: 60 }, (_, index) =>
+  String(index).padStart(2, '0')
+);
+
+const TimeField = ({ label, value, onChange, required = false, error }: TimeFieldProps) => {
+  const [rawHour, rawMinute] = value.split(':');
+  const hour24 = Number(rawHour);
+  const minute24 = Number(rawMinute);
+  const period = Number.isFinite(hour24) && hour24 >= 12 ? 'PM' : 'AM';
+  const hour12Value = Number.isFinite(hour24)
+    ? hour24 % 12 === 0
+      ? 12
+      : hour24 % 12
+    : 12;
+  const resolvedHour = timeHourOptions.includes(String(hour12Value).padStart(2, '0'))
+    ? String(hour12Value).padStart(2, '0')
+    : '12';
+  const resolvedMinute = timeMinuteOptions.includes(String(minute24).padStart(2, '0'))
+    ? String(minute24).padStart(2, '0')
+    : '00';
+  const [open, setOpen] = useState(false);
+
+  const handleUpdate = (nextPeriod: 'AM' | 'PM', nextHour: string, nextMinute: string) => {
+    const hourNumber = Number(nextHour);
+    const minuteNumber = Number(nextMinute);
+    if (!Number.isFinite(hourNumber) || !Number.isFinite(minuteNumber)) return;
+    const hour24Value =
+      nextPeriod === 'PM'
+        ? hourNumber % 12 === 0
+          ? 12
+          : hourNumber + 12
+        : hourNumber % 12 === 12
+          ? 0
+          : hourNumber;
+    const hourText = String(hour24Value).padStart(2, '0');
+    const minuteText = String(minuteNumber).padStart(2, '0');
+    onChange(`${hourText}:${minuteText}`);
+  };
+
+  return (
+    <div className="space-y-2">
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <div>
+            <StandardInput
+              label={label}
+              type="time"
+              value={value}
+              placeholder="시간을 선택하세요"
+              required={required}
+              readOnly
+              icon={<ClockIcon className="h-4 w-4" />}
+              error={error}
+              onClick={() => setOpen(true)}
+              onKeyDown={(event: { key: string; preventDefault: () => void }) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  setOpen(true);
+                }
+              }}
+            />
+          </div>
+        </PopoverTrigger>
+        <PopoverContent className="w-72 p-0" sideOffset={10}>
+          <div className="rounded-[14px] border border-[var(--border-light)] bg-white p-4 shadow-[var(--shadow-card)]">
+            <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-[var(--text-primary)]">
+              <ClockIcon className="h-4 w-4 text-[var(--text-muted)]" />
+              결혼식 시간 선택
+            </div>
+            <div className="rounded-[12px] border border-[var(--border-light)] bg-[var(--bg-secondary)]/70 p-3">
+              <div className="grid grid-cols-3 gap-3">
+                <div className="space-y-1">
+                  <span className="text-xs font-medium text-[var(--text-muted)]">오전/오후</span>
+                  <select
+                    className="h-9 w-full rounded-md border border-[var(--border-light)] bg-white/70 px-2 text-sm text-[var(--text-primary)] focus:border-[var(--accent-rose)] focus:ring-2 focus:ring-[var(--accent-rose)] focus:outline-none"
+                    value={period}
+                    onChange={(event) =>
+                      handleUpdate(event.target.value as 'AM' | 'PM', resolvedHour, resolvedMinute)
+                    }
+                  >
+                    <option value="AM">AM</option>
+                    <option value="PM">PM</option>
+                  </select>
+                </div>
+                <div className="space-y-1">
+                  <span className="text-xs font-medium text-[var(--text-muted)]">시</span>
+                  <select
+                    className="h-9 w-full rounded-md border border-[var(--border-light)] bg-white/70 px-2 text-sm text-[var(--text-primary)] focus:border-[var(--accent-rose)] focus:ring-2 focus:ring-[var(--accent-rose)] focus:outline-none"
+                    value={resolvedHour}
+                    onChange={(event) =>
+                      handleUpdate(period as 'AM' | 'PM', event.target.value, resolvedMinute)
+                    }
+                  >
+                    {timeHourOptions.map((item) => (
+                      <option key={item} value={item}>
+                        {item}시
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-1">
+                  <span className="text-xs font-medium text-[var(--text-muted)]">분</span>
+                  <select
+                    className="h-9 w-full rounded-md border border-[var(--border-light)] bg-white/70 px-2 text-sm text-[var(--text-primary)] focus:border-[var(--accent-rose)] focus:ring-2 focus:ring-[var(--accent-rose)] focus:outline-none"
+                    value={resolvedMinute}
+                    onChange={(event) =>
+                      handleUpdate(period as 'AM' | 'PM', resolvedHour, event.target.value)
+                    }
+                  >
+                    {timeMinuteOptions.map((item) => (
+                      <option key={item} value={item}>
+                        {item}분
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div className="mt-3 rounded-md border border-[var(--border-light)] bg-white/80 px-3 py-2 text-xs text-[var(--text-muted)]">
+              선택됨: {value || '없음'}
+            </div>
+          </div>
+        </PopoverContent>
+      </Popover>
+    </div>
+  );
+};
+
 /**
  * 예식장 정보 관리 섹션
  */
@@ -88,6 +288,7 @@ export const AdminSectionVenue = ({ data }: AdminSectionVenueProps) => {
     car: data.transportation?.car || '',
     parking: data.transportation?.parking || '',
   });
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   const [saving, setSaving] = useState({
     venue: false,
@@ -140,7 +341,7 @@ export const AdminSectionVenue = ({ data }: AdminSectionVenueProps) => {
     try {
       const isoDateTime = buildIsoDateTime(venueInfo.weddingDate, venueInfo.weddingTime);
       if (!isoDateTime) {
-        toast.error('예식 날짜와 시간을 확인해주세요.');
+        setFieldErrors({ event_date_time: '결혼식 날짜와 시간을 입력해주세요.' });
         return;
       }
 
@@ -155,7 +356,16 @@ export const AdminSectionVenue = ({ data }: AdminSectionVenueProps) => {
         formData.append('location_longitude', String(locationCoords.lng));
       }
 
-      await updateLocationAction(formData);
+      const result = await updateLocationAction(formData);
+      if (result && result.ok === false) {
+        if (result.fieldErrors) {
+          setFieldErrors(result.fieldErrors);
+          return;
+        }
+        toast.error(result.message || '저장에 실패했습니다.');
+        return;
+      }
+      setFieldErrors({});
       toast.success('예식장 기본 정보가 저장되었습니다.');
     } catch (_error) {
       toast.error('저장에 실패했습니다.');
@@ -169,7 +379,7 @@ export const AdminSectionVenue = ({ data }: AdminSectionVenueProps) => {
     try {
       const isoDateTime = buildIsoDateTime(venueInfo.weddingDate, venueInfo.weddingTime);
       if (!isoDateTime) {
-        toast.error('예식 날짜와 시간을 확인해주세요.');
+        setFieldErrors({ event_date_time: '결혼식 날짜와 시간을 입력해주세요.' });
         return;
       }
 
@@ -180,7 +390,16 @@ export const AdminSectionVenue = ({ data }: AdminSectionVenueProps) => {
       formData.append('event_venue', venueInfo.placeName);
       formData.append('event_address', venueInfo.address);
 
-      await updateWeddingInfoSectionAction(formData);
+      const result = await updateWeddingInfoSectionAction(formData);
+      if (result && result.ok === false) {
+        if (result.fieldErrors) {
+          setFieldErrors(result.fieldErrors);
+          return;
+        }
+        toast.error(result.message || '저장에 실패했습니다.');
+        return;
+      }
+      setFieldErrors({});
       toast.success('예식 안내 문구가 저장되었습니다.');
     } catch (_error) {
       toast.error('저장에 실패했습니다.');
@@ -194,7 +413,11 @@ export const AdminSectionVenue = ({ data }: AdminSectionVenueProps) => {
     try {
       const titleFormData = new FormData();
       titleFormData.append('location_section_title', transportation.locationSectionTitle);
-      await updateLocationSectionTitleAction(titleFormData);
+      const titleResult = await updateLocationSectionTitleAction(titleFormData);
+      if (titleResult && titleResult.ok === false) {
+        toast.error(titleResult.message || '저장에 실패했습니다.');
+        return;
+      }
 
       const formData = new FormData();
       formData.append('location_id', data.location.id);
@@ -202,7 +425,15 @@ export const AdminSectionVenue = ({ data }: AdminSectionVenueProps) => {
       formData.append('transport_bus', transportation.bus);
       formData.append('transport_car', transportation.car);
       formData.append('transport_parking', transportation.parking);
-      await updateTransportationAction(formData);
+      const result = await updateTransportationAction(formData);
+      if (result && result.ok === false) {
+        if (result.fieldErrors) {
+          setFieldErrors(result.fieldErrors);
+          return;
+        }
+        toast.error(result.message || '저장에 실패했습니다.');
+        return;
+      }
 
       toast.success('교통 안내가 저장되었습니다.');
     } catch (_error) {
@@ -261,19 +492,35 @@ export const AdminSectionVenue = ({ data }: AdminSectionVenueProps) => {
           <StandardCard title="예식장 기본 정보">
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <StandardInput
+                <DateField
                   label="결혼식 날짜"
-                  type="date"
                   value={venueInfo.weddingDate}
-                  onChange={(value) => setVenueInfo((prev) => ({ ...prev, weddingDate: value }))}
+                  onChange={(value) => {
+                    setVenueInfo((prev) => ({ ...prev, weddingDate: value }));
+                    setFieldErrors((prev) => {
+                      if (!prev.event_date_time) return prev;
+                      const next = { ...prev };
+                      delete next.event_date_time;
+                      return next;
+                    });
+                  }}
                   required
+                  error={fieldErrors.event_date_time}
                 />
-                <StandardInput
+                <TimeField
                   label="결혼식 시간"
-                  type="time"
                   value={venueInfo.weddingTime}
-                  onChange={(value) => setVenueInfo((prev) => ({ ...prev, weddingTime: value }))}
+                  onChange={(value) => {
+                    setVenueInfo((prev) => ({ ...prev, weddingTime: value }));
+                    setFieldErrors((prev) => {
+                      if (!prev.event_date_time) return prev;
+                      const next = { ...prev };
+                      delete next.event_date_time;
+                      return next;
+                    });
+                  }}
                   required
+                  error={fieldErrors.event_date_time}
                 />
               </div>
               <StandardInput

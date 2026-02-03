@@ -68,3 +68,19 @@ export const assertNoError = (result: { error: unknown }) => {
     throw result.error;
   }
 };
+
+/**
+ * 액션 에러 메시지 추출
+ * @param error unknown
+ * @param fallback string
+ * @returns string
+ */
+export const getActionErrorMessage = (
+  error: unknown,
+  fallback = '저장에 실패했습니다.'
+) => {
+  if (error instanceof Error && error.message) {
+    return error.message;
+  }
+  return fallback;
+};

@@ -2,7 +2,18 @@
 
 import { createSupabaseAdmin } from '@/lib/supabaseAdmin';
 import { getOrCreateInvitation } from '@/app/(admin)/admin/data';
-import { assertNoError, requireAdminSession, revalidateAdmin } from './shared';
+import {
+  assertNoError,
+  getActionErrorMessage,
+  requireAdminSession,
+  revalidateAdmin,
+} from './shared';
+import {
+  checkboxToBool,
+  isValidationError,
+  optionalString,
+  safeRequiredString,
+} from './validation';
 
 /**
  * BGM 설정 업데이트
@@ -14,13 +25,38 @@ export const updateBgmAction = async (formData: FormData) => {
   const supabase = createSupabaseAdmin();
   const { id } = await getOrCreateInvitation();
 
-  const payload = {
-    enabled: formData.get('bgm_enabled') === 'on',
-    audio_url: String(formData.get('bgm_audio_url') || ''),
-    auto_play: formData.get('bgm_auto_play') === 'on',
-    loop: formData.get('bgm_loop') === 'on',
-  };
+  try {
+    const fieldErrors: Record<string, string> = {};
+    const enabled = checkboxToBool(formData.get('bgm_enabled'), false);
+    const audioUrl = enabled
+      ? safeRequiredString(
+          formData.get('bgm_audio_url'),
+          'bgm_audio_url',
+          'BGM 오디오 URL',
+          500,
+          fieldErrors,
+          'BGM 오디오 URL을 입력해주세요.'
+        )
+      : optionalString(formData.get('bgm_audio_url'), '', 500);
 
-  assertNoError(await supabase.from('invitation_bgm').update(payload).eq('invitation_id', id));
-  revalidateAdmin();
+    if (Object.keys(fieldErrors).length > 0) {
+      return { ok: false, fieldErrors };
+    }
+
+    const payload = {
+      enabled,
+      audio_url: audioUrl,
+      auto_play: checkboxToBool(formData.get('bgm_auto_play'), true),
+      loop: checkboxToBool(formData.get('bgm_loop'), true),
+    };
+
+    assertNoError(await supabase.from('invitation_bgm').update(payload).eq('invitation_id', id));
+    revalidateAdmin();
+    return { ok: true };
+  } catch (error) {
+    if (isValidationError(error)) {
+      return { ok: false, fieldErrors: error.fieldErrors };
+    }
+    return { ok: false, message: getActionErrorMessage(error) };
+  }
 };

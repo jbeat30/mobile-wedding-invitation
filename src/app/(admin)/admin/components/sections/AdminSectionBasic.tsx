@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { KakaoMap } from '@/components/ui/KakaoMap';
 import { DateTimePicker } from '@/components/ui/DateTimePicker';
+import { UsersIcon } from 'lucide-react';
 
 type AdminSectionBasicProps = {
   data: AdminDashboardData;
@@ -32,6 +33,12 @@ export const AdminSectionBasic = ({ data }: AdminSectionBasicProps) => {
 
   return (
     <div className="flex flex-col gap-6">
+      <div className="flex items-start gap-3">
+        <UsersIcon className="w-7 h-7 text-blue-600 mt-1" />
+        <h1 className="text-2xl font-bold text-gray-900">기본 정보</h1>
+        <p className="text-gray-600 mt-1">신랑신부와 부모님 성함을 관리하세요</p>
+      </div>
+
       <Card>
         <CardHeader>
           <CardTitle>기본 정보</CardTitle>

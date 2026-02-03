@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { AdminImageFileField } from '@/app/(admin)/admin/components/AdminImageFileField';
+import { Loader2Icon } from 'lucide-react';
 
 type AdminSectionLoadingProps = {
   loading: AdminDashboardData['loading'];
@@ -26,6 +27,12 @@ type AdminSectionLoadingProps = {
 export const AdminSectionLoading = ({ loading, assets, fileUrlToNameMap, sectionTitle }: AdminSectionLoadingProps) => {
   return (
     <div className="flex flex-col gap-6">
+      <div className="flex items-start gap-3">
+        <Loader2Icon className="w-7 h-7 text-blue-600 mt-1" />
+        <h1 className="text-2xl font-bold text-gray-900">로딩 화면</h1>
+        <p className="text-gray-600 mt-1">로딩 화면 표시 여부와 이미지를 설정하세요</p>
+      </div>
+
       <Card>
         <CardHeader>
           <CardTitle>로딩 설정</CardTitle>

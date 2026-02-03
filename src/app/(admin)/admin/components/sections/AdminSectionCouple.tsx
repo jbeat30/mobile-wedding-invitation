@@ -7,7 +7,7 @@ import { AdminForm } from '@/app/(admin)/admin/components/AdminForm';
 import { AdminImageFileField } from '@/app/(admin)/admin/components/AdminImageFileField';
 import { AdminSubmitButton } from '@/app/(admin)/admin/components/AdminSubmitButton';
 import { StandardButton, StandardCard, StandardInput } from '@/components/admin/StandardComponents';
-import { SaveIcon } from 'lucide-react';
+import { HeartIcon, SaveIcon } from 'lucide-react';
 
 type AdminSectionCoupleProps = {
   profile: AdminDashboardData['profile'];
@@ -52,9 +52,10 @@ export const AdminSectionCouple = ({
   }, [profile, parents]);
   return (
     <div className="flex flex-col gap-6">
-      <div className="mb-2">
-        <h1 className="text-3xl font-bold text-gray-900">커플 정보</h1>
-        <p className="text-gray-600 mt-2 text-base">신랑신부 기본 정보를 입력하세요</p>
+      <div className="flex items-start gap-3">
+        <HeartIcon className="w-7 h-7 text-blue-600 mt-1" />
+        <h1 className="text-2xl font-bold text-gray-900">커플 정보</h1>
+        <p className="text-gray-600 mt-1">신랑신부 소개와 프로필 사진을 관리하세요</p>
       </div>
       <AdminForm
         action={updateBasicInfoAction}

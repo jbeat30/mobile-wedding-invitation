@@ -14,9 +14,10 @@ import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { SelectField } from '@/components/ui/SelectField';
+import { AdminSelectField } from '@/app/(admin)/admin/components/AdminSelectField';
 import { Textarea } from '@/components/ui/textarea';
 import { BANK_OPTIONS } from '@/constants/banks';
+import { CreditCardIcon } from 'lucide-react';
 
 type AdminSectionAccountsProps = {
   accounts: AdminDashboardData['accounts'];
@@ -26,20 +27,119 @@ type AdminSectionAccountsProps = {
   setAccountFormOpen: Dispatch<SetStateAction<{ groom: boolean; bride: boolean }>>;
 };
 
-/**
- * 은행 옵션 목록에 포함되는지 확인
- * @param bankName 은행명
- * @returns boolean
- */
-const isSupportedBank = (bankName: string) =>
-  BANK_OPTIONS.some((option) => option.name === bankName);
+const BANK_SELECT_OPTIONS = BANK_OPTIONS.map((option) => ({
+  value: option.name,
+  label: option.name,
+}));
 
-/**
- * 셀렉트 기본값을 반환
- * @param bankName 은행명
- * @returns string
- */
-const getDefaultBankValue = (bankName: string) => (isSupportedBank(bankName) ? bankName : '');
+const getBankSelectOptions = (bankName: string) => {
+  const normalized = bankName.trim();
+  if (!normalized) return BANK_SELECT_OPTIONS;
+  const hasMatch = BANK_SELECT_OPTIONS.some((option) => option.value === normalized);
+  if (hasMatch) return BANK_SELECT_OPTIONS;
+  return [{ value: normalized, label: normalized }, ...BANK_SELECT_OPTIONS];
+};
+
+const AccountEntryFormFields = ({ groupKey, label }: { groupKey: 'groom' | 'bride'; label: string }) => {
+  return (
+    <>
+      <div className="flex flex-col gap-2">
+        <Label htmlFor={`${groupKey}_bank_name`}>은행명</Label>
+        <AdminSelectField
+          id={`${groupKey}_bank_name`}
+          name="bank_name"
+          defaultValue=""
+          options={BANK_SELECT_OPTIONS}
+          placeholder="은행을 선택하세요"
+        />
+      </div>
+      <div className="flex flex-col gap-2">
+        <Label htmlFor={`${groupKey}_account_number`}>계좌번호</Label>
+        <Input
+          id={`${groupKey}_account_number`}
+          name="account_number"
+          pattern="[\d-]+"
+          title="숫자와 하이픈만 입력 가능합니다"
+        />
+      </div>
+      <div className="flex flex-col gap-2">
+        <Label htmlFor={`${groupKey}_holder`}>예금주</Label>
+        <Input
+          id={`${groupKey}_holder`}
+          name="holder"
+        />
+      </div>
+      <div className="flex flex-col gap-2">
+        <Label htmlFor={`${groupKey}_label`}>라벨</Label>
+        <Input id={`${groupKey}_label`} name="label" placeholder={label} />
+      </div>
+    </>
+  );
+};
+
+const AccountEntryEditor = ({
+  entryId,
+  bankName,
+  accountNumber,
+  holder,
+  label,
+  groupLabel,
+}: {
+  entryId: string;
+  bankName: string;
+  accountNumber: string;
+  holder: string;
+  label: string | null;
+  groupLabel: string;
+}) => {
+  return (
+    <>
+      <input type="hidden" name="entry_id" value={entryId} />
+      <div className="grid gap-3 md:grid-cols-2">
+        <div className="flex flex-col gap-2">
+          <Label htmlFor={`bank_name_${entryId}`}>은행명</Label>
+          <AdminSelectField
+            id={`bank_name_${entryId}`}
+            name="bank_name"
+            defaultValue={bankName}
+            options={getBankSelectOptions(bankName)}
+            placeholder="은행을 선택하세요"
+          />
+        </div>
+        <div className="flex flex-col gap-2">
+          <Label htmlFor={`account_number_${entryId}`}>계좌번호</Label>
+          <Input
+            id={`account_number_${entryId}`}
+            name="account_number"
+            defaultValue={accountNumber}
+            pattern="[\d-]+"
+            title="숫자와 하이픈만 입력 가능합니다"
+          />
+        </div>
+      </div>
+      <div className="grid gap-3 md:grid-cols-2">
+        <div className="flex flex-col gap-2">
+          <Label htmlFor={`holder_${entryId}`}>예금주</Label>
+          <Input
+            id={`holder_${entryId}`}
+            name="holder"
+            defaultValue={holder}
+          />
+        </div>
+        <div className="flex flex-col gap-2">
+          <Label htmlFor={`label_${entryId}`}>라벨</Label>
+          <Input
+            id={`label_${entryId}`}
+            name="label"
+            defaultValue={label || ''}
+            placeholder={groupLabel}
+          />
+        </div>
+      </div>
+    </>
+  );
+};
+
 
 /**
  * 어카운트 섹션
@@ -54,6 +154,13 @@ export const AdminSectionAccounts = ({
   setAccountFormOpen,
 }: AdminSectionAccountsProps) => {
   return (
+    <div className="space-y-6">
+      <div className="flex items-start gap-3">
+        <CreditCardIcon className="w-7 h-7 text-blue-600 mt-1" />
+        <h1 className="text-2xl font-bold text-gray-900">계좌 정보</h1>
+        <p className="text-gray-600 mt-1">신랑신부 은행 계좌를 관리하세요</p>
+      </div>
+
     <Card>
       <CardHeader>
         <CardTitle>어카운트</CardTitle>
@@ -115,49 +222,25 @@ export const AdminSectionAccounts = ({
                   </div>
 
                   {accountFormOpen[groupKey] ? (
-                    <AdminForm
-                      action={addAccountEntryAction}
-                      successMessage="계좌가 추가되었습니다"
-                      className="grid gap-3"
-                    >
-                      <input type="hidden" name="accounts_id" value={accounts.id} />
-                      <input type="hidden" name="group_type" value={groupKey} />
-                      <div className="flex flex-col gap-2">
-                        <Label htmlFor={`${groupKey}_bank_name`}>은행명</Label>
-                        <SelectField
-                          id={`${groupKey}_bank_name`}
-                          name="bank_name"
-                          defaultValue=""
-                          required
-                        >
-                          <option value="" disabled>
-                            은행을 선택하세요
-                          </option>
-                          {BANK_OPTIONS.map((option) => (
-                            <option key={option.name} value={option.name}>
-                              {option.name}
-                            </option>
-                          ))}
-                        </SelectField>
+                    <div className="rounded-[14px] border border-[var(--border-light)] bg-[var(--bg-secondary)]/70 p-4">
+                      <div className="mb-3 text-[13px] font-semibold text-[var(--text-muted)]">
+                        {group.label}측 계좌 추가
                       </div>
-                      <div className="flex flex-col gap-2">
-                        <Label htmlFor={`${groupKey}_account_number`}>계좌번호</Label>
-                        <Input id={`${groupKey}_account_number`} name="account_number" />
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <Label htmlFor={`${groupKey}_holder`}>예금주</Label>
-                        <Input id={`${groupKey}_holder`} name="holder" />
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <Label htmlFor={`${groupKey}_label`}>라벨</Label>
-                        <Input id={`${groupKey}_label`} name="label" />
-                      </div>
-                      <div className="flex justify-end">
-                        <AdminSubmitButton size="sm" pendingText="추가 중...">
-                          추가하기
-                        </AdminSubmitButton>
-                      </div>
-                    </AdminForm>
+                      <AdminForm
+                        action={addAccountEntryAction}
+                        successMessage="계좌가 추가되었습니다"
+                        className="grid gap-3"
+                      >
+                        <input type="hidden" name="accounts_id" value={accounts.id} />
+                        <input type="hidden" name="group_type" value={groupKey} />
+                      <AccountEntryFormFields groupKey={groupKey} label={group.label} />
+                        <div className="flex justify-end">
+                          <AdminSubmitButton size="sm" pendingText="추가 중...">
+                            추가하기
+                          </AdminSubmitButton>
+                        </div>
+                      </AdminForm>
+                    </div>
                   ) : null}
 
                   <div className="rounded-[12px] border border-[var(--border-light)] bg-white/70">
@@ -171,55 +254,14 @@ export const AdminSectionAccounts = ({
                               className="grid gap-3"
                               formId={`account-entry-${entry.id}`}
                             >
-                              <input type="hidden" name="entry_id" value={entry.id} />
-                              <div className="grid gap-3 md:grid-cols-2">
-                                <div className="flex flex-col gap-2">
-                                  <Label htmlFor={`bank_name_${entry.id}`}>은행명</Label>
-                                  <SelectField
-                                    id={`bank_name_${entry.id}`}
-                                    name="bank_name"
-                                    defaultValue={getDefaultBankValue(entry.bank_name)}
-                                    required
-                                  >
-                                    <option value="" disabled>
-                                      은행을 선택하세요
-                                    </option>
-                                    {BANK_OPTIONS.map((option) => (
-                                      <option key={option.name} value={option.name}>
-                                        {option.name}
-                                      </option>
-                                    ))}
-                                  </SelectField>
-                                </div>
-                                <div className="flex flex-col gap-2">
-                                  <Label htmlFor={`account_number_${entry.id}`}>
-                                    계좌번호
-                                  </Label>
-                                  <Input
-                                    id={`account_number_${entry.id}`}
-                                    name="account_number"
-                                    defaultValue={entry.account_number}
-                                  />
-                                </div>
-                              </div>
-                              <div className="grid gap-3 md:grid-cols-2">
-                                <div className="flex flex-col gap-2">
-                                  <Label htmlFor={`holder_${entry.id}`}>예금주</Label>
-                                  <Input
-                                    id={`holder_${entry.id}`}
-                                    name="holder"
-                                    defaultValue={entry.holder}
-                                  />
-                                </div>
-                                <div className="flex flex-col gap-2">
-                                  <Label htmlFor={`label_${entry.id}`}>라벨</Label>
-                                  <Input
-                                    id={`label_${entry.id}`}
-                                    name="label"
-                                    defaultValue={entry.label || ''}
-                                  />
-                                </div>
-                              </div>
+                              <AccountEntryEditor
+                                entryId={entry.id}
+                                bankName={entry.bank_name || ''}
+                                accountNumber={entry.account_number}
+                                holder={entry.holder}
+                                label={entry.label}
+                                groupLabel={group.label}
+                              />
                             </AdminForm>
                             <div className="flex items-center justify-end gap-2">
                               <button type="submit" form={`account-entry-${entry.id}`}>
@@ -253,5 +295,6 @@ export const AdminSectionAccounts = ({
         </div>
       </CardContent>
     </Card>
+    </div>
   );
 };

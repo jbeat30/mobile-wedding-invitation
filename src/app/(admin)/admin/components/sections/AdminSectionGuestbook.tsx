@@ -12,6 +12,7 @@ import { DataTable } from '@/components/ui/data-table';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import type { ColumnDef } from '@tanstack/react-table';
+import { MessageSquareIcon } from 'lucide-react';
 
 type AdminSectionGuestbookProps = {
   guestbook: AdminDashboardData['guestbook'];
@@ -66,6 +67,13 @@ export const AdminSectionGuestbook = ({
   ];
 
   return (
+    <div className="space-y-6">
+      <div className="flex items-start gap-3">
+        <MessageSquareIcon className="w-7 h-7 text-blue-600 mt-1" />
+        <h1 className="text-2xl font-bold text-gray-900">게스트북</h1>
+        <p className="text-gray-600 mt-1">방명록 설정과 작성 메시지를 관리하세요</p>
+      </div>
+
     <Card>
       <CardHeader>
         <CardTitle>게스트북</CardTitle>
@@ -164,5 +172,6 @@ export const AdminSectionGuestbook = ({
         </div>
       </CardContent>
     </Card>
+    </div>
   );
 };

@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { ImageIcon } from 'lucide-react';
 
 type AdminSectionIntroProps = {
   assets: AdminDashboardData['assets'];
@@ -31,6 +32,12 @@ export const AdminSectionIntro = ({
 }: AdminSectionIntroProps) => {
   return (
     <div className="flex flex-col gap-6">
+      <div className="flex items-start gap-3">
+        <ImageIcon className="w-7 h-7 text-blue-600 mt-1" />
+        <h1 className="text-2xl font-bold text-gray-900">인트로</h1>
+        <p className="text-gray-600 mt-1">메인 이미지와 인사말을 관리하세요</p>
+      </div>
+
       <Card>
         <CardHeader>
           <CardTitle>메인 이미지</CardTitle>

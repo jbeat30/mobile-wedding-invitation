@@ -27,11 +27,14 @@ import {
 type AdminFormState = {
   status: 'idle' | 'success' | 'error';
   message?: string;
+  fieldErrors?: Record<string, string>;
   submittedAt?: number;
 };
 
 type AdminFormProps = {
-  action: (formData: FormData) => Promise<void>;
+  action: (formData: FormData) => Promise<
+    void | { ok?: boolean; message?: string; fieldErrors?: Record<string, string> }
+  >;
   successMessage?: string;
   errorMessage?: string;
   confirmTitle?: string;
@@ -44,6 +47,7 @@ type AdminFormProps = {
 type AdminFormContextValue = {
   isDirty: boolean;
   isEmpty: boolean;
+  fieldErrors: Record<string, string>;
 };
 
 const AdminFormContext = createContext<AdminFormContextValue | null>(null);
@@ -54,7 +58,18 @@ const AdminFormContext = createContext<AdminFormContextValue | null>(null);
  */
 export const useAdminFormState = () => {
   const context = useContext(AdminFormContext);
-  return context ?? { isDirty: true, isEmpty: false };
+  return context ?? { isDirty: true, isEmpty: false, fieldErrors: {} };
+};
+
+export const useAdminFieldError = (name: string) => {
+  const { fieldErrors } = useAdminFormState();
+  return fieldErrors[name];
+};
+
+export const AdminFieldError = ({ name }: { name: string }) => {
+  const message = useAdminFieldError(name);
+  if (!message) return null;
+  return <p className="mt-1 text-sm text-red-600">{message}</p>;
 };
 
 type AdminFormValueMap = Record<string, string[]>;
@@ -173,6 +188,7 @@ export const AdminForm = ({
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
   const [isEmpty, setIsEmpty] = useState(true);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const allowSubmitRef = useRef(false);
   const formRef = useRef<HTMLFormElement | null>(null);
   const initialValuesRef = useRef<string>('');
@@ -180,11 +196,20 @@ export const AdminForm = ({
   const [state, formAction] = useActionState<AdminFormState, FormData>(
     async (_prevState, formData) => {
       try {
-        await action(formData);
+        const result = await action(formData);
+        if (result && typeof result === 'object' && 'ok' in result && result.ok === false) {
+          return {
+            status: 'error',
+            message: result.message,
+            fieldErrors: result.fieldErrors,
+            submittedAt: Date.now(),
+          };
+        }
         return { status: 'success', submittedAt: Date.now() };
       } catch (error) {
         console.error('Admin form submit failed:', error);
-        return { status: 'error', submittedAt: Date.now() };
+        const message = error instanceof Error && error.message ? error.message : undefined;
+        return { status: 'error', message, submittedAt: Date.now() };
       }
     },
     { status: 'idle' }
@@ -194,15 +219,34 @@ export const AdminForm = ({
     if (state.status === 'idle') {
       return;
     }
-    const message = state.status === 'success' ? successMessage : errorMessage;
+    if (state.status === 'error') {
+      if (state.fieldErrors && Object.keys(state.fieldErrors).length > 0) {
+        setFieldErrors(state.fieldErrors);
+        return;
+      }
+      setFieldErrors({});
+    }
+    const message =
+      state.status === 'success'
+        ? successMessage
+        : state.message || errorMessage;
     setToastMessage(message);
     setToastOpen(true);
     if (state.status === 'success') {
+      setFieldErrors({});
       void queryClient.invalidateQueries({ queryKey: ['adminData'] });
     }
     const timer = window.setTimeout(() => setToastOpen(false), 2000);
     return () => window.clearTimeout(timer);
-  }, [state.status, state.submittedAt, successMessage, errorMessage, queryClient]);
+  }, [
+    state.status,
+    state.submittedAt,
+    state.message,
+    state.fieldErrors,
+    successMessage,
+    errorMessage,
+    queryClient,
+  ]);
 
   /**
    * 폼 상태 재계산
@@ -215,6 +259,74 @@ export const AdminForm = ({
     setIsDirty(serialized !== initialValuesRef.current);
     setIsEmpty(isFormEmpty(formRef.current));
   }, []);
+
+  const applyFieldErrors = useCallback(
+    (nextFieldErrors: Record<string, string>) => {
+      if (!formRef.current) return;
+      const form = formRef.current;
+      form.querySelectorAll('[data-admin-field-error="true"]').forEach((node) => node.remove());
+      form
+        .querySelectorAll('.admin-field-error')
+        .forEach((node) => node.classList.remove('admin-field-error'));
+      form
+        .querySelectorAll('[aria-invalid="true"]')
+        .forEach((node) => node.removeAttribute('aria-invalid'));
+
+      if (!nextFieldErrors || Object.keys(nextFieldErrors).length === 0) {
+        return;
+      }
+
+      const escapeName =
+        typeof CSS !== 'undefined' && typeof CSS.escape === 'function'
+          ? CSS.escape
+          : (value: string) => value.replace(/["\\]/g, '\\$&');
+
+      Object.entries(nextFieldErrors).forEach(([name, message]) => {
+        const selector = `[name="${escapeName(name)}"]`;
+        const element = form.querySelector(selector) as HTMLElement | null;
+        if (!element) return;
+
+        const wrapper = element.closest('[data-admin-field-wrapper="true"]') as HTMLElement | null;
+        const errorNode = document.createElement('p');
+        errorNode.dataset.adminFieldError = 'true';
+        errorNode.className = 'admin-field-error-message';
+        errorNode.textContent = message;
+
+        if (wrapper) {
+          const hasDropzone = Boolean(wrapper.querySelector('[data-admin-dropzone="true"]'));
+          const trigger = wrapper.querySelector('[role="combobox"]') as HTMLElement | null;
+          if (hasDropzone) {
+            wrapper.classList.add('admin-field-error');
+          }
+          if (trigger) {
+            trigger.classList.add('admin-field-error');
+            trigger.setAttribute('aria-invalid', 'true');
+          }
+          wrapper.insertAdjacentElement('afterend', errorNode);
+          return;
+        }
+
+        element.classList.add('admin-field-error');
+        element.setAttribute('aria-invalid', 'true');
+        element.insertAdjacentElement('afterend', errorNode);
+      });
+    },
+    []
+  );
+
+  const clearFieldError = useCallback((name?: string | null) => {
+    if (!name) return;
+    setFieldErrors((prev) => {
+      if (!prev[name]) return prev;
+      const next = { ...prev };
+      delete next[name];
+      return next;
+    });
+  }, []);
+
+  useEffect(() => {
+    applyFieldErrors(fieldErrors);
+  }, [applyFieldErrors, fieldErrors]);
 
   useEffect(() => {
     if (!formRef.current) return;
@@ -257,15 +369,21 @@ export const AdminForm = ({
   };
 
   return (
-    <AdminFormContext.Provider value={{ isDirty, isEmpty }}>
+    <AdminFormContext.Provider value={{ isDirty, isEmpty, fieldErrors }}>
       <form
         ref={formRef}
         id={formId}
         action={formAction}
         className={className}
         onSubmit={handleSubmit}
-        onInput={evaluateFormState}
-        onChange={evaluateFormState}
+        onInput={(event) => {
+          evaluateFormState();
+          clearFieldError((event.target as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement).name);
+        }}
+        onChange={(event) => {
+          evaluateFormState();
+          clearFieldError((event.target as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement).name);
+        }}
       >
         {children}
       </form>

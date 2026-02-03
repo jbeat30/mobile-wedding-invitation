@@ -14,6 +14,7 @@ type AdminSelectFieldProps = {
   name: string;
   defaultValue: string;
   options: AdminSelectOption[];
+  placeholder?: string;
   disabled?: boolean;
 };
 
@@ -27,13 +28,12 @@ export const AdminSelectField = ({
   name,
   defaultValue,
   options,
+  placeholder,
   disabled = false,
 }: AdminSelectFieldProps) => {
-  const fallbackValue = options[0]?.value ?? '';
   const normalizedDefault = String(defaultValue || '').trim();
-  const resolvedDefault = options.some((option) => option.value === normalizedDefault)
-    ? normalizedDefault
-    : fallbackValue;
+  const hasMatch = options.some((option) => option.value === normalizedDefault);
+  const resolvedDefault = hasMatch ? normalizedDefault : '';
   const [value, setValue] = useState(resolvedDefault);
   const currentLabel =
     options.find((option) => option.value === value)?.label || value || '';
@@ -42,11 +42,10 @@ export const AdminSelectField = ({
 
   useEffect(() => {
     const nextDefault = String(defaultValue || '').trim();
-    const resolved = options.some((option) => option.value === nextDefault)
-      ? nextDefault
-      : fallbackValue;
+    const matched = options.some((option) => option.value === nextDefault);
+    const resolved = matched ? nextDefault : '';
     setValue(resolved);
-  }, [defaultValue, fallbackValue, options]);
+  }, [defaultValue, options]);
 
   /**
    * 변경 이벤트 전달
@@ -67,13 +66,17 @@ export const AdminSelectField = ({
   }, [value, notifyChange]);
 
   return (
-    <>
+    <div data-admin-field-wrapper="true" data-admin-field-name={name}>
       {disabled ? (
-        <Input id={id} value={currentLabel} readOnly />
+        <Input
+          id={id}
+          value={currentLabel}
+          readOnly
+        />
       ) : (
         <Select value={value} onValueChange={setValue}>
           <SelectTrigger id={id}>
-            <SelectValue placeholder="선택됨" />
+            <SelectValue placeholder={placeholder ?? '선택하세요'} />
           </SelectTrigger>
           <SelectContent>
             {options.map((option) => (
@@ -91,6 +94,6 @@ export const AdminSelectField = ({
         value={value}
         data-admin-track="true"
       />
-    </>
+    </div>
   );
 };

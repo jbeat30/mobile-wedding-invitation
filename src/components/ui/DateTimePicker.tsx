@@ -1,12 +1,12 @@
 'use client';
 
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, type KeyboardEvent } from 'react';
 import { format, parseISO } from 'date-fns';
 import { ko } from 'date-fns/locale';
-import { Button } from '@/components/ui/Button';
 import { Calendar } from '@/components/ui/calendar';
-import { Label } from '@/components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { StandardInput } from '@/components/admin/StandardComponents';
+import { CalendarIcon, ClockIcon } from 'lucide-react';
 
 type DateTimePickerProps = {
   id: string;
@@ -36,6 +36,7 @@ export const DateTimePicker = ({
   const [hour, setHour] = useState(() => String(((now.getHours() + 11) % 12) + 1).padStart(2, '0'));
   const [minute, setMinute] = useState(() => String(now.getMinutes()).padStart(2, '0'));
   const [period, setPeriod] = useState<'AM' | 'PM'>(() => (now.getHours() >= 12 ? 'PM' : 'AM'));
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     if (defaultValue) {
@@ -134,72 +135,102 @@ export const DateTimePicker = ({
     () => Array.from({ length: 12 }, (_, index) => String(index + 1).padStart(2, '0')),
     []
   );
-  const minuteOptions = useMemo(() => ['00', '30'], []);
+  const minuteOptions = useMemo(
+    () => Array.from({ length: 60 }, (_, index) => String(index).padStart(2, '0')),
+    []
+  );
   const selectClassName =
     'h-9 w-full rounded-md border border-[var(--border-light)] bg-white/70 px-2 text-[14px] font-sans text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-rose)] focus:ring-offset-2';
 
   return (
     <div className="flex flex-col gap-2">
-      <Label htmlFor={id}>{label}</Label>
-      <Popover>
+      <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <Button
-            id={id}
-            type="button"
-            variant="outline"
-            size="lg"
-            className="justify-start font-normal"
-            aria-required={required}
-          >
-            {selectedDateTime
-              ? format(selectedDateTime, 'yyyy-MM-dd a hh:mm', { locale: ko })
-              : '날짜와 시간을 선택하세요'}
-          </Button>
+          <div>
+            <StandardInput
+              id={id}
+              label={label}
+              value={
+                selectedDateTime
+                  ? format(selectedDateTime, 'yyyy-MM-dd a hh:mm', { locale: ko })
+                  : ''
+              }
+              placeholder="날짜와 시간을 선택하세요"
+              required={required}
+              readOnly
+              icon={<CalendarIcon className="h-4 w-4" />}
+              onClick={() => setOpen(true)}
+              onKeyDown={(event: KeyboardEvent<HTMLInputElement>) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  setOpen(true);
+                }
+              }}
+            />
+          </div>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0">
-          <div className="p-3">
+          <div className="rounded-xl border border-[var(--border-light)] bg-white p-4 shadow-[var(--shadow-card)]">
+            <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-[var(--text-primary)]">
+              <CalendarIcon className="h-4 w-4 text-[var(--text-muted)]" />
+              마감 날짜 선택
+            </div>
             <Calendar
               mode="single"
               selected={selectedDate}
               defaultMonth={selectedDate ?? now}
               onSelect={handleDateChange}
             />
-            <div className="mt-3 grid grid-cols-3 gap-2">
-              <select
-                className={selectClassName}
-                value={period}
-                onChange={(event) => handleTimeChange(hour, minute, event.target.value as 'AM' | 'PM')}
-              >
-                <option value="AM">오전</option>
-                <option value="PM">오후</option>
-              </select>
-              <select
-                className={selectClassName}
-                value={hour}
-                onChange={(event) => handleTimeChange(event.target.value, minute, period)}
-              >
-                {hourOptions.map((value) => (
-                  <option key={value} value={value}>
-                    {value}시
-                  </option>
-                ))}
-              </select>
-              <select
-                className={selectClassName}
-                value={minute}
-                onChange={(event) => handleTimeChange(hour, event.target.value, period)}
-              >
-                {minuteOptions.map((value) => (
-                  <option key={value} value={value}>
-                    {value}분
-                  </option>
-                ))}
-              </select>
+            <div className="mt-4 rounded-[12px] border border-[var(--border-light)] bg-[var(--bg-secondary)]/70 p-3">
+              <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-[var(--text-primary)]">
+                <ClockIcon className="h-4 w-4 text-[var(--text-muted)]" />
+                마감 시간 선택
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                <select
+                  className={selectClassName}
+                  value={period}
+                  onChange={(event) =>
+                    handleTimeChange(hour, minute, event.target.value as 'AM' | 'PM')
+                  }
+                >
+                  <option value="AM">AM</option>
+                  <option value="PM">PM</option>
+                </select>
+                <select
+                  className={selectClassName}
+                  value={hour}
+                  onChange={(event) => handleTimeChange(event.target.value, minute, period)}
+                >
+                  {hourOptions.map((value) => (
+                    <option key={value} value={value}>
+                      {value}시
+                    </option>
+                  ))}
+                </select>
+                <select
+                  className={selectClassName}
+                  value={minute}
+                  onChange={(event) => handleTimeChange(hour, event.target.value, period)}
+                >
+                  {minuteOptions.map((value) => (
+                    <option key={value} value={value}>
+                      {value}분
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div className="mt-3 rounded-md border border-[var(--border-light)] bg-white/80 px-3 py-2 text-xs text-[var(--text-muted)]">
+              선택됨:{' '}
+              {selectedDateTime
+                ? format(selectedDateTime, 'yyyy-MM-dd a hh:mm', { locale: ko })
+                : '없음'}
             </div>
           </div>
         </PopoverContent>
       </Popover>
-      <input type="hidden" name={name} value={isoValue} />
+      <input type="hidden" name={name} value={isoValue} data-admin-track="true" />
     </div>
   );
 };

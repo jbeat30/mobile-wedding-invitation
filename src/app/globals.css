@@ -178,11 +178,11 @@ body::before {
 }
 
 @layer components {
-    .admin-scope main button:not([data-admin-switch]),
+    .admin-scope main button:not([data-admin-switch]):not([role="combobox"]),
     .admin-scope main input[type="submit"],
     .admin-scope main input[type="button"],
     .admin-scope main a[role="button"],
-    .admin-scope .admin-modal button:not([data-admin-switch]) {
+    .admin-scope .admin-modal button:not([data-admin-switch]):not([role="combobox"]) {
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
@@ -198,29 +198,29 @@ body::before {
         line-height: 1.25rem !important;
     }
 
-    .admin-scope main button:not([data-admin-switch]):hover,
+    .admin-scope main button:not([data-admin-switch]):not([role="combobox"]):hover,
     .admin-scope main input[type="submit"]:hover,
     .admin-scope main input[type="button"]:hover,
     .admin-scope main a[role="button"]:hover,
-    .admin-scope .admin-modal button:not([data-admin-switch]):hover {
+    .admin-scope .admin-modal button:not([data-admin-switch]):not([role="combobox"]):hover {
         background-color: #1d4ed8 !important;
         color: #ffffff !important;
     }
 
-    .admin-scope main button:not([data-admin-switch]):focus-visible,
+    .admin-scope main button:not([data-admin-switch]):not([role="combobox"]):focus-visible,
     .admin-scope main input[type="submit"]:focus-visible,
     .admin-scope main input[type="button"]:focus-visible,
     .admin-scope main a[role="button"]:focus-visible,
-    .admin-scope .admin-modal button:not([data-admin-switch]):focus-visible {
+    .admin-scope .admin-modal button:not([data-admin-switch]):not([role="combobox"]):focus-visible {
         box-shadow: 0 0 0 2px #3b82f6 !important;
         outline: none !important;
     }
 
-    .admin-scope main button:not([data-admin-switch]):disabled,
+    .admin-scope main button:not([data-admin-switch]):not([role="combobox"]):disabled,
     .admin-scope main input[type="submit"]:disabled,
     .admin-scope main input[type="button"]:disabled,
     .admin-scope main a[role="button"][aria-disabled="true"],
-    .admin-scope .admin-modal button:not([data-admin-switch]):disabled {
+    .admin-scope .admin-modal button:not([data-admin-switch]):not([role="combobox"]):disabled {
         opacity: 0.5 !important;
         cursor: not-allowed !important;
     }
@@ -229,7 +229,7 @@ body::before {
 @layer components {
     .admin-dialog,
     .admin-dialog * {
-        font-family: var(--font-admin-sans), var(--font-sans) !important;
+        font-family: var(--font-admin-sans) !important;
     }
 
     .admin-dialog button {
@@ -269,6 +269,29 @@ body::before {
     .admin-dialog button:disabled {
         opacity: 0.5 !important;
         cursor: not-allowed !important;
+    }
+
+    .admin-field-error {
+        border-color: #fca5a5 !important;
+        box-shadow: 0 0 0 1px #fca5a5 !important;
+    }
+
+    .admin-field-error:focus,
+    .admin-field-error:focus-visible {
+        border-color: #ef4444 !important;
+        box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important;
+        outline: none !important;
+    }
+
+    .admin-field-error-message {
+        margin-top: 0.25rem !important;
+        font-size: 0.875rem !important;
+        color: #dc2626 !important;
+    }
+
+    .admin-field-error [data-admin-dropzone="true"] {
+        border-color: #fca5a5 !important;
+        box-shadow: 0 0 0 1px #fca5a5 !important;
     }
 }
 
