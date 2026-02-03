@@ -9,8 +9,10 @@ import {
   updateWeddingInfoSectionAction,
 } from '@/app/(admin)/admin/actions/content';
 import { StandardCard, StandardInput, StandardButton } from '@/components/admin/StandardComponents';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useAdminStore } from '@/stores/adminStore';
-import { Car, MapPinIcon, SaveIcon, SearchIcon, TrainIcon } from 'lucide-react';
+import { CalendarIcon, Car, ClockIcon, MapPinIcon, SaveIcon, SearchIcon, TrainIcon } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 type AdminSectionVenueProps = {
@@ -50,6 +52,156 @@ const buildIsoDateTime = (date: string, time: string) => {
   }
   const localDate = new Date(year, month - 1, day, hour, minute, 0, 0);
   return localDate.toISOString();
+};
+
+type DateFieldProps = {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  required?: boolean;
+};
+
+const DateField = ({ label, value, onChange, required = false }: DateFieldProps) => {
+  const selectedDate = value ? new Date(`${value}T00:00:00`) : undefined;
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="space-y-2">
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <div>
+            <StandardInput
+              label={label}
+              value={value}
+              placeholder="날짜를 선택하세요"
+              required={required}
+              readOnly
+              icon={<CalendarIcon className="h-4 w-4" />}
+              onClick={() => setOpen(true)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  setOpen(true);
+                }
+              }}
+            />
+          </div>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0" sideOffset={10}>
+          <div className="rounded-xl border border-[var(--border-light)] bg-white p-4 shadow-[var(--shadow-card)]">
+            <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-[var(--text-primary)]">
+              <CalendarIcon className="h-4 w-4 text-[var(--text-muted)]" />
+              결혼식 날짜 선택
+            </div>
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              defaultMonth={selectedDate ?? new Date()}
+              onSelect={(date) =>
+                onChange(date ? date.toLocaleDateString('en-CA') : '')
+              }
+            />
+            <div className="mt-3 rounded-md border border-[var(--border-light)] bg-[var(--bg-secondary)]/70 px-3 py-2 text-xs text-[var(--text-muted)]">
+              선택됨: {value || '없음'}
+            </div>
+          </div>
+        </PopoverContent>
+      </Popover>
+    </div>
+  );
+};
+
+type TimeFieldProps = {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  required?: boolean;
+};
+
+const timeHourOptions = Array.from({ length: 24 }, (_, index) =>
+  String(index).padStart(2, '0')
+);
+const timeMinuteOptions = ['00', '15', '30', '45'];
+
+const TimeField = ({ label, value, onChange, required = false }: TimeFieldProps) => {
+  const [hour, minute] = value.split(':');
+  const resolvedHour = timeHourOptions.includes(hour) ? hour : '12';
+  const resolvedMinute = timeMinuteOptions.includes(minute) ? minute : '00';
+  const [open, setOpen] = useState(false);
+
+  const handleUpdate = (nextHour: string, nextMinute: string) => {
+    onChange(`${nextHour}:${nextMinute}`);
+  };
+
+  return (
+    <div className="space-y-2">
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <div>
+            <StandardInput
+              label={label}
+              type="time"
+              value={value}
+              placeholder="시간을 선택하세요"
+              required={required}
+              readOnly
+              icon={<ClockIcon className="h-4 w-4" />}
+              onClick={() => setOpen(true)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  setOpen(true);
+                }
+              }}
+            />
+          </div>
+        </PopoverTrigger>
+        <PopoverContent className="w-72 p-0" sideOffset={10}>
+          <div className="rounded-[14px] border border-[var(--border-light)] bg-white p-4 shadow-[var(--shadow-card)]">
+            <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-[var(--text-primary)]">
+              <ClockIcon className="h-4 w-4 text-[var(--text-muted)]" />
+              결혼식 시간 선택
+            </div>
+            <div className="rounded-[12px] border border-[var(--border-light)] bg-[var(--bg-secondary)]/70 p-3">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <span className="text-xs font-medium text-[var(--text-muted)]">시</span>
+                  <select
+                    className="h-9 w-full rounded-md border border-[var(--border-light)] bg-white/70 px-2 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-rose)] focus:border-[var(--accent-rose)]"
+                    value={resolvedHour}
+                    onChange={(event) => handleUpdate(event.target.value, resolvedMinute)}
+                  >
+                    {timeHourOptions.map((item) => (
+                      <option key={item} value={item}>
+                        {item}시
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-1">
+                  <span className="text-xs font-medium text-[var(--text-muted)]">분</span>
+                  <select
+                    className="h-9 w-full rounded-md border border-[var(--border-light)] bg-white/70 px-2 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-rose)] focus:border-[var(--accent-rose)]"
+                    value={resolvedMinute}
+                    onChange={(event) => handleUpdate(resolvedHour, event.target.value)}
+                  >
+                    {timeMinuteOptions.map((item) => (
+                      <option key={item} value={item}>
+                        {item}분
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div className="mt-3 rounded-md border border-[var(--border-light)] bg-white/80 px-3 py-2 text-xs text-[var(--text-muted)]">
+              선택됨: {value || '없음'}
+            </div>
+          </div>
+        </PopoverContent>
+      </Popover>
+    </div>
+  );
 };
 
 /**
@@ -261,18 +413,20 @@ export const AdminSectionVenue = ({ data }: AdminSectionVenueProps) => {
           <StandardCard title="예식장 기본 정보">
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <StandardInput
+                <DateField
                   label="결혼식 날짜"
-                  type="date"
                   value={venueInfo.weddingDate}
-                  onChange={(value) => setVenueInfo((prev) => ({ ...prev, weddingDate: value }))}
+                  onChange={(value) =>
+                    setVenueInfo((prev) => ({ ...prev, weddingDate: value }))
+                  }
                   required
                 />
-                <StandardInput
+                <TimeField
                   label="결혼식 시간"
-                  type="time"
                   value={venueInfo.weddingTime}
-                  onChange={(value) => setVenueInfo((prev) => ({ ...prev, weddingTime: value }))}
+                  onChange={(value) =>
+                    setVenueInfo((prev) => ({ ...prev, weddingTime: value }))
+                  }
                   required
                 />
               </div>

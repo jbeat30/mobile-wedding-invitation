@@ -39,6 +39,8 @@ interface StandardInputProps {
   disabled?: boolean;
   error?: string;
   className?: string;
+  icon?: ReactNode;
+  iconPosition?: 'left' | 'right';
   name?: string;
 }
 
@@ -55,9 +57,13 @@ export const StandardInput = forwardRef<HTMLInputElement, StandardInputProps>(({
   disabled = false,
   error,
   className,
+  icon,
+  iconPosition = 'right',
   name,
   ...props
 }, ref) => {
+  const hasIcon = Boolean(icon);
+  const iconPaddingClass = hasIcon ? (iconPosition === 'left' ? 'pl-9' : 'pr-9') : '';
   return (
     <div className={cn('mb-4', className)}>
       {label && (
@@ -66,22 +72,35 @@ export const StandardInput = forwardRef<HTMLInputElement, StandardInputProps>(({
           {required && <span className="text-red-500 ml-1">*</span>}
         </label>
       )}
-      <input
-        ref={ref}
-        type={type}
-        name={name}
-        value={value}
-        onChange={(e) => onChange?.(e.target.value)}
-        placeholder={placeholder}
-        disabled={disabled}
-        className={cn(
-          'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm',
-          'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
-          'disabled:bg-gray-50 disabled:text-gray-500',
-          error && 'border-red-300 focus:ring-red-500 focus:border-red-500'
-        )}
-        {...props}
-      />
+      <div className={cn('relative', hasIcon && 'text-gray-900')}>
+        <input
+          ref={ref}
+          type={type}
+          name={name}
+          value={value}
+          onChange={(e) => onChange?.(e.target.value)}
+          placeholder={placeholder}
+          disabled={disabled}
+          className={cn(
+            'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm',
+            'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
+            'disabled:bg-gray-50 disabled:text-gray-500',
+            iconPaddingClass,
+            error && 'border-red-300 focus:ring-red-500 focus:border-red-500'
+          )}
+          {...props}
+        />
+        {hasIcon ? (
+          <span
+            className={cn(
+              'pointer-events-none absolute inset-y-0 flex items-center',
+              iconPosition === 'left' ? 'left-3' : 'right-3'
+            )}
+          >
+            {icon}
+          </span>
+        ) : null}
+      </div>
       {error && (
         <p className="mt-1 text-sm text-red-600">{error}</p>
       )}
