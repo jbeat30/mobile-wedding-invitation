@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Share2Icon } from 'lucide-react';
 
 type AdminSectionShareProps = {
   share: AdminDashboardData['share'];
@@ -28,20 +29,27 @@ export const AdminSectionShare = ({ share, assets, fileUrlToNameMap }: AdminSect
 
   return (
     <div className="flex flex-col gap-6">
+      <div className="flex items-start gap-3">
+        <Share2Icon className="w-7 h-7 text-blue-600 mt-1" />
+        <h1 className="text-2xl font-bold text-gray-900">공유 설정</h1>
+        <p className="text-gray-600 mt-1">공유 문구와 소셜 미리보기 정보를 관리하세요</p>
+      </div>
+
+      {/* 화면 노출 정보 */}
       <Card>
         <CardHeader>
-          <CardTitle>공유 섹션</CardTitle>
+          <CardTitle>공유 섹션 정보</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-[14px] text-[var(--text-muted)]">
-            청첩장 화면에 표시되는 공유 섹션 제목/문구와 OG 메타 정보를 분리해서 설정합니다.
+            청첩장 공개 페이지의 공유 섹션에 표시되는 제목과 문구입니다.
           </p>
           <AdminForm
             action={updateShareAction}
-            successMessage="공유 섹션이 저장되었습니다"
-            className="mt-4 grid gap-4 md:grid-cols-2"
+            successMessage="공유 섹션 정보가 저장되었습니다"
+            className="mt-4 flex flex-col gap-4"
           >
-            <div className="flex flex-col gap-2 md:col-span-2">
+            <div className="flex flex-col gap-2">
               <Label htmlFor="section_title">공유 섹션 타이틀</Label>
               <Input
                 id="section_title"
@@ -50,7 +58,7 @@ export const AdminSectionShare = ({ share, assets, fileUrlToNameMap }: AdminSect
                 placeholder="입력하세요"
               />
             </div>
-            <div className="flex flex-col gap-2 md:col-span-2">
+            <div className="flex flex-col gap-2">
               <Label htmlFor="description">공유 섹션 문구</Label>
               <Textarea
                 id="description"
@@ -59,21 +67,39 @@ export const AdminSectionShare = ({ share, assets, fileUrlToNameMap }: AdminSect
                 placeholder="입력하세요"
               />
               <p className="text-[11px] text-[var(--text-muted)]">
-                이 문구는 공개 페이지의 공유 섹션 하단 설명으로 사용됩니다.
+                공개 페이지의 공유 섹션 하단 설명으로 사용됩니다.
               </p>
             </div>
+            <div className="flex justify-end">
+              <AdminSubmitButton size="sm" pendingText="저장 중...">
+                저장하기
+              </AdminSubmitButton>
+            </div>
+          </AdminForm>
+        </CardContent>
+      </Card>
+
+      {/* 기본 미리보기 — 카카오톡 이외의 앱·브라우저 공유 시 사용 */}
+      <Card>
+        <CardHeader>
+          <CardTitle>기본 미리보기 (OG)</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-[14px] text-[var(--text-muted)]">
+            카카오톡이 아닌 메신저·브라우저에서 링크를 공유했을 때 표시되는 정보입니다.
+          </p>
+          <AdminForm
+            action={updateShareAction}
+            successMessage="OG 정보가 저장되었습니다"
+            className="mt-4 grid gap-4 md:grid-cols-2"
+          >
             <div className="md:col-span-2">
               <div className="rounded-2xl border border-dashed border-[var(--border-light)] bg-white/60 p-4">
-                <p className="text-[13px] font-semibold text-[var(--text-primary)]">OG 메타 정보</p>
-                <p className="mt-1 text-[12px] text-[var(--text-muted)]">
-                  OG 타이틀과 설명은 소셜 미리보기에서 사용하는 데이터입니다. 아래 값들은
-                  자동으로 함께 제공됩니다.
-                </p>
-                <div className="mt-3 space-y-1 text-[12px] text-[var(--text-secondary)]">
-                  <p>og:type: website (고정)</p>
+                <p className="text-[13px] font-semibold text-[var(--text-primary)]">자동 제공되는 OG 메타</p>
+                <div className="mt-2 space-y-1 text-[12px] text-[var(--text-secondary)]">
+                  <p>og:type: website</p>
                   <p>og:url: {siteUrl}</p>
                   <p>og:site_name: Wedding Invitation</p>
-                  <p>developer: jbeat</p>
                 </div>
               </div>
             </div>
@@ -85,9 +111,7 @@ export const AdminSectionShare = ({ share, assets, fileUrlToNameMap }: AdminSect
                 defaultValue={share.og_title || ''}
                 placeholder="입력하세요"
               />
-              <p className="text-[11px] text-[var(--text-muted)]">
-                OG 타이틀은 메신저/브라우저 미리보기 제목으로 사용되며 60자 내외로 입력하세요.
-              </p>
+              <p className="text-[11px] text-[var(--text-muted)]">60자 내외로 입력하세요.</p>
             </div>
             <div className="flex flex-col gap-2 md:col-span-2">
               <Label htmlFor="og_description">OG 설명</Label>
@@ -97,9 +121,7 @@ export const AdminSectionShare = ({ share, assets, fileUrlToNameMap }: AdminSect
                 defaultValue={share.og_description || ''}
                 placeholder="입력하세요"
               />
-              <p className="text-[11px] text-[var(--text-muted)]">
-                OG 설명은 메신저/브라우저 미리보기 본문으로 사용됩니다. 최대 두 줄을 권장합니다.
-              </p>
+              <p className="text-[11px] text-[var(--text-muted)]">최대 두 줄을 권장합니다.</p>
             </div>
             <div className="md:col-span-2 flex justify-end">
               <AdminSubmitButton size="sm" pendingText="저장 중...">
@@ -107,16 +129,39 @@ export const AdminSectionShare = ({ share, assets, fileUrlToNameMap }: AdminSect
               </AdminSubmitButton>
             </div>
           </AdminForm>
+
+          <AdminForm
+            action={updateShareImagesAction}
+            successMessage="OG 이미지가 저장되었습니다"
+            className="mt-6 grid gap-4 md:grid-cols-2"
+          >
+            <AdminImageFileField
+              id="share_og_image"
+              name="share_og_image"
+              label="OG 이미지"
+              sectionId="share/og"
+              defaultValue={assets.share_og_image}
+              defaultFileName={assets.share_og_image ? fileUrlToNameMap[assets.share_og_image] : null}
+              hint="카카오톡 외 메신저·브라우저 미리보기용 (2MB 초과 시 자동 압축)"
+            />
+            <div className="md:col-span-2 flex justify-end">
+              <AdminSubmitButton size="sm" pendingText="저장 중...">
+                이미지 저장
+              </AdminSubmitButton>
+            </div>
+          </AdminForm>
         </CardContent>
       </Card>
 
+      {/* 카카오톡 앱 내 공유 버튼 전용 — OG와 독립적 설정 */}
       <Card>
         <CardHeader>
           <CardTitle>카카오 공유 카드</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-[14px] text-[var(--text-muted)]">
-            카카오톡 공유 카드에 표시되는 문구/이미지를 설정합니다.
+            카카오톡 앱 내 공유 버튼을 통해 공유했을 때 표시되는 카드입니다. OG와 독립적으로
+            설정됩니다.
           </p>
           <AdminForm
             action={updateShareAction}
@@ -162,37 +207,6 @@ export const AdminSectionShare = ({ share, assets, fileUrlToNameMap }: AdminSect
             <div className="md:col-span-2 flex justify-end">
               <AdminSubmitButton size="sm" pendingText="저장 중...">
                 저장하기
-              </AdminSubmitButton>
-            </div>
-          </AdminForm>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>미리보기(OG) 이미지</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-[14px] text-[var(--text-muted)]">
-            카카오 외 외부 메신저/브라우저 미리보기에서 사용하는 이미지입니다.
-          </p>
-          <AdminForm
-            action={updateShareImagesAction}
-            successMessage="OG 이미지가 저장되었습니다"
-            className="mt-4 grid gap-4 md:grid-cols-2"
-          >
-            <AdminImageFileField
-              id="share_og_image"
-              name="share_og_image"
-              label="OG 이미지"
-              sectionId="share/og"
-              defaultValue={assets.share_og_image}
-              defaultFileName={assets.share_og_image ? fileUrlToNameMap[assets.share_og_image] : null}
-              hint="메신저/브라우저 미리보기용 (2MB 초과 시 자동 압축)"
-            />
-            <div className="md:col-span-2 flex justify-end">
-              <AdminSubmitButton size="sm" pendingText="저장 중...">
-                이미지 저장
               </AdminSubmitButton>
             </div>
           </AdminForm>

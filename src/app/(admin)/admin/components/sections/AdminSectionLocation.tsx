@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { MapIcon } from 'lucide-react';
 
 type AdminSectionLocationProps = {
   data: AdminDashboardData;
@@ -25,6 +26,12 @@ type AdminSectionLocationProps = {
 export const AdminSectionLocation = ({ data }: AdminSectionLocationProps) => {
   return (
     <div className="flex flex-col gap-6">
+      <div className="flex items-start gap-3">
+        <MapIcon className="w-7 h-7 text-blue-600 mt-1" />
+        <h1 className="text-2xl font-bold text-gray-900">예식 정보 & 오시는 길</h1>
+        <p className="text-gray-600 mt-1">예식 안내 문구와 교통 정보를 관리하세요</p>
+      </div>
+
       <Card>
         <CardHeader>
           <CardTitle>예식 정보</CardTitle>

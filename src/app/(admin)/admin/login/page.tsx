@@ -86,7 +86,7 @@ export default function AdminLoginPage() {
         {/* 푸터 */}
         <div className="text-center">
           <p className="text-xs text-gray-500">
-            Wedding CMS v1.0 - 보안 접속
+            Jbeat Wedding CMS v1.0
           </p>
         </div>
       </div>

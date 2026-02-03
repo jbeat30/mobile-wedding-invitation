@@ -3,7 +3,7 @@
 import type { AdminDashboardData } from '@/app/(admin)/admin/data';
 import { updateClosingAction } from '@/app/(admin)/admin/actions/content';
 import { StandardButton, StandardCard, StandardInput } from '@/components/admin/StandardComponents';
-import { SaveIcon } from 'lucide-react';
+import { MessageCircleIcon, SaveIcon } from 'lucide-react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -41,6 +41,13 @@ export const AdminSectionClosing = ({ closing }: AdminSectionClosingProps) => {
   };
 
   return (
+    <div className="space-y-6">
+      <div className="flex items-start gap-3">
+        <MessageCircleIcon className="w-7 h-7 text-blue-600 mt-1" />
+        <h1 className="text-2xl font-bold text-gray-900">마무리 인삿말</h1>
+        <p className="text-gray-600 mt-1">마무리 문구와 저작권 표기를 관리하세요</p>
+      </div>
+
     <StandardCard
       title="마무리 인삿말"
       actions={
@@ -75,5 +82,6 @@ export const AdminSectionClosing = ({ closing }: AdminSectionClosingProps) => {
         />
       </div>
     </StandardCard>
+    </div>
   );
 };

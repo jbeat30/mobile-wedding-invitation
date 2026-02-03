@@ -17,6 +17,7 @@ import { Label } from '@/components/ui/label';
 import { SelectField } from '@/components/ui/SelectField';
 import { Textarea } from '@/components/ui/textarea';
 import { BANK_OPTIONS } from '@/constants/banks';
+import { CreditCardIcon } from 'lucide-react';
 
 type AdminSectionAccountsProps = {
   accounts: AdminDashboardData['accounts'];
@@ -54,6 +55,13 @@ export const AdminSectionAccounts = ({
   setAccountFormOpen,
 }: AdminSectionAccountsProps) => {
   return (
+    <div className="space-y-6">
+      <div className="flex items-start gap-3">
+        <CreditCardIcon className="w-7 h-7 text-blue-600 mt-1" />
+        <h1 className="text-2xl font-bold text-gray-900">계좌 정보</h1>
+        <p className="text-gray-600 mt-1">신랑신부 은행 계좌를 관리하세요</p>
+      </div>
+
     <Card>
       <CardHeader>
         <CardTitle>어카운트</CardTitle>
@@ -253,5 +261,6 @@ export const AdminSectionAccounts = ({
         </div>
       </CardContent>
     </Card>
+    </div>
   );
 };

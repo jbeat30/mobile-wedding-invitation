@@ -8,6 +8,7 @@ import {
   XIcon,
   HomeIcon,
   FileTextIcon,
+  Loader2Icon,
   UsersIcon,
   MapPinIcon,
   ImageIcon,
@@ -23,7 +24,7 @@ import { logoutAction } from '@/app/(admin)/admin/actions/auth';
 
 const NAVIGATION_ITEMS = [
   { id: 'overview', label: '대시보드', icon: HomeIcon },
-  { id: 'loading', label: '로딩 섹션', icon: FileTextIcon },
+  { id: 'loading', label: '로딩 섹션', icon: Loader2Icon },
   { id: 'intro', label: '인트로 섹션', icon: FileTextIcon },
   { id: 'couple', label: '커플 정보', icon: UsersIcon },
   { id: 'location', label: '예식장 정보', icon: MapPinIcon },

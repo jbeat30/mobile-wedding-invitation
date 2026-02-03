@@ -9,6 +9,7 @@ import { AdminSwitchField } from '@/app/(admin)/admin/components/AdminSwitchFiel
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { MusicIcon } from 'lucide-react';
 
 type AdminSectionBgmProps = {
   bgm: AdminDashboardData['bgm'];
@@ -63,6 +64,13 @@ export const AdminSectionBgm = ({ bgm }: AdminSectionBgmProps) => {
   };
 
   return (
+    <div className="space-y-6">
+      <div className="flex items-start gap-3">
+        <MusicIcon className="w-7 h-7 text-blue-600 mt-1" />
+        <h1 className="text-2xl font-bold text-gray-900">BGM 설정</h1>
+        <p className="text-gray-600 mt-1">배경음악 파일과 재생 옵션을 관리하세요</p>
+      </div>
+
     <Card>
       <CardHeader>
         <CardTitle>BGM 설정</CardTitle>
@@ -154,5 +162,6 @@ export const AdminSectionBgm = ({ bgm }: AdminSectionBgmProps) => {
         </AdminForm>
       </CardContent>
     </Card>
+    </div>
   );
 };

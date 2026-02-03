@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import type { ColumnDef } from '@tanstack/react-table';
+import { ClipboardListIcon } from 'lucide-react';
 
 type AdminSectionRsvpProps = {
   rsvp: AdminDashboardData['rsvp'];
@@ -76,6 +77,12 @@ export const AdminSectionRsvp = ({
 
   return (
     <div className="flex flex-col gap-6">
+      <div className="flex items-start gap-3">
+        <ClipboardListIcon className="w-7 h-7 text-blue-600 mt-1" />
+        <h1 className="text-2xl font-bold text-gray-900">RSVP</h1>
+        <p className="text-gray-600 mt-1">참석 의사 수신 설정과 응답 목록을 관리하세요</p>
+      </div>
+
       <Card>
         <CardHeader>
           <CardTitle>RSVP 설정</CardTitle>
