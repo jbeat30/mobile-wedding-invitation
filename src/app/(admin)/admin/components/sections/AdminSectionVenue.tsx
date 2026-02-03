@@ -118,19 +118,46 @@ type TimeFieldProps = {
   required?: boolean;
 };
 
-const timeHourOptions = Array.from({ length: 24 }, (_, index) =>
+const timeHourOptions = Array.from({ length: 12 }, (_, index) =>
+  String(index + 1).padStart(2, '0')
+);
+const timeMinuteOptions = Array.from({ length: 60 }, (_, index) =>
   String(index).padStart(2, '0')
 );
-const timeMinuteOptions = ['00', '15', '30', '45'];
 
 const TimeField = ({ label, value, onChange, required = false }: TimeFieldProps) => {
-  const [hour, minute] = value.split(':');
-  const resolvedHour = timeHourOptions.includes(hour) ? hour : '12';
-  const resolvedMinute = timeMinuteOptions.includes(minute) ? minute : '00';
+  const [rawHour, rawMinute] = value.split(':');
+  const hour24 = Number(rawHour);
+  const minute24 = Number(rawMinute);
+  const period = Number.isFinite(hour24) && hour24 >= 12 ? 'PM' : 'AM';
+  const hour12Value = Number.isFinite(hour24)
+    ? hour24 % 12 === 0
+      ? 12
+      : hour24 % 12
+    : 12;
+  const resolvedHour = timeHourOptions.includes(String(hour12Value).padStart(2, '0'))
+    ? String(hour12Value).padStart(2, '0')
+    : '12';
+  const resolvedMinute = timeMinuteOptions.includes(String(minute24).padStart(2, '0'))
+    ? String(minute24).padStart(2, '0')
+    : '00';
   const [open, setOpen] = useState(false);
 
-  const handleUpdate = (nextHour: string, nextMinute: string) => {
-    onChange(`${nextHour}:${nextMinute}`);
+  const handleUpdate = (nextPeriod: 'AM' | 'PM', nextHour: string, nextMinute: string) => {
+    const hourNumber = Number(nextHour);
+    const minuteNumber = Number(nextMinute);
+    if (!Number.isFinite(hourNumber) || !Number.isFinite(minuteNumber)) return;
+    const hour24Value =
+      nextPeriod === 'PM'
+        ? hourNumber % 12 === 0
+          ? 12
+          : hourNumber + 12
+        : hourNumber % 12 === 12
+          ? 0
+          : hourNumber;
+    const hourText = String(hour24Value).padStart(2, '0');
+    const minuteText = String(minuteNumber).padStart(2, '0');
+    onChange(`${hourText}:${minuteText}`);
   };
 
   return (
@@ -163,13 +190,28 @@ const TimeField = ({ label, value, onChange, required = false }: TimeFieldProps)
               결혼식 시간 선택
             </div>
             <div className="rounded-[12px] border border-[var(--border-light)] bg-[var(--bg-secondary)]/70 p-3">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-3 gap-3">
+                <div className="space-y-1">
+                  <span className="text-xs font-medium text-[var(--text-muted)]">오전/오후</span>
+                  <select
+                    className="h-9 w-full rounded-md border border-[var(--border-light)] bg-white/70 px-2 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-rose)] focus:border-[var(--accent-rose)]"
+                    value={period}
+                    onChange={(event) =>
+                      handleUpdate(event.target.value as 'AM' | 'PM', resolvedHour, resolvedMinute)
+                    }
+                  >
+                    <option value="AM">AM</option>
+                    <option value="PM">PM</option>
+                  </select>
+                </div>
                 <div className="space-y-1">
                   <span className="text-xs font-medium text-[var(--text-muted)]">시</span>
                   <select
                     className="h-9 w-full rounded-md border border-[var(--border-light)] bg-white/70 px-2 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-rose)] focus:border-[var(--accent-rose)]"
                     value={resolvedHour}
-                    onChange={(event) => handleUpdate(event.target.value, resolvedMinute)}
+                    onChange={(event) =>
+                      handleUpdate(period as 'AM' | 'PM', event.target.value, resolvedMinute)
+                    }
                   >
                     {timeHourOptions.map((item) => (
                       <option key={item} value={item}>
@@ -183,7 +225,9 @@ const TimeField = ({ label, value, onChange, required = false }: TimeFieldProps)
                   <select
                     className="h-9 w-full rounded-md border border-[var(--border-light)] bg-white/70 px-2 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-rose)] focus:border-[var(--accent-rose)]"
                     value={resolvedMinute}
-                    onChange={(event) => handleUpdate(resolvedHour, event.target.value)}
+                    onChange={(event) =>
+                      handleUpdate(period as 'AM' | 'PM', resolvedHour, event.target.value)
+                    }
                   >
                     {timeMinuteOptions.map((item) => (
                       <option key={item} value={item}>
