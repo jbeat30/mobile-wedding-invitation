@@ -40,6 +40,106 @@ const getBankSelectOptions = (bankName: string) => {
   return [{ value: normalized, label: normalized }, ...BANK_SELECT_OPTIONS];
 };
 
+const AccountEntryFormFields = ({ groupKey, label }: { groupKey: 'groom' | 'bride'; label: string }) => {
+  return (
+    <>
+      <div className="flex flex-col gap-2">
+        <Label htmlFor={`${groupKey}_bank_name`}>은행명</Label>
+        <AdminSelectField
+          id={`${groupKey}_bank_name`}
+          name="bank_name"
+          defaultValue=""
+          options={BANK_SELECT_OPTIONS}
+          placeholder="은행을 선택하세요"
+        />
+      </div>
+      <div className="flex flex-col gap-2">
+        <Label htmlFor={`${groupKey}_account_number`}>계좌번호</Label>
+        <Input
+          id={`${groupKey}_account_number`}
+          name="account_number"
+          pattern="[\d-]+"
+          title="숫자와 하이픈만 입력 가능합니다"
+        />
+      </div>
+      <div className="flex flex-col gap-2">
+        <Label htmlFor={`${groupKey}_holder`}>예금주</Label>
+        <Input
+          id={`${groupKey}_holder`}
+          name="holder"
+        />
+      </div>
+      <div className="flex flex-col gap-2">
+        <Label htmlFor={`${groupKey}_label`}>라벨</Label>
+        <Input id={`${groupKey}_label`} name="label" placeholder={label} />
+      </div>
+    </>
+  );
+};
+
+const AccountEntryEditor = ({
+  entryId,
+  bankName,
+  accountNumber,
+  holder,
+  label,
+  groupLabel,
+}: {
+  entryId: string;
+  bankName: string;
+  accountNumber: string;
+  holder: string;
+  label: string | null;
+  groupLabel: string;
+}) => {
+  return (
+    <>
+      <input type="hidden" name="entry_id" value={entryId} />
+      <div className="grid gap-3 md:grid-cols-2">
+        <div className="flex flex-col gap-2">
+          <Label htmlFor={`bank_name_${entryId}`}>은행명</Label>
+          <AdminSelectField
+            id={`bank_name_${entryId}`}
+            name="bank_name"
+            defaultValue={bankName}
+            options={getBankSelectOptions(bankName)}
+            placeholder="은행을 선택하세요"
+          />
+        </div>
+        <div className="flex flex-col gap-2">
+          <Label htmlFor={`account_number_${entryId}`}>계좌번호</Label>
+          <Input
+            id={`account_number_${entryId}`}
+            name="account_number"
+            defaultValue={accountNumber}
+            pattern="[\d-]+"
+            title="숫자와 하이픈만 입력 가능합니다"
+          />
+        </div>
+      </div>
+      <div className="grid gap-3 md:grid-cols-2">
+        <div className="flex flex-col gap-2">
+          <Label htmlFor={`holder_${entryId}`}>예금주</Label>
+          <Input
+            id={`holder_${entryId}`}
+            name="holder"
+            defaultValue={holder}
+          />
+        </div>
+        <div className="flex flex-col gap-2">
+          <Label htmlFor={`label_${entryId}`}>라벨</Label>
+          <Input
+            id={`label_${entryId}`}
+            name="label"
+            defaultValue={label || ''}
+            placeholder={groupLabel}
+          />
+        </div>
+      </div>
+    </>
+  );
+};
+
 
 /**
  * 어카운트 섹션
@@ -133,33 +233,7 @@ export const AdminSectionAccounts = ({
                       >
                         <input type="hidden" name="accounts_id" value={accounts.id} />
                         <input type="hidden" name="group_type" value={groupKey} />
-                        <div className="flex flex-col gap-2">
-                          <Label htmlFor={`${groupKey}_bank_name`}>은행명</Label>
-                          <AdminSelectField
-                            id={`${groupKey}_bank_name`}
-                            name="bank_name"
-                            defaultValue=""
-                            options={BANK_SELECT_OPTIONS}
-                            placeholder="은행을 선택하세요"
-                          />
-                        </div>
-                        <div className="flex flex-col gap-2">
-                          <Label htmlFor={`${groupKey}_account_number`}>계좌번호</Label>
-                          <Input
-                            id={`${groupKey}_account_number`}
-                            name="account_number"
-                            pattern="[\d-]+"
-                            title="숫자와 하이픈만 입력 가능합니다"
-                          />
-                        </div>
-                        <div className="flex flex-col gap-2">
-                          <Label htmlFor={`${groupKey}_holder`}>예금주</Label>
-                          <Input id={`${groupKey}_holder`} name="holder" />
-                        </div>
-                        <div className="flex flex-col gap-2">
-                          <Label htmlFor={`${groupKey}_label`}>라벨</Label>
-                          <Input id={`${groupKey}_label`} name="label" placeholder={group.label} />
-                        </div>
+                      <AccountEntryFormFields groupKey={groupKey} label={group.label} />
                         <div className="flex justify-end">
                           <AdminSubmitButton size="sm" pendingText="추가 중...">
                             추가하기
@@ -180,50 +254,14 @@ export const AdminSectionAccounts = ({
                               className="grid gap-3"
                               formId={`account-entry-${entry.id}`}
                             >
-                              <input type="hidden" name="entry_id" value={entry.id} />
-                              <div className="grid gap-3 md:grid-cols-2">
-                                <div className="flex flex-col gap-2">
-                                  <Label htmlFor={`bank_name_${entry.id}`}>은행명</Label>
-                                  <AdminSelectField
-                                    id={`bank_name_${entry.id}`}
-                                    name="bank_name"
-                                    defaultValue={entry.bank_name || ''}
-                                    options={getBankSelectOptions(entry.bank_name || '')}
-                                    placeholder="은행을 선택하세요"
-                                  />
-                                </div>
-                                <div className="flex flex-col gap-2">
-                                  <Label htmlFor={`account_number_${entry.id}`}>
-                                    계좌번호
-                                  </Label>
-                                  <Input
-                                    id={`account_number_${entry.id}`}
-                                    name="account_number"
-                                    defaultValue={entry.account_number}
-                                    pattern="[\d-]+"
-                                    title="숫자와 하이픈만 입력 가능합니다"
-                                  />
-                                </div>
-                              </div>
-                              <div className="grid gap-3 md:grid-cols-2">
-                                <div className="flex flex-col gap-2">
-                                  <Label htmlFor={`holder_${entry.id}`}>예금주</Label>
-                                  <Input
-                                    id={`holder_${entry.id}`}
-                                    name="holder"
-                                    defaultValue={entry.holder}
-                                  />
-                                </div>
-                                <div className="flex flex-col gap-2">
-                                  <Label htmlFor={`label_${entry.id}`}>라벨</Label>
-                                  <Input
-                                    id={`label_${entry.id}`}
-                                    name="label"
-                                    defaultValue={entry.label || ''}
-                                    placeholder={group.label}
-                                  />
-                                </div>
-                              </div>
+                              <AccountEntryEditor
+                                entryId={entry.id}
+                                bankName={entry.bank_name || ''}
+                                accountNumber={entry.account_number}
+                                holder={entry.holder}
+                                label={entry.label}
+                                groupLabel={group.label}
+                              />
                             </AdminForm>
                             <div className="flex items-center justify-end gap-2">
                               <button type="submit" form={`account-entry-${entry.id}`}>

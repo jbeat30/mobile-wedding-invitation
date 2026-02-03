@@ -11,11 +11,12 @@ import {
   revalidatePublic,
 } from './shared';
 import {
+  isValidationError,
   numberWithDefault,
   optionalDateTime,
   optionalString,
-  requiredDateTime,
-  requiredString,
+  safeRequiredDateTime,
+  safeRequiredString,
 } from './validation';
 
 /**
@@ -97,6 +98,9 @@ export const updateBasicInfoAction = async (formData: FormData) => {
     revalidatePublic();
     return { ok: true };
   } catch (error) {
+    if (isValidationError(error)) {
+      return { ok: false, fieldErrors: error.fieldErrors };
+    }
     return { ok: false, message: getActionErrorMessage(error) };
   }
 };
@@ -111,16 +115,26 @@ export const updateProfileAction = async (formData: FormData) => {
   const supabase = createSupabaseAdmin();
   const { id } = await getOrCreateInvitation();
   try {
+    const fieldErrors: Record<string, string> = {};
+    const sectionTitle = safeRequiredString(
+      formData.get('couple_section_title'),
+      'couple_section_title',
+      '커플 섹션 타이틀',
+      100,
+      fieldErrors,
+      '커플 섹션 타이틀을 입력해주세요.'
+    );
+
+    if (Object.keys(fieldErrors).length > 0) {
+      return { ok: false, fieldErrors };
+    }
+
     const payload = {
       groom_bio: optionalString(formData.get('groom_bio'), '', 2000),
       groom_profile_image: optionalString(formData.get('groom_profile_image'), '', 500),
       bride_bio: optionalString(formData.get('bride_bio'), '', 2000),
       bride_profile_image: optionalString(formData.get('bride_profile_image'), '', 500),
-      section_title: optionalString(
-        formData.get('couple_section_title'),
-        '두 사람을 소개합니다',
-        100
-      ),
+      section_title: sectionTitle || '두 사람을 소개합니다',
     };
 
     assertNoError(
@@ -131,6 +145,9 @@ export const updateProfileAction = async (formData: FormData) => {
     revalidatePublic();
     return { ok: true };
   } catch (error) {
+    if (isValidationError(error)) {
+      return { ok: false, fieldErrors: error.fieldErrors };
+    }
     return { ok: false, message: getActionErrorMessage(error) };
   }
 };
@@ -145,9 +162,31 @@ export const updateLoadingAction = async (formData: FormData) => {
   const supabase = createSupabaseAdmin();
   const { id } = await getOrCreateInvitation();
   try {
+    const fieldErrors: Record<string, string> = {};
+    const sectionTitle = safeRequiredString(
+      formData.get('loading_section_title'),
+      'loading_section_title',
+      '로딩 섹션 타이틀',
+      100,
+      fieldErrors,
+      '로딩 섹션 타이틀을 입력해주세요.'
+    );
+    const message = safeRequiredString(
+      formData.get('loading_message'),
+      'loading_message',
+      '로딩 문구',
+      200,
+      fieldErrors,
+      '로딩 문구를 입력해주세요.'
+    );
+
+    if (Object.keys(fieldErrors).length > 0) {
+      return { ok: false, fieldErrors };
+    }
+
     const payload = {
       enabled: formData.get('loading_enabled') === 'on',
-      message: optionalString(formData.get('loading_message'), 'We are getting married', 200),
+      message: message || 'We are getting married',
       min_duration: numberWithDefault(formData.get('loading_min_duration'), 1500, {
         min: 0,
         max: 600000,
@@ -158,11 +197,7 @@ export const updateLoadingAction = async (formData: FormData) => {
         max: 600000,
         integer: true,
       }),
-      section_title: optionalString(
-        formData.get('loading_section_title'),
-        'WEDDING INVITATION',
-        100
-      ),
+      section_title: sectionTitle || 'WEDDING INVITATION',
     };
 
     assertNoError(
@@ -172,6 +207,9 @@ export const updateLoadingAction = async (formData: FormData) => {
     revalidatePublic();
     return { ok: true };
   } catch (error) {
+    if (isValidationError(error)) {
+      return { ok: false, fieldErrors: error.fieldErrors };
+    }
     return { ok: false, message: getActionErrorMessage(error) };
   }
 };
@@ -226,6 +264,9 @@ export const updateLocationAction = async (formData: FormData) => {
     revalidateAdmin();
     return { ok: true };
   } catch (error) {
+    if (isValidationError(error)) {
+      return { ok: false, fieldErrors: error.fieldErrors };
+    }
     return { ok: false, message: getActionErrorMessage(error) };
   }
 };
@@ -240,15 +281,23 @@ export const updateLocationSectionTitleAction = async (formData: FormData) => {
   const supabase = createSupabaseAdmin();
   const { id } = await getOrCreateInvitation();
   try {
+    const fieldErrors: Record<string, string> = {};
+    const sectionTitle = safeRequiredString(
+      formData.get('location_section_title'),
+      'location_section_title',
+      '오시는 길 섹션 타이틀',
+      100,
+      fieldErrors,
+      '오시는 길 섹션 타이틀을 입력해주세요.'
+    );
+    if (Object.keys(fieldErrors).length > 0) {
+      return { ok: false, fieldErrors };
+    }
     assertNoError(
       await supabase
         .from('invitation_location')
         .update({
-          section_title: optionalString(
-            formData.get('location_section_title'),
-            '오시는 길',
-            100
-          ),
+          section_title: sectionTitle || '오시는 길',
         })
         .eq('invitation_id', id)
     );
@@ -256,6 +305,9 @@ export const updateLocationSectionTitleAction = async (formData: FormData) => {
     revalidateAdmin();
     return { ok: true };
   } catch (error) {
+    if (isValidationError(error)) {
+      return { ok: false, fieldErrors: error.fieldErrors };
+    }
     return { ok: false, message: getActionErrorMessage(error) };
   }
 };
@@ -270,11 +322,22 @@ export const updateWeddingInfoSectionAction = async (formData: FormData) => {
   const supabase = createSupabaseAdmin();
   const { id } = await getOrCreateInvitation();
   try {
+    const fieldErrors: Record<string, string> = {};
     const sectionTitle = optionalString(formData.get('wedding_section_title'), '결혼합니다', 100);
-    const eventDateTime = requiredDateTime(formData.get('event_date_time'), '결혼식 날짜/시간');
+    const eventDateTime = safeRequiredDateTime(
+      formData.get('event_date_time'),
+      'event_date_time',
+      '결혼식 날짜/시간',
+      fieldErrors,
+      '결혼식 날짜와 시간을 입력해주세요.'
+    );
     const eventVenue = optionalString(formData.get('event_venue'), '', 200);
     const eventAddress = optionalString(formData.get('event_address'), '', 300);
     const notices = parseLines(optionalString(formData.get('location_notices'), '', 2000));
+
+    if (Object.keys(fieldErrors).length > 0) {
+      return { ok: false, fieldErrors };
+    }
 
     assertNoError(
       await supabase
@@ -297,6 +360,9 @@ export const updateWeddingInfoSectionAction = async (formData: FormData) => {
     revalidateAdmin();
     return { ok: true };
   } catch (error) {
+    if (isValidationError(error)) {
+      return { ok: false, fieldErrors: error.fieldErrors };
+    }
     return { ok: false, message: getActionErrorMessage(error) };
   }
 };
@@ -310,7 +376,18 @@ export const updateTransportationAction = async (formData: FormData) => {
   await requireAdminSession();
   const supabase = createSupabaseAdmin();
   try {
-    const locationId = requiredString(formData.get('location_id'), 'location_id', 100);
+    const fieldErrors: Record<string, string> = {};
+    const locationId = safeRequiredString(
+      formData.get('location_id'),
+      'location_id',
+      'location_id',
+      100,
+      fieldErrors
+    );
+
+    if (Object.keys(fieldErrors).length > 0) {
+      return { ok: false, fieldErrors };
+    }
 
     const payload = {
       subway: parseLines(optionalString(formData.get('transport_subway'), '', 2000)),
@@ -328,6 +405,9 @@ export const updateTransportationAction = async (formData: FormData) => {
     revalidateAdmin();
     return { ok: true };
   } catch (error) {
+    if (isValidationError(error)) {
+      return { ok: false, fieldErrors: error.fieldErrors };
+    }
     return { ok: false, message: getActionErrorMessage(error) };
   }
 };
@@ -342,9 +422,31 @@ export const updateClosingAction = async (formData: FormData) => {
   const supabase = createSupabaseAdmin();
   const { id } = await getOrCreateInvitation();
   try {
+    const fieldErrors: Record<string, string> = {};
+    const sectionTitle = safeRequiredString(
+      formData.get('closing_section_title'),
+      'closing_section_title',
+      '마무리 섹션 타이틀',
+      100,
+      fieldErrors,
+      '마무리 섹션 타이틀을 입력해주세요.'
+    );
+    const message = safeRequiredString(
+      formData.get('closing_message'),
+      'closing_message',
+      '마무리 인사',
+      2000,
+      fieldErrors,
+      '마무리 인사를 입력해주세요.'
+    );
+
+    if (Object.keys(fieldErrors).length > 0) {
+      return { ok: false, fieldErrors };
+    }
+
     const payload = {
-      section_title: optionalString(formData.get('closing_section_title'), 'THANK YOU', 100),
-      message: optionalString(formData.get('closing_message'), '', 2000),
+      section_title: sectionTitle || 'THANK YOU',
+      message: message || '',
       copyright: optionalString(formData.get('closing_copyright'), '', 200),
     };
 

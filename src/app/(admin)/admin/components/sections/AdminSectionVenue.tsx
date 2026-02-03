@@ -59,9 +59,10 @@ type DateFieldProps = {
   value: string;
   onChange: (value: string) => void;
   required?: boolean;
+  error?: string;
 };
 
-const DateField = ({ label, value, onChange, required = false }: DateFieldProps) => {
+const DateField = ({ label, value, onChange, required = false, error }: DateFieldProps) => {
   const selectedDate = value ? new Date(`${value}T00:00:00`) : undefined;
   const [open, setOpen] = useState(false);
 
@@ -77,6 +78,7 @@ const DateField = ({ label, value, onChange, required = false }: DateFieldProps)
               required={required}
               readOnly
               icon={<CalendarIcon className="h-4 w-4" />}
+              error={error}
               onClick={() => setOpen(true)}
               onKeyDown={(event) => {
                 if (event.key === 'Enter' || event.key === ' ') {
@@ -116,6 +118,7 @@ type TimeFieldProps = {
   value: string;
   onChange: (value: string) => void;
   required?: boolean;
+  error?: string;
 };
 
 const timeHourOptions = Array.from({ length: 12 }, (_, index) =>
@@ -125,7 +128,7 @@ const timeMinuteOptions = Array.from({ length: 60 }, (_, index) =>
   String(index).padStart(2, '0')
 );
 
-const TimeField = ({ label, value, onChange, required = false }: TimeFieldProps) => {
+const TimeField = ({ label, value, onChange, required = false, error }: TimeFieldProps) => {
   const [rawHour, rawMinute] = value.split(':');
   const hour24 = Number(rawHour);
   const minute24 = Number(rawMinute);
@@ -173,6 +176,7 @@ const TimeField = ({ label, value, onChange, required = false }: TimeFieldProps)
               required={required}
               readOnly
               icon={<ClockIcon className="h-4 w-4" />}
+              error={error}
               onClick={() => setOpen(true)}
               onKeyDown={(event: { key: string; preventDefault: () => void }) => {
                 if (event.key === 'Enter' || event.key === ' ') {
@@ -284,6 +288,7 @@ export const AdminSectionVenue = ({ data }: AdminSectionVenueProps) => {
     car: data.transportation?.car || '',
     parking: data.transportation?.parking || '',
   });
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   const [saving, setSaving] = useState({
     venue: false,
@@ -336,7 +341,7 @@ export const AdminSectionVenue = ({ data }: AdminSectionVenueProps) => {
     try {
       const isoDateTime = buildIsoDateTime(venueInfo.weddingDate, venueInfo.weddingTime);
       if (!isoDateTime) {
-        toast.error('예식 날짜와 시간을 확인해주세요.');
+        setFieldErrors({ event_date_time: '결혼식 날짜와 시간을 입력해주세요.' });
         return;
       }
 
@@ -351,7 +356,16 @@ export const AdminSectionVenue = ({ data }: AdminSectionVenueProps) => {
         formData.append('location_longitude', String(locationCoords.lng));
       }
 
-      await updateLocationAction(formData);
+      const result = await updateLocationAction(formData);
+      if (result && result.ok === false) {
+        if (result.fieldErrors) {
+          setFieldErrors(result.fieldErrors);
+          return;
+        }
+        toast.error(result.message || '저장에 실패했습니다.');
+        return;
+      }
+      setFieldErrors({});
       toast.success('예식장 기본 정보가 저장되었습니다.');
     } catch (_error) {
       toast.error('저장에 실패했습니다.');
@@ -365,7 +379,7 @@ export const AdminSectionVenue = ({ data }: AdminSectionVenueProps) => {
     try {
       const isoDateTime = buildIsoDateTime(venueInfo.weddingDate, venueInfo.weddingTime);
       if (!isoDateTime) {
-        toast.error('예식 날짜와 시간을 확인해주세요.');
+        setFieldErrors({ event_date_time: '결혼식 날짜와 시간을 입력해주세요.' });
         return;
       }
 
@@ -376,7 +390,16 @@ export const AdminSectionVenue = ({ data }: AdminSectionVenueProps) => {
       formData.append('event_venue', venueInfo.placeName);
       formData.append('event_address', venueInfo.address);
 
-      await updateWeddingInfoSectionAction(formData);
+      const result = await updateWeddingInfoSectionAction(formData);
+      if (result && result.ok === false) {
+        if (result.fieldErrors) {
+          setFieldErrors(result.fieldErrors);
+          return;
+        }
+        toast.error(result.message || '저장에 실패했습니다.');
+        return;
+      }
+      setFieldErrors({});
       toast.success('예식 안내 문구가 저장되었습니다.');
     } catch (_error) {
       toast.error('저장에 실패했습니다.');
@@ -390,7 +413,11 @@ export const AdminSectionVenue = ({ data }: AdminSectionVenueProps) => {
     try {
       const titleFormData = new FormData();
       titleFormData.append('location_section_title', transportation.locationSectionTitle);
-      await updateLocationSectionTitleAction(titleFormData);
+      const titleResult = await updateLocationSectionTitleAction(titleFormData);
+      if (titleResult && titleResult.ok === false) {
+        toast.error(titleResult.message || '저장에 실패했습니다.');
+        return;
+      }
 
       const formData = new FormData();
       formData.append('location_id', data.location.id);
@@ -398,7 +425,15 @@ export const AdminSectionVenue = ({ data }: AdminSectionVenueProps) => {
       formData.append('transport_bus', transportation.bus);
       formData.append('transport_car', transportation.car);
       formData.append('transport_parking', transportation.parking);
-      await updateTransportationAction(formData);
+      const result = await updateTransportationAction(formData);
+      if (result && result.ok === false) {
+        if (result.fieldErrors) {
+          setFieldErrors(result.fieldErrors);
+          return;
+        }
+        toast.error(result.message || '저장에 실패했습니다.');
+        return;
+      }
 
       toast.success('교통 안내가 저장되었습니다.');
     } catch (_error) {
@@ -460,18 +495,32 @@ export const AdminSectionVenue = ({ data }: AdminSectionVenueProps) => {
                 <DateField
                   label="결혼식 날짜"
                   value={venueInfo.weddingDate}
-                  onChange={(value) =>
-                    setVenueInfo((prev) => ({ ...prev, weddingDate: value }))
-                  }
+                  onChange={(value) => {
+                    setVenueInfo((prev) => ({ ...prev, weddingDate: value }));
+                    setFieldErrors((prev) => {
+                      if (!prev.event_date_time) return prev;
+                      const next = { ...prev };
+                      delete next.event_date_time;
+                      return next;
+                    });
+                  }}
                   required
+                  error={fieldErrors.event_date_time}
                 />
                 <TimeField
                   label="결혼식 시간"
                   value={venueInfo.weddingTime}
-                  onChange={(value) =>
-                    setVenueInfo((prev) => ({ ...prev, weddingTime: value }))
-                  }
+                  onChange={(value) => {
+                    setVenueInfo((prev) => ({ ...prev, weddingTime: value }));
+                    setFieldErrors((prev) => {
+                      if (!prev.event_date_time) return prev;
+                      const next = { ...prev };
+                      delete next.event_date_time;
+                      return next;
+                    });
+                  }}
                   required
+                  error={fieldErrors.event_date_time}
                 />
               </div>
               <StandardInput

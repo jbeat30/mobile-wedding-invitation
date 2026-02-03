@@ -270,6 +270,29 @@ body::before {
         opacity: 0.5 !important;
         cursor: not-allowed !important;
     }
+
+    .admin-field-error {
+        border-color: #fca5a5 !important;
+        box-shadow: 0 0 0 1px #fca5a5 !important;
+    }
+
+    .admin-field-error:focus,
+    .admin-field-error:focus-visible {
+        border-color: #ef4444 !important;
+        box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important;
+        outline: none !important;
+    }
+
+    .admin-field-error-message {
+        margin-top: 0.25rem !important;
+        font-size: 0.875rem !important;
+        color: #dc2626 !important;
+    }
+
+    .admin-field-error [data-admin-dropzone="true"] {
+        border-color: #fca5a5 !important;
+        box-shadow: 0 0 0 1px #fca5a5 !important;
+    }
 }
 
 .public-page {

@@ -8,7 +8,13 @@ import {
   requireAdminSession,
   revalidateAdmin,
 } from './shared';
-import { numberWithDefault, optionalString, requiredString } from './validation';
+import {
+  isValidationError,
+  numberWithDefault,
+  optionalString,
+  requiredString,
+  safeRequiredString,
+} from './validation';
 
 /**
  * 에셋 업데이트
@@ -33,6 +39,9 @@ export const updateAssetsAction = async (formData: FormData) => {
     revalidateAdmin();
     return { ok: true };
   } catch (error) {
+    if (isValidationError(error)) {
+      return { ok: false, fieldErrors: error.fieldErrors };
+    }
     return { ok: false, message: getActionErrorMessage(error) };
   }
 };
@@ -57,6 +66,9 @@ export const updateHeroImageAction = async (formData: FormData) => {
     revalidateAdmin();
     return { ok: true };
   } catch (error) {
+    if (isValidationError(error)) {
+      return { ok: false, fieldErrors: error.fieldErrors };
+    }
     return { ok: false, message: getActionErrorMessage(error) };
   }
 };
@@ -91,6 +103,9 @@ export const updateShareImagesAction = async (formData: FormData) => {
     revalidateAdmin();
     return { ok: true };
   } catch (error) {
+    if (isValidationError(error)) {
+      return { ok: false, fieldErrors: error.fieldErrors };
+    }
     return { ok: false, message: getActionErrorMessage(error) };
   }
 };
@@ -115,6 +130,9 @@ export const updateLoadingImageAction = async (formData: FormData) => {
     revalidateAdmin();
     return { ok: true };
   } catch (error) {
+    if (isValidationError(error)) {
+      return { ok: false, fieldErrors: error.fieldErrors };
+    }
     return { ok: false, message: getActionErrorMessage(error) };
   }
 };
@@ -128,10 +146,24 @@ export const updateGalleryAction = async (formData: FormData) => {
   await requireAdminSession();
   const supabase = createSupabaseAdmin();
   try {
-    const galleryId = requiredString(formData.get('gallery_id'), 'gallery_id', 100);
+    const galleryId = requiredString(formData.get('gallery_id'), 'gallery_id', 'gallery_id', 100);
+
+    const fieldErrors: Record<string, string> = {};
+    const sectionTitle = safeRequiredString(
+      formData.get('gallery_section_title'),
+      'gallery_section_title',
+      '갤러리 섹션 타이틀',
+      100,
+      fieldErrors,
+      '갤러리 섹션 타이틀을 입력해주세요.'
+    );
+
+    if (Object.keys(fieldErrors).length > 0) {
+      return { ok: false, fieldErrors };
+    }
 
     const payload = {
-      section_title: optionalString(formData.get('gallery_section_title'), '우리의 갤러리', 100),
+      section_title: sectionTitle || '우리의 갤러리',
       description: optionalString(formData.get('gallery_description'), '', 500),
       autoplay: formData.get('gallery_autoplay') === 'on',
       autoplay_delay: numberWithDefault(formData.get('gallery_autoplay_delay'), 3000, {
@@ -147,6 +179,9 @@ export const updateGalleryAction = async (formData: FormData) => {
     revalidateAdmin();
     return { ok: true };
   } catch (error) {
+    if (isValidationError(error)) {
+      return { ok: false, fieldErrors: error.fieldErrors };
+    }
     return { ok: false, message: getActionErrorMessage(error) };
   }
 };
@@ -160,7 +195,7 @@ export const addGalleryImageAction = async (formData: FormData) => {
   await requireAdminSession();
   const supabase = createSupabaseAdmin();
   try {
-    const galleryId = requiredString(formData.get('gallery_id'), 'gallery_id', 100);
+    const galleryId = requiredString(formData.get('gallery_id'), 'gallery_id', 'gallery_id', 100);
     const imageSources = formData
       .getAll('image_src')
       .map((value) => String(value))
@@ -168,7 +203,7 @@ export const addGalleryImageAction = async (formData: FormData) => {
       .filter((value) => value.length > 0);
 
     if (imageSources.length === 0) {
-      return { ok: false, message: '이미지를 추가해주세요.' };
+      return { ok: false, fieldErrors: { image_src_count: '이미지를 추가해주세요.' } };
     }
 
     const { data: latestSort } = await supabase
@@ -193,6 +228,9 @@ export const addGalleryImageAction = async (formData: FormData) => {
     revalidateAdmin();
     return { ok: true };
   } catch (error) {
+    if (isValidationError(error)) {
+      return { ok: false, fieldErrors: error.fieldErrors };
+    }
     return { ok: false, message: getActionErrorMessage(error) };
   }
 };
@@ -206,11 +244,14 @@ export const deleteGalleryImageAction = async (formData: FormData) => {
   await requireAdminSession();
   const supabase = createSupabaseAdmin();
   try {
-    const imageId = requiredString(formData.get('image_id'), 'image_id', 100);
+    const imageId = requiredString(formData.get('image_id'), 'image_id', 'image_id', 100);
     assertNoError(await supabase.from('invitation_gallery_images').delete().eq('id', imageId));
     revalidateAdmin();
     return { ok: true };
   } catch (error) {
+    if (isValidationError(error)) {
+      return { ok: false, fieldErrors: error.fieldErrors };
+    }
     return { ok: false, message: getActionErrorMessage(error) };
   }
 };

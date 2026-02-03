@@ -8,7 +8,7 @@ import {
   requireAdminSession,
   revalidateAdmin,
 } from './shared';
-import { optionalString } from './validation';
+import { isValidationError, optionalString, safeRequiredString } from './validation';
 
 /**
  * 공유 설정/섹션 타이틀 업데이트
@@ -22,7 +22,19 @@ export const updateShareAction = async (formData: FormData) => {
   try {
     const payload: Record<string, string> = { developer: 'jbeat' };
     if (formData.has('section_title')) {
-      payload.section_title = optionalString(formData.get('section_title'), '청첩장 공유하기', 100);
+      const fieldErrors: Record<string, string> = {};
+      const sectionTitle = safeRequiredString(
+        formData.get('section_title'),
+        'section_title',
+        '공유 섹션 타이틀',
+        100,
+        fieldErrors,
+        '공유 섹션 타이틀을 입력해주세요.'
+      );
+      if (Object.keys(fieldErrors).length > 0) {
+        return { ok: false, fieldErrors };
+      }
+      payload.section_title = sectionTitle || '청첩장 공유하기';
     }
     if (formData.has('description')) {
       payload.description = optionalString(formData.get('description'), '', 200);
@@ -52,6 +64,9 @@ export const updateShareAction = async (formData: FormData) => {
     revalidateAdmin();
     return { ok: true };
   } catch (error) {
+    if (isValidationError(error)) {
+      return { ok: false, fieldErrors: error.fieldErrors };
+    }
     return { ok: false, message: getActionErrorMessage(error) };
   }
 };

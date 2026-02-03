@@ -66,9 +66,13 @@ export const AdminSelectField = ({
   }, [value, notifyChange]);
 
   return (
-    <>
+    <div data-admin-field-wrapper="true" data-admin-field-name={name}>
       {disabled ? (
-        <Input id={id} value={currentLabel} readOnly />
+        <Input
+          id={id}
+          value={currentLabel}
+          readOnly
+        />
       ) : (
         <Select value={value} onValueChange={setValue}>
           <SelectTrigger id={id}>
@@ -90,6 +94,6 @@ export const AdminSelectField = ({
         value={value}
         data-admin-track="true"
       />
-    </>
+    </div>
   );
 };
