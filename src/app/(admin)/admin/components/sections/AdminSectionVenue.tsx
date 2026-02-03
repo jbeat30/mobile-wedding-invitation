@@ -174,7 +174,7 @@ const TimeField = ({ label, value, onChange, required = false }: TimeFieldProps)
               readOnly
               icon={<ClockIcon className="h-4 w-4" />}
               onClick={() => setOpen(true)}
-              onKeyDown={(event) => {
+              onKeyDown={(event: { key: string; preventDefault: () => void }) => {
                 if (event.key === 'Enter' || event.key === ' ') {
                   event.preventDefault();
                   setOpen(true);
@@ -194,7 +194,7 @@ const TimeField = ({ label, value, onChange, required = false }: TimeFieldProps)
                 <div className="space-y-1">
                   <span className="text-xs font-medium text-[var(--text-muted)]">오전/오후</span>
                   <select
-                    className="h-9 w-full rounded-md border border-[var(--border-light)] bg-white/70 px-2 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-rose)] focus:border-[var(--accent-rose)]"
+                    className="h-9 w-full rounded-md border border-[var(--border-light)] bg-white/70 px-2 text-sm text-[var(--text-primary)] focus:border-[var(--accent-rose)] focus:ring-2 focus:ring-[var(--accent-rose)] focus:outline-none"
                     value={period}
                     onChange={(event) =>
                       handleUpdate(event.target.value as 'AM' | 'PM', resolvedHour, resolvedMinute)
@@ -207,7 +207,7 @@ const TimeField = ({ label, value, onChange, required = false }: TimeFieldProps)
                 <div className="space-y-1">
                   <span className="text-xs font-medium text-[var(--text-muted)]">시</span>
                   <select
-                    className="h-9 w-full rounded-md border border-[var(--border-light)] bg-white/70 px-2 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-rose)] focus:border-[var(--accent-rose)]"
+                    className="h-9 w-full rounded-md border border-[var(--border-light)] bg-white/70 px-2 text-sm text-[var(--text-primary)] focus:border-[var(--accent-rose)] focus:ring-2 focus:ring-[var(--accent-rose)] focus:outline-none"
                     value={resolvedHour}
                     onChange={(event) =>
                       handleUpdate(period as 'AM' | 'PM', event.target.value, resolvedMinute)
@@ -223,7 +223,7 @@ const TimeField = ({ label, value, onChange, required = false }: TimeFieldProps)
                 <div className="space-y-1">
                   <span className="text-xs font-medium text-[var(--text-muted)]">분</span>
                   <select
-                    className="h-9 w-full rounded-md border border-[var(--border-light)] bg-white/70 px-2 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-rose)] focus:border-[var(--accent-rose)]"
+                    className="h-9 w-full rounded-md border border-[var(--border-light)] bg-white/70 px-2 text-sm text-[var(--text-primary)] focus:border-[var(--accent-rose)] focus:ring-2 focus:ring-[var(--accent-rose)] focus:outline-none"
                     value={resolvedMinute}
                     onChange={(event) =>
                       handleUpdate(period as 'AM' | 'PM', resolvedHour, event.target.value)
