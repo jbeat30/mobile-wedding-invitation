@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { SelectField } from '@/components/ui/SelectField';
+import { AdminSelectField } from '@/app/(admin)/admin/components/AdminSelectField';
 import { Textarea } from '@/components/ui/textarea';
 import { BANK_OPTIONS } from '@/constants/banks';
 import { CreditCardIcon } from 'lucide-react';
@@ -27,20 +27,19 @@ type AdminSectionAccountsProps = {
   setAccountFormOpen: Dispatch<SetStateAction<{ groom: boolean; bride: boolean }>>;
 };
 
-/**
- * 은행 옵션 목록에 포함되는지 확인
- * @param bankName 은행명
- * @returns boolean
- */
-const isSupportedBank = (bankName: string) =>
-  BANK_OPTIONS.some((option) => option.name === bankName);
+const BANK_SELECT_OPTIONS = BANK_OPTIONS.map((option) => ({
+  value: option.name,
+  label: option.name,
+}));
 
-/**
- * 셀렉트 기본값을 반환
- * @param bankName 은행명
- * @returns string
- */
-const getDefaultBankValue = (bankName: string) => (isSupportedBank(bankName) ? bankName : '');
+const getBankSelectOptions = (bankName: string) => {
+  const normalized = bankName.trim();
+  if (!normalized) return BANK_SELECT_OPTIONS;
+  const hasMatch = BANK_SELECT_OPTIONS.some((option) => option.value === normalized);
+  if (hasMatch) return BANK_SELECT_OPTIONS;
+  return [{ value: normalized, label: normalized }, ...BANK_SELECT_OPTIONS];
+};
+
 
 /**
  * 어카운트 섹션
@@ -132,25 +131,22 @@ export const AdminSectionAccounts = ({
                       <input type="hidden" name="group_type" value={groupKey} />
                       <div className="flex flex-col gap-2">
                         <Label htmlFor={`${groupKey}_bank_name`}>은행명</Label>
-                        <SelectField
+                        <AdminSelectField
                           id={`${groupKey}_bank_name`}
                           name="bank_name"
                           defaultValue=""
-                          required
-                        >
-                          <option value="" disabled>
-                            은행을 선택하세요
-                          </option>
-                          {BANK_OPTIONS.map((option) => (
-                            <option key={option.name} value={option.name}>
-                              {option.name}
-                            </option>
-                          ))}
-                        </SelectField>
+                          options={BANK_SELECT_OPTIONS}
+                          placeholder="은행을 선택하세요"
+                        />
                       </div>
                       <div className="flex flex-col gap-2">
                         <Label htmlFor={`${groupKey}_account_number`}>계좌번호</Label>
-                        <Input id={`${groupKey}_account_number`} name="account_number" />
+                        <Input
+                          id={`${groupKey}_account_number`}
+                          name="account_number"
+                          pattern="[\d-]+"
+                          title="숫자와 하이픈만 입력 가능합니다"
+                        />
                       </div>
                       <div className="flex flex-col gap-2">
                         <Label htmlFor={`${groupKey}_holder`}>예금주</Label>
@@ -158,7 +154,7 @@ export const AdminSectionAccounts = ({
                       </div>
                       <div className="flex flex-col gap-2">
                         <Label htmlFor={`${groupKey}_label`}>라벨</Label>
-                        <Input id={`${groupKey}_label`} name="label" />
+                        <Input id={`${groupKey}_label`} name="label" placeholder={group.label} />
                       </div>
                       <div className="flex justify-end">
                         <AdminSubmitButton size="sm" pendingText="추가 중...">
@@ -183,21 +179,13 @@ export const AdminSectionAccounts = ({
                               <div className="grid gap-3 md:grid-cols-2">
                                 <div className="flex flex-col gap-2">
                                   <Label htmlFor={`bank_name_${entry.id}`}>은행명</Label>
-                                  <SelectField
+                                  <AdminSelectField
                                     id={`bank_name_${entry.id}`}
                                     name="bank_name"
-                                    defaultValue={getDefaultBankValue(entry.bank_name)}
-                                    required
-                                  >
-                                    <option value="" disabled>
-                                      은행을 선택하세요
-                                    </option>
-                                    {BANK_OPTIONS.map((option) => (
-                                      <option key={option.name} value={option.name}>
-                                        {option.name}
-                                      </option>
-                                    ))}
-                                  </SelectField>
+                                    defaultValue={entry.bank_name || ''}
+                                    options={getBankSelectOptions(entry.bank_name || '')}
+                                    placeholder="은행을 선택하세요"
+                                  />
                                 </div>
                                 <div className="flex flex-col gap-2">
                                   <Label htmlFor={`account_number_${entry.id}`}>
@@ -207,6 +195,8 @@ export const AdminSectionAccounts = ({
                                     id={`account_number_${entry.id}`}
                                     name="account_number"
                                     defaultValue={entry.account_number}
+                                    pattern="[\d-]+"
+                                    title="숫자와 하이픈만 입력 가능합니다"
                                   />
                                 </div>
                               </div>
@@ -225,6 +215,7 @@ export const AdminSectionAccounts = ({
                                     id={`label_${entry.id}`}
                                     name="label"
                                     defaultValue={entry.label || ''}
+                                    placeholder={group.label}
                                   />
                                 </div>
                               </div>
