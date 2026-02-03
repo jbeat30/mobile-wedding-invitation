@@ -219,7 +219,13 @@ export const deleteAccountEntryAction = async (formData: FormData) => {
   const supabase = createSupabaseAdmin();
 
   try {
-    const entryId = requiredString(formData.get('entry_id'), 'entry_id', 'entry_id', 100);
+    const entryId = safeRequiredString(
+      formData.get('entry_id'),
+      'entry_id',
+      'entry_id',
+      100,
+      {}
+    );
     assertNoError(await supabase.from('invitation_account_entries').delete().eq('id', entryId));
     revalidateAdmin();
     return { ok: true };

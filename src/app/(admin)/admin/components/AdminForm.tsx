@@ -32,7 +32,9 @@ type AdminFormState = {
 };
 
 type AdminFormProps = {
-  action: (formData: FormData) => Promise<void | { ok?: boolean; message?: string }>;
+  action: (formData: FormData) => Promise<
+    void | { ok?: boolean; message?: string; fieldErrors?: Record<string, string> }
+  >;
   successMessage?: string;
   errorMessage?: string;
   confirmTitle?: string;
