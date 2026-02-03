@@ -230,7 +230,7 @@ export const DateTimePicker = ({
           </div>
         </PopoverContent>
       </Popover>
-      <input type="hidden" name={name} value={isoValue} />
+      <input type="hidden" name={name} value={isoValue} data-admin-track="true" />
     </div>
   );
 };

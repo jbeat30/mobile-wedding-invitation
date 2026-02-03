@@ -229,7 +229,7 @@ body::before {
 @layer components {
     .admin-dialog,
     .admin-dialog * {
-        font-family: var(--font-admin-sans), var(--font-sans) !important;
+        font-family: var(--font-admin-sans) !important;
     }
 
     .admin-dialog button {

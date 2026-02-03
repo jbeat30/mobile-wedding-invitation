@@ -2,7 +2,13 @@
 
 import { createSupabaseAdmin } from '@/lib/supabaseAdmin';
 import { getOrCreateInvitation } from '@/app/(admin)/admin/data';
-import { assertNoError, requireAdminSession, revalidateAdmin, toNumber } from './shared';
+import {
+  assertNoError,
+  getActionErrorMessage,
+  requireAdminSession,
+  revalidateAdmin,
+} from './shared';
+import { numberWithDefault, optionalString, requiredString } from './validation';
 
 /**
  * 에셋 업데이트
@@ -13,18 +19,22 @@ export const updateAssetsAction = async (formData: FormData) => {
   await requireAdminSession();
   const supabase = createSupabaseAdmin();
   const { id } = await getOrCreateInvitation();
+  try {
+    const payload = {
+      hero_image: optionalString(formData.get('hero_image'), '', 500),
+      loading_image: optionalString(formData.get('loading_image'), '', 500),
+      share_og_image: optionalString(formData.get('share_og_image'), '', 500),
+      share_kakao_image: optionalString(formData.get('share_kakao_image'), '', 500),
+    };
 
-  const payload = {
-    hero_image: String(formData.get('hero_image') || ''),
-    loading_image: String(formData.get('loading_image') || ''),
-    share_og_image: String(formData.get('share_og_image') || ''),
-    share_kakao_image: String(formData.get('share_kakao_image') || ''),
-  };
-
-  assertNoError(
-    await supabase.from('invitation_assets').update(payload).eq('invitation_id', id)
-  );
-  revalidateAdmin();
+    assertNoError(
+      await supabase.from('invitation_assets').update(payload).eq('invitation_id', id)
+    );
+    revalidateAdmin();
+    return { ok: true };
+  } catch (error) {
+    return { ok: false, message: getActionErrorMessage(error) };
+  }
 };
 
 /**
@@ -36,15 +46,19 @@ export const updateHeroImageAction = async (formData: FormData) => {
   await requireAdminSession();
   const supabase = createSupabaseAdmin();
   const { id } = await getOrCreateInvitation();
+  try {
+    assertNoError(
+      await supabase
+        .from('invitation_assets')
+        .update({ hero_image: optionalString(formData.get('hero_image'), '', 500) })
+        .eq('invitation_id', id)
+    );
 
-  assertNoError(
-    await supabase
-      .from('invitation_assets')
-      .update({ hero_image: String(formData.get('hero_image') || '') })
-      .eq('invitation_id', id)
-  );
-
-  revalidateAdmin();
+    revalidateAdmin();
+    return { ok: true };
+  } catch (error) {
+    return { ok: false, message: getActionErrorMessage(error) };
+  }
 };
 
 /**
@@ -56,21 +70,29 @@ export const updateShareImagesAction = async (formData: FormData) => {
   await requireAdminSession();
   const supabase = createSupabaseAdmin();
   const { id } = await getOrCreateInvitation();
-  const ogImage = String(formData.get('share_og_image') || '');
+  try {
+    const ogImage = optionalString(formData.get('share_og_image'), '', 500);
 
-  assertNoError(
-    await supabase
-      .from('invitation_assets')
-      .update({
-        share_og_image: ogImage,
-      })
-      .eq('invitation_id', id)
-  );
-  assertNoError(
-    await supabase.from('invitation_share').update({ og_image_url: ogImage }).eq('invitation_id', id)
-  );
+    assertNoError(
+      await supabase
+        .from('invitation_assets')
+        .update({
+          share_og_image: ogImage,
+        })
+        .eq('invitation_id', id)
+    );
+    assertNoError(
+      await supabase
+        .from('invitation_share')
+        .update({ og_image_url: ogImage })
+        .eq('invitation_id', id)
+    );
 
-  revalidateAdmin();
+    revalidateAdmin();
+    return { ok: true };
+  } catch (error) {
+    return { ok: false, message: getActionErrorMessage(error) };
+  }
 };
 
 /**
@@ -82,15 +104,19 @@ export const updateLoadingImageAction = async (formData: FormData) => {
   await requireAdminSession();
   const supabase = createSupabaseAdmin();
   const { id } = await getOrCreateInvitation();
+  try {
+    assertNoError(
+      await supabase
+        .from('invitation_assets')
+        .update({ loading_image: optionalString(formData.get('loading_image'), '', 500) })
+        .eq('invitation_id', id)
+    );
 
-  assertNoError(
-    await supabase
-      .from('invitation_assets')
-      .update({ loading_image: String(formData.get('loading_image') || '') })
-      .eq('invitation_id', id)
-  );
-
-  revalidateAdmin();
+    revalidateAdmin();
+    return { ok: true };
+  } catch (error) {
+    return { ok: false, message: getActionErrorMessage(error) };
+  }
 };
 
 /**
@@ -101,19 +127,28 @@ export const updateLoadingImageAction = async (formData: FormData) => {
 export const updateGalleryAction = async (formData: FormData) => {
   await requireAdminSession();
   const supabase = createSupabaseAdmin();
-  const galleryId = String(formData.get('gallery_id') || '');
+  try {
+    const galleryId = requiredString(formData.get('gallery_id'), 'gallery_id', 100);
 
-  const payload = {
-    section_title: String(formData.get('gallery_section_title') || ''),
-    description: String(formData.get('gallery_description') || ''),
-    autoplay: formData.get('gallery_autoplay') === 'on',
-    autoplay_delay: toNumber(formData.get('gallery_autoplay_delay'), 0) || null,
-  };
+    const payload = {
+      section_title: optionalString(formData.get('gallery_section_title'), '우리의 갤러리', 100),
+      description: optionalString(formData.get('gallery_description'), '', 500),
+      autoplay: formData.get('gallery_autoplay') === 'on',
+      autoplay_delay: numberWithDefault(formData.get('gallery_autoplay_delay'), 3000, {
+        min: 0,
+        max: 600000,
+        integer: true,
+      }),
+    };
 
-  assertNoError(
-    await supabase.from('invitation_gallery').update(payload).eq('id', galleryId)
-  );
-  revalidateAdmin();
+    assertNoError(
+      await supabase.from('invitation_gallery').update(payload).eq('id', galleryId)
+    );
+    revalidateAdmin();
+    return { ok: true };
+  } catch (error) {
+    return { ok: false, message: getActionErrorMessage(error) };
+  }
 };
 
 /**
@@ -124,38 +159,42 @@ export const updateGalleryAction = async (formData: FormData) => {
 export const addGalleryImageAction = async (formData: FormData) => {
   await requireAdminSession();
   const supabase = createSupabaseAdmin();
+  try {
+    const galleryId = requiredString(formData.get('gallery_id'), 'gallery_id', 100);
+    const imageSources = formData
+      .getAll('image_src')
+      .map((value) => String(value))
+      .map((value) => value.trim())
+      .filter((value) => value.length > 0);
 
-  const galleryId = String(formData.get('gallery_id') || '');
-  const imageSources = formData
-    .getAll('image_src')
-    .map((value) => String(value))
-    .map((value) => value.trim())
-    .filter((value) => value.length > 0);
+    if (imageSources.length === 0) {
+      return { ok: false, message: '이미지를 추가해주세요.' };
+    }
 
-  if (imageSources.length === 0) {
-    return;
+    const { data: latestSort } = await supabase
+      .from('invitation_gallery_images')
+      .select('sort_order')
+      .eq('gallery_id', galleryId)
+      .order('sort_order', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    const nextSortOrder = (latestSort?.sort_order ?? 0) + 1;
+    const payload = imageSources.map((src, index) => ({
+      gallery_id: galleryId,
+      src,
+      alt: '',
+      thumbnail: null,
+      width: null,
+      height: null,
+      sort_order: nextSortOrder + index,
+    }));
+
+    assertNoError(await supabase.from('invitation_gallery_images').insert(payload));
+    revalidateAdmin();
+    return { ok: true };
+  } catch (error) {
+    return { ok: false, message: getActionErrorMessage(error) };
   }
-
-  const { data: latestSort } = await supabase
-    .from('invitation_gallery_images')
-    .select('sort_order')
-    .eq('gallery_id', galleryId)
-    .order('sort_order', { ascending: false })
-    .limit(1)
-    .maybeSingle();
-  const nextSortOrder = (latestSort?.sort_order ?? 0) + 1;
-  const payload = imageSources.map((src, index) => ({
-    gallery_id: galleryId,
-    src,
-    alt: '',
-    thumbnail: null,
-    width: null,
-    height: null,
-    sort_order: nextSortOrder + index,
-  }));
-
-  assertNoError(await supabase.from('invitation_gallery_images').insert(payload));
-  revalidateAdmin();
 };
 
 /**
@@ -166,7 +205,12 @@ export const addGalleryImageAction = async (formData: FormData) => {
 export const deleteGalleryImageAction = async (formData: FormData) => {
   await requireAdminSession();
   const supabase = createSupabaseAdmin();
-  const imageId = String(formData.get('image_id') || '');
-  assertNoError(await supabase.from('invitation_gallery_images').delete().eq('id', imageId));
-  revalidateAdmin();
+  try {
+    const imageId = requiredString(formData.get('image_id'), 'image_id', 100);
+    assertNoError(await supabase.from('invitation_gallery_images').delete().eq('id', imageId));
+    revalidateAdmin();
+    return { ok: true };
+  } catch (error) {
+    return { ok: false, message: getActionErrorMessage(error) };
+  }
 };

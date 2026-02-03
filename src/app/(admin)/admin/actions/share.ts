@@ -2,7 +2,13 @@
 
 import { createSupabaseAdmin } from '@/lib/supabaseAdmin';
 import { getOrCreateInvitation } from '@/app/(admin)/admin/data';
-import { assertNoError, requireAdminSession, revalidateAdmin } from './shared';
+import {
+  assertNoError,
+  getActionErrorMessage,
+  requireAdminSession,
+  revalidateAdmin,
+} from './shared';
+import { optionalString } from './validation';
 
 /**
  * 공유 설정/섹션 타이틀 업데이트
@@ -13,34 +19,39 @@ export const updateShareAction = async (formData: FormData) => {
   await requireAdminSession();
   const supabase = createSupabaseAdmin();
   const { id } = await getOrCreateInvitation();
-  const payload: Record<string, string> = { developer: 'jbeat' };
-  if (formData.has('section_title')) {
-    payload.section_title = String(formData.get('section_title') || '');
-  }
-  if (formData.has('description')) {
-    payload.description = String(formData.get('description') || '');
-  }
-  if (formData.has('og_title')) {
-    payload.og_title = String(formData.get('og_title') || '');
-  }
-  if (formData.has('og_description')) {
-    payload.og_description = String(formData.get('og_description') || '');
-  }
-  if (formData.has('kakao_title')) {
-    payload.kakao_title = String(formData.get('kakao_title') || '');
-  }
-  if (formData.has('kakao_description')) {
-    payload.kakao_description = String(formData.get('kakao_description') || '');
-  }
-  if (formData.has('kakao_image_url')) {
-    payload.kakao_image_url = String(formData.get('kakao_image_url') || '');
-  }
-  if (formData.has('kakao_button_label')) {
-    payload.kakao_button_label = String(formData.get('kakao_button_label') || '');
-  }
+  try {
+    const payload: Record<string, string> = { developer: 'jbeat' };
+    if (formData.has('section_title')) {
+      payload.section_title = optionalString(formData.get('section_title'), '청첩장 공유하기', 100);
+    }
+    if (formData.has('description')) {
+      payload.description = optionalString(formData.get('description'), '', 200);
+    }
+    if (formData.has('og_title')) {
+      payload.og_title = optionalString(formData.get('og_title'), '', 200);
+    }
+    if (formData.has('og_description')) {
+      payload.og_description = optionalString(formData.get('og_description'), '', 500);
+    }
+    if (formData.has('kakao_title')) {
+      payload.kakao_title = optionalString(formData.get('kakao_title'), '', 200);
+    }
+    if (formData.has('kakao_description')) {
+      payload.kakao_description = optionalString(formData.get('kakao_description'), '', 500);
+    }
+    if (formData.has('kakao_image_url')) {
+      payload.kakao_image_url = optionalString(formData.get('kakao_image_url'), '', 500);
+    }
+    if (formData.has('kakao_button_label')) {
+      payload.kakao_button_label = optionalString(formData.get('kakao_button_label'), '', 50);
+    }
 
-  assertNoError(
-    await supabase.from('invitation_share').update(payload).eq('invitation_id', id)
-  );
-  revalidateAdmin();
+    assertNoError(
+      await supabase.from('invitation_share').update(payload).eq('invitation_id', id)
+    );
+    revalidateAdmin();
+    return { ok: true };
+  } catch (error) {
+    return { ok: false, message: getActionErrorMessage(error) };
+  }
 };

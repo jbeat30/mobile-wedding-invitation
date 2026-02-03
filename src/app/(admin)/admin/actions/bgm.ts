@@ -2,7 +2,13 @@
 
 import { createSupabaseAdmin } from '@/lib/supabaseAdmin';
 import { getOrCreateInvitation } from '@/app/(admin)/admin/data';
-import { assertNoError, requireAdminSession, revalidateAdmin } from './shared';
+import {
+  assertNoError,
+  getActionErrorMessage,
+  requireAdminSession,
+  revalidateAdmin,
+} from './shared';
+import { checkboxToBool, optionalString } from './validation';
 
 /**
  * BGM 설정 업데이트
@@ -14,13 +20,18 @@ export const updateBgmAction = async (formData: FormData) => {
   const supabase = createSupabaseAdmin();
   const { id } = await getOrCreateInvitation();
 
-  const payload = {
-    enabled: formData.get('bgm_enabled') === 'on',
-    audio_url: String(formData.get('bgm_audio_url') || ''),
-    auto_play: formData.get('bgm_auto_play') === 'on',
-    loop: formData.get('bgm_loop') === 'on',
-  };
+  try {
+    const payload = {
+      enabled: checkboxToBool(formData.get('bgm_enabled'), false),
+      audio_url: optionalString(formData.get('bgm_audio_url'), '', 500),
+      auto_play: checkboxToBool(formData.get('bgm_auto_play'), true),
+      loop: checkboxToBool(formData.get('bgm_loop'), true),
+    };
 
-  assertNoError(await supabase.from('invitation_bgm').update(payload).eq('invitation_id', id));
-  revalidateAdmin();
+    assertNoError(await supabase.from('invitation_bgm').update(payload).eq('invitation_id', id));
+    revalidateAdmin();
+    return { ok: true };
+  } catch (error) {
+    return { ok: false, message: getActionErrorMessage(error) };
+  }
 };

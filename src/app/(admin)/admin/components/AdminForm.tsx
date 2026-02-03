@@ -31,7 +31,7 @@ type AdminFormState = {
 };
 
 type AdminFormProps = {
-  action: (formData: FormData) => Promise<void>;
+  action: (formData: FormData) => Promise<void | { ok?: boolean; message?: string }>;
   successMessage?: string;
   errorMessage?: string;
   confirmTitle?: string;
@@ -180,11 +180,16 @@ export const AdminForm = ({
   const [state, formAction] = useActionState<AdminFormState, FormData>(
     async (_prevState, formData) => {
       try {
-        await action(formData);
+        const result = await action(formData);
+        if (result && typeof result === 'object' && 'ok' in result && result.ok === false) {
+          return { status: 'error', message: result.message, submittedAt: Date.now() };
+        }
         return { status: 'success', submittedAt: Date.now() };
       } catch (error) {
         console.error('Admin form submit failed:', error);
-        return { status: 'error', submittedAt: Date.now() };
+        const message =
+          error instanceof Error && error.message ? error.message : undefined;
+        return { status: 'error', message, submittedAt: Date.now() };
       }
     },
     { status: 'idle' }
@@ -194,7 +199,10 @@ export const AdminForm = ({
     if (state.status === 'idle') {
       return;
     }
-    const message = state.status === 'success' ? successMessage : errorMessage;
+    const message =
+      state.status === 'success'
+        ? successMessage
+        : state.message || errorMessage;
     setToastMessage(message);
     setToastOpen(true);
     if (state.status === 'success') {
@@ -202,7 +210,7 @@ export const AdminForm = ({
     }
     const timer = window.setTimeout(() => setToastOpen(false), 2000);
     return () => window.clearTimeout(timer);
-  }, [state.status, state.submittedAt, successMessage, errorMessage, queryClient]);
+  }, [state.status, state.submittedAt, state.message, successMessage, errorMessage, queryClient]);
 
   /**
    * 폼 상태 재계산
