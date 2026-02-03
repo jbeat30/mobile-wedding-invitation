@@ -32,7 +32,7 @@ export const StandardLayout = ({ children }: StandardLayoutProps) => {
 
         {/* 스크롤 가능한 콘텐츠 영역 */}
         <main className="min-h-screen p-6">
-          <div className="mx-auto max-w-7xl">{children}</div>
+          <div className="p-8">{children}</div>
         </main>
       </div>
 

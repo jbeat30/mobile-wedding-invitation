@@ -122,46 +122,51 @@ export const AdminSectionAccounts = ({
                   </div>
 
                   {accountFormOpen[groupKey] ? (
-                    <AdminForm
-                      action={addAccountEntryAction}
-                      successMessage="계좌가 추가되었습니다"
-                      className="grid gap-3"
-                    >
-                      <input type="hidden" name="accounts_id" value={accounts.id} />
-                      <input type="hidden" name="group_type" value={groupKey} />
-                      <div className="flex flex-col gap-2">
-                        <Label htmlFor={`${groupKey}_bank_name`}>은행명</Label>
-                        <AdminSelectField
-                          id={`${groupKey}_bank_name`}
-                          name="bank_name"
-                          defaultValue=""
-                          options={BANK_SELECT_OPTIONS}
-                          placeholder="은행을 선택하세요"
-                        />
+                    <div className="rounded-[14px] border border-[var(--border-light)] bg-[var(--bg-secondary)]/70 p-4">
+                      <div className="mb-3 text-[13px] font-semibold text-[var(--text-muted)]">
+                        {group.label}측 계좌 추가
                       </div>
-                      <div className="flex flex-col gap-2">
-                        <Label htmlFor={`${groupKey}_account_number`}>계좌번호</Label>
-                        <Input
-                          id={`${groupKey}_account_number`}
-                          name="account_number"
-                          pattern="[\d-]+"
-                          title="숫자와 하이픈만 입력 가능합니다"
-                        />
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <Label htmlFor={`${groupKey}_holder`}>예금주</Label>
-                        <Input id={`${groupKey}_holder`} name="holder" />
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <Label htmlFor={`${groupKey}_label`}>라벨</Label>
-                        <Input id={`${groupKey}_label`} name="label" placeholder={group.label} />
-                      </div>
-                      <div className="flex justify-end">
-                        <AdminSubmitButton size="sm" pendingText="추가 중...">
-                          추가하기
-                        </AdminSubmitButton>
-                      </div>
-                    </AdminForm>
+                      <AdminForm
+                        action={addAccountEntryAction}
+                        successMessage="계좌가 추가되었습니다"
+                        className="grid gap-3"
+                      >
+                        <input type="hidden" name="accounts_id" value={accounts.id} />
+                        <input type="hidden" name="group_type" value={groupKey} />
+                        <div className="flex flex-col gap-2">
+                          <Label htmlFor={`${groupKey}_bank_name`}>은행명</Label>
+                          <AdminSelectField
+                            id={`${groupKey}_bank_name`}
+                            name="bank_name"
+                            defaultValue=""
+                            options={BANK_SELECT_OPTIONS}
+                            placeholder="은행을 선택하세요"
+                          />
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          <Label htmlFor={`${groupKey}_account_number`}>계좌번호</Label>
+                          <Input
+                            id={`${groupKey}_account_number`}
+                            name="account_number"
+                            pattern="[\d-]+"
+                            title="숫자와 하이픈만 입력 가능합니다"
+                          />
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          <Label htmlFor={`${groupKey}_holder`}>예금주</Label>
+                          <Input id={`${groupKey}_holder`} name="holder" />
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          <Label htmlFor={`${groupKey}_label`}>라벨</Label>
+                          <Input id={`${groupKey}_label`} name="label" placeholder={group.label} />
+                        </div>
+                        <div className="flex justify-end">
+                          <AdminSubmitButton size="sm" pendingText="추가 중...">
+                            추가하기
+                          </AdminSubmitButton>
+                        </div>
+                      </AdminForm>
+                    </div>
                   ) : null}
 
                   <div className="rounded-[12px] border border-[var(--border-light)] bg-white/70">
