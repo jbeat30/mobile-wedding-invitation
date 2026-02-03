@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import { gsap } from 'gsap';
 import { ScrollIndicator } from '@/components/ui/ScrollIndicator';
 
 export type LoadingSectionProps = {
@@ -18,18 +17,23 @@ export type LoadingSectionProps = {
  * @param container 텍스트 컨테이너
  * @returns cleanup 함수
  */
-const animateLoadingText = (
+const animateLoadingText = async (
   container: HTMLDivElement | null
-): (() => void) | undefined => {
+): Promise<(() => void) | undefined> => {
   if (!container) return undefined;
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const items = container.querySelectorAll<HTMLElement>('[data-loading-text]');
   if (!items.length) return undefined;
 
   if (prefersReducedMotion) {
-    gsap.set(items, { opacity: 1, y: 0 });
+    items.forEach((item) => {
+      item.style.opacity = '1';
+      item.style.transform = 'translateY(0)';
+    });
     return undefined;
   }
+
+  const { gsap } = await import('gsap');
 
   gsap.set(items, { opacity: 0, y: 14 });
   const tween = gsap.to(items, {
@@ -81,8 +85,19 @@ export const LoadingSection = ({
   useEffect(() => {
     if (!isVisible || hasAnimatedRef.current) return;
     hasAnimatedRef.current = true;
-    const cleanup = animateLoadingText(loadingTextRef.current);
+    let cleanup: (() => void) | undefined;
+    let cancelled = false;
+
+    animateLoadingText(loadingTextRef.current).then((result) => {
+      if (cancelled) {
+        result?.();
+        return;
+      }
+      cleanup = result;
+    });
+
     return () => {
+      cancelled = true;
       cleanup?.();
     };
   }, [isVisible]);
@@ -181,6 +196,7 @@ export const LoadingSection = ({
             className="pointer-events-none absolute inset-0 z-[1] h-full w-full animate-[loading-reveal_1.1s_ease-out_both] object-cover object-bottom opacity-85 saturate-[0.95] will-change-[transform,opacity] select-none [-webkit-user-drag:none]"
             sizes="(max-width: 480px) 100vw, 480px"
             priority
+            fetchPriority="high"
             draggable={false}
             onContextMenu={(e) => e.preventDefault()}
             onTouchStart={(e) => e.preventDefault()}

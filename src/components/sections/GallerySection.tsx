@@ -58,7 +58,11 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
 
   return (
     <>
-      <section id="gallery" className="bg-[var(--bg-primary)] py-12">
+      <section
+        id="gallery"
+        className="bg-[var(--bg-primary)] py-12"
+        style={{ contentVisibility: 'auto', containIntrinsicSize: '900px' }}
+      >
         <div className="mx-auto flex w-full max-w-[520px] flex-col gap-8 px-6">
           {/* 헤더 */}
           <div
