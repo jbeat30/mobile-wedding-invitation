@@ -35,6 +35,7 @@ export const IntroSection = ({ couple, event, heroImage }: IntroSectionProps) =>
           alt="Wedding Main"
           fill
           priority
+          fetchPriority="high"
           className="object-cover object-center pointer-events-none select-none"
           sizes="(max-width: 480px) 100vw, 480px"
           draggable={false}

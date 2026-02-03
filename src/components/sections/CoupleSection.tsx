@@ -45,7 +45,7 @@ export const CoupleSection = ({ couple, title }: CoupleSectionProps) => {
                   src={couple.groom.profileImage}
                   alt={`${couple.groom.lastName}${couple.groom.firstName} 프로필`}
                   fill
-                  sizes="200px"
+                  sizes="(max-width: 480px) 160px, 200px"
                   className="object-cover pointer-events-none select-none"
                   draggable={false}
                   onContextMenu={(e) => e.preventDefault()}
@@ -74,7 +74,7 @@ export const CoupleSection = ({ couple, title }: CoupleSectionProps) => {
                   src={couple.bride.profileImage}
                   alt={`${couple.bride.lastName}${couple.bride.firstName} 프로필`}
                   fill
-                  sizes="200px"
+                  sizes="(max-width: 480px) 160px, 200px"
                   className="object-cover pointer-events-none select-none"
                   draggable={false}
                   onContextMenu={(e) => e.preventDefault()}

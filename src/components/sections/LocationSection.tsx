@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import type { InvitationEvent, InvitationLocation } from '@/mock/invitation.mock';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { KakaoMap } from '@/components/ui/KakaoMap';
@@ -19,6 +19,8 @@ type LocationSectionProps = {
 export const LocationSection = ({ event, location, title }: LocationSectionProps) => {
   const [isTransportOpen, setIsTransportOpen] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [shouldRenderMap, setShouldRenderMap] = useState(false);
+  const mapContainerRef = useRef<HTMLDivElement | null>(null);
 
   const showToast = useCallback((message: string) => {
     setToast(message);
@@ -91,8 +93,35 @@ export const LocationSection = ({ event, location, title }: LocationSectionProps
     [location.coordinates, location.placeName, event.address, showToast]
   );
 
+  useEffect(() => {
+    const node = mapContainerRef.current;
+    if (!node) return;
+
+    if (!('IntersectionObserver' in window)) {
+      setShouldRenderMap(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShouldRenderMap(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '200px' }
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <section id="location" className="bg-[var(--bg-primary)] py-12">
+    <section
+      id="location"
+      className="bg-[var(--bg-primary)] py-12"
+      style={{ contentVisibility: 'auto', containIntrinsicSize: '900px' }}
+    >
       <div className="mx-auto flex w-full max-w-[520px] flex-col gap-10 px-6">
         {/* 섹션 헤더 */}
         <div
@@ -115,8 +144,14 @@ export const LocationSection = ({ event, location, title }: LocationSectionProps
           data-animate="scale"
           data-animate-start="90"
         >
-          <div className="relative h-[220px]">
-            <KakaoMap lat={location.coordinates.lat} lng={location.coordinates.lng} />
+          <div ref={mapContainerRef} className="relative h-[220px]">
+            {shouldRenderMap ? (
+              <KakaoMap lat={location.coordinates.lat} lng={location.coordinates.lng} />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center bg-[var(--bg-secondary)] text-[13px] text-[var(--text-muted)]">
+                지도를 불러오는 중입니다
+              </div>
+            )}
           </div>
         </div>
 
