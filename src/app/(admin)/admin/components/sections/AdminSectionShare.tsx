@@ -135,15 +135,58 @@ export const AdminSectionShare = ({ share, assets, fileUrlToNameMap }: AdminSect
             successMessage="OG 이미지가 저장되었습니다"
             className="mt-6 grid gap-4 md:grid-cols-2"
           >
-            <AdminImageFileField
-              id="share_og_image"
-              name="share_og_image"
-              label="OG 이미지"
-              sectionId="share/og"
-              defaultValue={assets.share_og_image}
-              defaultFileName={assets.share_og_image ? fileUrlToNameMap[assets.share_og_image] : null}
-              hint="카카오톡 외 메신저·브라우저 미리보기용 (2MB 초과 시 자동 압축)"
-            />
+            <div className="md:col-span-2 flex flex-col gap-2">
+              <AdminImageFileField
+                id="share_og_image"
+                name="share_og_image"
+                label="OG 이미지"
+                sectionId="share/og"
+                defaultValue={assets.share_og_image}
+                defaultFileName={assets.share_og_image ? fileUrlToNameMap[assets.share_og_image] : null}
+                hint="카카오톡 외 메신저·브라우저 미리보기용 (2MB 초과 시 자동 압축)"
+              />
+              <div className="rounded-lg border border-blue-200 bg-blue-50/50 p-3 mt-1">
+                <p className="text-[12px] font-semibold text-blue-900 mb-1">💡 세로형 이미지 권장</p>
+                <p className="text-[11px] text-blue-800 leading-relaxed">
+                  웨딩 이미지는 세로가 긴 비율이 많으므로, <strong>400px × 800px (1:2 비율)</strong> 또는 <strong>3:4 비율</strong>의 세로형 이미지를 사용하시면 카카오톡에서 이미지가 잘리지 않고 더욱 아름답게 표시됩니다.
+                </p>
+              </div>
+            </div>
+
+            {/* OG 미리보기 */}
+            {assets.share_og_image && (
+              <div className="md:col-span-2">
+                <p className="text-[13px] font-semibold text-[var(--text-primary)] mb-3">미리보기</p>
+                <div className="rounded-xl border border-[var(--border-light)] bg-white overflow-hidden shadow-sm w-[240px]">
+                  {/* OG 이미지 */}
+                  <div className="w-full h-[320px] bg-gray-100 overflow-hidden">
+                    <img
+                      src={assets.share_og_image}
+                      alt="OG 미리보기"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  {/* OG 텍스트 정보 */}
+                  <div className="p-3">
+                    <p className="text-[12px] font-semibold text-[var(--text-primary)] truncate">
+                      {share.og_title || '제목 없음'}
+                    </p>
+                    <p className="text-[10px] text-[var(--text-secondary)] mt-1 line-clamp-2">
+                      {share.og_description || '설명 없음'}
+                    </p>
+                    <p className="text-[9px] text-[var(--text-muted)] mt-1.5 truncate">
+                      {siteUrl}
+                    </p>
+                  </div>
+                  <div className="px-3 pb-3">
+                    <p className="text-[9px] text-[var(--text-muted)] pt-2 border-t border-[var(--border-light)]">
+                      💡 카카오톡 공유 시 이와 유사한 형태로 표시됩니다
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="md:col-span-2 flex justify-end">
               <AdminSubmitButton size="sm" pendingText="저장 중...">
                 이미지 저장
@@ -186,15 +229,23 @@ export const AdminSectionShare = ({ share, assets, fileUrlToNameMap }: AdminSect
                 placeholder="입력하세요"
               />
             </div>
-            <AdminImageFileField
-              id="kakao_image_url"
-              name="kakao_image_url"
-              label="카카오 카드 이미지"
-              sectionId="share/kakao"
-              defaultValue={share.kakao_image_url || ''}
-              defaultFileName={share.kakao_image_url ? fileUrlToNameMap[share.kakao_image_url] : null}
-              hint="비어있으면 OG 이미지가 대신 사용됩니다 (2MB 초과 시 자동 압축)"
-            />
+            <div className="md:col-span-2 flex flex-col gap-2">
+              <AdminImageFileField
+                id="kakao_image_url"
+                name="kakao_image_url"
+                label="카카오 카드 이미지"
+                sectionId="share/kakao"
+                defaultValue={share.kakao_image_url || ''}
+                defaultFileName={share.kakao_image_url ? fileUrlToNameMap[share.kakao_image_url] : null}
+                hint="비어있으면 OG 이미지가 대신 사용됩니다 (2MB 초과 시 자동 압축)"
+              />
+              <div className="rounded-lg border border-blue-200 bg-blue-50/50 p-3 mt-1">
+                <p className="text-[12px] font-semibold text-blue-900 mb-1">💡 세로형 이미지 권장</p>
+                <p className="text-[11px] text-blue-800 leading-relaxed">
+                  웨딩 이미지는 세로가 긴 비율이 많으므로, <strong>400px × 800px (1:2 비율)</strong> 또는 <strong>3:4 비율</strong>의 세로형 이미지를 사용하시면 카카오톡에서 이미지가 잘리지 않고 더욱 아름답게 표시됩니다.
+                </p>
+              </div>
+            </div>
             <div className="flex flex-col gap-2 md:col-span-2">
               <Label htmlFor="kakao_button_label">카카오 버튼 라벨</Label>
               <Input
@@ -204,6 +255,41 @@ export const AdminSectionShare = ({ share, assets, fileUrlToNameMap }: AdminSect
                 placeholder="입력하세요"
               />
             </div>
+
+            {/* 카카오 미리보기 */}
+            {(share.kakao_image_url || assets.share_og_image) && (
+              <div className="md:col-span-2">
+                <p className="text-[13px] font-semibold text-[var(--text-primary)] mb-3">미리보기</p>
+                <div className="rounded-xl border border-[var(--border-light)] bg-white overflow-hidden shadow-sm w-[240px]">
+                  {/* 카카오 이미지 */}
+                  <div className="w-full h-[320px] bg-gray-100 overflow-hidden">
+                    <img
+                      src={share.kakao_image_url || assets.share_og_image || ''}
+                      alt="카카오 미리보기"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  {/* 카카오 텍스트 정보 */}
+                  <div className="p-3">
+                    <p className="text-[12px] font-semibold text-[var(--text-primary)] truncate">
+                      {share.kakao_title || share.og_title || '제목 없음'}
+                    </p>
+                    <p className="text-[10px] text-[var(--text-secondary)] mt-1 line-clamp-2">
+                      {share.kakao_description || share.og_description || '설명 없음'}
+                    </p>
+                    <p className="text-[9px] text-[var(--text-muted)] mt-1.5 truncate">
+                      {siteUrl}
+                    </p>
+                  </div>
+                  <div className="px-3 pb-3">
+                    <p className="text-[9px] text-[var(--text-muted)] pt-2 border-t border-[var(--border-light)]">
+                      💡 카카오톡 앱 내 공유 시 이와 유사한 형태로 표시됩니다
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="md:col-span-2 flex justify-end">
               <AdminSubmitButton size="sm" pendingText="저장 중...">
                 저장하기

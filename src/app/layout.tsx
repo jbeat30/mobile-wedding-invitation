@@ -67,8 +67,8 @@ export const generateMetadata = async (): Promise<Metadata> => {
         images: [
           {
             url: ogMeta.imageUrl,
-            width: 1200,
-            height: 630,
+            width: 400,
+            height: 800,
             alt: ogMeta.title,
           },
         ],
