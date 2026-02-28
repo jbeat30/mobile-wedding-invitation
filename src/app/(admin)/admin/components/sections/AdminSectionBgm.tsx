@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import type { AdminDashboardData } from '@/app/(admin)/admin/data';
 import { updateBgmAction } from '@/app/(admin)/admin/actions/bgm';
 import { AdminForm } from '@/app/(admin)/admin/components/AdminForm';
@@ -25,6 +25,7 @@ export const AdminSectionBgm = ({ bgm }: AdminSectionBgmProps) => {
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState('');
   const [uploadSuccess, setUploadSuccess] = useState(false);
+  const audioInputRef = useRef<HTMLInputElement>(null);
 
   /**
    * BGM 파일 업로드 처리
@@ -54,6 +55,15 @@ export const AdminSectionBgm = ({ bgm }: AdminSectionBgmProps) => {
       }
       const result = (await response.json()) as { url: string };
       setAudioUrl(result.url);
+
+      // Input value 업데이트 및 change 이벤트 트리거
+      if (audioInputRef.current) {
+        audioInputRef.current.value = result.url;
+        // change 이벤트 수동 트리거
+        const event = new Event('input', { bubbles: true });
+        audioInputRef.current.dispatchEvent(event);
+      }
+
       setUploadSuccess(true);
     } catch (error) {
       console.error('BGM upload failed:', error);
@@ -102,10 +112,14 @@ export const AdminSectionBgm = ({ bgm }: AdminSectionBgmProps) => {
           <div className="flex flex-col gap-2 md:col-span-2">
             <Label htmlFor="bgm_audio_url">BGM URL</Label>
             <Input
+              ref={audioInputRef}
               id="bgm_audio_url"
               name="bgm_audio_url"
-              value={audioUrl}
-              onChange={(event) => setAudioUrl(event.target.value)}
+              defaultValue={bgm.audio_url || ''}
+              onChange={(event) => {
+                setAudioUrl(event.target.value);
+                setUploadSuccess(false);
+              }}
             />
             <p className="text-[14px] text-[var(--text-muted)]">
               업로드한 파일 URL 또는 외부 mp3 파일 URL을 입력하세요.
