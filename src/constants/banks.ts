@@ -15,7 +15,7 @@ export const BANK_OPTIONS: BankOption[] = [
   { name: 'KDB산업은행', iconPath: '/icons/banks/kdb/original.jpg', iconAlt: 'KDB산업은행' },
   { name: 'SC제일은행', iconPath: '/icons/banks/sc-first/original.jpg', iconAlt: 'SC제일은행' },
   { name: 'iM뱅크', iconPath: '/icons/banks/im-banks/original.jpg', iconAlt: 'iM뱅크' },
-  { name: '카카오뱅크', iconPath: '/icons/banks/kakao-banks/original.jpg', iconAlt: '카카오뱅크' },
+  { name: '카카오뱅크', iconPath: '/icons/banks/kakao-bank/original.jpg', iconAlt: '카카오뱅크' },
   { name: '케이뱅크', iconPath: '/icons/banks/k-banks/original.jpg', iconAlt: '케이뱅크' },
   { name: '토스뱅크', iconPath: '/icons/banks/toss-banks/original.jpg', iconAlt: '토스뱅크' },
   { name: '씨티은행', iconPath: '/icons/banks/citi-banks/original.jpg', iconAlt: '씨티은행' },
