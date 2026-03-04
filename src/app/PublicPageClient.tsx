@@ -418,7 +418,6 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
                   trigger,
                   start,
                   toggleActions: 'play none none none',
-                  invalidateOnRefresh: true,
                 },
               });
               return;
@@ -446,7 +445,6 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
                 trigger,
                 start,
                 toggleActions: 'play none none none',
-                invalidateOnRefresh: true,
               },
             });
           });
@@ -529,19 +527,22 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
           ) : null}
         </div>
         {showContent ? (
-          <div className="relative">
-            <CherryBlossomCanvas density={50000} zIndex={50} opacity={0.5} minPetalCount={8} fullHeight={true} />
-            <CoupleSection couple={content.couple} title={sectionTitles.couple} />
-            <WeddingInfoSection
-              event={content.event}
-              couple={content.couple}
-              title={sectionTitles.wedding}
-            />
-            <LocationSection
-              location={content.location}
-              event={content.event}
-              title={sectionTitles.location}
-            />
+          <>
+            {/* 벚꽃 캔버스를 커플~위치 섹션(~1500px)으로만 제한 — 전체 페이지를 감싸면 4000px+ 캔버스가 매 프레임 clearRect/draw */}
+            <div className="relative">
+              <CherryBlossomCanvas density={50000} zIndex={50} opacity={0.5} minPetalCount={8} />
+              <CoupleSection couple={content.couple} title={sectionTitles.couple} />
+              <WeddingInfoSection
+                event={content.event}
+                couple={content.couple}
+                title={sectionTitles.wedding}
+              />
+              <LocationSection
+                location={content.location}
+                event={content.event}
+                title={sectionTitles.location}
+              />
+            </div>
             <GallerySection gallery={content.gallery} />
             <AccountsSection accounts={content.accounts} />
             <GuestbookSection
@@ -556,7 +557,7 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
             />
             <ShareSection share={content.share} title={sectionTitles.share} />
             <ClosingSection closing={content.closing} couple={content.couple} />
-          </div>
+          </>
         ) : null}
         <BgmPlayer
           audioUrl={content.bgm.audioUrl || ''}

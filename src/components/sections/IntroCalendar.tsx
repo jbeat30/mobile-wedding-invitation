@@ -34,7 +34,7 @@ export const IntroCalendar = ({
   }
 
   return (
-    <div className="w-full px-5" data-animate="fade-up">
+    <div className="w-full px-5">
       <div className="w-full">
         {/* 상단 구분선 */}
         <div className="my-6 h-[1px] w-full shrink-0 bg-black opacity-10"></div>

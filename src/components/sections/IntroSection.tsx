@@ -47,7 +47,8 @@ export const IntroSection = ({ couple, event, heroImage }: IntroSectionProps) =>
 
         {/* Hero 텍스트 */}
         <div className="absolute inset-0 flex items-end justify-center pb-16">
-          <div className="text-center" data-animate="fade-up" data-animate-start="80">
+          {/* section 기준 트리거 — hero 텍스트는 히어로 하단에 absolute 배치되어 있어 self 기준으로 하면 뷰포트에 보이는 시점보다 늦게 트리거됨 */}
+          <div className="text-center" data-animate="fade-up" data-animate-start="80" data-animate-trigger="section">
             <p className="font-label text-[12px] text-[var(--accent-rose-light)] drop-shadow-md font-bold">
               WEDDING INVITATION
             </p>
