@@ -73,6 +73,7 @@ export const CherryBlossomCanvas = ({
       swing = 0;
       swingStep = 0;
       opacity = 0;
+      fillColor = '';
 
       constructor(initial = false) {
         this.reset(initial);
@@ -101,6 +102,8 @@ export const CherryBlossomCanvas = ({
         this.swingStep = Math.random() * Math.PI * 2;
         // opacity: 가까운 잎일수록 더 선명
         this.opacity = 0.65 + this.depth * 0.35;
+        // fillColor를 reset() 시 한 번 계산 → draw()에서 객체 생성 없이 재사용
+        this.fillColor = `rgba(255,190,210,${this.opacity})`;
       }
 
       draw() {
@@ -116,12 +119,8 @@ export const CherryBlossomCanvas = ({
         context.bezierCurveTo(-1, 11, -6, 8, -7, 2);
         context.bezierCurveTo(-9, -4, -3, -8, 0, -6);
 
-        // gradient: 잎 중앙이 살짝 밝도록 설정 (더 선명한 핑크)
-        const gradient = context.createRadialGradient(1, 2, 0, 0, 2, 12);
-        gradient.addColorStop(0, `rgba(255,220,230,${this.opacity})`);
-        gradient.addColorStop(1, `rgba(255,150,180,${this.opacity * 0.9})`);
-
-        context.fillStyle = gradient;
+        // createRadialGradient은 매 프레임 매 꽃잎마다 객체를 생성해 GC 부하가 큼 → solid fill로 교체
+        context.fillStyle = this.fillColor;
         context.fill();
         context.restore();
       }
