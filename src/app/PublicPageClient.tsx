@@ -158,23 +158,16 @@ const createSecurityGuards = () => {
   };
 
   /**
-   * 모바일 롱프레스 다운로드 차단 (iOS/Android)
+   * 모바일 롱프레스 타이머 관리
+   * passive: true 사용으로 스크롤 성능 개선
+   * 실제 이미지 보호는 CSS로 처리
    */
-  const preventLongPress = (event: Event) => {
-    const target = event.target as HTMLElement | null;
-    if (target?.tagName === 'IMG' || target?.closest('img')) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-  };
-
   const handleTouchStart = (event: TouchEvent) => {
     const target = event.target as HTMLElement | null;
     if (target?.tagName === 'IMG' || target?.closest('img')) {
       longPressTimer = window.setTimeout(() => {
-        event.preventDefault();
-        event.stopPropagation();
-      }, 100);
+        // CSS로 이미지 보호가 처리되므로 여기서는 타이머만 관리
+      }, 500);
     }
   };
 
@@ -201,12 +194,11 @@ const createSecurityGuards = () => {
     document.addEventListener('paste', preventClipboard);
     document.addEventListener('keydown', preventKeyShortcuts);
 
-    // 모바일 롱프레스 차단
-    document.addEventListener('touchstart', handleTouchStart, { passive: false });
-    document.addEventListener('touchend', handleTouchEnd, { passive: false });
-    document.addEventListener('touchmove', handleTouchMove, { passive: false });
-    document.addEventListener('touchcancel', handleTouchEnd, { passive: false });
-    document.addEventListener('gesturestart', preventLongPress, { passive: false });
+    // 모바일 롱프레스 타이머 관리 (passive: true로 스크롤 성능 개선)
+    document.addEventListener('touchstart', handleTouchStart, { passive: true });
+    document.addEventListener('touchend', handleTouchEnd, { passive: true });
+    document.addEventListener('touchmove', handleTouchMove, { passive: true });
+    document.addEventListener('touchcancel', handleTouchEnd, { passive: true });
   };
 
   const detach = () => {
@@ -223,12 +215,11 @@ const createSecurityGuards = () => {
     document.removeEventListener('paste', preventClipboard);
     document.removeEventListener('keydown', preventKeyShortcuts);
 
-    // 모바일 롱프레스 차단 해제
+    // 모바일 롱프레스 타이머 해제
     document.removeEventListener('touchstart', handleTouchStart);
     document.removeEventListener('touchend', handleTouchEnd);
     document.removeEventListener('touchmove', handleTouchMove);
     document.removeEventListener('touchcancel', handleTouchEnd);
-    document.removeEventListener('gesturestart', preventLongPress);
   };
 
   return { attach, detach };

@@ -85,6 +85,8 @@ body::before {
         overflow-x: hidden;
         overflow-y: auto;
         scroll-behavior: smooth;
+        /* 모바일 스크롤 최적화 */
+        -webkit-overflow-scrolling: touch;
     }
 
     body {
@@ -102,7 +104,6 @@ body::before {
         font-feature-settings: "kern" 1, "liga" 1;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
-        touch-action: pan-y pan-x;
         -webkit-text-size-adjust: 100%;
         -webkit-touch-callout: none;
         -webkit-user-select: none;
@@ -301,6 +302,14 @@ body::before {
     user-select: none;
 }
 
+/* 메인 컨테이너 스크롤 최적화 */
+.public-page main {
+    -webkit-overflow-scrolling: touch;
+    /* GPU 가속으로 스크롤 성능 개선 */
+    transform: translateZ(0);
+    will-change: scroll-position;
+}
+
 .public-page img {
     -webkit-user-drag: none;
     -webkit-touch-callout: none !important;
@@ -308,6 +317,10 @@ body::before {
     user-select: none !important;
     pointer-events: auto;
     -webkit-tap-highlight-color: transparent;
+    /* iOS Safari 이미지 저장 메뉴 차단 */
+    -webkit-touch-callout: none !important;
+    /* Android 롱프레스 컨텍스트 메뉴 차단 */
+    touch-action: none !important;
 }
 
 /* Next.js Image 컴포넌트 내부 img 태그도 모두 차단 */
@@ -319,6 +332,7 @@ body::before {
     -webkit-user-drag: none !important;
     user-drag: none !important;
     pointer-events: none !important;
+    touch-action: none !important;
 }
 
 /* 이미지를 감싸는 부모 요소에서 pointer-events 복원 */
@@ -336,6 +350,7 @@ body::before {
     user-select: none !important;
     -webkit-user-drag: none !important;
     pointer-events: none !important;
+    touch-action: none !important;
 }
 
 /* 모달 내부 모든 이미지 차단 */
@@ -346,6 +361,7 @@ body::before {
     user-select: none !important;
     -webkit-user-drag: none !important;
     pointer-events: none !important;
+    touch-action: none !important;
 }
 
 .public-page :is(input, textarea, select, [contenteditable='true']) {
