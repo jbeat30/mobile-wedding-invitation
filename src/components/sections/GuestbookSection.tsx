@@ -9,6 +9,16 @@ import { SectionHeader } from '@/components/ui/SectionHeader';
 import { SurfaceCard } from '@/components/ui/SurfaceCard';
 import { TextArea, TextInput } from '@/components/ui/TextInput';
 import { Toast } from '@/components/ui/Toast';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { formatMonthDay } from '@/utils/date';
 import { isFourDigitPassword, isRequiredText } from '@/utils/validation';
 import { postJson } from '@/utils/api';
@@ -53,6 +63,43 @@ const saveEntries = (storageKey: string, entries: GuestbookEntry[]) => {
   }
 };
 
+// 쿨다운 유틸리티
+const COOLDOWN_KEY = 'guestbook-last-submit';
+const COOLDOWN_DURATION = 5 * 60 * 1000; // 5분
+
+const getLastSubmitTime = (): number | null => {
+  if (typeof window === 'undefined') return null;
+  try {
+    const stored = localStorage.getItem(COOLDOWN_KEY);
+    return stored ? parseInt(stored, 10) : null;
+  } catch {
+    return null;
+  }
+};
+
+const setLastSubmitTime = (time: number) => {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(COOLDOWN_KEY, time.toString());
+  } catch (e) {
+    console.error('Failed to save last submit time:', e);
+  }
+};
+
+const getRemainingCooldown = (): number => {
+  const lastSubmit = getLastSubmitTime();
+  if (!lastSubmit) return 0;
+  const elapsed = Date.now() - lastSubmit;
+  const remaining = COOLDOWN_DURATION - elapsed;
+  return remaining > 0 ? remaining : 0;
+};
+
+const formatCooldownTime = (ms: number): string => {
+  const minutes = Math.floor(ms / 60000);
+  const seconds = Math.floor((ms % 60000) / 1000);
+  return `${minutes}분 ${seconds}초`;
+};
+
 /**
  * 방명록 섹션
  * @param props GuestbookSectionProps
@@ -82,6 +129,10 @@ export const GuestbookSection = ({ guestbook, storageKey, title }: GuestbookSect
 
   // 토스트
   const [toast, setToast] = useState<string | null>(null);
+
+  // 제출 상태
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   // 초기 로딩: localStorage + mock 데이터 병합
   useEffect(() => {
@@ -115,10 +166,31 @@ export const GuestbookSection = ({ guestbook, storageKey, title }: GuestbookSect
   }, []);
 
   const handleSubmit = useCallback(
-    async (event: FormEvent<HTMLFormElement>) => {
+    (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();
-      if (!isValid) return;
+      if (!isValid || isSubmitting) return;
 
+      // 쿨다운 체크
+      const remainingCooldown = getRemainingCooldown();
+      if (remainingCooldown > 0) {
+        const timeLeft = formatCooldownTime(remainingCooldown);
+        showToast(`잠시 후 다시 시도해주세요 (${timeLeft} 남음)`);
+        return;
+      }
+
+      // 확인 다이얼로그 표시
+      setShowConfirmDialog(true);
+    },
+    [isValid, isSubmitting, showToast]
+  );
+
+  const handleConfirmSubmit = useCallback(async () => {
+    if (!isValid || isSubmitting) return;
+
+    setShowConfirmDialog(false);
+    setIsSubmitting(true);
+
+    try {
       const id =
         typeof globalThis.crypto?.randomUUID === 'function'
           ? globalThis.crypto.randomUUID()
@@ -134,24 +206,35 @@ export const GuestbookSection = ({ guestbook, storageKey, title }: GuestbookSect
         passwordHash,
       };
 
-      setEntries((prev) => [newEntry, ...prev]);
-      try {
-        const response = await postJson('/api/guestbook', newEntry);
-        if (!response.ok) {
-          throw new Error('Guestbook request failed');
-        }
-      } catch (error) {
-        console.error('Guestbook submit error:', error);
+      // 먼저 API 요청 수행
+      const response = await postJson('/api/guestbook', newEntry);
+      if (!response.ok) {
+        throw new Error('Guestbook request failed');
       }
+
+      // API 성공 후에만 상태 업데이트
+      setEntries((prev) => [newEntry, ...prev]);
+
+      // 쿨다운 타이머 설정
+      setLastSubmitTime(Date.now());
+
+      // 페이지를 1로 이동 (새 메시지 보여주기)
+      setPage(1);
+
+      // 폼 초기화하여 전송되었음을 명확히 표시
       setName('');
       setPassword('');
       setMessage('');
       setConsent(false);
-      setPage(1);
+
       showToast('메시지가 등록되었습니다');
-    },
-    [isValid, name, message, password, guestbook.enablePassword, showToast]
-  );
+    } catch (error) {
+      console.error('Guestbook submit error:', error);
+      showToast('메시지 등록에 실패했습니다. 다시 시도해주세요.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [isValid, isSubmitting, name, message, password, guestbook.enablePassword, showToast]);
 
   const handleEditClick = useCallback((entry: GuestbookEntry) => {
     // Mock 데이터는 수정 불가
@@ -333,8 +416,8 @@ export const GuestbookSection = ({ guestbook, storageKey, title }: GuestbookSect
               <span>{guestbook.privacyNotice}</span>
             </label>
 
-            <Button type="submit" size="full" disabled={!isValid}>
-              축하 메시지 남기기
+            <Button type="submit" size="full" disabled={!isValid || isSubmitting}>
+              {isSubmitting ? '등록 중...' : '축하 메시지 남기기'}
             </Button>
           </SurfaceCard>
 
@@ -546,6 +629,22 @@ export const GuestbookSection = ({ guestbook, storageKey, title }: GuestbookSect
           </div>
         </div>
       )}
+
+      {/* 제출 확인 다이얼로그 */}
+      <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>메시지를 등록하시겠습니까?</AlertDialogTitle>
+            <AlertDialogDescription>
+              작성하신 축하 메시지가 방명록에 등록됩니다.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>취소</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmSubmit}>등록하기</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* 토스트 메시지 */}
       <Toast isOpen={!!toast} message={toast} />

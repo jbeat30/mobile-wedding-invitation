@@ -9,6 +9,16 @@ import { SelectField } from '@/components/ui/SelectField';
 import { TextArea } from '@/components/ui/TextInput';
 import { Toast } from '@/components/ui/Toast';
 import { Button } from '@/components/ui/Button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { formatMonthDay } from '@/utils/date';
 import { postJson } from '@/utils/api';
 import { hasRequiredFields, normalizeCompanions } from '@/utils/rsvp';
@@ -26,6 +36,9 @@ export const RSVPSection = ({ rsvp, storageKey, title }: RSVPSectionProps) => {
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [consent, setConsent] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('참석 여부가 전달되었습니다');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const deadlineText = rsvp.deadline
     ? `${formatMonthDay(rsvp.deadline)}까지 회신 부탁드립니다`
     : '참석 여부를 알려주세요';
@@ -75,10 +88,23 @@ export const RSVPSection = ({ rsvp, storageKey, title }: RSVPSectionProps) => {
   }, [formData, consent, requiredFieldKeys]);
 
   const handleSubmit = useCallback(
-    async (event: FormEvent<HTMLFormElement>) => {
+    (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();
-      if (!isValid()) return;
+      if (!isValid() || isSubmitting) return;
 
+      // 확인 다이얼로그 표시
+      setShowConfirmDialog(true);
+    },
+    [isValid, isSubmitting]
+  );
+
+  const handleConfirmSubmit = useCallback(async () => {
+    if (!isValid() || isSubmitting) return;
+
+    setShowConfirmDialog(false);
+    setIsSubmitting(true);
+
+    try {
       const companionsValue = normalizeCompanions(attendanceValue, formData.companions || '');
       const payload = {
         ...formData,
@@ -86,28 +112,34 @@ export const RSVPSection = ({ rsvp, storageKey, title }: RSVPSectionProps) => {
         submittedAt: new Date().toISOString(),
       };
 
-      // localStorage에 저장 (Mock)
-      localStorage.setItem(storageKey, JSON.stringify(payload));
-
-      try {
-        const response = await postJson('/api/rsvp', payload);
-        if (!response.ok) {
-          throw new Error('RSVP request failed');
-        }
-      } catch (error) {
-        console.error('RSVP submit error:', error);
+      // 먼저 API 요청 수행
+      const response = await postJson('/api/rsvp', payload);
+      if (!response.ok) {
+        throw new Error('RSVP request failed');
       }
 
-      // 토스트 표시
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000);
+      // API 성공 후에만 상태 업데이트
+      localStorage.setItem(storageKey, JSON.stringify(payload));
 
-      // 폼 초기화
+      // 폼 초기화하여 전송되었음을 명확히 표시
       setFormData({});
       setConsent(false);
-    },
-    [isValid, formData, attendanceValue, storageKey]
-  );
+
+      // 성공 토스트 표시
+      setToastMessage('참석 여부가 전달되었습니다');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+    } catch (error) {
+      console.error('RSVP submit error:', error);
+
+      // 실패 토스트 표시
+      setToastMessage('전달에 실패했습니다. 다시 시도해주세요.');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [isValid, isSubmitting, formData, attendanceValue, storageKey]);
 
   const handleChange = (key: string, value: string) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
@@ -206,17 +238,33 @@ export const RSVPSection = ({ rsvp, storageKey, title }: RSVPSectionProps) => {
             </label>
 
             {/* 제출 버튼 */}
-            <Button type="submit" size="full" disabled={!isValid()}>
-              참석 여부 전달하기
+            <Button type="submit" size="full" disabled={!isValid() || isSubmitting}>
+              {isSubmitting ? '전달 중...' : '참석 여부 전달하기'}
             </Button>
           </SurfaceCard>
         </div>
       </section>
 
+      {/* 제출 확인 다이얼로그 */}
+      <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>참석 여부를 전달하시겠습니까?</AlertDialogTitle>
+            <AlertDialogDescription>
+              작성하신 참석 정보가 전달됩니다.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>취소</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmSubmit}>전달하기</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       {/* 토스트 메시지 */}
       <Toast
         isOpen={showToast}
-        message="참석 여부가 전달되었습니다"
+        message={toastMessage}
         toastClassName="py-2"
       />
     </>
