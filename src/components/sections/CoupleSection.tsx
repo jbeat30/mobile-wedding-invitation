@@ -58,7 +58,7 @@ export const CoupleSection = ({ couple, title }: CoupleSectionProps) => {
                 {`${couple.groom.lastName}${couple.groom.firstName}`}
               </h3>
               {couple.groom.bio && (
-                <p className="mt-1 text-[15px] leading-relaxed text-[var(--text-tertiary)]">
+                <p className="mt-1 text-[15px] leading-relaxed text-[var(--text-tertiary)] break-keep">
                   {couple.groom.bio}
                 </p>
               )}
@@ -87,7 +87,7 @@ export const CoupleSection = ({ couple, title }: CoupleSectionProps) => {
                 {`${couple.bride.lastName}${couple.bride.firstName}`}
               </h3>
               {couple.bride.bio && (
-                <p className="mt-1 text-[15px] leading-relaxed text-[var(--text-tertiary)]">
+                <p className="mt-1 text-[15px] leading-relaxed text-[var(--text-tertiary)] break-keep">
                   {couple.bride.bio}
                 </p>
               )}
