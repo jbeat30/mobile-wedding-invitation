@@ -73,12 +73,18 @@ export const KakaoMap = ({ lat, lng, level = 3, className = '' }: KakaoMapProps)
             center,
             level,
           });
+          mapInstanceRef.current.setDraggable(false);
+          mapInstanceRef.current.setZoomable(false);
+          mapInstanceRef.current.setKeyboardShortcuts(false);
           const marker = new window.kakao.maps.Marker({ position: center });
           marker.setMap(mapInstanceRef.current);
           markerRef.current = marker;
           return;
         }
         mapInstanceRef.current.setCenter(center);
+        mapInstanceRef.current.setDraggable(false);
+        mapInstanceRef.current.setZoomable(false);
+        mapInstanceRef.current.setKeyboardShortcuts(false);
         if (markerRef.current) {
           markerRef.current.setPosition(center);
         }
@@ -98,5 +104,5 @@ export const KakaoMap = ({ lat, lng, level = 3, className = '' }: KakaoMapProps)
     );
   }
 
-  return <div ref={mapRef} className={`h-full w-full ${className}`} />;
+  return <div ref={mapRef} className={`h-full w-full touch-pan-y ${className}`} />;
 };

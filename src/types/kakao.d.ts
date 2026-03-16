@@ -14,6 +14,9 @@ interface KakaoMapInstance {
   getLevel(): number;
   setLevel(level: number): void;
   setBounds(bounds: KakaoLatLngBounds): void;
+  setDraggable(draggable: boolean): void;
+  setZoomable(zoomable: boolean): void;
+  setKeyboardShortcuts(active: boolean): void;
 }
 
 interface KakaoMarker {
