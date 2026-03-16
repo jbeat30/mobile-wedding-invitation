@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import type { SyntheticEvent } from 'react';
 import Image from 'next/image';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -26,8 +26,37 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
   const [modalIndex, setModalIndex] = useState<number | null>(null);
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null);
   const mainSwiperRef = useRef<SwiperType | null>(null);
+  const sectionRef = useRef<HTMLElement | null>(null);
   const [portraitMap, setPortraitMap] = useState<Record<string, boolean>>({});
   const [activeIndex, setActiveIndex] = useState(0);
+  const [autoplayEnabled, setAutoplayEnabled] = useState(false);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section || !gallery.autoplay) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setAutoplayEnabled(entry.isIntersecting);
+      },
+      { threshold: 0.35 }
+    );
+
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, [gallery.autoplay]);
+
+  useEffect(() => {
+    const swiper = mainSwiperRef.current;
+    if (!swiper?.autoplay || !gallery.autoplay) return;
+
+    if (autoplayEnabled) {
+      swiper.autoplay.start();
+      return;
+    }
+
+    swiper.autoplay.stop();
+  }, [autoplayEnabled, gallery.autoplay]);
 
   const handleImageLoad = (id: string) => (event: SyntheticEvent<HTMLImageElement>) => {
     const image = event.currentTarget;
@@ -60,6 +89,7 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
     <>
       <section
         id="gallery"
+        ref={sectionRef}
         className="bg-[var(--bg-primary)] py-12"
         style={{ contentVisibility: 'auto', containIntrinsicSize: '900px' }}
       >
@@ -94,7 +124,7 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
               slidesPerView={1}
               thumbs={{ swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null }}
               autoplay={
-                gallery.autoplay
+                gallery.autoplay && autoplayEnabled
                   ? {
                       delay: gallery.autoplayDelay ?? 3000,
                       disableOnInteraction: false,
@@ -116,73 +146,71 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
                 const isPortrait = portraitMap[image.id] === true;
 
                 return (
-                <SwiperSlide
-                  key={image.id}
-                  className="!flex !items-center !justify-center bg-transparent"
-                  onContextMenu={(e) => e.preventDefault()}
-                >
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setActiveIndex(index);
-                      setModalIndex(index);
-                    }}
+                  <SwiperSlide
+                    key={image.id}
+                    className="!flex !items-center !justify-center bg-transparent"
                     onContextMenu={(e) => e.preventDefault()}
-                    className="relative w-full overflow-hidden group cursor-pointer block aspect-[4/3] bg-[var(--bg-secondary)]"
-                    aria-label={`${image.alt} 크게 보기`}
                   >
-                    {isPortrait && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setActiveIndex(index);
+                        setModalIndex(index);
+                      }}
+                      onContextMenu={(e) => e.preventDefault()}
+                      className="relative block aspect-[4/3] w-full cursor-pointer overflow-hidden bg-[var(--bg-secondary)] group"
+                      aria-label={`${image.alt} 크게 보기`}
+                    >
+                      {isPortrait && (
+                        <Image
+                          src={image.src}
+                          alt=""
+                          fill
+                          sizes="(max-width: 520px) 100vw, 520px"
+                          className="object-cover scale-105 blur-md opacity-60 pointer-events-none select-none"
+                          aria-hidden
+                          draggable={false}
+                          onContextMenu={(e) => e.preventDefault()}
+                          onTouchStart={(e) => e.preventDefault()}
+                        />
+                      )}
                       <Image
                         src={image.src}
-                        alt=""
+                        alt={image.alt}
                         fill
                         sizes="(max-width: 520px) 100vw, 520px"
-                        className="object-cover scale-105 blur-md opacity-60 pointer-events-none select-none"
-                        aria-hidden
+                        className={`transition-transform duration-700 group-hover:scale-105 pointer-events-none select-none ${
+                          isPortrait ? 'object-contain' : 'object-cover'
+                        }`}
+                        onLoad={handleImageLoad(image.id)}
+                        priority={index === 0}
+                        loading={index === 0 ? 'eager' : 'lazy'}
                         draggable={false}
                         onContextMenu={(e) => e.preventDefault()}
                         onTouchStart={(e) => e.preventDefault()}
+                        style={{ width: '100%', height: '100%', pointerEvents: 'none' }}
                       />
-                    )}
-                    <Image
-                      src={image.src}
-                      alt={image.alt}
-                      fill
-                      sizes="(max-width: 520px) 100vw, 520px"
-                      className={`transition-transform duration-700 group-hover:scale-105 pointer-events-none select-none ${
-                        isPortrait ? 'object-contain' : 'object-cover'
-                      }`}
-                      onLoad={handleImageLoad(image.id)}
-                      priority={index === 0}
-                      loading={index === 0 ? 'eager' : 'lazy'}
-                      draggable={false}
-                      onContextMenu={(e) => e.preventDefault()}
-                      onTouchStart={(e) => e.preventDefault()}
-                      style={{ width: '100%', height: '100%', pointerEvents: 'none' }}
-                    />
-                    {/* 그라데이션 오버레이 */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
-                    {/* 확대 아이콘 */}
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-500 group-hover:opacity-100">
-                      <div className="rounded-full bg-white/95 p-3 shadow-[0_8px_16px_rgba(0,0,0,0.2)] backdrop-blur-sm">
-                        <svg
-                          className="h-5 w-5 text-[var(--text-primary)]"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          strokeWidth={2.5}
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"
-                          />
-                        </svg>
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+                        <div className="rounded-full bg-white/95 p-3 shadow-[0_8px_16px_rgba(0,0,0,0.2)] backdrop-blur-sm">
+                          <svg
+                            className="h-5 w-5 text-[var(--text-primary)]"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth={2.5}
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"
+                            />
+                          </svg>
+                        </div>
                       </div>
-                    </div>
-                  </button>
-                </SwiperSlide>
+                    </button>
+                  </SwiperSlide>
                 );
               })}
             </Swiper>
