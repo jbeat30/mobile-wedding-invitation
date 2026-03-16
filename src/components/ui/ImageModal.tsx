@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import type { SyntheticEvent } from 'react';
 import Image from 'next/image';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { ModalShell } from '@/components/ui/ModalShell';
@@ -8,7 +9,7 @@ import { ModalShell } from '@/components/ui/ModalShell';
 type ImageModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  images: { id: string; src: string; alt: string }[];
+  images: { id: string; src: string; alt: string; width?: number; height?: number }[];
   initialIndex: number;
   onIndexChange?: (index: number) => void;
 };
@@ -28,14 +29,27 @@ export const ImageModal = ({
   const scrollPosRef = useRef(0);
   const scrollBehaviorRef = useRef<string | null>(null);
   const hasOpenedRef = useRef(false);
+  const historyEntryActiveRef = useRef(false);
+  const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 });
+  const [measuredSizes, setMeasuredSizes] = useState<Record<string, { width: number; height: number }>>({});
+  const [activeIndex, setActiveIndex] = useState(initialIndex);
 
-  /**
-   * 모달 내 슬라이드 변경 처리
-   * @param index 현재 슬라이드 인덱스
-   */
-  const handleSlideChange = (index: number) => {
-    onIndexChange?.(index);
-  };
+  useEffect(() => {
+    const updateViewportSize = () => {
+      setViewportSize({ width: window.innerWidth, height: window.innerHeight });
+    };
+
+    updateViewportSize();
+    window.addEventListener('resize', updateViewportSize);
+
+    return () => window.removeEventListener('resize', updateViewportSize);
+  }, []);
+
+  useEffect(() => {
+    if (isOpen) {
+      setActiveIndex(initialIndex);
+    }
+  }, [initialIndex, isOpen]);
 
   useEffect(() => {
     const html = document.documentElement;
@@ -55,6 +69,10 @@ export const ImageModal = ({
       document.body.style.position = 'fixed';
       document.body.style.top = `-${scrollPosRef.current}px`;
       document.body.style.width = '100%';
+
+      const nextState = { ...(window.history.state ?? {}), imageModalOpen: true };
+      window.history.pushState(nextState, '');
+      historyEntryActiveRef.current = true;
     } else if (hasOpenedRef.current) {
       if (scrollBehaviorRef.current === null) {
         scrollBehaviorRef.current = html.style.scrollBehavior;
@@ -71,6 +89,11 @@ export const ImageModal = ({
       window.scrollTo(0, scrollPosRef.current);
       html.style.scrollBehavior = scrollBehaviorRef.current || '';
       scrollBehaviorRef.current = null;
+
+      if (historyEntryActiveRef.current) {
+        historyEntryActiveRef.current = false;
+        window.history.back();
+      }
     }
 
     return () => {
@@ -86,16 +109,68 @@ export const ImageModal = ({
     };
   }, [isOpen]);
 
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handlePopState = () => {
+      historyEntryActiveRef.current = false;
+      onClose();
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [isOpen, onClose]);
+
   if (!isOpen || images.length === 0) {
     return null;
   }
+
+  const currentImage = images[activeIndex] ?? images[initialIndex] ?? images[0];
+  const currentSize = measuredSizes[currentImage.id] ?? (
+    currentImage.width && currentImage.height
+      ? { width: currentImage.width, height: currentImage.height }
+      : null
+  );
+
+  const maxModalWidth = Math.min(viewportSize.width * 0.9 || 520, 520);
+  const maxModalHeight = Math.min(viewportSize.height * 0.72 || 600, 600);
+  const aspectRatio = currentSize ? currentSize.width / currentSize.height : 1;
+
+  const slideFrame =
+    aspectRatio >= maxModalWidth / maxModalHeight
+      ? { width: maxModalWidth, height: maxModalWidth / aspectRatio }
+      : { width: maxModalHeight * aspectRatio, height: maxModalHeight };
+
+  const handleImageLoad =
+    (id: string) => (event: SyntheticEvent<HTMLImageElement>) => {
+      const image = event.currentTarget;
+      const nextSize = { width: image.naturalWidth, height: image.naturalHeight };
+
+      if (!nextSize.width || !nextSize.height) return;
+
+      setMeasuredSizes((prev) => {
+        const prevSize = prev[id];
+        if (prevSize?.width === nextSize.width && prevSize.height === nextSize.height) {
+          return prev;
+        }
+        return { ...prev, [id]: nextSize };
+      });
+    };
+
+  const handleSlideChange = (index: number) => {
+    setActiveIndex(index);
+    onIndexChange?.(index);
+  };
 
   return (
     <ModalShell
       isOpen={isOpen}
       onClose={onClose}
+      closeOnBackdrop={false}
       className="z-[9999] bg-black/85 p-4 backdrop-blur-sm"
       style={{ touchAction: 'pan-y' }}
+      role="dialog"
+      aria-modal="true"
     >
       <button
         type="button"
@@ -107,10 +182,11 @@ export const ImageModal = ({
         ×
       </button>
       <div
-        className="relative flex max-h-[80dvh] max-w-[90vw] flex-col gap-3"
+        data-testid="image-modal-stage"
+        className="relative flex max-w-[90vw] flex-col gap-3"
         onClick={(e) => e.stopPropagation()}
         onContextMenu={(e) => e.preventDefault()}
-        style={{ touchAction: 'pan-y', maxHeight: '600px' }}
+        style={{ touchAction: 'pan-y', width: `${Math.max(slideFrame.width, 240)}px` }}
       >
         <div className="pointer-events-none flex items-center justify-center" aria-hidden="true">
           <span className="flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-[12px] font-medium text-white/85 backdrop-blur">
@@ -140,12 +216,12 @@ export const ImageModal = ({
           </span>
         </div>
         <Swiper
-          key={initialIndex}
           slidesPerView={1}
           spaceBetween={0}
           initialSlide={initialIndex}
           onSlideChange={(swiper) => handleSlideChange(swiper.realIndex)}
-          className="h-[80dvh] max-h-[600px] w-[90vw] max-w-[520px] [&_img]:pointer-events-none [&_img]:select-none"
+          className="w-full [&_img]:pointer-events-none [&_img]:select-none"
+          style={{ height: `${Math.max(slideFrame.height, 180)}px` }}
         >
           {images.map((image, index) => (
             <SwiperSlide
@@ -166,6 +242,7 @@ export const ImageModal = ({
                   priority={index === initialIndex}
                   loading={index === initialIndex ? 'eager' : 'lazy'}
                   draggable={false}
+                  onLoad={handleImageLoad(image.id)}
                   onContextMenu={(e) => e.preventDefault()}
                   onTouchStart={(e) => e.preventDefault()}
                   style={{ pointerEvents: 'none' }}

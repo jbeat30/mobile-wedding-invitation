@@ -305,8 +305,6 @@ body::before {
 /* 메인 컨테이너 스크롤 최적화 */
 .public-page main {
     -webkit-overflow-scrolling: touch;
-    /* GPU 가속으로 스크롤 성능 개선 */
-    transform: translateZ(0);
     will-change: scroll-position;
 }
 

@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, type CSSProperties, type ReactNode } from 'react';
+import { useEffect, useState, type CSSProperties, type HTMLAttributes, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 
 type ModalShellProps = {
   isOpen: boolean;
@@ -8,8 +9,9 @@ type ModalShellProps = {
   closeOnBackdrop?: boolean;
   className?: string;
   style?: CSSProperties;
+  portalTarget?: Element | null;
   children: ReactNode;
-};
+} & Pick<HTMLAttributes<HTMLDivElement>, 'role' | 'aria-modal'>;
 
 /**
  * 모달 기본 래퍼
@@ -22,8 +24,17 @@ export const ModalShell = ({
   closeOnBackdrop = true,
   className = '',
   style,
+  portalTarget,
+  role,
+  'aria-modal': ariaModal,
   children,
 }: ModalShellProps) => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   useEffect(() => {
     if (!isOpen) return;
 
@@ -38,6 +49,7 @@ export const ModalShell = ({
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
+  if (!mounted) return null;
 
   const handleBackdropClick = (event: React.MouseEvent<HTMLDivElement>) => {
     if (!closeOnBackdrop) return;
@@ -46,14 +58,18 @@ export const ModalShell = ({
     }
   };
 
-  return (
+  const content = (
     <div
       className={`fixed inset-0 z-50 flex items-center justify-center bg-black/50 ${className}`}
       onClick={handleBackdropClick}
       onContextMenu={(e) => e.preventDefault()}
       style={style}
+      role={role}
+      aria-modal={ariaModal}
     >
       {children}
     </div>
   );
+
+  return createPortal(content, portalTarget ?? document.body);
 };
