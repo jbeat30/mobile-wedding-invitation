@@ -285,9 +285,9 @@ export const invitationMock: InvitationMock = {
   },
   theme: {
     fonts: {
-      serif: 'var(--font-gowun), var(--font-nanum), "Gowun Batang", "Nanum Myeongjo", Georgia, serif',
+      serif: 'var(--font-gowun), "Gowun Batang", "Nanum Myeongjo", Georgia, serif',
       serifEn: 'var(--font-crimson), Georgia, "Times New Roman", serif',
-      sans: 'var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif',
+      sans: '-apple-system, BlinkMacSystemFont, "Pretendard", sans-serif',
     },
     colors: {
       background: {
