@@ -58,7 +58,8 @@ export const BgmPlayer = ({ audioUrl, enabled, loop, onPlaybackChange }: BgmPlay
 
     const warmCache = async () => {
       try {
-        await fetch(audioUrl, { signal: controller.signal, cache: 'force-cache' });
+        // no-cors: R2 CORS 설정 없이도 cross-origin 오디오 캐시 워밍 가능 (opaque 응답)
+        await fetch(audioUrl, { signal: controller.signal, cache: 'force-cache', mode: 'no-cors' });
       } catch {
         // 캐시 워밍 실패 시에도 재생 시도는 유지한다.
       }
