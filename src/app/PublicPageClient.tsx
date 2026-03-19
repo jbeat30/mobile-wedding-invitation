@@ -262,13 +262,20 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
 
 
   useEffect(() => {
-    // GSAP 로드 후 ScrollTrigger 설정
-    const setupScrollTrigger = async () => {
-      const { ScrollTrigger } = await import('gsap/ScrollTrigger');
+    let cleanupFn: (() => void) | undefined;
 
-      // 모바일/웹뷰 리사이즈 리프레시 과다 방지용 설정임
+    const init = async () => {
+      // GSAP + ScrollTrigger 단일 로드 (2개 useEffect → 1개로 통합)
+      const [{ gsap }, { ScrollTrigger }] = await Promise.all([
+        import('gsap'),
+        import('gsap/ScrollTrigger'),
+      ]);
+
+      gsap.registerPlugin(ScrollTrigger);
+
+      // 모바일/웹뷰 리사이즈 리프레시 과다 방지용 설정
       ScrollTrigger.config({
-        ignoreMobileResize: true, // 작은 리사이즈 무시
+        ignoreMobileResize: true,
         limitCallbacks: true,
       });
 
@@ -309,170 +316,139 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
         }, 150);
       };
 
+      const handleLoad = () => scheduleRefresh();
+
       window.addEventListener('resize', handleSmartResize);
       window.visualViewport?.addEventListener('resize', handleSmartResize);
       window.addEventListener('orientationchange', handleSmartResize);
-
-      const handleLoad = () => {
-        scheduleRefresh();
-      };
-
       window.addEventListener('load', handleLoad);
-      document.fonts?.ready.then(() => {
-        scheduleRefresh();
-      });
+      document.fonts?.ready.then(() => scheduleRefresh());
 
       const root = contentRef.current;
       if (root) {
-        resizeObserver = new ResizeObserver(() => {
-          scheduleRefresh();
-        });
+        resizeObserver = new ResizeObserver(() => scheduleRefresh());
         resizeObserver.observe(root);
       }
 
-      return () => {
+      // 애니메이션 초기화 (showContent 시에만)
+      let animCleanup: (() => void) | null = null;
+      let mutationObserver: MutationObserver | null = null;
+
+      if (showContent) {
+        const container = contentRef.current;
+        if (container) {
+          const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+          const initScrollAnimations = () => {
+            // data-animate 속성이 붙은 요소만 GSAP 대상에 포함
+            // 요소가 아직 렌더되지 않았으면 false를 반환해 대기
+            const elements = gsap.utils.toArray<HTMLElement>(container.querySelectorAll('[data-animate]'));
+            if (!elements.length) return false;
+
+            const ctx = gsap.context(() => {
+              // 모션 감소 설정일 때는 애니메이션 없이 바로 표시
+              if (prefersReducedMotion) {
+                gsap.set(elements, { opacity: 1, clearProps: 'transform' });
+                return;
+              }
+
+              elements.forEach((element) => {
+                // data-animate 값으로 타입을 지정: fade-up(기본), fade, scale, stagger
+                const type = element.dataset.animate ?? 'fade-up';
+
+                if (type === 'stagger') {
+                  // 그룹 내부 아이템은 data-animate-item으로 관리
+                  const items = gsap.utils
+                    .toArray<HTMLElement>(element.querySelectorAll('[data-animate-item]'))
+                    .slice(0);
+                  if (!items.length) return;
+                  const options = getStaggerOptions(element);
+                  const start = getTriggerStart(element, 80);
+                  const trigger = resolveTriggerElement(element);
+
+                  gsap.set(items, { opacity: 0, y: options.y });
+                  gsap.to(items, {
+                    opacity: 1,
+                    y: 0,
+                    duration: options.duration,
+                    ease: 'power3.out',
+                    stagger: options.stagger,
+                    delay: options.delay,
+                    scrollTrigger: {
+                      // 그룹의 컨테이너 기준으로 스크롤 진입 감지
+                      trigger,
+                      start,
+                      toggleActions: 'play none none none',
+                    },
+                  });
+                  return;
+                }
+
+                // 기본 애니메이션 초기 상태 정의
+                const initial =
+                  type === 'scale'
+                    ? { opacity: 0, y: 14, scale: 0.985 }
+                    : type === 'fade'
+                      ? { opacity: 0 }
+                      : { opacity: 0, y: 18 };
+                const start = getTriggerStart(element, 80);
+                const trigger = resolveTriggerElement(element);
+
+                gsap.set(element, initial);
+                gsap.to(element, {
+                  opacity: 1,
+                  y: 0,
+                  scale: 1,
+                  duration: 1.1,
+                  ease: 'power3.out',
+                  scrollTrigger: {
+                    // 요소 상단이 뷰포트 진입 시점에 트리거
+                    trigger,
+                    start,
+                    toggleActions: 'play none none none',
+                  },
+                });
+              });
+
+              // 모든 트리거 계산을 한 번 갱신
+              ScrollTrigger.refresh();
+            }, container);
+
+            animCleanup = () => ctx.revert();
+            return true;
+          };
+
+          const initialized = initScrollAnimations();
+
+          if (!initialized) {
+            // 동적 섹션이 마운트된 뒤에 GSAP을 초기화
+            mutationObserver = new MutationObserver(() => {
+              if (initScrollAnimations()) {
+                mutationObserver?.disconnect();
+                mutationObserver = null;
+              }
+            });
+
+            mutationObserver.observe(container, { childList: true, subtree: true });
+          }
+        }
+      }
+
+      cleanupFn = () => {
         window.removeEventListener('resize', handleSmartResize);
         window.visualViewport?.removeEventListener('resize', handleSmartResize);
         window.removeEventListener('orientationchange', handleSmartResize);
         window.removeEventListener('load', handleLoad);
         clearTimeout(resizeTimer);
         resizeObserver?.disconnect();
+        mutationObserver?.disconnect();
+        animCleanup?.();
       };
     };
 
-    let cleanupFn: (() => void) | undefined;
+    init();
 
-    setupScrollTrigger().then((cleanup) => {
-      cleanupFn = cleanup;
-    });
-
-    return () => {
-      cleanupFn?.();
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!showContent) return;
-    const container = contentRef.current;
-    if (!container) return;
-
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let observer: MutationObserver | null = null;
-    let cleanup: (() => void) | null = null;
-
-    // GSAP를 동적으로 로드하여 초기 번들 크기 감소
-    const loadGsapAndInitialize = async () => {
-      const [{ gsap }, { ScrollTrigger }] = await Promise.all([
-        import('gsap'),
-        import('gsap/ScrollTrigger'),
-      ]);
-
-      gsap.registerPlugin(ScrollTrigger);
-
-      const initScrollAnimations = () => {
-        // data-animate 속성이 붙은 요소만 GSAP 대상에 포함
-        // 요소가 아직 렌더되지 않았으면 false를 반환해 대기
-        const elements = gsap.utils.toArray<HTMLElement>(container.querySelectorAll('[data-animate]'));
-        if (!elements.length) return false;
-
-        const ctx = gsap.context(() => {
-          // 모션 감소 설정일 때는 애니메이션 없이 바로 표시
-          if (prefersReducedMotion) {
-            gsap.set(elements, { opacity: 1, clearProps: 'transform' });
-            return;
-          }
-
-          elements.forEach((element) => {
-            // data-animate 값으로 타입을 지정: fade-up(기본), fade, scale, stagger
-            const type = element.dataset.animate ?? 'fade-up';
-
-            if (type === 'stagger') {
-              // 그룹 내부 아이템은 data-animate-item으로 관리
-              const items = gsap.utils
-                .toArray<HTMLElement>(element.querySelectorAll('[data-animate-item]'))
-                .slice(0);
-              if (!items.length) return;
-              const options = getStaggerOptions(element);
-              const start = getTriggerStart(element, 80);
-              const trigger = resolveTriggerElement(element);
-
-              gsap.set(items, { opacity: 0, y: options.y });
-              gsap.to(items, {
-                opacity: 1,
-                y: 0,
-                duration: options.duration,
-                ease: 'power3.out',
-                stagger: options.stagger,
-                delay: options.delay,
-                scrollTrigger: {
-                  // 그룹의 컨테이너 기준으로 스크롤 진입 감지
-                  trigger,
-                  start,
-                  toggleActions: 'play none none none',
-                },
-              });
-              return;
-            }
-
-            // 기본 애니메이션 초기 상태 정의
-            const initial =
-              type === 'scale'
-                ? { opacity: 0, y: 14, scale: 0.985 }
-                : type === 'fade'
-                  ? { opacity: 0 }
-                  : { opacity: 0, y: 18 };
-            const start = getTriggerStart(element, 80);
-            const trigger = resolveTriggerElement(element);
-
-            gsap.set(element, initial);
-            gsap.to(element, {
-              opacity: 1,
-              y: 0,
-              scale: 1,
-              duration: 1.1,
-              ease: 'power3.out',
-              scrollTrigger: {
-                // 요소 상단이 뷰포트 진입 시점에 트리거
-                trigger,
-                start,
-                toggleActions: 'play none none none',
-              },
-            });
-          });
-
-          // 모든 트리거 계산을 한 번 갱신
-          ScrollTrigger.refresh();
-        }, container);
-
-        // cleanup으로 애니메이션/트리거를 정리
-        cleanup = () => {
-          ctx.revert();
-        };
-        return true;
-      };
-
-      const initialized = initScrollAnimations();
-
-      if (!initialized) {
-        // 동적 섹션이 마운트된 뒤에 GSAP을 초기화
-        observer = new MutationObserver(() => {
-          const nextInitialized = initScrollAnimations();
-          if (nextInitialized) {
-            observer?.disconnect();
-            observer = null;
-          }
-        });
-
-        observer.observe(container, { childList: true, subtree: true });
-      }
-    };
-
-    loadGsapAndInitialize();
-
-    return () => {
-      observer?.disconnect();
-      cleanup?.();
-    };
+    return () => cleanupFn?.();
   }, [showContent]);
 
   return (

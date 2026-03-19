@@ -1,31 +1,16 @@
 import type { Metadata, Viewport } from 'next';
-import { Geist, Nanum_Myeongjo, Gowun_Batang, Crimson_Pro } from 'next/font/google';
+import { Gowun_Batang, Crimson_Pro } from 'next/font/google';
 import './globals.css';
 import { loadOgMetadata } from '@/app/invitationData';
 import { getCachedTheme } from '@/lib/invitationCache';
 import { Agentation } from 'agentation';
-
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-  display: 'swap',
-  preload: false,
-});
-
-const nanumMyeongjo = Nanum_Myeongjo({
-  weight: ['400', '700'],
-  subsets: ['latin'],
-  variable: '--font-nanum',
-  display: 'swap',
-  preload: false,
-});
 
 const gowunBatang = Gowun_Batang({
   weight: ['400', '700'],
   subsets: ['latin'],
   variable: '--font-gowun',
   display: 'swap',
-  preload: true,
+  preload: false,
 });
 
 const crimsonPro = Crimson_Pro({
@@ -113,6 +98,13 @@ export default async function RootLayout({
 }>) {
   // React.cache()로 캐시됨 - page.tsx에서 재호출해도 중복 쿼리 없음
   const theme = await getCachedTheme();
+  const r2Origin = (() => {
+    try {
+      return process.env.R2_PUBLIC_BASE_URL ? new URL(process.env.R2_PUBLIC_BASE_URL).origin : null;
+    } catch {
+      return null;
+    }
+  })();
   const themeStyle = {
     '--font-serif': theme.fonts.serif,
     '--font-serif-en': theme.fonts.serifEn,
@@ -146,10 +138,12 @@ export default async function RootLayout({
   return (
     <html
       lang="ko"
-      className={`${geistSans.variable} ${nanumMyeongjo.variable} ${gowunBatang.variable} ${crimsonPro.variable}`}
+      className={`${gowunBatang.variable} ${crimsonPro.variable}`}
       style={themeStyle}
     >
-      <head />
+      <head>
+        {r2Origin && <link rel="preconnect" href={r2Origin} crossOrigin="anonymous" />}
+      </head>
       <body className="antialiased [text-rendering:optimizeLegibility] isolate min-[481px]:[background:radial-gradient(circle_at_top,_#FAF9F7_0%,_#F0EDE8_100%)]">
         {children}
         {process.env.NODE_ENV === 'development' && <Agentation />}
