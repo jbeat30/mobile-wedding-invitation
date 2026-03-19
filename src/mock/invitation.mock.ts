@@ -51,10 +51,6 @@ export type InvitationTheme = {
 export type InvitationAssets = {
   heroImage: string;
   loadingImage: string;
-  share: {
-    ogImage: string;
-    kakaoImage: string;
-  };
 };
 
 export type InvitationStorage = {
@@ -124,11 +120,12 @@ export type InvitationGuestbook = {
 };
 
 export type InvitationRsvpField = {
-  key: 'attendance' | 'meal' | 'companions' | 'notes';
+  key: 'name' | 'attendance' | 'meal' | 'companions' | 'notes';
   label: string;
   required: boolean;
   options?: string[];
   placeholder?: string;
+  inputType?: 'text' | 'textarea';
 };
 
 export type InvitationRsvpConsent = {
@@ -192,9 +189,6 @@ export type InvitationShare = {
   og_description: string | null;
   developer: string;
   og_image_url: string | null;
-  kakao_title: string | null;
-  kakao_description: string | null;
-  kakao_image_url: string | null;
   kakao_button_label: string | null;
 };
 
@@ -282,10 +276,6 @@ export type InvitationMock = {
 const assets: InvitationAssets = {
   heroImage: '/mock/main-image.png',
   loadingImage: '/mock/main-image.png',
-  share: {
-    ogImage: 'https://placehold.co/1200x630/F6EFE7/c19a7b?text=Wedding+Invitation',
-    kakaoImage: 'https://placehold.co/800x400/F6EFE7/c19a7b?text=Wedding',
-  },
 };
 
 export const invitationMock: InvitationMock = {
@@ -473,10 +463,7 @@ export const invitationMock: InvitationMock = {
       og_title: '강신랑 · 장신부 결혼식에 초대합니다',
       og_description: '2026년 05월 16일 오후 3시 00분 | 채림 웨딩홀',
       developer: 'jbeat',
-      og_image_url: assets.share.ogImage,
-      kakao_title: '결혼식에 초대합니다',
-      kakao_description: '강신랑 · 장신부\n2026년 05월 16일 오후 3시 00분\n채림 웨딩홀',
-      kakao_image_url: assets.share.kakaoImage,
+      og_image_url: 'https://placehold.co/1200x630/F6EFE7/c19a7b?text=Wedding+Invitation',
       kakao_button_label: '청첩장 보기',
     },
     rsvp: {

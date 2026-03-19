@@ -1,0 +1,135 @@
+{
+  "version": "2.0",
+  "lastUpdated": "2026-03-19T03:38:39.066Z",
+  "activeFeatures": [
+    "mock",
+    "mobile-wedding-invitation",
+    "sections"
+  ],
+  "primaryFeature": "mock",
+  "features": {
+    "mock": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-03-19T02:25:29.958Z",
+        "lastUpdated": "2026-03-19T02:25:29.958Z"
+      },
+      "lastFile": "/Users/g/WebstormProjects/mobile-wedding-invitation/src/mock/invitation.mock.ts"
+    },
+    "mobile-wedding-invitation": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-03-19T02:25:45.376Z",
+        "lastUpdated": "2026-03-19T02:25:45.376Z"
+      },
+      "lastFile": "/Users/g/WebstormProjects/mobile-wedding-invitation/src/app/invitationData.ts"
+    },
+    "sections": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-03-19T02:25:58.927Z",
+        "lastUpdated": "2026-03-19T03:38:39.066Z"
+      },
+      "lastFile": "/Users/g/WebstormProjects/mobile-wedding-invitation/src/components/sections/RSVPSection.tsx"
+    }
+  },
+  "pipeline": {
+    "currentPhase": 1,
+    "level": "Dynamic",
+    "phaseHistory": []
+  },
+  "session": {
+    "startedAt": "2026-03-19T02:15:03.118Z",
+    "onboardingCompleted": false,
+    "lastActivity": "2026-03-19T03:38:39.066Z"
+  },
+  "history": [
+    {
+      "timestamp": "2026-03-19T02:25:29.958Z",
+      "feature": "mock",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-19T02:25:45.376Z",
+      "feature": "mobile-wedding-invitation",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-19T02:25:58.927Z",
+      "feature": "sections",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-19T02:26:14.651Z",
+      "feature": "sections",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-19T03:36:47.781Z",
+      "feature": "sections",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-19T03:37:00.748Z",
+      "feature": "sections",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-19T03:37:13.972Z",
+      "feature": "sections",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-19T03:37:28.069Z",
+      "feature": "sections",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-19T03:37:41.160Z",
+      "feature": "sections",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-19T03:37:59.352Z",
+      "feature": "sections",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-19T03:38:25.514Z",
+      "feature": "sections",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-19T03:38:39.066Z",
+      "feature": "sections",
+      "phase": "do",
+      "action": "updated"
+    }
+  ]
+}

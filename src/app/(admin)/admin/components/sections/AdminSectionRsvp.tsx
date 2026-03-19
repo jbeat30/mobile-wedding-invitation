@@ -1,8 +1,12 @@
 'use client';
 
-import { useEffect, type Dispatch, type SetStateAction } from 'react';
+import { useEffect, useTransition, type Dispatch, type SetStateAction } from 'react';
 import type { AdminDashboardData } from '@/app/(admin)/admin/data';
-import { updateRsvpAction } from '@/app/(admin)/admin/actions/rsvp';
+import {
+  deleteBulkRsvpAction,
+  deleteRsvpResponseAction,
+  updateRsvpAction,
+} from '@/app/(admin)/admin/actions/rsvp';
 import { AdminForm } from '@/app/(admin)/admin/components/AdminForm';
 import { AdminSubmitButton } from '@/app/(admin)/admin/components/AdminSubmitButton';
 import { AdminSwitchField } from '@/app/(admin)/admin/components/AdminSwitchField';
@@ -12,8 +16,9 @@ import { DateTimePicker } from '@/components/ui/DateTimePicker';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/Button';
 import type { ColumnDef } from '@tanstack/react-table';
-import { ClipboardListIcon } from 'lucide-react';
+import { ClipboardListIcon, Trash2Icon } from 'lucide-react';
 
 type AdminSectionRsvpProps = {
   rsvp: AdminDashboardData['rsvp'];
@@ -35,6 +40,8 @@ export const AdminSectionRsvp = ({
   rsvpPage,
   setRsvpPage,
 }: AdminSectionRsvpProps) => {
+  const [isPending, startTransition] = useTransition();
+
   useEffect(() => {
     const pageSize = 8;
     const totalPages = Math.max(1, Math.ceil(rsvpResponses.length / pageSize));
@@ -42,6 +49,14 @@ export const AdminSectionRsvp = ({
       setRsvpPage(totalPages);
     }
   }, [rsvpResponses.length, rsvpPage, setRsvpPage]);
+
+  const handleBulkDelete = (ids: string[]) => {
+    startTransition(async () => {
+      const formData = new FormData();
+      formData.set('response_ids', ids.join(','));
+      await deleteBulkRsvpAction(formData);
+    });
+  };
 
   const columns: ColumnDef<(typeof rsvpResponses)[number]>[] = [
     {
@@ -71,6 +86,23 @@ export const AdminSectionRsvp = ({
         <span className="text-[var(--text-muted)]">
           {new Date(row.original.submittedAt).toLocaleDateString('ko-KR')}
         </span>
+      ),
+    },
+    {
+      id: 'actions',
+      header: '',
+      cell: ({ row }) => (
+        <AdminForm
+          action={deleteRsvpResponseAction}
+          confirmTitle="RSVP 응답을 삭제하시겠습니까?"
+          confirmDescription="삭제된 응답은 복구할 수 없습니다."
+          successMessage="RSVP 응답이 삭제되었습니다"
+        >
+          <input type="hidden" name="response_id" value={row.original.id} />
+          <Button type="submit" variant="ghost" size="icon" className="text-red-500 hover:text-red-700 hover:bg-red-50">
+            <Trash2Icon className="h-4 w-4" />
+          </Button>
+        </AdminForm>
       ),
     },
   ];
@@ -169,7 +201,13 @@ export const AdminSectionRsvp = ({
             pageSize={8}
             onPageChange={setRsvpPage}
             emptyMessage="등록된 RSVP가 없습니다"
+            enableRowSelection
+            getRowId={(row) => row.id}
+            onDeleteSelected={handleBulkDelete}
           />
+          {isPending && (
+            <p className="mt-2 text-center text-[13px] text-[var(--text-muted)]">삭제 중...</p>
+          )}
         </CardContent>
       </Card>
     </div>

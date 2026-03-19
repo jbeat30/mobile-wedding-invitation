@@ -51,9 +51,9 @@ export const ShareSection = ({ share, title }: ShareSectionProps) => {
       return;
     }
 
-    const kakaoTitle = share.kakao_title || share.og_title || share.description;
-    const kakaoDescription = share.kakao_description || share.og_description || share.description;
-    const kakaoImageUrl = share.kakao_image_url || share.og_image_url || '';
+    const kakaoTitle = share.og_title || share.description;
+    const kakaoDescription = share.og_description || share.description;
+    const kakaoImageUrl = share.og_image_url || '';
     const kakaoButtonLabel = share.kakao_button_label || '청첩장 보기';
 
     try {

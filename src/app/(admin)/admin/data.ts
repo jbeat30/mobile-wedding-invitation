@@ -37,8 +37,6 @@ type InvitationAssetsRow = {
   id: string;
   hero_image: string | null;
   loading_image: string | null;
-  share_og_image: string | null;
-  share_kakao_image: string | null;
 };
 
 type InvitationGreetingRow = {
@@ -56,9 +54,6 @@ type InvitationShareRow = {
   og_description: string | null;
   developer: string | null;
   og_image_url: string | null;
-  kakao_title: string | null;
-  kakao_description: string | null;
-  kakao_image_url: string | null;
   kakao_button_label: string | null;
 };
 
@@ -525,8 +520,6 @@ export const loadAdminData = async () => {
       id: assets.id,
       hero_image: assets.hero_image,
       loading_image: assets.loading_image,
-      share_og_image: assets.share_og_image,
-      share_kakao_image: assets.share_kakao_image,
     },
     greeting: {
       id: greeting.id,
@@ -541,9 +534,6 @@ export const loadAdminData = async () => {
       og_description: share.og_description,
       developer: share.developer || 'jbeat',
       og_image_url: share.og_image_url,
-      kakao_title: share.kakao_title,
-      kakao_description: share.kakao_description,
-      kakao_image_url: share.kakao_image_url,
       kakao_button_label: share.kakao_button_label,
     },
     bgm: {

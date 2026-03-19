@@ -6,7 +6,7 @@ import { FieldLabel } from '@/components/ui/FieldLabel';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { SurfaceCard } from '@/components/ui/SurfaceCard';
 import { SelectField } from '@/components/ui/SelectField';
-import { TextArea } from '@/components/ui/TextInput';
+import { TextArea, TextInput } from '@/components/ui/TextInput';
 import { Toast } from '@/components/ui/Toast';
 import { Button } from '@/components/ui/Button';
 import {
@@ -22,6 +22,38 @@ import {
 import { formatMonthDay } from '@/utils/date';
 import { postJson } from '@/utils/api';
 import { hasRequiredFields, normalizeCompanions } from '@/utils/rsvp';
+
+// 쿨다운 유틸리티
+const RSVP_COOLDOWN_KEY = 'rsvp-last-submit';
+const COOLDOWN_DURATION = 5 * 60 * 1000; // 5분
+
+const getRsvpRemainingCooldown = (): number => {
+  if (typeof window === 'undefined') return 0;
+  try {
+    const stored = localStorage.getItem(RSVP_COOLDOWN_KEY);
+    if (!stored) return 0;
+    const elapsed = Date.now() - parseInt(stored, 10);
+    const remaining = COOLDOWN_DURATION - elapsed;
+    return remaining > 0 ? remaining : 0;
+  } catch {
+    return 0;
+  }
+};
+
+const setRsvpLastSubmitTime = () => {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(RSVP_COOLDOWN_KEY, Date.now().toString());
+  } catch {
+    // ignore
+  }
+};
+
+const formatCooldownTime = (ms: number): string => {
+  const minutes = Math.floor(ms / 60000);
+  const seconds = Math.floor((ms % 60000) / 1000);
+  return `${minutes}분 ${seconds}초`;
+};
 
 type RSVPSectionProps = {
   rsvp: InvitationRsvp;
@@ -92,6 +124,16 @@ export const RSVPSection = ({ rsvp, storageKey, title }: RSVPSectionProps) => {
       event.preventDefault();
       if (!isValid() || isSubmitting) return;
 
+      // 쿨다운 체크
+      const remainingCooldown = getRsvpRemainingCooldown();
+      if (remainingCooldown > 0) {
+        const timeLeft = formatCooldownTime(remainingCooldown);
+        setToastMessage(`잠시 후 다시 시도해주세요 (${timeLeft} 남음)`);
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 3000);
+        return;
+      }
+
       // 확인 다이얼로그 표시
       setShowConfirmDialog(true);
     },
@@ -120,6 +162,9 @@ export const RSVPSection = ({ rsvp, storageKey, title }: RSVPSectionProps) => {
 
       // API 성공 후에만 상태 업데이트
       localStorage.setItem(storageKey, JSON.stringify(payload));
+
+      // 쿨다운 타이머 설정
+      setRsvpLastSubmitTime();
 
       // 폼 초기화하여 전송되었음을 명확히 표시
       setFormData({});
@@ -207,6 +252,15 @@ export const RSVPSection = ({ rsvp, storageKey, title }: RSVPSectionProps) => {
                       ))
                     )}
                   </SelectField>
+                ) : field.inputType === 'text' ? (
+                  <TextInput
+                    id={`rsvp-${field.key}`}
+                    type="text"
+                    value={formData[field.key] || ''}
+                    onChange={(e) => handleChange(field.key, e.target.value)}
+                    placeholder={field.placeholder}
+                    required={field.required}
+                  />
                 ) : (
                   <TextArea
                     id={`rsvp-${field.key}`}

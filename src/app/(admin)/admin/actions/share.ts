@@ -45,14 +45,8 @@ export const updateShareAction = async (formData: FormData) => {
     if (formData.has('og_description')) {
       payload.og_description = optionalString(formData.get('og_description'), '', 500);
     }
-    if (formData.has('kakao_title')) {
-      payload.kakao_title = optionalString(formData.get('kakao_title'), '', 200);
-    }
-    if (formData.has('kakao_description')) {
-      payload.kakao_description = optionalString(formData.get('kakao_description'), '', 500);
-    }
-    if (formData.has('kakao_image_url')) {
-      payload.kakao_image_url = optionalString(formData.get('kakao_image_url'), '', 500);
+    if (formData.has('og_image_url')) {
+      payload.og_image_url = optionalString(formData.get('og_image_url'), '', 500);
     }
     if (formData.has('kakao_button_label')) {
       payload.kakao_button_label = optionalString(formData.get('kakao_button_label'), '', 50);

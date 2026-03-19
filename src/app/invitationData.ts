@@ -16,6 +16,13 @@ const DEFAULT_TIMEZONE = 'Asia/Seoul';
 /** 기본 RSVP 필드 설정 */
 const DEFAULT_RSVP_FIELDS: InvitationRsvpField[] = [
   {
+    key: 'name',
+    label: '이름',
+    required: true,
+    inputType: 'text',
+    placeholder: '이름을 입력해주세요',
+  },
+  {
     key: 'attendance',
     label: '참석 여부',
     required: true,
@@ -176,9 +183,6 @@ type InvitationShareRow = {
   og_description: string | null;
   developer: string | null;
   og_image_url: string | null;
-  kakao_title: string | null;
-  kakao_description: string | null;
-  kakao_image_url: string | null;
   kakao_button_label: string | null;
   section_title: string;
 };
@@ -187,8 +191,6 @@ type InvitationShareRow = {
 type InvitationAssetsRow = {
   hero_image: string | null;
   loading_image: string | null;
-  share_og_image: string | null;
-  share_kakao_image: string | null;
 };
 
 /** BGM 설정 DB 로우 타입 */
@@ -388,10 +390,6 @@ export const loadInvitationView = async (): Promise<InvitationMock> => {
       assets: {
         heroImage: assets.hero_image || '',
         loadingImage: assets.loading_image || '',
-        share: {
-          ogImage: assets.share_og_image || '',
-          kakaoImage: assets.share_kakao_image || '',
-        },
       },
       content: {
         loading: {
@@ -472,9 +470,6 @@ export const loadInvitationView = async (): Promise<InvitationMock> => {
           og_description: share.og_description,
           developer: share.developer || 'jbeat',
           og_image_url: share.og_image_url,
-          kakao_title: share.kakao_title,
-          kakao_description: share.kakao_description,
-          kakao_image_url: share.kakao_image_url,
           kakao_button_label: share.kakao_button_label,
         },
         rsvp: {
@@ -594,26 +589,18 @@ export const loadOgMetadata = async (): Promise<OgMetadata> => {
     // React.cache()로 중복 방지
     const invitation = await getCachedInvitation();
 
-    const [shareResult, assetsResult] = await Promise.all([
-      supabase
-        .from('invitation_share')
-        .select('description, og_title, og_description, og_image_url, developer')
-        .eq('invitation_id', invitation.id)
-        .maybeSingle(),
-      supabase
-        .from('invitation_assets')
-        .select('share_og_image')
-        .eq('invitation_id', invitation.id)
-        .maybeSingle(),
-    ]);
+    const shareResult = await supabase
+      .from('invitation_share')
+      .select('description, og_title, og_description, og_image_url, developer')
+      .eq('invitation_id', invitation.id)
+      .maybeSingle();
 
     const share = shareResult.data as InvitationShareRow | null;
-    const assets = assetsResult.data as Pick<InvitationAssetsRow, 'share_og_image'> | null;
 
     return {
       title: share?.og_title || defaultMeta.title,
       description: share?.og_description || share?.description || defaultMeta.description,
-      imageUrl: share?.og_image_url || assets?.share_og_image || null,
+      imageUrl: share?.og_image_url || null,
       type: 'website',
       url: currentUrl,
       siteName: share?.og_title || defaultMeta.title,
