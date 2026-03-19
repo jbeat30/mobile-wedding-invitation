@@ -27,6 +27,7 @@ type UploadState = {
   isUploading: boolean;
   successCount: number;
   failedItems: UploadItem[];
+  successUrls: string[];
 };
 
 type AdminGalleryUploadFieldProps = {
@@ -72,8 +73,9 @@ export const AdminGalleryUploadField = ({
       isUploading: uploadingCount > 0,
       successCount: successItems.length,
       failedItems,
+      successUrls: successItems.map((item) => item.result?.url ?? '').filter(Boolean),
     });
-  }, [failedItems, onUploadStateChange, successItems.length, uploadingCount]);
+  }, [failedItems, onUploadStateChange, successItems, uploadingCount]);
 
   /**
    * 폼 상태 변경 이벤트 전달

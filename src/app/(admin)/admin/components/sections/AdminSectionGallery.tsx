@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
 import type { AdminDashboardData } from '@/app/(admin)/admin/data';
 import {
@@ -37,6 +37,7 @@ type GalleryUploadState = {
   isUploading: boolean;
   successCount: number;
   failedItems: Array<{ id: string }>;
+  successUrls: string[];
 };
 
 type AdminSectionGalleryProps = {
@@ -69,6 +70,9 @@ export const AdminSectionGallery = ({
   orderSaved,
   setOrderSaved,
 }: AdminSectionGalleryProps) => {
+  const [isPendingUpload, startUploadTransition] = useTransition();
+  const submittedUrlsRef = useRef<Set<string>>(new Set());
+  const uploadStateRef = useRef<GalleryUploadState>({ isUploading: false, successCount: 0, failedItems: [], successUrls: [] });
   const [orderSaving, setOrderSaving] = useState(false);
   const [orderError, setOrderError] = useState<string | null>(null);
   const [orderConfirmOpen, setOrderConfirmOpen] = useState(false);
@@ -78,6 +82,7 @@ export const AdminSectionGallery = ({
     isUploading: false,
     successCount: 0,
     failedItems: [],
+    successUrls: [],
   });
   const [savedOrderIds, setSavedOrderIds] = useState(() =>
     initialGalleryItems.map((item) => item.id)
@@ -122,8 +127,30 @@ export const AdminSectionGallery = ({
    * @param state GalleryUploadState
    */
   const handleUploadStateChange = useCallback((state: GalleryUploadState) => {
+    uploadStateRef.current = state;
     setUploadState(state);
   }, []);
+
+  // 업로드 완료 시 자동 저장
+  useEffect(() => {
+    if (uploadState.isUploading) return;
+    const newUrls = uploadStateRef.current.successUrls.filter(
+      (url) => !submittedUrlsRef.current.has(url)
+    );
+    if (newUrls.length === 0) return;
+    newUrls.forEach((url) => submittedUrlsRef.current.add(url));
+    startUploadTransition(async () => {
+      const fd = new FormData();
+      fd.append('gallery_id', gallery.id);
+      newUrls.forEach((url) => fd.append('image_src', url));
+      const result = await addGalleryImageAction(fd);
+      if (result?.ok === false) {
+        openToast(result.message || '이미지 추가에 실패했습니다');
+      } else {
+        openToast('이미지가 추가되었습니다');
+      }
+    });
+  }, [uploadState.isUploading, uploadState.successCount, gallery.id]);
 
   return (
     <div className="space-y-6">
@@ -189,32 +216,25 @@ export const AdminSectionGallery = ({
 
           <div className="flex flex-col gap-4">
             <div className="rounded-[12px] border border-[var(--border-light)] bg-white/70 p-4">
-              <h3 className="text-[14px] font-semibold text-[var(--text-primary)]">이미지 추가</h3>
-              <AdminForm
-                action={addGalleryImageAction}
-                successMessage="이미지가 추가되었습니다"
-                className="mt-4 grid gap-4 md:grid-cols-2"
-              >
-                <input type="hidden" name="gallery_id" value={gallery.id} />
+              <div className="flex items-center justify-between">
+                <h3 className="text-[14px] font-semibold text-[var(--text-primary)]">이미지 추가</h3>
+                {isPendingUpload && (
+                  <span className="inline-flex items-center gap-1.5 text-[13px] text-[var(--text-secondary)]">
+                    <span className="h-3 w-3 animate-spin rounded-full border border-[var(--text-secondary)] border-t-transparent" />
+                    저장 중...
+                  </span>
+                )}
+              </div>
+              <div className="mt-4">
                 <AdminGalleryUploadField
                   id="image_src"
                   name="image_src"
                   label="이미지 파일"
                   sectionId="gallery/images"
-                  hint="2MB 초과 시 자동 압축"
-                  required
+                  hint="업로드 완료 후 자동으로 저장됩니다 (2MB 초과 시 자동 압축)"
                   onUploadStateChange={handleUploadStateChange}
                 />
-                <div className="md:col-span-2 flex justify-end">
-                  <AdminSubmitButton
-                    size="sm"
-                    pendingText="추가 중..."
-                    disabled={uploadState.isUploading || uploadState.successCount === 0}
-                  >
-                    이미지 추가
-                  </AdminSubmitButton>
-                </div>
-              </AdminForm>
+              </div>
             </div>
 
             <div className="rounded-[12px] border border-[var(--border-light)] bg-white/70 p-4">

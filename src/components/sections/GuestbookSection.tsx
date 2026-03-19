@@ -376,7 +376,7 @@ export const GuestbookSection = ({ guestbook, storageKey, title }: GuestbookSect
 
             {guestbook.enablePassword && (
               <div className="flex flex-col gap-2">
-                <FieldLabel htmlFor="guest-password">비밀번호</FieldLabel>
+                <FieldLabel htmlFor="guest-password">비밀번호 <span className="text-[12px]">(수정·삭제시 사용)</span></FieldLabel>
                 <TextInput
                   id="guest-password"
                   name="guest-password"
