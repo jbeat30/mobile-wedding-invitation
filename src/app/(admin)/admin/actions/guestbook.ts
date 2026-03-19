@@ -13,6 +13,7 @@ import {
   isValidationError,
   numberWithDefault,
   optionalString,
+  requiredString,
   safeRequiredString,
 } from './validation';
 
@@ -58,6 +59,58 @@ export const updateGuestbookAction = async (formData: FormData) => {
 
     assertNoError(
       await supabase.from('invitation_guestbook').update(payload).eq('invitation_id', id)
+    );
+    revalidateAdmin();
+    return { ok: true };
+  } catch (error) {
+    if (isValidationError(error)) {
+      return { ok: false, fieldErrors: error.fieldErrors };
+    }
+    return { ok: false, message: getActionErrorMessage(error) };
+  }
+};
+
+/**
+ * 방명록 단건 삭제
+ */
+export const deleteGuestbookEntryAction = async (formData: FormData) => {
+  await requireAdminSession();
+  const supabase = createSupabaseAdmin();
+  try {
+    const entryId = requiredString(formData.get('entry_id'), 'entry_id', 'entry_id', 100);
+    assertNoError(
+      await supabase.from('invitation_guestbook_entries').delete().eq('id', entryId)
+    );
+    revalidateAdmin();
+    return { ok: true };
+  } catch (error) {
+    if (isValidationError(error)) {
+      return { ok: false, fieldErrors: error.fieldErrors };
+    }
+    return { ok: false, message: getActionErrorMessage(error) };
+  }
+};
+
+/**
+ * 방명록 다중 삭제
+ */
+export const deleteBulkGuestbookAction = async (formData: FormData) => {
+  await requireAdminSession();
+  const supabase = createSupabaseAdmin();
+  try {
+    const idsRaw = formData.get('entry_ids');
+    const ids =
+      typeof idsRaw === 'string'
+        ? idsRaw
+            .split(',')
+            .map((s) => s.trim())
+            .filter(Boolean)
+        : [];
+    if (ids.length === 0) {
+      return { ok: false, message: '삭제할 항목을 선택해주세요.' };
+    }
+    assertNoError(
+      await supabase.from('invitation_guestbook_entries').delete().in('id', ids)
     );
     revalidateAdmin();
     return { ok: true };

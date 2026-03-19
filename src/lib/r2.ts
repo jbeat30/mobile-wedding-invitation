@@ -271,3 +271,14 @@ export const uploadToR2 = async ({
     originalName,
   };
 };
+
+/**
+ * R2 파일 삭제
+ * @param key file_key (e.g. `invitations/{sectionId}/{uuid}.ext`)
+ */
+export const deleteFromR2 = async (key: string): Promise<void> => {
+  const response = await requestR2({ method: 'DELETE', key });
+  if (!response.ok && response.status !== 404) {
+    throw new Error(`R2 delete failed: ${response.status}`);
+  }
+};

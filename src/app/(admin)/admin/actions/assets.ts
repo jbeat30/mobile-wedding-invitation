@@ -8,6 +8,7 @@ import {
   requireAdminSession,
   revalidateAdmin,
 } from './shared';
+import { deleteFromR2 } from '@/lib/r2';
 import {
   isValidationError,
   numberWithDefault,
@@ -245,6 +246,28 @@ export const deleteGalleryImageAction = async (formData: FormData) => {
   const supabase = createSupabaseAdmin();
   try {
     const imageId = requiredString(formData.get('image_id'), 'image_id', 'image_id', 100);
+
+    // 이미지 src 조회
+    const { data: image } = await supabase
+      .from('invitation_gallery_images')
+      .select('src')
+      .eq('id', imageId)
+      .single();
+
+    // R2 파일 및 uploaded_files 정리
+    if (image?.src) {
+      const { data: fileRecord } = await supabase
+        .from('uploaded_files')
+        .select('file_key')
+        .eq('file_url', image.src)
+        .maybeSingle();
+
+      if (fileRecord?.file_key) {
+        await deleteFromR2(fileRecord.file_key);
+        await supabase.from('uploaded_files').delete().eq('file_key', fileRecord.file_key);
+      }
+    }
+
     assertNoError(await supabase.from('invitation_gallery_images').delete().eq('id', imageId));
     revalidateAdmin();
     return { ok: true };

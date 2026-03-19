@@ -1,8 +1,12 @@
 'use client';
 
-import { useEffect, type Dispatch, type SetStateAction } from 'react';
+import { useEffect, useTransition, type Dispatch, type SetStateAction } from 'react';
 import type { AdminDashboardData } from '@/app/(admin)/admin/data';
-import { updateGuestbookAction } from '@/app/(admin)/admin/actions/guestbook';
+import {
+  deleteBulkGuestbookAction,
+  deleteGuestbookEntryAction,
+  updateGuestbookAction,
+} from '@/app/(admin)/admin/actions/guestbook';
 import { AdminForm } from '@/app/(admin)/admin/components/AdminForm';
 import { AdminSelectField } from '@/app/(admin)/admin/components/AdminSelectField';
 import { AdminSubmitButton } from '@/app/(admin)/admin/components/AdminSubmitButton';
@@ -11,8 +15,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DataTable } from '@/components/ui/data-table';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/Button';
 import type { ColumnDef } from '@tanstack/react-table';
-import { MessageSquareIcon } from 'lucide-react';
+import { MessageSquareIcon, Trash2Icon } from 'lucide-react';
 
 type AdminSectionGuestbookProps = {
   guestbook: AdminDashboardData['guestbook'];
@@ -34,6 +39,8 @@ export const AdminSectionGuestbook = ({
   guestbookPage,
   setGuestbookPage,
 }: AdminSectionGuestbookProps) => {
+  const [isPending, startTransition] = useTransition();
+
   useEffect(() => {
     const pageSize = 6;
     const totalPages = Math.max(1, Math.ceil(guestbookEntries.length / pageSize));
@@ -41,6 +48,14 @@ export const AdminSectionGuestbook = ({
       setGuestbookPage(totalPages);
     }
   }, [guestbookEntries.length, guestbookPage, setGuestbookPage]);
+
+  const handleBulkDelete = (ids: string[]) => {
+    startTransition(async () => {
+      const formData = new FormData();
+      formData.set('entry_ids', ids.join(','));
+      await deleteBulkGuestbookAction(formData);
+    });
+  };
 
   const columns: ColumnDef<(typeof guestbookEntries)[number]>[] = [
     {
@@ -62,6 +77,23 @@ export const AdminSectionGuestbook = ({
         <span className="text-[var(--text-muted)]">
           {new Date(row.original.createdAt).toLocaleDateString('ko-KR')}
         </span>
+      ),
+    },
+    {
+      id: 'actions',
+      header: '',
+      cell: ({ row }) => (
+        <AdminForm
+          action={deleteGuestbookEntryAction}
+          confirmTitle="방명록을 삭제하시겠습니까?"
+          confirmDescription="삭제된 방명록은 복구할 수 없습니다."
+          successMessage="방명록이 삭제되었습니다"
+        >
+          <input type="hidden" name="entry_id" value={row.original.id} />
+          <Button type="submit" variant="ghost" size="icon" className="text-red-500 hover:text-red-700 hover:bg-red-50">
+            <Trash2Icon className="h-4 w-4" />
+          </Button>
+        </AdminForm>
       ),
     },
   ];
@@ -168,7 +200,13 @@ export const AdminSectionGuestbook = ({
             pageSize={6}
             onPageChange={setGuestbookPage}
             emptyMessage="등록된 방명록이 없습니다"
+            enableRowSelection
+            getRowId={(row) => row.id}
+            onDeleteSelected={handleBulkDelete}
           />
+          {isPending && (
+            <p className="mt-2 text-center text-[13px] text-[var(--text-muted)]">삭제 중...</p>
+          )}
         </div>
       </CardContent>
     </Card>

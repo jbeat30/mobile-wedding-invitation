@@ -45,6 +45,9 @@ export const updateShareAction = async (formData: FormData) => {
     if (formData.has('og_description')) {
       payload.og_description = optionalString(formData.get('og_description'), '', 500);
     }
+    if (formData.has('og_image_url')) {
+      payload.og_image_url = optionalString(formData.get('og_image_url'), '', 500);
+    }
     if (formData.has('kakao_title')) {
       payload.kakao_title = optionalString(formData.get('kakao_title'), '', 200);
     }
@@ -61,6 +64,16 @@ export const updateShareAction = async (formData: FormData) => {
     assertNoError(
       await supabase.from('invitation_share').update(payload).eq('invitation_id', id)
     );
+
+    // invitation_assets의 share_og_image도 동기화 (SQL Step 2 적용 전까지)
+    if (formData.has('og_image_url')) {
+      const ogImageUrl = optionalString(formData.get('og_image_url'), '', 500);
+      await supabase
+        .from('invitation_assets')
+        .update({ share_og_image: ogImageUrl })
+        .eq('invitation_id', id);
+    }
+
     revalidateAdmin();
     return { ok: true };
   } catch (error) {
