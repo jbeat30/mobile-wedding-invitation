@@ -124,11 +124,12 @@ export type InvitationGuestbook = {
 };
 
 export type InvitationRsvpField = {
-  key: 'attendance' | 'meal' | 'companions' | 'notes';
+  key: 'name' | 'attendance' | 'meal' | 'companions' | 'notes';
   label: string;
   required: boolean;
   options?: string[];
   placeholder?: string;
+  inputType?: 'text' | 'textarea';
 };
 
 export type InvitationRsvpConsent = {

@@ -16,6 +16,13 @@ const DEFAULT_TIMEZONE = 'Asia/Seoul';
 /** 기본 RSVP 필드 설정 */
 const DEFAULT_RSVP_FIELDS: InvitationRsvpField[] = [
   {
+    key: 'name',
+    label: '이름',
+    required: true,
+    inputType: 'text',
+    placeholder: '이름을 입력해주세요',
+  },
+  {
     key: 'attendance',
     label: '참석 여부',
     required: true,

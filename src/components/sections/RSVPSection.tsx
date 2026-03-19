@@ -6,7 +6,7 @@ import { FieldLabel } from '@/components/ui/FieldLabel';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { SurfaceCard } from '@/components/ui/SurfaceCard';
 import { SelectField } from '@/components/ui/SelectField';
-import { TextArea } from '@/components/ui/TextInput';
+import { TextArea, TextInput } from '@/components/ui/TextInput';
 import { Toast } from '@/components/ui/Toast';
 import { Button } from '@/components/ui/Button';
 import {
@@ -207,6 +207,15 @@ export const RSVPSection = ({ rsvp, storageKey, title }: RSVPSectionProps) => {
                       ))
                     )}
                   </SelectField>
+                ) : field.inputType === 'text' ? (
+                  <TextInput
+                    id={`rsvp-${field.key}`}
+                    type="text"
+                    value={formData[field.key] || ''}
+                    onChange={(e) => handleChange(field.key, e.target.value)}
+                    placeholder={field.placeholder}
+                    required={field.required}
+                  />
                 ) : (
                   <TextArea
                     id={`rsvp-${field.key}`}
