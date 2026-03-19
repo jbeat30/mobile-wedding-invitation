@@ -361,7 +361,7 @@ export const GuestbookSection = ({ guestbook, storageKey, title }: GuestbookSect
             data-animate-start="90"
           >
             <div className="flex flex-col gap-2">
-              <FieldLabel htmlFor="guest-name">NAME</FieldLabel>
+              <FieldLabel htmlFor="guest-name">이름</FieldLabel>
               <TextInput
                 id="guest-name"
                 name="guest-name"
@@ -376,7 +376,7 @@ export const GuestbookSection = ({ guestbook, storageKey, title }: GuestbookSect
 
             {guestbook.enablePassword && (
               <div className="flex flex-col gap-2">
-                <FieldLabel htmlFor="guest-password">PASSWORD</FieldLabel>
+                <FieldLabel htmlFor="guest-password">비밀번호</FieldLabel>
                 <TextInput
                   id="guest-password"
                   name="guest-password"
@@ -393,7 +393,7 @@ export const GuestbookSection = ({ guestbook, storageKey, title }: GuestbookSect
             )}
 
             <div className="flex flex-col gap-2">
-              <FieldLabel htmlFor="guest-message">MESSAGE</FieldLabel>
+              <FieldLabel htmlFor="guest-message">메시지</FieldLabel>
               <TextArea
                 id="guest-message"
                 name="guest-message"
@@ -595,7 +595,7 @@ export const GuestbookSection = ({ guestbook, storageKey, title }: GuestbookSect
 
             <form onSubmit={handleEditSubmit} className="flex flex-col gap-4">
               <div className="flex flex-col gap-2">
-                <FieldLabel htmlFor="edit-name">NAME</FieldLabel>
+                <FieldLabel htmlFor="edit-name">이름</FieldLabel>
                 <TextInput
                   id="edit-name"
                   value={editName}
@@ -607,7 +607,7 @@ export const GuestbookSection = ({ guestbook, storageKey, title }: GuestbookSect
               </div>
 
               <div className="flex flex-col gap-2">
-                <FieldLabel htmlFor="edit-message">MESSAGE</FieldLabel>
+                <FieldLabel htmlFor="edit-message">메시지</FieldLabel>
                 <TextArea
                   id="edit-message"
                   value={editMessage}
