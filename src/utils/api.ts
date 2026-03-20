@@ -21,3 +21,23 @@ export const postJson = async (url: string, body: JsonValue) => {
     body: JSON.stringify(body),
   });
 };
+
+export const patchJson = async (url: string, body: JsonValue) => {
+  return fetch(url, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+};
+
+export const deleteJson = async (url: string, body: JsonValue) => {
+  return fetch(url, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+};

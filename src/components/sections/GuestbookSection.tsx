@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { formatMonthDay } from '@/utils/date';
 import { isFourDigitPassword, isRequiredText } from '@/utils/validation';
-import { postJson } from '@/utils/api';
+import { deleteJson, patchJson, postJson } from '@/utils/api';
 
 type GuestbookSectionProps = {
   guestbook: InvitationGuestbook;
@@ -133,6 +133,12 @@ export const GuestbookSection = ({ guestbook, storageKey, title }: GuestbookSect
   // 제출 상태
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+
+  // 수정/삭제 API 상태
+  const [verifiedPasswordHash, setVerifiedPasswordHash] = useState<string | null>(null);
+  const [showDeleteConfirmDialog, setShowDeleteConfirmDialog] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   // 초기 로딩: localStorage + mock 데이터 병합
   useEffect(() => {
@@ -268,43 +274,88 @@ export const GuestbookSection = ({ guestbook, storageKey, title }: GuestbookSect
         return;
       }
 
+      const inputHash = await hashPassword(inputPassword);
       setModalOpen(false);
       setModalError('');
+      setVerifiedPasswordHash(inputHash);
 
       if (actionType === 'delete') {
-        setEntries((prev) => prev.filter((e) => e.id !== targetEntry.id));
-        showToast('메시지가 삭제되었습니다');
-        setTargetEntry(null);
-        setActionType(null);
+        setShowDeleteConfirmDialog(true);
       } else if (actionType === 'edit') {
         setEditName(targetEntry.name);
         setEditMessage(targetEntry.message);
         setEditModalOpen(true);
       }
     },
-    [targetEntry, actionType, showToast]
+    [targetEntry, actionType]
   );
 
   const handleEditSubmit = useCallback(
-    (event: FormEvent<HTMLFormElement>) => {
+    async (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();
-      if (!targetEntry || !editName.trim() || !editMessage.trim()) return;
+      if (!targetEntry || !editName.trim() || !editMessage.trim() || !verifiedPasswordHash) return;
+      if (isEditing) return;
 
-      setEntries((prev) =>
-        prev.map((e) =>
-          e.id === targetEntry.id
-            ? { ...e, name: editName.trim(), message: editMessage.trim() }
-            : e
-        )
-      );
+      setIsEditing(true);
+      try {
+        const response = await patchJson(`/api/guestbook/${targetEntry.id}`, {
+          passwordHash: verifiedPasswordHash,
+          name: editName.trim(),
+          message: editMessage.trim(),
+        });
+        if (!response.ok) throw new Error('Edit failed');
 
-      setEditModalOpen(false);
+        setEntries((prev) =>
+          prev.map((e) =>
+            e.id === targetEntry.id
+              ? { ...e, name: editName.trim(), message: editMessage.trim() }
+              : e
+          )
+        );
+        setEditModalOpen(false);
+        showToast('메시지가 수정되었습니다');
+      } catch {
+        showToast('수정에 실패했습니다. 다시 시도해주세요.');
+      } finally {
+        setIsEditing(false);
+        setTargetEntry(null);
+        setActionType(null);
+        setVerifiedPasswordHash(null);
+      }
+    },
+    [targetEntry, editName, editMessage, verifiedPasswordHash, isEditing, showToast]
+  );
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!targetEntry || !verifiedPasswordHash || isDeleting) return;
+
+    setShowDeleteConfirmDialog(false);
+    setIsDeleting(true);
+    try {
+      const response = await deleteJson(`/api/guestbook/${targetEntry.id}`, {
+        passwordHash: verifiedPasswordHash,
+      });
+      if (!response.ok) {
+        const data = (await response.json()) as { error?: string };
+        if (response.status === 404) {
+          showToast('이미 삭제된 메시지입니다');
+          setEntries((prev) => prev.filter((e) => e.id !== targetEntry.id));
+        } else {
+          showToast(data.error ?? '삭제에 실패했습니다. 다시 시도해주세요.');
+        }
+        return;
+      }
+      setEntries((prev) => prev.filter((e) => e.id !== targetEntry.id));
+      showToast('메시지가 삭제되었습니다');
+    } catch {
+      showToast('삭제에 실패했습니다. 다시 시도해주세요.');
+    } finally {
+      setIsDeleting(false);
       setTargetEntry(null);
       setActionType(null);
-      showToast('메시지가 수정되었습니다');
-    },
-    [targetEntry, editName, editMessage, showToast]
-  );
+      setVerifiedPasswordHash(null);
+    }
+  }, [targetEntry, verifiedPasswordHash, isDeleting, showToast]);
 
   const sortedEntries = useMemo(() => {
     return [...entries].sort(
@@ -460,9 +511,28 @@ export const GuestbookSection = ({ guestbook, storageKey, title }: GuestbookSect
                     <p className="text-[14px] font-medium text-[var(--text-primary)]">
                       {entry.name}
                     </p>
-                    <span className="text-[12px] text-[var(--text-muted)]">
-                      {formatDate(entry.createdAt)}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[12px] text-[var(--text-muted)]">
+                        {formatDate(entry.createdAt)}
+                      </span>
+                      {canModify && (guestbook.enableEdit || guestbook.enableDelete) && (
+                        <button
+                          type="button"
+                          aria-label="수정 또는 삭제"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setActiveEntryId((prev) => (prev === entry.id ? null : entry.id));
+                          }}
+                          className="flex h-6 w-6 items-center justify-center rounded-full text-[var(--text-muted)] opacity-40 transition hover:opacity-80"
+                        >
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
+                            <circle cx="7" cy="2" r="1.3" />
+                            <circle cx="7" cy="7" r="1.3" />
+                            <circle cx="7" cy="12" r="1.3" />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
                   </div>
                   <p className="mt-2 text-[14px] leading-relaxed text-[var(--text-secondary)]">
                     {entry.message}
@@ -621,14 +691,38 @@ export const GuestbookSection = ({ guestbook, storageKey, title }: GuestbookSect
               <Button
                 type="submit"
                 size="full"
-                disabled={!editName.trim() || !editMessage.trim()}
+                disabled={!editName.trim() || !editMessage.trim() || isEditing}
               >
-                수정 완료
+                {isEditing ? '수정 중...' : '수정 완료'}
               </Button>
             </form>
           </div>
         </div>
       )}
+
+      {/* 삭제 확인 다이얼로그 */}
+      <AlertDialog open={showDeleteConfirmDialog} onOpenChange={setShowDeleteConfirmDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>메시지를 삭제하시겠습니까?</AlertDialogTitle>
+            <AlertDialogDescription>삭제된 메시지는 복구할 수 없습니다.</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              onClick={() => {
+                setTargetEntry(null);
+                setActionType(null);
+                setVerifiedPasswordHash(null);
+              }}
+            >
+              취소
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteConfirm} disabled={isDeleting}>
+              {isDeleting ? '삭제 중...' : '삭제하기'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* 제출 확인 다이얼로그 */}
       <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
