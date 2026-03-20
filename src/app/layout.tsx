@@ -144,7 +144,7 @@ export default async function RootLayout({
       <head>
         {r2Origin && <link rel="preconnect" href={r2Origin} crossOrigin="anonymous" />}
       </head>
-      <body className="antialiased [text-rendering:optimizeLegibility] isolate min-[481px]:[background:radial-gradient(circle_at_top,_#FAF9F7_0%,_#F0EDE8_100%)]">
+      <body className="loading-state antialiased [text-rendering:optimizeLegibility] isolate min-[481px]:[background:radial-gradient(circle_at_top,_#FAF9F7_0%,_#F0EDE8_100%)]">
         {children}
         {process.env.NODE_ENV === 'development' && <Agentation />}
       </body>

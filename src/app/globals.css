@@ -78,6 +78,11 @@ body::before {
     z-index: -1;
 }
 
+/* TTFB 동안 흰 화면 방지 — PublicPageClient가 로딩 완료 시 클래스 제거 */
+body.loading-state {
+    background-color: #1a1210 !important;
+}
+
 @layer base {
     html {
         width: 100%;

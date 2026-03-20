@@ -260,6 +260,13 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
     };
   }, []);
 
+  // TTFB 흰 화면 방지용 loading-state 클래스 제거 (로딩 완료 시)
+  useEffect(() => {
+    if (!isLoading) {
+      document.body.classList.remove('loading-state');
+    }
+  }, [isLoading]);
+
 
   useEffect(() => {
     let cleanupFn: (() => void) | undefined;
