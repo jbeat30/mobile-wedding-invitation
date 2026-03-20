@@ -552,6 +552,85 @@ export const loadInvitationView = async (): Promise<InvitationMock> => {
 };
 
 
+/**
+ * LoadingSection 표시에 필요한 최소 데이터 타입
+ * page.tsx에서 빠른 응답을 위해 3개 테이블만 조회하여 반환
+ */
+export type LoadingSectionData = {
+  loading: {
+    enabled: boolean;
+    message: string;
+    minDuration: number;
+    additionalDuration: number;
+    section_title: string;
+  };
+  assets: {
+    loadingImage: string;
+  };
+  bgm: {
+    enabled: boolean;
+    audioUrl: string;
+    autoPlay: boolean;
+    loop: boolean;
+  };
+};
+
+/**
+ * LoadingSection 표시에 필요한 최소 데이터 조회 (3개 쿼리)
+ * page.tsx에서 호출하여 TTFB를 대폭 단축함
+ * 나머지 데이터는 클라이언트가 /api/invitation으로 별도 수신
+ */
+export const loadLoadingSectionData = async (): Promise<LoadingSectionData> => {
+  try {
+    const supabase = createSupabaseAdmin();
+    const invitation = await getOrCreateInvitation();
+
+    const [loading, assets, bgm] = (await Promise.all([
+      ensureSingleRow(supabase, 'invitation_loading', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
+      ensureSingleRow(supabase, 'invitation_assets', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
+      ensureSingleRow(supabase, 'invitation_bgm', { invitation_id: invitation.id }, { invitation_id: invitation.id }),
+    ])) as [InvitationLoadingRow, InvitationAssetsRow, InvitationBgmRow];
+
+    return {
+      loading: {
+        enabled: loading.enabled,
+        message: loading.message,
+        minDuration: loading.min_duration,
+        additionalDuration: loading.additional_duration,
+        section_title: loading.section_title,
+      },
+      assets: {
+        loadingImage: assets.loading_image || '',
+      },
+      bgm: {
+        enabled: bgm.enabled,
+        audioUrl: bgm.audio_url || '',
+        autoPlay: bgm.auto_play,
+        loop: bgm.loop,
+      },
+    };
+  } catch {
+    return {
+      loading: {
+        enabled: invitationMock.content.loading.enabled,
+        message: invitationMock.content.loading.message,
+        minDuration: invitationMock.content.loading.minDuration,
+        additionalDuration: invitationMock.content.loading.additionalDuration,
+        section_title: invitationMock.content.loading.section_title ?? 'WEDDING INVITATION',
+      },
+      assets: {
+        loadingImage: invitationMock.assets.loadingImage,
+      },
+      bgm: {
+        enabled: invitationMock.content.bgm.enabled,
+        audioUrl: invitationMock.content.bgm.audioUrl ?? '',
+        autoPlay: invitationMock.content.bgm.autoPlay,
+        loop: invitationMock.content.bgm.loop,
+      },
+    };
+  }
+};
+
 /** OG 메타데이터 타입 */
 export type OgMetadata = {
   title: string;
