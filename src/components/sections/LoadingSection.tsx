@@ -179,7 +179,7 @@ export const LoadingSection = ({
   return (
     <section
       data-testid="loading-section"
-      className="relative flex w-full touch-pan-y flex-col items-center justify-center"
+      className="relative flex w-full touch-pan-y flex-col items-center justify-center bg-[#1a1210]"
       // 터치 스크롤 우선 처리되게 해서 웹뷰 드래그 확대 막는 용도임
       style={{
         height: initialHeightRef.current ? `${initialHeightRef.current}px` : '100vh',

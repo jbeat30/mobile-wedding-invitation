@@ -77,7 +77,7 @@ export const IntroCalendar = ({
                       {day}
                     </div>
                   </div>
-                );
+                );0
               }
 
               const textColor = (isHoliday || isSunday)

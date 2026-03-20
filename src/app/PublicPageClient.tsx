@@ -3,19 +3,52 @@
 import { useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import type { InvitationMock } from '@/mock/invitation.mock';
+import type { LoadingSectionData } from '@/app/invitationData';
 import { LoadingSection } from '@/components/sections/LoadingSection';
-import { CherryBlossomCanvas } from '@/components/sections/CherryBlossomCanvas';
-import { BgmPlayer } from '@/components/sections/BgmPlayer';
-import { BgmToggle } from '@/components/sections/BgmToggle';
-import { IntroSection } from '@/components/sections/IntroSection';
-import { GreetingSection } from '@/components/sections/GreetingSection';
-import { CoupleSection } from '@/components/sections/CoupleSection';
-import { WeddingInfoSection } from '@/components/sections/WeddingInfoSection';
-import { LocationSection } from '@/components/sections/LocationSection';
 import { useLoadingState } from '@/hooks/useLoadingState';
 import { useBgmPreference } from '@/hooks/useBgmPreference';
 
-// 무거운 섹션들을 동적 임포트로 분할 (Swiper 포함)
+// 로딩 중 숨겨지는 섹션 — 모두 동적 임포트로 분할하여 초기 번들 크기 감소 → TBT 개선
+const CherryBlossomCanvas = dynamic(
+  () => import('@/components/sections/CherryBlossomCanvas').then((mod) => ({ default: mod.CherryBlossomCanvas })),
+  { ssr: true }
+);
+
+const BgmPlayer = dynamic(
+  () => import('@/components/sections/BgmPlayer').then((mod) => ({ default: mod.BgmPlayer })),
+  { ssr: false }
+);
+
+const BgmToggle = dynamic(
+  () => import('@/components/sections/BgmToggle').then((mod) => ({ default: mod.BgmToggle })),
+  { ssr: false }
+);
+
+const IntroSection = dynamic(
+  () => import('@/components/sections/IntroSection').then((mod) => ({ default: mod.IntroSection })),
+  { ssr: true }
+);
+
+const GreetingSection = dynamic(
+  () => import('@/components/sections/GreetingSection').then((mod) => ({ default: mod.GreetingSection })),
+  { ssr: true }
+);
+
+const CoupleSection = dynamic(
+  () => import('@/components/sections/CoupleSection').then((mod) => ({ default: mod.CoupleSection })),
+  { ssr: true }
+);
+
+const WeddingInfoSection = dynamic(
+  () => import('@/components/sections/WeddingInfoSection').then((mod) => ({ default: mod.WeddingInfoSection })),
+  { ssr: true }
+);
+
+const LocationSection = dynamic(
+  () => import('@/components/sections/LocationSection').then((mod) => ({ default: mod.LocationSection })),
+  { ssr: true }
+);
+
 const GallerySection = dynamic(
   () => import('@/components/sections/GallerySection').then((mod) => ({ default: mod.GallerySection })),
   { ssr: true }
@@ -47,7 +80,7 @@ const ClosingSection = dynamic(
 );
 
 type PublicPageClientProps = {
-  invitation: InvitationMock;
+  loadingData: LoadingSectionData;
 };
 
 /**
@@ -230,22 +263,27 @@ const createSecurityGuards = () => {
  * @param props PublicPageClientProps
  * @returns JSX.Element
  */
-export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
-  const { content, assets, storage } = invitation;
-  const { loading, sectionTitles } = content;
+export const PublicPageClient = ({ loadingData }: PublicPageClientProps) => {
+  const { loading, assets, bgm } = loadingData;
   const { isLoading, isHintVisible } = useLoadingState({
     minDuration: loading.minDuration,
     additionalDuration: loading.additionalDuration,
   });
   const showLoading = loading.enabled;
-  const showContent = !loading.enabled || !isLoading;
   const contentRef = useRef<HTMLElement | null>(null);
-  const bgmAvailable = Boolean(content.bgm.enabled);
-  const { enabled: bgmEnabled, setEnabled: setBgmEnabled } = useBgmPreference(
-    content.bgm.autoPlay
-  );
+  const bgmAvailable = Boolean(bgm.enabled);
+  const { enabled: bgmEnabled, setEnabled: setBgmEnabled } = useBgmPreference(bgm.autoPlay);
   const isBgmActive = bgmAvailable && bgmEnabled;
   const [isBgmPlaying, setIsBgmPlaying] = useState(false);
+  const [fullData, setFullData] = useState<InvitationMock | null>(null);
+
+  useEffect(() => {
+    fetch('/api/invitation')
+      .then((res) => res.json())
+      .then(setFullData);
+  }, []);
+
+  const showContent = (!loading.enabled || !isLoading) && fullData !== null;
 
   useEffect(() => {
     const isLocalhost =
@@ -259,6 +297,13 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
       guards.detach();
     };
   }, []);
+
+  // TTFB 흰 화면 방지용 loading-state 클래스 제거 (로딩 완료 시)
+  useEffect(() => {
+    if (!isLoading) {
+      document.body.classList.remove('loading-state');
+    }
+  }, [isLoading]);
 
 
   useEffect(() => {
@@ -475,61 +520,61 @@ export const PublicPageClient = ({ invitation }: PublicPageClientProps) => {
               imageSrc={assets.loadingImage}
               isVisible={isLoading}
               isHintVisible={isHintVisible}
-              title={sectionTitles.loading ?? 'WEDDING INVITATION'}
+              title={loading.section_title ?? 'WEDDING INVITATION'}
             />
           )}
-          {showContent ? (
+          {showContent && fullData && (
             <div>
               <GreetingSection
-                greeting={content.greeting}
-                couple={content.couple}
-                title={sectionTitles.greeting}
+                greeting={fullData.content.greeting}
+                couple={fullData.content.couple}
+                title={fullData.content.sectionTitles.greeting}
               />
               <IntroSection
-                couple={content.couple}
-                event={content.event}
-                heroImage={assets.heroImage}
+                couple={fullData.content.couple}
+                event={fullData.content.event}
+                heroImage={fullData.assets.heroImage}
               />
             </div>
-          ) : null}
+          )}
         </div>
-        {showContent ? (
+        {showContent && fullData && (
           <>
             {/* 벚꽃 캔버스를 커플~위치 섹션(~1500px)으로만 제한 — 전체 페이지를 감싸면 4000px+ 캔버스가 매 프레임 clearRect/draw */}
             <div className="relative">
               <CherryBlossomCanvas density={50000} zIndex={50} opacity={0.5} minPetalCount={8} />
-              <CoupleSection couple={content.couple} title={sectionTitles.couple} />
+              <CoupleSection couple={fullData.content.couple} title={fullData.content.sectionTitles.couple} />
               <WeddingInfoSection
-                event={content.event}
-                couple={content.couple}
-                title={sectionTitles.wedding}
+                event={fullData.content.event}
+                couple={fullData.content.couple}
+                title={fullData.content.sectionTitles.wedding}
               />
               <LocationSection
-                location={content.location}
-                event={content.event}
-                title={sectionTitles.location}
+                location={fullData.content.location}
+                event={fullData.content.event}
+                title={fullData.content.sectionTitles.location}
               />
             </div>
-            <GallerySection gallery={content.gallery} />
-            <AccountsSection accounts={content.accounts} />
+            <GallerySection gallery={fullData.content.gallery} />
+            <AccountsSection accounts={fullData.content.accounts} />
             <GuestbookSection
-              guestbook={content.guestbook}
-              storageKey={storage.guestbook.key}
-              title={sectionTitles.guestbook}
+              guestbook={fullData.content.guestbook}
+              storageKey={fullData.storage.guestbook.key}
+              title={fullData.content.sectionTitles.guestbook}
             />
             <RSVPSection
-              rsvp={content.rsvp}
-              storageKey={storage.rsvp.key}
-              title={sectionTitles.rsvp}
+              rsvp={fullData.content.rsvp}
+              storageKey={fullData.storage.rsvp.key}
+              title={fullData.content.sectionTitles.rsvp}
             />
-            <ShareSection share={content.share} title={sectionTitles.share} />
-            <ClosingSection closing={content.closing} couple={content.couple} />
+            <ShareSection share={fullData.content.share} title={fullData.content.sectionTitles.share} />
+            <ClosingSection closing={fullData.content.closing} couple={fullData.content.couple} />
           </>
-        ) : null}
+        )}
         <BgmPlayer
-          audioUrl={content.bgm.audioUrl || ''}
+          audioUrl={bgm.audioUrl}
           enabled={isBgmActive}
-          loop={content.bgm.loop}
+          loop={bgm.loop}
           onPlaybackChange={setIsBgmPlaying}
         />
       </main>
