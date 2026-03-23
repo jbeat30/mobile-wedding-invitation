@@ -326,10 +326,10 @@ export const PublicPageClient = ({ loadingData }: PublicPageClientProps) => {
 
       // 모바일 주소창/네비게이션 바로 인한 viewport 변경 필터링
       let lastWidth = window.innerWidth;
-      let lastHeight = window.innerHeight;
       let resizeTimer: number;
       let lastRefreshAt = 0;
       let resizeObserver: ResizeObserver | null = null;
+      let lastRootWidth = contentRef.current?.offsetWidth ?? 0;
 
       const scheduleRefresh = () => {
         const now = Date.now();
@@ -342,21 +342,14 @@ export const PublicPageClient = ({ loadingData }: PublicPageClientProps) => {
         clearTimeout(resizeTimer);
         resizeTimer = window.setTimeout(() => {
           const currentWidth = window.innerWidth;
-          const currentHeight = window.innerHeight;
 
           // 너비 변경 = 실제 리사이즈 (가로↔세로, 창 크기 변경)
           const widthChanged = Math.abs(currentWidth - lastWidth) > 50;
-          const heightChanged = Math.abs(currentHeight - lastHeight) > 50;
 
           if (widthChanged) {
             // 실제 리사이즈만 ScrollTrigger refresh
             scheduleRefresh();
             lastWidth = currentWidth;
-            lastHeight = currentHeight;
-          } else if (heightChanged) {
-            // 높이만 변경 = 주소창/네비 바 변경 (지연 후 refresh)
-            scheduleRefresh();
-            lastHeight = currentHeight;
           }
         }, 150);
       };
@@ -371,7 +364,18 @@ export const PublicPageClient = ({ loadingData }: PublicPageClientProps) => {
 
       const root = contentRef.current;
       if (root) {
-        resizeObserver = new ResizeObserver(() => scheduleRefresh());
+        resizeObserver = new ResizeObserver((entries) => {
+          const entry = entries[0];
+          const nextWidth =
+            entry?.borderBoxSize && entry.borderBoxSize.length > 0
+              ? entry.borderBoxSize[0].inlineSize
+              : root.offsetWidth;
+
+          if (Math.abs(nextWidth - lastRootWidth) <= 1) return;
+
+          lastRootWidth = nextWidth;
+          scheduleRefresh();
+        });
         resizeObserver.observe(root);
       }
 

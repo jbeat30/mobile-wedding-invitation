@@ -91,7 +91,6 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
         id="gallery"
         ref={sectionRef}
         className="bg-[var(--bg-primary)] py-12"
-        style={{ contentVisibility: 'auto', containIntrinsicSize: '900px' }}
       >
         <div className="mx-auto flex w-full max-w-[520px] flex-col gap-8 px-6">
           {/* 헤더 */}
@@ -171,7 +170,6 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
                           aria-hidden
                           draggable={false}
                           onContextMenu={(e) => e.preventDefault()}
-                          onTouchStart={(e) => e.preventDefault()}
                         />
                       )}
                       <Image
@@ -187,7 +185,6 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
                         loading={index === 0 ? 'eager' : 'lazy'}
                         draggable={false}
                         onContextMenu={(e) => e.preventDefault()}
-                        onTouchStart={(e) => e.preventDefault()}
                         style={{ width: '100%', height: '100%', pointerEvents: 'none' }}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
@@ -286,7 +283,6 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
                       loading="lazy"
                       draggable={false}
                       onContextMenu={(e) => e.preventDefault()}
-                      onTouchStart={(e) => e.preventDefault()}
                     />
                   </button>
                 </SwiperSlide>

@@ -77,26 +77,15 @@ export const BgmPlayer = ({ audioUrl, enabled, loop, onPlaybackChange }: BgmPlay
 
     if (enabled) {
       let isPlaying = false;
+      const interactionOptions: AddEventListenerOptions = { capture: true };
+      const passiveInteractionOptions: AddEventListenerOptions = { capture: true, passive: true };
 
       const removeListeners = () => {
-        window.removeEventListener('pointerdown', handleInteraction);
-        window.removeEventListener('pointerup', handleInteraction);
-        window.removeEventListener('mousedown', handleInteraction);
-        window.removeEventListener('mouseup', handleInteraction);
-        window.removeEventListener('click', handleInteraction);
-        window.removeEventListener('keydown', handleInteraction);
-        window.removeEventListener('touchstart', handleInteraction);
-        window.removeEventListener('touchmove', handleInteraction);
-        window.removeEventListener('touchend', handleInteraction);
-        window.removeEventListener('wheel', handleInteraction);
-        window.removeEventListener('scroll', handleInteraction);
-        window.removeEventListener('pageshow', handleInteraction);
-        document.removeEventListener('scroll', handleInteraction);
-        document.removeEventListener('touchstart', handleInteraction);
-        document.removeEventListener('touchmove', handleInteraction);
-        document.body?.removeEventListener('touchstart', handleInteraction);
-        document.body?.removeEventListener('touchmove', handleInteraction);
-        document.body?.removeEventListener('wheel', handleInteraction);
+        window.removeEventListener('pointerdown', handleInteraction, interactionOptions);
+        window.removeEventListener('click', handleInteraction, interactionOptions);
+        window.removeEventListener('keydown', handleInteraction, interactionOptions);
+        window.removeEventListener('touchend', handleInteraction, passiveInteractionOptions);
+        window.removeEventListener('pageshow', handleInteraction, interactionOptions);
       };
 
       const handleInteraction = () => {
@@ -112,30 +101,12 @@ export const BgmPlayer = ({ audioUrl, enabled, loop, onPlaybackChange }: BgmPlay
           });
       };
 
-      const interactionOptions: AddEventListenerOptions = {
-        passive: false,
-        capture: true,
-      };
-
       handleInteraction();
       window.addEventListener('pointerdown', handleInteraction, interactionOptions);
-      window.addEventListener('pointerup', handleInteraction, interactionOptions);
-      window.addEventListener('mousedown', handleInteraction, interactionOptions);
-      window.addEventListener('mouseup', handleInteraction, interactionOptions);
       window.addEventListener('click', handleInteraction, interactionOptions);
-      window.addEventListener('touchstart', handleInteraction, interactionOptions);
-      window.addEventListener('touchmove', handleInteraction, interactionOptions);
-      window.addEventListener('touchend', handleInteraction, interactionOptions);
       window.addEventListener('keydown', handleInteraction, interactionOptions);
-      window.addEventListener('wheel', handleInteraction, interactionOptions);
-      window.addEventListener('scroll', handleInteraction, interactionOptions);
       window.addEventListener('pageshow', handleInteraction, interactionOptions);
-      document.addEventListener('scroll', handleInteraction, interactionOptions);
-      document.addEventListener('touchstart', handleInteraction, interactionOptions);
-      document.addEventListener('touchmove', handleInteraction, interactionOptions);
-      document.body?.addEventListener('touchstart', handleInteraction, interactionOptions);
-      document.body?.addEventListener('touchmove', handleInteraction, interactionOptions);
-      document.body?.addEventListener('wheel', handleInteraction, interactionOptions);
+      window.addEventListener('touchend', handleInteraction, passiveInteractionOptions);
 
       return removeListeners;
     }

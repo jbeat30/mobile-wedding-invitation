@@ -244,7 +244,6 @@ export const ImageModal = ({
                   draggable={false}
                   onLoad={handleImageLoad(image.id)}
                   onContextMenu={(e) => e.preventDefault()}
-                  onTouchStart={(e) => e.preventDefault()}
                   style={{ pointerEvents: 'none' }}
                 />
               </div>
