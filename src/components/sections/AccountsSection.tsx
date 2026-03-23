@@ -62,7 +62,6 @@ export const AccountsSection = ({ accounts }: AccountsSectionProps) => {
     <section
       id="accounts"
       className="bg-[var(--bg-primary)] py-12"
-      style={{ contentVisibility: 'auto', containIntrinsicSize: '900px' }}
     >
       <div className="mx-auto flex w-full max-w-[520px] flex-col gap-8 px-6">
         <div

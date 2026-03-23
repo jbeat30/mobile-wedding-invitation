@@ -70,7 +70,7 @@ export const IntroSection = ({ couple, event, heroImage }: IntroSectionProps) =>
     <section id="intro" className="relative bg-[var(--bg-primary)]">
       {/* Hero 영역 - JS로 계산된 heroHeight 적용 */}
       <div 
-        className="relative overflow-hidden transition-[height] duration-500 ease-out"
+        className="relative overflow-hidden"
         style={{ height: heroHeight }}
       >
         <Image
@@ -83,7 +83,6 @@ export const IntroSection = ({ couple, event, heroImage }: IntroSectionProps) =>
           sizes="(max-width: 480px) 100vw, 480px"
           draggable={false}
           onContextMenu={(e) => e.preventDefault()}
-          onTouchStart={(e) => e.preventDefault()}
         />
         {/* 배경 딤드 오버레이 - 하단부 텍스트 가독성을 위해 아래쪽이 더 어둡게 */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/30 to-black/60" />

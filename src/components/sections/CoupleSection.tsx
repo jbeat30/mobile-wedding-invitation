@@ -48,7 +48,6 @@ export const CoupleSection = ({ couple, title }: CoupleSectionProps) => {
                   className="object-cover pointer-events-none select-none"
                   draggable={false}
                   onContextMenu={(e) => e.preventDefault()}
-                  onTouchStart={(e) => e.preventDefault()}
                 />
               )}
             </div>
@@ -77,7 +76,6 @@ export const CoupleSection = ({ couple, title }: CoupleSectionProps) => {
                   className="object-cover pointer-events-none select-none"
                   draggable={false}
                   onContextMenu={(e) => e.preventDefault()}
-                  onTouchStart={(e) => e.preventDefault()}
                 />
               )}
             </div>
