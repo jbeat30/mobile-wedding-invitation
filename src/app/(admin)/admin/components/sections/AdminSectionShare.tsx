@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Share2Icon } from 'lucide-react';
+import Image from 'next/image';
 
 type AdminSectionShareProps = {
   share: AdminDashboardData['share'];
@@ -138,11 +139,13 @@ export const AdminSectionShare = ({ share, fileUrlToNameMap }: AdminSectionShare
               <div className="md:col-span-2">
                 <p className="text-[13px] font-semibold text-[var(--text-primary)] mb-3">미리보기</p>
                 <div className="rounded-xl border border-[var(--border-light)] bg-white overflow-hidden shadow-sm w-[240px]">
-                  <div className="w-full h-[320px] bg-gray-100 overflow-hidden">
-                    <img
+                  <div className="relative w-full h-[320px] bg-gray-100 overflow-hidden">
+                    <Image
                       src={share.og_image_url}
                       alt="공유 미리보기"
-                      className="w-full h-full object-cover"
+                      fill
+                      sizes="240px"
+                      className="object-cover"
                     />
                   </div>
                   <div className="p-3">
