@@ -9,19 +9,24 @@ type IntroSectionProps = {
   heroImage: string;
 };
 
+// UI 임계치 및 비율 상수화
+const HERO_MIN_HEIGHT = 480;
+const HERO_MAX_HEIGHT = 640;
+const HERO_HEIGHT_RATIO = 0.6; // 60vh
+
 /**
  * 인트로 섹션 - Hero 영역
  */
 export const IntroSection = ({ couple, event, heroImage }: IntroSectionProps) => {
-  const [heroHeight, setHeroHeight] = useState<string>('clamp(480px, 60vh, 640px)');
+  const [heroHeight, setHeroHeight] = useState<string>(`clamp(${HERO_MIN_HEIGHT}px, ${HERO_HEIGHT_RATIO * 100}vh, ${HERO_MAX_HEIGHT}px)`);
 
   useEffect(() => {
     // 모바일 웹뷰에서 주소창/하단바가 나타나고 사라질 때 높이가 변하는 현상을 방지하기 위해 
     // 마운트 시점에 실제 픽셀 높이를 계산하여 고정
     const updateHeight = () => {
-      // 60vh에 해당하는 픽셀 값을 계산하되, clamp(480px, 640px) 범위를 유지
-      const vh60 = window.innerHeight * 0.6;
-      const calculatedHeight = Math.min(Math.max(480, vh60), 640);
+      // 비율에 해당하는 픽셀 값을 계산하되, 범위를 유지
+      const vhEquivalent = window.innerHeight * HERO_HEIGHT_RATIO;
+      const calculatedHeight = Math.min(Math.max(HERO_MIN_HEIGHT, vhEquivalent), HERO_MAX_HEIGHT);
       setHeroHeight(`${calculatedHeight}px`);
     };
 
@@ -40,19 +45,26 @@ export const IntroSection = ({ couple, event, heroImage }: IntroSectionProps) =>
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const introDate = new Date(event.dateTime);
-  const formattedDateTime = Number.isNaN(introDate.getTime())
-    ? event.dateTime
-    : `${new Intl.DateTimeFormat('ko-KR', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        weekday: 'short',
-      }).format(introDate)} ${new Intl.DateTimeFormat('ko-KR', {
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true,
-      }).format(introDate)}`;
+  // 날짜 포맷팅 로직
+  const formattedDateTime = (() => {
+    const date = new Date(event.dateTime);
+    if (Number.isNaN(date.getTime())) return event.dateTime;
+
+    const mainFormatter = new Intl.DateTimeFormat('ko-KR', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      weekday: 'short',
+    });
+    
+    const timeFormatter = new Intl.DateTimeFormat('ko-KR', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    });
+
+    return `${mainFormatter.format(date)} ${timeFormatter.format(date)}`;
+  })();
 
   return (
     <section id="intro" className="relative bg-[var(--bg-primary)]">
@@ -78,7 +90,6 @@ export const IntroSection = ({ couple, event, heroImage }: IntroSectionProps) =>
 
         {/* Hero 텍스트 */}
         <div className="absolute inset-0 flex items-end justify-center pb-16">
-          {/* section 기준 트리거 — hero 텍스트는 히어로 하단에 absolute 배치되어 있어 self 기준으로 하면 뷰포트에 보이는 시점보다 늦게 트리거됨 */}
           <div className="text-center" data-animate="fade-up" data-animate-start="80" data-animate-trigger="section">
             <p className="font-label text-[12px] text-[var(--accent-rose-light)] drop-shadow-md font-bold">
               WEDDING INVITATION
