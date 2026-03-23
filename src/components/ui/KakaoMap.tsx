@@ -104,5 +104,11 @@ export const KakaoMap = ({ lat, lng, level = 3, className = '' }: KakaoMapProps)
     );
   }
 
-  return <div ref={mapRef} className={`h-full w-full touch-pan-y ${className}`} />;
+  return (
+    <div className={`relative h-full w-full ${className}`}>
+      <div ref={mapRef} className="h-full w-full" />
+      {/* 터치 이벤트가 지도 SDK에 도달하지 않도록 막는 투명 오버레이 */}
+      <div className="absolute inset-0 z-10" />
+    </div>
+  );
 };
