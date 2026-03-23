@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import type { InvitationCouple, InvitationEvent } from '@/mock/invitation.mock';
 import { HeartIcon } from '@/components/ui/HeartIcon';
@@ -12,6 +13,33 @@ type IntroSectionProps = {
  * 인트로 섹션 - Hero 영역
  */
 export const IntroSection = ({ couple, event, heroImage }: IntroSectionProps) => {
+  const [heroHeight, setHeroHeight] = useState<string>('clamp(480px, 60vh, 640px)');
+
+  useEffect(() => {
+    // 모바일 웹뷰에서 주소창/하단바가 나타나고 사라질 때 높이가 변하는 현상을 방지하기 위해 
+    // 마운트 시점에 실제 픽셀 높이를 계산하여 고정
+    const updateHeight = () => {
+      // 60vh에 해당하는 픽셀 값을 계산하되, clamp(480px, 640px) 범위를 유지
+      const vh60 = window.innerHeight * 0.6;
+      const calculatedHeight = Math.min(Math.max(480, vh60), 640);
+      setHeroHeight(`${calculatedHeight}px`);
+    };
+
+    updateHeight();
+
+    // 브라우저 리사이즈 대응 (가로 너비가 변할 때만 — 기기 회전 등 대응)
+    let lastWidth = window.innerWidth;
+    const handleResize = () => {
+      if (window.innerWidth !== lastWidth) {
+        updateHeight();
+        lastWidth = window.innerWidth;
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const introDate = new Date(event.dateTime);
   const formattedDateTime = Number.isNaN(introDate.getTime())
     ? event.dateTime
@@ -28,8 +56,11 @@ export const IntroSection = ({ couple, event, heroImage }: IntroSectionProps) =>
 
   return (
     <section id="intro" className="relative bg-[var(--bg-primary)]">
-      {/* Hero 영역 */}
-      <div className="relative h-[clamp(480px,60vh,640px)] overflow-hidden supports-[height:100svh]:h-[clamp(480px,60svh,640px)]">
+      {/* Hero 영역 - JS로 계산된 heroHeight 적용 */}
+      <div 
+        className="relative overflow-hidden transition-[height] duration-500 ease-out"
+        style={{ height: heroHeight }}
+      >
         <Image
           src={heroImage}
           alt="Wedding Main"
