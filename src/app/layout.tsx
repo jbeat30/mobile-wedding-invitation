@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from 'next';
+import { Analytics } from '@vercel/analytics/next';
 import { Gowun_Batang, Crimson_Pro } from 'next/font/google';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import './globals.css';
 import { loadOgMetadata } from '@/app/invitationData';
 import { getCachedTheme } from '@/lib/invitationCache';
@@ -146,6 +148,8 @@ export default async function RootLayout({
       </head>
       <body className="loading-state antialiased [text-rendering:optimizeLegibility] isolate min-[481px]:[background:radial-gradient(circle_at_top,_#FAF9F7_0%,_#F0EDE8_100%)]">
         {children}
+        <Analytics />
+        <SpeedInsights />
         {process.env.NODE_ENV === 'development' && <Agentation />}
       </body>
     </html>
