@@ -351,8 +351,8 @@ export const invitationMock: InvitationMock = {
     },
     event: {
       dateTime: '2026-05-16T15:00:00+09:00',
-      venue: '채림 웨딩홀',
-      address: '경기도 부천시 원미구 심곡동 173-1',
+      venue: '왈루 웨딩홀',
+      address: '경기도 안산시 단원구 몰라동 123-1',
     },
     greeting: {
       message: [
@@ -368,24 +368,24 @@ export const invitationMock: InvitationMock = {
     couple: {
       groom: {
         firstName: '신랑',
-        lastName: '강',
+        lastName: '김',
         bio: '조용한 다정함으로 하루를 따뜻하게 만드는 사람입니다.',
         profileImage: '/mock/groom-front-512.png',
       },
       bride: {
         firstName: '신부',
-        lastName: '장',
+        lastName: '이',
         bio: '웃음을 나누는 순간이 가장 소중한 사람입니다.',
         profileImage: '/mock/bride-front-512.png',
       },
       parents: {
         groom: {
-          father: '강아버지',
-          mother: '송어머니',
+          father: '김아버지',
+          mother: '정어머니',
         },
         bride: {
-          father: '장아버지',
-          mother: '이어머니',
+          father: '이아버지',
+          mother: '홍어머니',
         },
       },
       section_title: '두 사람을 소개합니다',
@@ -397,9 +397,9 @@ export const invitationMock: InvitationMock = {
         lng: 126.78204185207186,
       },
       transportation: {
-        subway: ['지하철 1호선 부천역 3번, 4번, 7번 출구'],
-        bus: ['5, 12, 23번 부천역 하차 후 도보 7분'],
-        parking: '로얄쇼핑주차장 (채림웨딩홀 전용주차장) 약 3시간 무료',
+        subway: ['지하철 1호선 삼성역 3번, 4번, 7번 출구'],
+        bus: ['5, 12, 23번 홍대역 하차 후 도보 7분'],
+        parking: '왈루쇼핑주차장 (왈루 웨딩홀 전용주차장) 약 3시간 무료',
       },
       notices: [
         '예식 후 간단한 식사가 준비되어 있습니다.',
@@ -460,8 +460,8 @@ export const invitationMock: InvitationMock = {
     share: {
       section_title: '청첩장 공유하기',
       description: '소중한 분들과 함께 나눠주세요',
-      og_title: '강신랑 · 장신부 결혼식에 초대합니다',
-      og_description: '2026년 05월 16일 오후 3시 00분 | 채림 웨딩홀',
+      og_title: '신랑 · 신부 결혼식에 초대합니다',
+      og_description: '2026년 06월 14일 오후 3시 00분 | 왈루 웨딩홀',
       developer: 'jbeat',
       og_image_url: 'https://placehold.co/1200x630/F6EFE7/c19a7b?text=Wedding+Invitation',
       kakao_button_label: '청첩장 보기',
@@ -552,13 +552,13 @@ export const invitationMock: InvitationMock = {
           label: '신랑',
           bankName: '국민은행',
           accountNumber: '123-456-789012',
-          holder: '강신랑',
+          holder: '김신랑',
         },
         {
           label: '아버지',
           bankName: '신한은행',
           accountNumber: '123-456-000000',
-          holder: '강버지',
+          holder: '김버지',
         },
       ],
       bride: [
@@ -566,13 +566,13 @@ export const invitationMock: InvitationMock = {
           label: '신부',
           bankName: '신한은행',
           accountNumber: '110-234-567890',
-          holder: '장신부',
+          holder: '이신부',
         },
         {
           label: '어머니',
           bankName: '하나은행',
           accountNumber: '110-000-000000',
-          holder: '한머니',
+          holder: '홍머니',
         },
       ],
     },
