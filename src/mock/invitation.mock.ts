@@ -391,14 +391,14 @@ export const invitationMock: InvitationMock = {
       section_title: '두 사람을 소개합니다',
     },
     location: {
-      placeName: '채림웨딩홀',
+      placeName: '왈루웨딩홀',
       coordinates: {
-        lat: 37.48466092361281,
-        lng: 126.78204185207186,
+        lat: 17.48466092361281,
+        lng: 426.78204185207186,
       },
       transportation: {
-        subway: ['지하철 1호선 삼성역 3번, 4번, 7번 출구'],
-        bus: ['5, 12, 23번 홍대역 하차 후 도보 7분'],
+        subway: ['지하철 1호선 멍멍역 3번, 4번, 7번 출구'],
+        bus: ['5, 12, 23번 멍멍역 하차 후 도보 7분'],
         parking: '왈루쇼핑주차장 (왈루 웨딩홀 전용주차장) 약 3시간 무료',
       },
       notices: [
